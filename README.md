@@ -1,0 +1,1 @@
+# Welcome to The C6 Generic Collection Library for C# and CLI
