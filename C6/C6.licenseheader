@@ -1,0 +1,20 @@
+﻿extensions: designer.cs generated.cs
+extensions: .cs .cpp .h
+// This file is part of the C6 Generic Collection Library for C# and CLI
+// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+
+extensions: .aspx .ascx
+<%-- 
+This file is part of the C6 Generic Collection Library for C# and CLI
+See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+--%>
+
+extensions: .vb
+'This file is part of the C6 Generic Collection Library for C# and CLI
+'See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+
+extensions:  .xml .config .xsd
+<!--
+This file is part of the C6 Generic Collection Library for C# and CLI
+See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+-->

@@ -132,6 +132,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="C6.licenseheader" />
     <None Include="C6.snk" />
   </ItemGroup>
   <ItemGroup>
