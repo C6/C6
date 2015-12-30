@@ -189,6 +189,8 @@
     <None Include="C6.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\EnumerationDirection.cs" />
+    <Compile Include="Enums\Speed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
