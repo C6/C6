@@ -64,13 +64,7 @@ namespace C6
         }
 
 
-        public EnumerationDirection Direction
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public abstract EnumerationDirection Direction { get; }
 
 
         #region Non-Contract Methods
