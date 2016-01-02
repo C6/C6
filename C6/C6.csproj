@@ -191,6 +191,7 @@
   <ItemGroup>
     <Compile Include="Enums\EnumerationDirection.cs" />
     <Compile Include="Enums\Speed.cs" />
+    <Compile Include="Interfaces\IDirectedEnumerable.cs" />
     <Compile Include="Interfaces\IShowable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
