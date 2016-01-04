@@ -47,7 +47,7 @@ namespace C6
     {
         public IDirectedEnumerable<T> Backwards()
         {
-            // No requirements
+            // No Requires
 
 
             // Result is never null
@@ -64,7 +64,20 @@ namespace C6
         }
 
 
-        public abstract EnumerationDirection Direction { get; }
+        public EnumerationDirection Direction
+        {
+            get
+            {
+                // No Requires
+
+
+                // Result is a valid enum constant
+                Contract.Ensures(Enum.IsDefined(typeof(EnumerationDirection), Contract.Result<EnumerationDirection>()));
+
+
+                throw new NotImplementedException();
+            }
+        }
 
 
         #region Non-Contract Methods

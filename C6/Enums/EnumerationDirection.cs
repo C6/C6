@@ -1,6 +1,7 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+using System;
 using System.Diagnostics.Contracts;
 
 namespace C6
@@ -40,6 +41,10 @@ namespace C6
         [Pure]
         public static bool IsForward(this EnumerationDirection direction)
         {
+            // Argument must be valid enum constant
+            Contract.Requires(Enum.IsDefined(typeof (EnumerationDirection), direction));
+
+
             return direction == EnumerationDirection.Forwards;
         }
     }
