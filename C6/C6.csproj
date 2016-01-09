@@ -190,9 +190,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\EnumerationDirection.cs" />
+    <Compile Include="Enums\EventType.cs" />
     <Compile Include="Enums\Speed.cs" />
+    <Compile Include="Events\EventArgs\ClearedEventArgs.cs" />
+    <Compile Include="Events\EventArgs\ItemCountEventArgs.cs" />
+    <Compile Include="Events\EventManager.cs" />
+    <Compile Include="Interfaces\ICollectionValue.cs" />
     <Compile Include="Interfaces\IDirectedEnumerable.cs" />
     <Compile Include="Interfaces\IShowable.cs" />
+    <Compile Include="Events\EventArgs\ItemAtEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializable.cs" />
   </ItemGroup>
