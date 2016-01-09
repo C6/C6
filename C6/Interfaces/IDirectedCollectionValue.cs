@@ -14,7 +14,7 @@ namespace C6
     /// <summary>
     /// Represents a sized generic collection, that can be enumerated backwards.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam
+    /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(IDirectedCollectionValueContract<>))]
     public interface IDirectedCollectionValue<T> : IDirectedEnumerable<T>, ICollectionValue<T>
     {
