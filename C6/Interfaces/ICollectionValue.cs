@@ -485,7 +485,7 @@ namespace C6
 
 
             // Result is never null
-            Contract.Ensures(Contract.Result<T>() != null);
+            // Contract.Ensures(Contract.Result<T>() != null);
 
             // Return value is from the collection
             Contract.Ensures(this.Contains(Contract.Result<T>()));

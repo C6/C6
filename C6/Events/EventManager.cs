@@ -299,7 +299,7 @@ namespace C6
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be positive
             Contract.Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
@@ -315,7 +315,7 @@ namespace C6
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be positive
             Contract.Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
@@ -331,7 +331,7 @@ namespace C6
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-negative
             Contract.Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
@@ -347,7 +347,7 @@ namespace C6
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-negative
             Contract.Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?

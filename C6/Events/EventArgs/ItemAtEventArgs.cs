@@ -35,7 +35,7 @@ namespace C6
         private void ObjectInvariant()
         {
             // Item is non-null
-            Contract.Invariant(Item != null);
+            // Contract.Invariant(Item != null);
 
             // TODO: Contract index bounds more precisely when actually used
             // Index is non-negative
@@ -53,7 +53,7 @@ namespace C6
         public ItemAtEventArgs(T item, int index)
         {
             // Argument must be non-null
-            Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-negative
             Contract.Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
@@ -63,7 +63,7 @@ namespace C6
             Index = index;
 
             
-            Contract.Assume(Item != null); // Static checker shortcoming
+            // Contract.Assume(Item != null); // Static checker shortcoming
             Contract.Assume(Index >= 0); // Static checker shortcoming
         }
     }

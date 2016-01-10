@@ -41,7 +41,7 @@ namespace C6
         private void ObjectInvariant()
         {
             // Item is non-null
-            Contract.Invariant(Item != null);
+            // Contract.Invariant(Item != null);
 
             // TODO: Contract size more precisely when actually used, i.e. bound the size upwards
             // Count is positive
@@ -60,7 +60,7 @@ namespace C6
         public ItemCountEventArgs(T item, int count)
         {
             // Argument must be non-null
-            Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be positive
             Contract.Requires(count > 0);
@@ -70,7 +70,7 @@ namespace C6
             Count = count;
 
             
-            Contract.Assume(Item != null); // Static checker shortcoming
+            // Contract.Assume(Item != null); // Static checker shortcoming
             Contract.Assume(Count > 0); // Static checker shortcoming
         }
     }
