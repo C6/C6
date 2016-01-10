@@ -198,6 +198,7 @@
     <Compile Include="Interfaces\ICollectionValue.cs" />
     <Compile Include="Interfaces\IDirectedCollectionValue.cs" />
     <Compile Include="Interfaces\IDirectedEnumerable.cs" />
+    <Compile Include="Interfaces\IExtensible.cs" />
     <Compile Include="Interfaces\IShowable.cs" />
     <Compile Include="Events\EventArgs\ItemAtEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
