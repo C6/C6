@@ -36,7 +36,7 @@ namespace C6
 
 
     [ContractClassFor(typeof(IDirectedCollectionValue<>))]
-    abstract class IDirectedCollectionValueContract<T> : IDirectedCollectionValue<T>
+    internal abstract class IDirectedCollectionValueContract<T> : IDirectedCollectionValue<T>
     {
         IDirectedCollectionValue<T> IDirectedCollectionValue<T>.Backwards()
         {

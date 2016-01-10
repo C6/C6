@@ -47,7 +47,7 @@ namespace C6
 
 
     [ContractClassFor(typeof(IShowable))]
-    abstract class IShowableContract : IShowable
+    internal abstract class IShowableContract : IShowable
     {
         public bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
         {

@@ -43,7 +43,7 @@ namespace C6
 
 
     [ContractClassFor(typeof(IDirectedEnumerable<>))]
-    abstract class IDirectedEnumerableContract<T> : IDirectedEnumerable<T>
+    internal abstract class IDirectedEnumerableContract<T> : IDirectedEnumerable<T>
     {
         public IDirectedEnumerable<T> Backwards()
         {

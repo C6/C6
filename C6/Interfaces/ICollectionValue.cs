@@ -182,7 +182,7 @@ namespace C6
 
     // TODO: Add contracts on the events to ensure they are thrown http://stackoverflow.com/questions/34591107/writing-code-contracts-on-methods-throwing-events
     [ContractClassFor(typeof(ICollectionValue<>))]
-    abstract class ICollectionValueContract<T> : ICollectionValue<T>
+    internal abstract class ICollectionValueContract<T> : ICollectionValue<T>
     {
         public EventType ListenableEvents
         {
