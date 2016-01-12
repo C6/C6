@@ -59,6 +59,13 @@ namespace C6
         /// <see cref="CollectionChanged"/> event.
         /// </para>
         /// </remarks>
+        /// <seealso cref="EventType.Changed"/>
+        /// <seealso cref="IExtensible{T}.Add"/>
+        /// <seealso cref="IExtensible{T}.AddAll"/>
+        /// <seealso cref="IStack{T}.Push"/>
+        /// <seealso cref="IStack{T}.Pop"/>
+        /// <seealso cref="IQueue{T}.Enqueue"/>
+        /// <seealso cref="IQueue{T}.Dequeue"/>
         event EventHandler CollectionChanged;
 
 
@@ -72,6 +79,7 @@ namespace C6
         /// before the corresponding <see cref="CollectionChanged"/> event is
         /// raised.
         /// </remarks>
+        /// <seealso cref="EventType.Cleared"/>
         event EventHandler<ClearedEventArgs> CollectionCleared;
 
 
@@ -85,6 +93,11 @@ namespace C6
         /// and the collection in an internally consistent state, and before
         /// the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
+        /// <seealso cref="EventType.Added"/>
+        /// <seealso cref="IExtensible{T}.Add"/>
+        /// <seealso cref="IExtensible{T}.AddAll"/>
+        /// <seealso cref="IStack{T}.Push"/>
+        /// <seealso cref="IQueue{T}.Enqueue"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
 
 
@@ -97,6 +110,9 @@ namespace C6
         /// and before the corresponding <see cref="CollectionChanged"/> event
         /// is raised.
         /// </remarks>
+        /// <seealso cref="EventType.Removed"/>
+        /// <seealso cref="IStack{T}.Pop"/>
+        /// <seealso cref="IQueue{T}.Dequeue"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
 
 
@@ -110,6 +126,9 @@ namespace C6
         /// and before the corresponding <see cref="CollectionChanged"/> event
         /// is raised.
         /// </remarks>
+        /// <seealso cref="EventType.Inserted"/>
+        /// <seealso cref="IStack{T}.Push"/>
+        /// <seealso cref="IQueue{T}.Enqueue"/>
         event EventHandler<ItemAtEventArgs<T>> ItemInserted;
 
 
@@ -122,6 +141,9 @@ namespace C6
         /// and the collection in an internally consistent state, and before
         /// the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
+        /// <seealso cref="EventType.RemovedAt"/>
+        /// <seealso cref="IStack{T}.Pop"/>
+        /// <seealso cref="IQueue{T}.Dequeue"/>
         event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
 
 
