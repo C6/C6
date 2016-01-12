@@ -74,6 +74,7 @@ namespace C6
         public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        public abstract bool IsEmpty { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
         public abstract T Choose();

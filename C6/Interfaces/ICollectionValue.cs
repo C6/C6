@@ -148,6 +148,15 @@ namespace C6
 
 
         /// <summary>
+        /// Gets a value indicating whether the collection is empty.
+        /// </summary>
+        /// <value><c>true</c> if the collection is empty;
+        /// otherwise, <c>false</c>.</value>
+        [Pure]
+        bool IsEmpty { get; }
+
+
+        /// <summary>
         /// Gets the number of items contained in the collection.
         /// </summary>
         /// <value>The number of items contained in the collection.</value>
@@ -464,6 +473,24 @@ namespace C6
             }
         }
 
+        public bool IsEmpty
+        {
+            get
+            {
+                // No Requires
+
+                
+                // Returns true if Count is zero, otherwise false
+                Contract.Ensures(Contract.Result<bool>() == (Count == 0));
+
+                // Returns true if the enumerator is empty, otherwise false
+                Contract.Ensures(Contract.Result<bool>() != this.Any());
+
+
+                throw new NotImplementedException();
+            }
+        }
+
 
         public int Count
         {
@@ -503,7 +530,7 @@ namespace C6
         public T Choose()
         {
             // Collection must be non-empty
-            Contract.Requires(this.Any()); // TODO: Use <NoSuchItemException>?
+            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is never null

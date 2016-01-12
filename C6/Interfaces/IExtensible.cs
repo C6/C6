@@ -190,7 +190,7 @@ namespace C6
             Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer))); // TODO: Fix if EqualityComparer might be null!
 
             // Adding an item makes the collection non-empty
-            Contract.Ensures(this.Any());
+            Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
             Contract.Ensures(this.Contains(item, EqualityComparer)); // TODO: Fix if EqualityComparer might be null!
@@ -219,7 +219,7 @@ namespace C6
 
 
             // Adding an item makes the collection non-empty
-            Contract.Ensures(this.Any());
+            Contract.Ensures(!IsEmpty);
 
             // The collection will contain the items added
             Contract.Ensures(Contract.ForAll(items, item => this.Contains(item, EqualityComparer)));
@@ -247,6 +247,7 @@ namespace C6
         public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        public abstract bool IsEmpty { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
         public abstract T Choose();

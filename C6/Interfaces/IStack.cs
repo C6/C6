@@ -129,7 +129,7 @@ namespace C6
 
 
             // Adding an item makes the collection non-empty
-            Contract.Ensures(this.Any());
+            Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
             Contract.Ensures(this.Contains(item)); // TODO: Use EqualityComparer?
@@ -153,7 +153,7 @@ namespace C6
         public T Pop()
         {
             // Collection must be non-empty
-            Contract.Requires(this.Any()); // TODO: Use <NoSuchItemException>?
+            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
             // Collection must be non-read-only
             Contract.Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible property, which IQueue doesn't inherit from!
@@ -193,6 +193,7 @@ namespace C6
         public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        public abstract bool IsEmpty { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
         public abstract T Choose();
