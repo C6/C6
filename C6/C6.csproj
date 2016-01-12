@@ -195,10 +195,13 @@
     <Compile Include="Events\EventArgs\ClearedEventArgs.cs" />
     <Compile Include="Events\EventArgs\ItemCountEventArgs.cs" />
     <Compile Include="Events\EventManager.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Interfaces\ICollectionValue.cs" />
+    <Compile Include="Interfaces\IStack.cs" />
     <Compile Include="Interfaces\IDirectedCollectionValue.cs" />
     <Compile Include="Interfaces\IDirectedEnumerable.cs" />
     <Compile Include="Interfaces\IExtensible.cs" />
+    <Compile Include="Interfaces\IQueue.cs" />
     <Compile Include="Interfaces\IShowable.cs" />
     <Compile Include="Events\EventArgs\ItemAtEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
