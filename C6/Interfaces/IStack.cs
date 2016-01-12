@@ -25,6 +25,7 @@ namespace C6
         /// </summary>
         /// <param name="index">The zero-based index of the item to get.</param>
         /// <returns>The item at the specified index.</returns>
+        [Pure]
         T this[int index] { get; }
 
 
