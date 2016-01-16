@@ -151,6 +151,8 @@ namespace C6
         /// Gets or sets the item with which the specified handle is
         /// associated.
         /// </summary>
+        /// <value>The item with which the specified handle is/should be
+        /// associated with. <c>null</c> is allowed for nullable items.</value>
         /// <param name="handle">
         /// The handle associated with the item to get or set. The handle must
         /// be associated with an item in the priority queue.
@@ -223,7 +225,7 @@ namespace C6
         /// </summary>
         /// <param name="handle">The specified handle.</param>
         /// <param name="item">The new item with which the handle should be 
-        /// associated with.</param>
+        /// associated. <c>null</c> is allowed for nullable items.</param>
         /// <returns>The item that the handle was previously associated with.
         /// </returns>
         /// <exception cref="InvalidPriorityQueueHandleException">
@@ -267,7 +269,8 @@ namespace C6
         /// A handle for reuse must be compatible with this priority queue, 
         /// by being created by a priority queue of the same runtime type, but not 
         /// necessarily the same priority queue object.</param>
-        /// <param name="item"></param>
+        /// <param name="item">The item with which the handle should be 
+        /// associated. <c>null</c> is allowed for nullable items.</param>
         /// <returns><c>true</c>.</returns>
         /// <remarks>
         /// <para>If the item is added, it raises the following events (in that 
