@@ -66,6 +66,15 @@ namespace C6
         /// <seealso cref="IStack{T}.Pop"/>
         /// <seealso cref="IQueue{T}.Enqueue"/>
         /// <seealso cref="IQueue{T}.Dequeue"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin()"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin(out IPriorityQueueHandle{T})"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
+        /// <seealso cref="IPriorityQueue{T}.this"/>
+        /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T})"/>
+        /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T}, out T)"/>
+        /// <seealso cref="IPriorityQueue{T}.Replace"/>
+        /// <seealso cref="IPriorityQueue{T}.Remove"/>
         event EventHandler CollectionChanged;
 
 
@@ -98,6 +107,8 @@ namespace C6
         /// <seealso cref="IExtensible{T}.AddAll"/>
         /// <seealso cref="IStack{T}.Push"/>
         /// <seealso cref="IQueue{T}.Enqueue"/>
+        /// <seealso cref="IPriorityQueue{T}.this[IPriorityQueueHandle{T}]"/>
+        /// <seealso cref="IPriorityQueue{T}.Replace"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
 
 
@@ -113,6 +124,13 @@ namespace C6
         /// <seealso cref="EventType.Removed"/>
         /// <seealso cref="IStack{T}.Pop"/>
         /// <seealso cref="IQueue{T}.Dequeue"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin()"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin(out IPriorityQueueHandle{T})"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
+        /// <seealso cref="IPriorityQueue{T}.this"/>
+        /// <seealso cref="IPriorityQueue{T}.Replace"/>
+        /// <seealso cref="IPriorityQueue{T}.Remove"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
 
 
