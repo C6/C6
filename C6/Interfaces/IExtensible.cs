@@ -19,6 +19,7 @@ namespace C6
     [ContractClass(typeof(IExtensibleContract<>))]
     public interface IExtensible<T> : ICollectionValue<T>
     {
+        // TODO: Move to ICollectionValue?
         /// <summary>
         /// Gets a value indicating whether the collection is read-only.
         /// </summary>
@@ -31,7 +32,8 @@ namespace C6
         [Pure]
         bool IsReadOnly { get; }
 
-
+        
+        // TODO: Which one does it use, when there is a IComparer as well?!
         /// <summary>
         /// Gets a value indicating whether the collection allows duplicates.
         /// </summary>
@@ -46,7 +48,7 @@ namespace C6
         [Pure]
         bool AllowsDuplicates { get; }
 
-
+        
         /// <summary>
         /// Gets a value indicating whether the collection only stores an item
         /// once and keeps track of duplicates using a counter.
@@ -61,6 +63,7 @@ namespace C6
 
         /*
         // TODO: Add this? Update contracts on methods.
+        // TODO: Move to ICollectionValue?
         /// <summary>
         /// Gets a value indicating whether the collection allows <c>null</c> 
         /// items.
@@ -72,7 +75,7 @@ namespace C6
         */
 
 
-        // TODO: wonder where the right position of this is. And the semantics.
+        // TODO: wonder where the right position of this is. And the semantics. Should at least be in the same class as AllowsDuplicates!
         // TODO: Could the result be null?
         /// <summary>
         /// Gets the <see cref="SCG.IEqualityComparer{T}"/> used by the collection.
@@ -81,7 +84,7 @@ namespace C6
         [Pure]
         SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-
+        
         // TODO: Should we allow/disallow null values generally? Seems only to be a problem with hash-based collections.
         /// <summary>
         /// Adds an item to the collection if possible.
@@ -150,7 +153,17 @@ namespace C6
         public bool IsReadOnly { get; } = default(bool);
 
 
-        public bool AllowsDuplicates { get; } = default(bool);
+        public bool AllowsDuplicates
+        {
+            get
+            {
+                // A set only contains distinct items // TODO: Is this the right place to put it?
+                Contract.Ensures(Contract.Result<bool>() || Count == this.Distinct(EqualityComparer).Count());
+
+
+                throw new NotImplementedException();
+            }
+        }
 
 
         public bool DuplicatesByCounting
