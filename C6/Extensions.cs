@@ -29,7 +29,7 @@ namespace C6
             // Argument must be non-null
             // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
 
-            // Result is never null
+            // Result is non-null
             Contract.Ensures(Contract.Result<SCG.IEnumerable<T>>() != null);
 
 

@@ -168,7 +168,7 @@ namespace C6
         {
             get
             {
-                // Result is never null
+                // Result is non-null
                 Contract.Ensures(Contract.Result<SCG.IEqualityComparer<T>>() != null);
 
 
@@ -236,7 +236,7 @@ namespace C6
         #region Non-Contract Methods
 
         public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         public abstract string ToString(string format, IFormatProvider formatProvider);
         public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
         public abstract EventType ListenableEvents { get; }

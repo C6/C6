@@ -50,7 +50,7 @@ namespace C6
             // No Requires
 
 
-            // Result is never null
+            // Result is non-null
             Contract.Ensures(Contract.Result<IDirectedEnumerable<T>>() != null);
 
             // Result enumeration is backwards
@@ -83,7 +83,7 @@ namespace C6
         #region Non-Contract Methods
 
         public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

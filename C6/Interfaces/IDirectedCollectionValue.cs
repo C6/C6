@@ -43,7 +43,7 @@ namespace C6
             // No Requires
 
 
-            // Result is never null
+            // Result is non-null
             Contract.Ensures(Contract.Result<IDirectedEnumerable<T>>() != null);
 
             // Result enumeration is backwards
@@ -62,7 +62,7 @@ namespace C6
 
         public abstract EnumerationDirection Direction { get; }
         public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         public abstract IDirectedEnumerable<T> Backwards();
         public abstract string ToString(string format, IFormatProvider formatProvider);
         public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);

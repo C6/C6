@@ -108,7 +108,7 @@ namespace C6
                 Contract.Requires(0 <= index && index < Count); // TODO: Use <IndexOutOfRangeException>?
 
 
-                // Result is never null
+                // Result is non-null
                 // Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
                 // Result is the same as skipping the first index items
@@ -162,7 +162,7 @@ namespace C6
             // Dequeuing an item decrements the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
-            // Result is never null
+            // Result is non-null
             // Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // Result is the same the first items
@@ -179,7 +179,7 @@ namespace C6
         #region Non-Contract Methods
 
         public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() { throw new NotImplementedException(); }
         IDirectedCollectionValue<T> IDirectedCollectionValue<T>.Backwards() { throw new NotImplementedException(); }
         public abstract EnumerationDirection Direction { get; }
