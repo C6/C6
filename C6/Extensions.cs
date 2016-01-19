@@ -59,5 +59,34 @@ namespace C6
             
             return (enumerable as ICollectionValue<T>)?.IsEmpty ?? !enumerable.Any();
         }
+
+
+        [Pure]
+        public static bool Find<T>(this SCG.IEnumerable<T> enumerable, Func<T, bool> predicate, out T item)
+        {
+            // Argument must be non-null
+            Contract.Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+
+            // Argument must be non-null
+            Contract.Requires(predicate != null); // TODO: Use <ArgumentNullException>?
+
+
+            // Returns true if p(x) returned true for some item x; otherwise false
+            Contract.Ensures(Contract.Result<bool>() == enumerable.Any(predicate));
+
+            // Result item equals the first (or default) item satisfying the predicate
+            Contract.Ensures(Contract.ValueAtReturn(out item).Equals(enumerable.FirstOrDefault(predicate)));
+
+
+            bool result;
+
+            using (var enumerator = enumerable.Where(predicate).GetEnumerator())
+            {
+                // ReSharper disable once AssignmentInConditionalExpression
+                item = (result = enumerator.MoveNext()) ? enumerator.Current : default(T);
+            }
+
+            return result;
+        }
     }
 }
