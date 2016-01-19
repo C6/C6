@@ -159,11 +159,9 @@ namespace C6
         /// </param>
         /// <returns>The specified handle's associated item.</returns>
         /// <exception cref="InvalidPriorityQueueHandleException">
-        /// <para>The handle is not associated with an item in this priority
-        /// queue.</para>
-        /// <para> -or- </para>
-        /// <para>The handle is associated with an item in another priority
-        /// queue.</para></exception>
+        /// The handle is not associated with an item in this priority queue,
+        /// or the handle is associated with an item in another priority queue.
+        /// </exception>
         /// <remarks>
         /// The setter raises the following events (in that order) with the
         /// collection as sender:
@@ -229,11 +227,9 @@ namespace C6
         /// <returns>The item that the handle was previously associated with.
         /// </returns>
         /// <exception cref="InvalidPriorityQueueHandleException">
-        /// <para>The handle is not associated with an item in this priority
-        /// queue.</para>
-        /// <para> -or- </para>
-        /// <para>The handle is associated with an item in another priority
-        /// queue.</para></exception>
+        /// The handle is not associated with an item in this priority queue,
+        /// or the handle is associated with an item in another priority queue.
+        /// </exception>
         /// <remarks>
         /// <para>
         /// This is typically used for changing the priority of a queued item.

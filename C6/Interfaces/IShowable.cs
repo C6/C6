@@ -29,11 +29,9 @@ namespace C6
         /// <param name="rest">The number of characters to fit the formatted
         /// string to. The actual number of used characters is subtracted from
         /// the variable on return.</param>
-        /// <param name="formatProvider">
-        /// <para>The provider to use to format the value.</para>
-        /// <para>-or-</para>
-        /// <para>A null reference to obtain the numeric format information 
-        /// from the current locale setting of the operating system.</para>
+        /// <param name="formatProvider">The provider to use to format the
+        /// value, or a null reference to obtain the numeric format information 
+        /// from the current locale setting of the operating system.
         /// </param>
         /// <returns><c>true</c> if the appended formatted string was complete (not truncated);
         /// otherwise, <c>false</c>.</returns>
