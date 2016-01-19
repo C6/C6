@@ -137,6 +137,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Contracts\TestFailureMethods.cs" />
     <Compile Include="Contracts\Violates.cs" />
+    <Compile Include="Sorting\InsertionSortTests.cs" />
+    <Compile Include="Sorting\HeapSortTests.cs" />
+    <Compile Include="Sorting\SortingTests.cs" />
+    <Compile Include="Sorting\IntroSortTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
