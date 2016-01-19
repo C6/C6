@@ -9,17 +9,17 @@ namespace C6.Tests.Enums
     public class SpeedTests
     {
         [Test]
-        public void Speed_ConstantIsLessThanLogarithmic_IsTrue() => 
-            Assert.That(Constant, Is.LessThan(Log));
+        public void Speed_ConstantIsLessThanLogarithmic_IsTrue()
+            => Assert.That(Constant, Is.LessThan(Log));
 
 
         [Test]
-        public void Speed_LogarithmicIsLessThanLinear_IsTrue() => 
-            Assert.That(Log, Is.LessThan(Linear));
+        public void Speed_LogarithmicIsLessThanLinear_IsTrue()
+            => Assert.That(Log, Is.LessThan(Linear));
 
 
         [Test]
-        public void Speed_LinearIsLessThanPotentiallyInfinite_IsTrue() => 
-            Assert.That(Linear, Is.LessThan(PotentiallyInfinite));
+        public void Speed_LinearIsLessThanPotentiallyInfinite_IsTrue()
+            => Assert.That(Linear, Is.LessThan(PotentiallyInfinite));
     }
 }

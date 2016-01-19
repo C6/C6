@@ -1,7 +1,5 @@
-﻿using System;
-using C6.Tests.Contracts;
+﻿using C6.Tests.Contracts;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using static C6.EnumerationDirection;
 
 
@@ -12,17 +10,17 @@ namespace C6.Tests.Enums
     public class EnumerationDirectionExtensionTests
     {
         [Test]
-        public void IsForward_Forwards_True() =>
-            Assert.That(Forwards.IsForward(), Is.True);
+        public void IsForward_Forwards_True()
+            => Assert.That(Forwards.IsForward(), Is.True);
 
         [Test]
-        public void IsForward_Backwards_False() =>
-            Assert.That(Backwards.IsForward(), Is.False);
+        public void IsForward_Backwards_False()
+            => Assert.That(Backwards.IsForward(), Is.False);
 
         [Test]
         public void IsForward_InvalidValue_ViolatesPrecondition()
         {
-            var invalidEnumerationDirection = (EnumerationDirection) 2;
+            var invalidEnumerationDirection = (EnumerationDirection)2;
 
             Assert.That(() => invalidEnumerationDirection.IsForward(), Violates.Precondition);
         }
