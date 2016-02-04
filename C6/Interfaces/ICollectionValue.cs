@@ -26,21 +26,21 @@ namespace C6
     public interface ICollectionValue<T> : SCG.IEnumerable<T>, IShowable
     {
         /// <summary>
-        /// Gets a bitmap flag indicating the collection's subscribable events.
+        /// Gets a bit flag indicating the collection's subscribable events.
         /// </summary>
         /// <value>
-        /// The bitmap indicating the collection's subscribable events.
+        /// The bit flag indicating the collection's subscribable events.
         /// </value>
         [Pure]
         EventType ListenableEvents { get; }
 
 
         /// <summary>
-        /// Gets a bitmap flag indicating the collection's currently subscribed
+        /// Gets a bit flag indicating the collection's currently subscribed
         /// events.
         /// </summary>
         /// <value>
-        /// The bitmap indicating the collection's currently subscribed events.
+        /// The bit flag indicating the collection's currently subscribed events.
         /// </value>
         [Pure]
         EventType ActiveEvents { get; }

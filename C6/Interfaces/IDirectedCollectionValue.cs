@@ -28,7 +28,7 @@ namespace C6
         /// enumerator will enumerate the items backwards.</returns>
         /// <remarks>The <see cref="IDirectedCollectionValue{T}"/> becomes
         /// invalid, if the original is modified. The method is typically used
-        /// as in <c>foreach (var x in coll.Backwards()) {...}</c>.</remarks>
+        /// as in <c>foreach (var item in coll.Backwards()) {...}</c>.</remarks>
         [Pure]
         new IDirectedCollectionValue<T> Backwards();
     }

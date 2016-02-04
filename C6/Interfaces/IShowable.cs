@@ -28,7 +28,7 @@ namespace C6
         /// formatted string is appended.</param>
         /// <param name="rest">The number of characters to fit the formatted
         /// string to. The actual number of used characters is subtracted from
-        /// the variable on return.</param>
+        /// the parameter on return.</param>
         /// <param name="formatProvider">The provider to use to format the
         /// value, or a null reference to obtain the numeric format information 
         /// from the current locale setting of the operating system.

@@ -96,7 +96,9 @@ namespace C6
         /// <remarks>
         /// <para>If the collection has set semantics, the item will be
         /// added if not already in the collection. If bag semantics, the item 
-        /// will always be added.</para>
+        /// will always be added. The collection's
+        /// <see cref="EqualityComparer"/> is used to determine item equality.
+        /// </para>
         /// <para>If the item is added, it raises the following events (in that 
         /// order) with the collection as sender:
         /// <list type="bullet">
@@ -122,9 +124,10 @@ namespace C6
         /// the collection. <c>null</c> is allowed for nullable items, but not 
         /// for the enumerable itself.</param>
         /// <remarks>
-        /// <para> If the collection has set semantics, the items will be added
+        /// <para>If the collection has set semantics, each item will be added
         /// if not already in the collection. If bag semantics, the items will
-        /// always be added.</para>
+        /// always be added. The collection's <see cref="EqualityComparer"/> is
+        /// used to determine item equality.</para>
         /// <para>This is equivalent to
         /// <c>foreach (var item in coll) { coll.Add(item); }</c>, but might be
         /// more efficient and it only raises the event 

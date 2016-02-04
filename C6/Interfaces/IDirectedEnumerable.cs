@@ -25,7 +25,7 @@ namespace C6
         /// will enumerate the items backwards.</returns>
         /// <remarks>The <see cref="IDirectedEnumerable{T}"/> becomes invalid, 
         /// if the original is modified. The method is typically used as in 
-        /// <c>foreach (var x in coll.Backwards()) {...}</c>.</remarks>
+        /// <c>foreach (var item in coll.Backwards()) {...}</c>.</remarks>
         [Pure]
         IDirectedEnumerable<T> Backwards();
 
