@@ -11,6 +11,7 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     // TODO: Add contracts
+    // TODO: Make IEquatable<SCG.KeyValuePair<K,V>?
     // TODO: Implement IShowable and IFormattable members properly
     /// <summary>
     /// Defines a key/value pair that is equatable and showable.
@@ -50,11 +51,7 @@ namespace C6
         /// The value is set to the default value of type
         /// <typeparamref name="TValue"/>.
         /// </remarks>
-        public KeyValuePair(TKey key)
-        {
-            Key = key;
-            Value = default(TValue);
-        }
+        public KeyValuePair(TKey key) : this(key, default(TValue)) { }
 
 
         /// <summary>
@@ -107,12 +104,8 @@ namespace C6
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         [Pure]
         public override int GetHashCode()
-        {
-            // Just ensure that the value is the same as in C5
-            Contract.Ensures(Contract.Result<int>() == SCG.EqualityComparer<TKey>.Default.GetHashCode(Key) + 13984681 * SCG.EqualityComparer<TValue>.Default.GetHashCode(Value));
-
-            return Key.GetHashCode() + 13984681 * Value.GetHashCode();
-        }
+            // Uses SCG.EqualityComparer as Key and Value could be null
+            => SCG.EqualityComparer<TKey>.Default.GetHashCode(Key) + 13984681 * SCG.EqualityComparer<TValue>.Default.GetHashCode(Value);
 
         #endregion
 
@@ -128,13 +121,7 @@ namespace C6
         /// <returns><c>true</c> if this key-value pair is equal to the 
         /// specified key-value pair; otherwise, <c>false</c>.</returns>
         [Pure]
-        public bool Equals(KeyValuePair<TKey, TValue> other)
-        {
-            // Just ensure that the value is the same as in C5
-            Contract.Ensures(Contract.Result<bool>() == SCG.EqualityComparer<TKey>.Default.Equals(Key, other.Key) && SCG.EqualityComparer<TValue>.Default.Equals(Value, other.Value));
-
-            return Key.Equals(other.Key) && Value.Equals(other.Value);
-        }
+        public bool Equals(KeyValuePair<TKey, TValue> other) => Key.Equals(other.Key) && Value.Equals(other.Value);
 
 
         /// <summary>
