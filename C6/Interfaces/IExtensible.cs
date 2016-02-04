@@ -84,7 +84,7 @@ namespace C6
         [Pure]
         SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        
+
         // TODO: Should we allow/disallow null values generally? Seems only to be a problem with hash-based collections.
         /// <summary>
         /// Adds an item to the collection if possible.
@@ -153,7 +153,13 @@ namespace C6
     [ContractClassFor(typeof(IExtensible<>))]
     internal abstract class IExtensibleContract<T> : IExtensible<T>
     {
-        public bool IsReadOnly { get; } = default(bool);
+        public bool IsReadOnly
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
 
         public bool AllowsDuplicates
