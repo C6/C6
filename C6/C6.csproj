@@ -193,7 +193,7 @@
   <ItemGroup>
     <Compile Include="Contracts\ContractExtensions.cs" />
     <Compile Include="Enums\EnumerationDirection.cs" />
-    <Compile Include="Enums\EventType.cs" />
+    <Compile Include="Enums\EventTypes.cs" />
     <Compile Include="Enums\Speed.cs" />
     <Compile Include="Events\EventArgs\ClearedEventArgs.cs" />
     <Compile Include="Events\EventArgs\ItemCountEventArgs.cs" />

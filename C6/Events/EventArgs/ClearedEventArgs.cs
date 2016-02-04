@@ -15,6 +15,7 @@ namespace C6
     [DebuggerDisplay("(ClearedEventArgs {Count} {Full})")] // TODO: format appropriately
     public class ClearedEventArgs : EventArgs
     {
+        // TODO: Consider replacing Full with an enum instead of bool.
         /// <summary>
         /// Gets a value indicating whether a collection was cleared, or
         /// whether a list view or an index range was cleared.
@@ -51,6 +52,8 @@ namespace C6
         }
 
 
+        // TODO: Default arguments are not CLS compliant!
+        // TODO: Look at FDG 8.8
         /// <summary>
         /// Initializes a new instance of the <see cref="ClearedEventArgs"/>
         /// class for an operation that cleared a collection or a list

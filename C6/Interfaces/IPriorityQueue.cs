@@ -42,6 +42,7 @@ namespace C6
         SCG.IComparer<T> Comparer { get; }
 
 
+        // TODO: Rename to Min
         /// <summary>
         /// Returns the current least item in the priority queue.
         /// </summary>
@@ -50,6 +51,7 @@ namespace C6
         T FindMin();
 
 
+        // TODO: Rename to Min
         /// <summary>
         /// Returns the current least item in the priority queue.
         /// </summary>
@@ -100,6 +102,7 @@ namespace C6
         T RemoveMin(out IPriorityQueueHandle<T> handle);
 
 
+        // TODO: Rename to Max
         /// <summary>
         /// Returns the current largest item in the priority queue.
         /// </summary>
@@ -108,6 +111,7 @@ namespace C6
         T FindMax();
 
 
+        // TODO: Rename to Max
         /// <summary>
         /// Returns the current largest item in the priority queue.
         /// </summary>
@@ -217,7 +221,8 @@ namespace C6
 
 
         // TODO: Exception: what if the handle is of the wrong type?
-        // TODO: Only raise events when items are different?
+        // TODO: Rename to Update?
+        // TODO: Remove if this is the same as this[handle] = item?
         /// <summary>
         /// Replaces the item with which the specified handle is associated.
         /// </summary>
@@ -256,6 +261,7 @@ namespace C6
         T Replace(IPriorityQueueHandle<T> handle, T item);
 
 
+        // TODO: Reorder parameters?
         /// <summary>
         /// Add an item to the priority queue, receiving a handle for the item 
         /// in the queue, or reusing an existing unused handle.
@@ -743,8 +749,8 @@ namespace C6
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         public abstract string ToString(string format, IFormatProvider formatProvider);
         public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
-        public abstract EventType ListenableEvents { get; }
-        public abstract EventType ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
+        public abstract EventTypes ActiveEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;

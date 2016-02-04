@@ -9,7 +9,7 @@ namespace C6
     /// <summary>
     /// Defines the directions of an enumeration order relative to the original collection.
     /// </summary>
-    public enum EnumerationDirection : byte
+    public enum EnumerationDirection
     {
         /// <summary>
         /// Enumeration order is the same as the original collection.

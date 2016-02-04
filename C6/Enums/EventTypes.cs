@@ -17,10 +17,10 @@ namespace C6
     /// <see cref="All"/>.
     /// </remarks>
     [Flags]
-    public enum EventType : byte
+    public enum EventTypes
     {
         /// <summary>
-        /// Corresponds to no event.
+        /// Corresponds to no events.
         /// </summary>
         None = 0,
 
@@ -70,9 +70,16 @@ namespace C6
         RemovedAt = 1 << 5,
 
         /// <summary>
-        /// Is the combined value of <see cref="Basic"/>,
-        /// <see cref="Inserted"/>, and <see cref="RemovedAt"/>.
+        /// Is the combined value of <see cref="Inserted"/> and
+        /// <see cref="RemovedAt"/>.
         /// </summary>
-        All = Basic | Inserted | RemovedAt
+        Indexed = Inserted | RemovedAt,
+
+
+        /// <summary>
+        /// Is the combined value of <see cref="Basic"/> and 
+        /// <see cref="Indexed"/>.
+        /// </summary>
+        All = Basic | Indexed
     }
 }

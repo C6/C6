@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("C6")]
+[assembly: AssemblyTitle("C6.dll")]
 [assembly: AssemblyDescription("The C6 Generic Collection Library for C# and CLI is a comprehensive collection library supporting lists, sets, bags, dictionaries, priority queues, (FIFO) queues, and (LIFO) stacks.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Niels Kokholm, Peter Sestoft, Rasmus Lystrøm, Mikkel Riise Lund")]
@@ -12,5 +12,6 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright © Niels Kokholm, Peter Sestoft, Rasmus Lystrøm, Mikkel Riise Lund 2003-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("0.1.*")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
 [assembly: CLSCompliant(true)]

@@ -12,7 +12,7 @@ namespace C6
     /// The values may refer to worst-case, amortized and/or expected
     /// asymptotic complexity with regards to the collection size.
     /// </remarks>
-    public enum Speed : byte
+    public enum Speed
     {
         /// <summary>
         /// The operation takes constant time.
