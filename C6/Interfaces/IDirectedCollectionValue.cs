@@ -66,8 +66,8 @@ namespace C6
         public abstract IDirectedEnumerable<T> Backwards();
         public abstract string ToString(string format, IFormatProvider formatProvider);
         public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
-        public abstract EventType ListenableEvents { get; }
-        public abstract EventType ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
+        public abstract EventTypes ActiveEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;

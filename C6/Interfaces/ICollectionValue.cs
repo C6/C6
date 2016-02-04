@@ -7,7 +7,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using SCG = System.Collections.Generic;
-using static C6.EventType;
+using static C6.EventTypes;
 
 namespace C6
 {
@@ -32,7 +32,7 @@ namespace C6
         /// The bit flag indicating the collection's subscribable events.
         /// </value>
         [Pure]
-        EventType ListenableEvents { get; }
+        EventTypes ListenableEvents { get; }
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace C6
         /// The bit flag indicating the collection's currently subscribed events.
         /// </value>
         [Pure]
-        EventType ActiveEvents { get; }
+        EventTypes ActiveEvents { get; }
 
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace C6
         /// <see cref="CollectionChanged"/> event.
         /// </para>
         /// </remarks>
-        /// <seealso cref="EventType.Changed"/>
+        /// <seealso cref="EventTypes.Changed"/>
         /// <seealso cref="IExtensible{T}.Add"/>
         /// <seealso cref="IExtensible{T}.AddAll"/>
         /// <seealso cref="IStack{T}.Push"/>
@@ -88,7 +88,7 @@ namespace C6
         /// before the corresponding <see cref="CollectionChanged"/> event is
         /// raised.
         /// </remarks>
-        /// <seealso cref="EventType.Cleared"/>
+        /// <seealso cref="EventTypes.Cleared"/>
         event EventHandler<ClearedEventArgs> CollectionCleared;
 
 
@@ -102,7 +102,7 @@ namespace C6
         /// and the collection in an internally consistent state, and before
         /// the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
-        /// <seealso cref="EventType.Added"/>
+        /// <seealso cref="EventTypes.Added"/>
         /// <seealso cref="IExtensible{T}.Add"/>
         /// <seealso cref="IExtensible{T}.AddAll"/>
         /// <seealso cref="IStack{T}.Push"/>
@@ -121,9 +121,9 @@ namespace C6
         /// and before the corresponding <see cref="CollectionChanged"/> event
         /// is raised.
         /// </remarks>
-        /// <seealso cref="EventType.Removed"/>
         /// <seealso cref="IStack{T}.Pop"/>
         /// <seealso cref="IQueue{T}.Dequeue"/>
+        /// <seealso cref="EventTypes.Removed"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMin()"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMin(out IPriorityQueueHandle{T})"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
@@ -144,8 +144,8 @@ namespace C6
         /// and before the corresponding <see cref="CollectionChanged"/> event
         /// is raised.
         /// </remarks>
-        /// <seealso cref="EventType.Inserted"/>
         /// <seealso cref="IStack{T}.Push"/>
+        /// <seealso cref="EventTypes.Inserted"/>
         /// <seealso cref="IQueue{T}.Enqueue"/>
         event EventHandler<ItemAtEventArgs<T>> ItemInserted;
 
@@ -159,8 +159,8 @@ namespace C6
         /// and the collection in an internally consistent state, and before
         /// the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
-        /// <seealso cref="EventType.RemovedAt"/>
         /// <seealso cref="IStack{T}.Pop"/>
+        /// <seealso cref="EventTypes.RemovedAt"/>
         /// <seealso cref="IQueue{T}.Dequeue"/>
         event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
 
@@ -233,7 +233,7 @@ namespace C6
     [ContractClassFor(typeof(ICollectionValue<>))]
     internal abstract class ICollectionValueContract<T> : ICollectionValue<T>
     {
-        public EventType ListenableEvents
+        public EventTypes ListenableEvents
         {
             get
             {
@@ -241,7 +241,7 @@ namespace C6
 
 
                 // The listenable events must exist
-                Contract.Ensures(All.HasFlag(Contract.Result<EventType>()));
+                Contract.Ensures(All.HasFlag(Contract.Result<EventTypes>()));
 
 
                 throw new NotImplementedException();
@@ -249,7 +249,7 @@ namespace C6
         }
 
 
-        public EventType ActiveEvents
+        public EventTypes ActiveEvents
         {
             get
             {
@@ -257,10 +257,10 @@ namespace C6
 
 
                 // The active events must exist
-                Contract.Ensures(All.HasFlag(Contract.Result<EventType>()));
+                Contract.Ensures(All.HasFlag(Contract.Result<EventTypes>()));
 
                 // The active events must be listenable
-                Contract.Ensures(ListenableEvents.HasFlag(Contract.Result<EventType>()));
+                Contract.Ensures(ListenableEvents.HasFlag(Contract.Result<EventTypes>()));
 
                 // TODO: Check this matches the actual active events.
 

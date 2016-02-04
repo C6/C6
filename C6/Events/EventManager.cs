@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using static C6.EventType;
+using static C6.EventTypes;
 
 namespace C6
 {
@@ -37,7 +37,7 @@ namespace C6
         
 
         [Pure]
-        public EventType ActiveEvents { get; private set; }
+        public EventTypes ActiveEvents { get; private set; }
 
 
         public event EventHandler CollectionChanged
