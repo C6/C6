@@ -7,7 +7,6 @@ using static C6.EventType;
 
 namespace C6
 {
-    // TODO: Rename Raise to On
     // TODO: Merge into CollectionValueBase
     /// <summary>
     /// Manages events for an <see cref="ICollectionValue{T}"/>.
@@ -269,7 +268,7 @@ namespace C6
         }
 
         
-        public void RaiseCollectionChanged(object sender)
+        public void OnCollectionChanged(object sender)
         {
             // Argument must be non-null
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
@@ -279,8 +278,8 @@ namespace C6
         }
 
 
-        public void RaiseCollectionCleared(object sender, bool full, int count, int? start = null)
         // TODO: Default arguments are not CLS compliant!
+        public void OnCollectionCleared(object sender, bool full, int count, int? start = null)
         {
             // Argument must be non-null
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
@@ -296,7 +295,7 @@ namespace C6
         }
 
 
-        public void RaiseItemsAdded(object sender, T item, int count)
+        public void OnItemsAdded(object sender, T item, int count)
         {
             // Argument must be non-null
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
@@ -312,7 +311,7 @@ namespace C6
         }
 
 
-        public void RaiseItemsRemoved(object sender, T item, int count)
+        public void OnItemsRemoved(object sender, T item, int count)
         {
             // Argument must be non-null
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
@@ -328,7 +327,7 @@ namespace C6
         }
 
 
-        public void RaiseItemInserted(object sender, T item, int index)
+        public void OnItemInserted(object sender, T item, int index)
         {
             // Argument must be non-null
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
@@ -344,7 +343,7 @@ namespace C6
         }
 
         
-        public void RaiseItemRemovedAt(object sender, T item, int index)
+        public void OnItemRemovedAt(object sender, T item, int index)
         {
             // Argument must be non-null
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
