@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 
 namespace C6
 {
+    // TODO: Should the underlying type simply be Int32? FDG 4.8
     /// <summary>
     /// Defines the directions of an enumeration order relative to the original collection.
     /// </summary>

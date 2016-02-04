@@ -7,6 +7,8 @@ using static C6.EventType;
 
 namespace C6
 {
+    // TODO: Rename Raise to On
+    // TODO: Merge into CollectionValueBase
     /// <summary>
     /// Manages events for an <see cref="ICollectionValue{T}"/>.
     /// </summary>
@@ -278,6 +280,7 @@ namespace C6
 
 
         public void RaiseCollectionCleared(object sender, bool full, int count, int? start = null)
+        // TODO: Default arguments are not CLS compliant!
         {
             // Argument must be non-null
             Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?

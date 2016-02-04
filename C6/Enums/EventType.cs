@@ -5,6 +5,8 @@ using System;
 
 namespace C6
 {
+    // TODO: Should the underlying type simply be Int32? FDG 4.8
+    // TODO: Rename to EventTypes as it is a bitflag
     /// <summary>
     /// Defines different types of events for collections.
     /// </summary>

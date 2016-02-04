@@ -3,6 +3,7 @@
 
 namespace C6
 {
+    // TODO: Should the underlying type simply be Int32? FDG 4.8
     // TODO: Add information about amortize/expected. See http://docs.scala-lang.org/overviews/collections/performance-characteristics.html
     // Values are order to be comparable: Constant < Log < Linear < PotentiallyInfinite
     /// <summary>
