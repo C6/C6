@@ -3,7 +3,6 @@
 
 namespace C6
 {
-    // TODO: Should the underlying type simply be Int32? FDG 4.8
     // TODO: Add information about amortize/expected. See http://docs.scala-lang.org/overviews/collections/performance-characteristics.html
     // Values are order to be comparable: Constant < Log < Linear < PotentiallyInfinite
     /// <summary>
@@ -13,7 +12,7 @@ namespace C6
     /// The values may refer to worst-case, amortized and/or expected
     /// asymptotic complexity with regards to the collection size.
     /// </remarks>
-    public enum Speed : byte
+    public enum Speed
     {
         /// <summary>
         /// The operation takes constant time.
