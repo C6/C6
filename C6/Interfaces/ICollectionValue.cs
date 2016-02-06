@@ -538,6 +538,7 @@ namespace C6
         }
 
 
+        // Contracts are copied to ICollection<T>.Count. Keep both updated!
         public int Count
         {
             get
@@ -590,6 +591,7 @@ namespace C6
         }
 
 
+        // Contracts are copied to ICollection.CopyTo. Keep both updated!
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null

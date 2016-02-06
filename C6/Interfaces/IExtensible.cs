@@ -155,6 +155,7 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
+        // Contracts are copied to ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
             get
@@ -203,6 +204,7 @@ namespace C6
         }
 
 
+        // Contracts are copied to ICollection<T>.Add. Keep both updated!
         public bool Add(T item)
         {
             // Collection must be non-read-only

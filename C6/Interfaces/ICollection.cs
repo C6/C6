@@ -738,8 +738,32 @@ namespace C6
     [ContractClassFor(typeof(ICollection<>))]
     internal abstract class ICollectionContract<T> : ICollection<T>
     {
+        // Contracts are copied from IExtensible<T>.Add. Keep both updated!
         public bool Add(T item)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Argument must be non-null
+            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
+
+            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
+            Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer))); // TODO: Fix if EqualityComparer might be null!
+
+            // Adding an item makes the collection non-empty
+            Contract.Ensures(!IsEmpty);
+
+            // The collection will contain the item added
+            Contract.Ensures(this.Contains(item, EqualityComparer)); // TODO: Fix if EqualityComparer might be null!
+
+            // Adding an item increments the count by one
+            Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 1 : 0));
+
+            // Adding the item increments the number of equal items by one
+            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0)); // TODO: Fix if EqualityComparer might be null!
+
+
             throw new NotImplementedException();
         }
 
@@ -776,16 +800,40 @@ namespace C6
             }
         }
 
+
+        // Contracts are copied from ICollectionValue<T>.CopyTo. Keep both updated!
         public void CopyTo(T[] array, int arrayIndex)
         {
+            // Argument must be non-null
+            Contract.Requires(array != null); // TODO: Use <ArgumentNullException>?
+
+            // Argument must be within bounds
+            Contract.Requires(0 <= arrayIndex && arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
+
+
+            // Array contains the collection's items in enumeration order from arrayIndex
+            Contract.Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
+
+
             throw new NotImplementedException();
         }
 
-
+        
+        // Contracts are copied from ICollectionValue<T>.Count. Keep both updated!
         public int Count
         {
             get
             {
+                // No Requires
+
+
+                // Returns a non-negative number
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
+                // Returns the same as the number of items in the enumerator
+                Contract.Ensures(Contract.Result<int>() == Enumerable.Count(this));
+
+
                 throw new NotImplementedException();
             }
         }
@@ -809,6 +857,7 @@ namespace C6
         }
 
 
+        // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
             get
@@ -822,6 +871,7 @@ namespace C6
         {
             throw new NotImplementedException();
         }
+
 
         public bool Remove(T item)
         {
