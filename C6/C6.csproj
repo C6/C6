@@ -200,6 +200,7 @@
     <Compile Include="Events\EventManager.cs" />
     <Compile Include="Exceptions\InvalidPriorityQueueHandleException.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Interfaces\ICollection.cs" />
     <Compile Include="Interfaces\ICollectionValue.cs" />
     <Compile Include="Interfaces\IPriorityQueueHandle.cs" />
     <Compile Include="Interfaces\IStack.cs" />

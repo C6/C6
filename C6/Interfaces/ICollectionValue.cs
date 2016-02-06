@@ -11,7 +11,6 @@ using static C6.EventTypes;
 
 namespace C6
 {
-    // TODO: Document events with <seealso/>
     /// <summary>
     /// Represents a generic, observable collection that may be enumerated and
     /// can answer efficiently how many items it contains.
@@ -60,21 +59,33 @@ namespace C6
         /// </para>
         /// </remarks>
         /// <seealso cref="EventTypes.Changed"/>
+        /// <seealso cref="ICollection{T}.Add"/>
+        /// <seealso cref="ICollection{T}.Clear"/>
+        /// <seealso cref="ICollection{T}.FindOrAdd"/>
+        /// <seealso cref="ICollection{T}.Remove(T)"/>
+        /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
+        /// <seealso cref="ICollection{T}.RemoveAll(T)"/>
+        /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
+        /// <seealso cref="ICollection{T}.RetainAll"/>
+        /// <seealso cref="ICollection{T}.Update(T)"/>
+        /// <seealso cref="ICollection{T}.Update(T, out T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IExtensible{T}.Add"/>
         /// <seealso cref="IExtensible{T}.AddAll"/>
-        /// <seealso cref="IStack{T}.Push"/>
-        /// <seealso cref="IStack{T}.Pop"/>
-        /// <seealso cref="IQueue{T}.Enqueue"/>
-        /// <seealso cref="IQueue{T}.Dequeue"/>
-        /// <seealso cref="IPriorityQueue{T}.RemoveMin()"/>
-        /// <seealso cref="IPriorityQueue{T}.RemoveMin(out IPriorityQueueHandle{T})"/>
-        /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
-        /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
-        /// <seealso cref="IPriorityQueue{T}.this"/>
         /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T})"/>
         /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T}, out T)"/>
-        /// <seealso cref="IPriorityQueue{T}.Replace"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin()"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin(out IPriorityQueueHandle{T})"/>
+        /// <seealso cref="IPriorityQueue{T}.this"/>
         /// <seealso cref="IPriorityQueue{T}.Remove"/>
+        /// <seealso cref="IPriorityQueue{T}.Replace"/>
+        /// <seealso cref="IQueue{T}.Dequeue"/>
+        /// <seealso cref="IQueue{T}.Enqueue"/>
+        /// <seealso cref="IStack{T}.Pop"/>
+        /// <seealso cref="IStack{T}.Push"/>
         event EventHandler CollectionChanged;
 
 
@@ -89,10 +100,10 @@ namespace C6
         /// raised.
         /// </remarks>
         /// <seealso cref="EventTypes.Cleared"/>
+        /// <seealso cref="ICollection{T}.Clear"/>
         event EventHandler<ClearedEventArgs> CollectionCleared;
 
 
-        // TODO: an Update operation will fire an ItemsRemoved and an ItemsAdded event.
         // TODO: When an item is inserted into a list, both ItemInserted and ItemsAdded events will be fired.
         /// <summary>
         /// Occurs when an item is added to the collection.
@@ -103,12 +114,18 @@ namespace C6
         /// the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.Added"/>
+        /// <seealso cref="ICollection{T}.Add"/>
+        /// <seealso cref="ICollection{T}.FindOrAdd"/>
+        /// <seealso cref="ICollection{T}.Update(T)"/>
+        /// <seealso cref="ICollection{T}.Update(T, out T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IExtensible{T}.Add"/>
         /// <seealso cref="IExtensible{T}.AddAll"/>
-        /// <seealso cref="IStack{T}.Push"/>
-        /// <seealso cref="IQueue{T}.Enqueue"/>
-        /// <seealso cref="IPriorityQueue{T}.this[IPriorityQueueHandle{T}]"/>
         /// <seealso cref="IPriorityQueue{T}.Replace"/>
+        /// <seealso cref="IPriorityQueue{T}.this[IPriorityQueueHandle{T}]"/>
+        /// <seealso cref="IQueue{T}.Enqueue"/>
+        /// <seealso cref="IStack{T}.Push"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
 
 
@@ -121,16 +138,25 @@ namespace C6
         /// and before the corresponding <see cref="CollectionChanged"/> event
         /// is raised.
         /// </remarks>
-        /// <seealso cref="IStack{T}.Pop"/>
-        /// <seealso cref="IQueue{T}.Dequeue"/>
         /// <seealso cref="EventTypes.Removed"/>
-        /// <seealso cref="IPriorityQueue{T}.RemoveMin()"/>
-        /// <seealso cref="IPriorityQueue{T}.RemoveMin(out IPriorityQueueHandle{T})"/>
+        /// <seealso cref="ICollection{T}.Remove(T)"/>
+        /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
+        /// <seealso cref="ICollection{T}.RemoveAll(T)"/>
+        /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
+        /// <seealso cref="ICollection{T}.RetainAll"/>
+        /// <seealso cref="ICollection{T}.Update(T)"/>
+        /// <seealso cref="ICollection{T}.Update(T, out T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
+        /// <seealso cref="IPriorityQueue{T}.Remove"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
-        /// <seealso cref="IPriorityQueue{T}.this"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin()"/>
+        /// <seealso cref="IPriorityQueue{T}.RemoveMin(out IPriorityQueueHandle{T})"/>
         /// <seealso cref="IPriorityQueue{T}.Replace"/>
-        /// <seealso cref="IPriorityQueue{T}.Remove"/>
+        /// <seealso cref="IPriorityQueue{T}.this"/>
+        /// <seealso cref="IQueue{T}.Dequeue"/>
+        /// <seealso cref="IStack{T}.Pop"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
 
 
@@ -144,9 +170,9 @@ namespace C6
         /// and before the corresponding <see cref="CollectionChanged"/> event
         /// is raised.
         /// </remarks>
-        /// <seealso cref="IStack{T}.Push"/>
         /// <seealso cref="EventTypes.Inserted"/>
         /// <seealso cref="IQueue{T}.Enqueue"/>
+        /// <seealso cref="IStack{T}.Push"/>
         event EventHandler<ItemAtEventArgs<T>> ItemInserted;
 
 
@@ -159,9 +185,9 @@ namespace C6
         /// and the collection in an internally consistent state, and before
         /// the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
-        /// <seealso cref="IStack{T}.Pop"/>
         /// <seealso cref="EventTypes.RemovedAt"/>
         /// <seealso cref="IQueue{T}.Dequeue"/>
+        /// <seealso cref="IStack{T}.Pop"/>
         event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
 
 
@@ -499,7 +525,7 @@ namespace C6
             {
                 // No Requires
 
-                
+
                 // Returns true if Count is zero, otherwise false
                 Contract.Ensures(Contract.Result<bool>() == (Count == 0));
 
