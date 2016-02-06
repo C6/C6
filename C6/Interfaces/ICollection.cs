@@ -2,7 +2,11 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Collections;
 using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Text;
+
 using SCG = System.Collections.Generic;
 
 namespace C6
@@ -11,6 +15,7 @@ namespace C6
     /// Defines the simplest set of methods to manipulate a general generic
     /// collection.
     /// </summary>
+    [ContractClass(typeof(ICollectionContract<>))]
     public interface ICollection<T> : IExtensible<T>, SCG.ICollection<T>
     {
         /// <summary>
@@ -726,5 +731,198 @@ namespace C6
         /// </para>
         /// </remarks>
         bool UpdateOrAdd(T item, out T oldItem);
+    }
+
+
+
+    [ContractClassFor(typeof(ICollection<>))]
+    internal abstract class ICollectionContract<T> : ICollection<T>
+    {
+        public bool Add(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool Contains(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool ContainsAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public int ContainsCount(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Speed ContainsSpeed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public int Count
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+        public bool Find(ref T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool FindOrAdd(ref T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public int GetUnsequencedHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+        public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool Remove(T item, out T removedItem)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool RemoveAll(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void RemoveAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void RetainAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public ICollectionValue<T> UniqueItems()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool UnsequencedEquals(ICollection<T> otherCollection)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool Update(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool Update(T item, out T oldItem)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool UpdateOrAdd(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool UpdateOrAdd(T item, out T oldItem)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        #region Non-Contract Methods
+
+        public abstract void AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AllowsDuplicates { get; }
+        void ICollectionValue<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
+        void SCG.ICollection<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
+        int SCG.ICollection<T>.Count { get { throw new NotImplementedException(); } }
+        public abstract bool DuplicatesByCounting { get; }
+        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
+        bool IExtensible<T>.IsReadOnly { get { throw new NotImplementedException(); } }
+        bool SCG.ICollection<T>.IsReadOnly { get { throw new NotImplementedException(); } }
+        bool SCG.ICollection<T>.Remove(T item) { throw new NotImplementedException(); }
+        public abstract SCG.IEnumerator<T> GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public abstract string ToString(string format, IFormatProvider formatProvider);
+        public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
+        public abstract EventTypes ListenableEvents { get; }
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract event EventHandler CollectionChanged;
+        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        void SCG.ICollection<T>.Add(T item) { throw new NotImplementedException(); }
+        bool IExtensible<T>.Add(T item) { throw new NotImplementedException(); }
+        void SCG.ICollection<T>.Clear() { throw new NotImplementedException(); }
+        public abstract T Choose();
+        bool SCG.ICollection<T>.Contains(T item) { throw new NotImplementedException(); }
+        int ICollectionValue<T>.Count { get { throw new NotImplementedException(); } }
+        public abstract Speed CountSpeed { get; }
+        public abstract bool IsEmpty { get; }
+        public abstract T[] ToArray();
+
+        #endregion
     }
 }
