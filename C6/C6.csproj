@@ -191,6 +191,7 @@
     <None Include="C6.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComparerFactory.cs" />
     <Compile Include="Contracts\ContractExtensions.cs" />
     <Compile Include="Enums\EnumerationDirection.cs" />
     <Compile Include="Enums\EventTypes.cs" />
