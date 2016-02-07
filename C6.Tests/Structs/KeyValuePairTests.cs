@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+
+using NUnit.Framework;
 
 
 namespace C6.Tests
@@ -56,20 +58,21 @@ namespace C6.Tests
         #region ToString
 
         [Test]
-        public void ToString_RandomPair_IsEqual()
+        public void ToString_RandomPair_ContainsKeyBeforeValue()
         {
             // Arrange
             var random = TestContext.CurrentContext.Random;
             var key = random.Next();
             var value = random.GetString(10);
             var kvp = new KeyValuePair<int, string>(key, value);
-            var toString = "(" + key + ", " + value + ")";
+            var toString = kvp.ToString();
 
             // Act
-            var result = kvp.ToString();
+            var keyIndex = toString.IndexOf(key.ToString(), StringComparison.Ordinal);
+            var valueIndex = toString.IndexOf(value, StringComparison.Ordinal);
 
             // Assert
-            Assert.That(result, Is.EqualTo(toString));
+            Assert.That(keyIndex, Is.Not.Negative.And.LessThan(valueIndex));
         }
 
         #endregion
