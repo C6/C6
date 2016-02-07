@@ -404,7 +404,7 @@ namespace C6
             // Result is same as FindMin
             Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMin())));
 
-            // Removing an item decrements the count by one
+            // Removing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
             // Return value is from the collection
@@ -430,7 +430,7 @@ namespace C6
             // Result is same as FindMin
             Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMin())));
 
-            // Removing an item decrements the count by one
+            // Removing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
             // The handle is no longer associated with an item in the priority queue
@@ -510,7 +510,7 @@ namespace C6
             // Result is same as FindMax
             Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMax())));
 
-            // Removing an item decrements the count by one
+            // Removing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
             // Return value is from the collection
@@ -536,7 +536,7 @@ namespace C6
             // Result is same as FindMax
             Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMax())));
 
-            // Removing an item decrements the count by one
+            // Removing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
             // The handle is no longer associated with an item in the priority queue
@@ -646,7 +646,7 @@ namespace C6
             // Count remains unchanged
             Contract.Ensures(Count == Contract.OldValue(Count));
 
-            // Adding an item makes the collection non-empty
+            // The collection is non-empty
             Contract.Ensures(!IsEmpty);
 
             // Handle is associated with new item
@@ -691,16 +691,16 @@ namespace C6
             // Always returns true
             Contract.Ensures(Contract.Result<bool>());
 
-            // Adding an item makes the collection non-empty
+            // The collection becomes non-empty
             Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
             Contract.Ensures(this.Contains(item, EqualityComparer)); // TODO: Fix if EqualityComparer might be null!
 
-            // Adding an item increments the count by one
+            // Adding an item increases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) + 1);
 
-            // Adding the item increments the number of equal items by one
+            // Adding the item increases the number of equal items by one
             Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1); // TODO: Fix if EqualityComparer might be null!
 
             // Returned handle is non-null
@@ -728,7 +728,7 @@ namespace C6
             // Result is non-null
             // Contract.Ensures(Contract.Result<T>() != null);
 
-            // Removing an item decrements the count by one
+            // Removing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
             // Count remains the same if an exception is thrown

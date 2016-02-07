@@ -103,8 +103,8 @@ namespace C6
         /// order) with the collection as sender:
         /// <list type="bullet">
         /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
+        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the added item
+        /// and a count of one.
         /// </description></item>
         /// <item><description>
         /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
@@ -215,16 +215,16 @@ namespace C6
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
             Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer))); // TODO: Fix if EqualityComparer might be null!
 
-            // Adding an item makes the collection non-empty
+            // The collection becomes non-empty
             Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
             Contract.Ensures(this.Contains(item, EqualityComparer)); // TODO: Fix if EqualityComparer might be null!
 
-            // Adding an item increments the count by one
+            // Adding an item increases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 1 : 0));
 
-            // Adding the item increments the number of equal items by one
+            // Adding the item increases the number of equal items by one
             Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0)); // TODO: Fix if EqualityComparer might be null!
 
 
@@ -244,7 +244,7 @@ namespace C6
             // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
 
 
-            // Adding an item makes the collection non-empty
+            // The collection becomes non-empty
             Contract.Ensures(!IsEmpty);
 
             // The collection will contain the items added

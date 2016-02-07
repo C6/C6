@@ -10,7 +10,7 @@ using System.Text;
 
 namespace C6
 {
-    // TODO: decide if this should extend ICollection - it at least needs IsReadOnly
+    // TODO: decide if this should extend ICollection/IExtensible - it at least needs IsReadOnly
     /// <summary>
     /// Represents a generic last-in-first-out (LIFO) stack data structure.
     /// </summary>
@@ -18,7 +18,8 @@ namespace C6
     [ContractClass(typeof(IStackContract<>))]
     public interface IStack<T> : IDirectedCollectionValue<T>
     {
-        // TODO: Also found in IQueue<T>
+        // TODO: Document events!
+        // Also found in IQueue<T>
         /// <summary>
         /// Gets the item at the specified index in the stack.
         /// The bottom of the stack has index <c>0</c>.
@@ -131,16 +132,16 @@ namespace C6
             Contract.Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
 
 
-            // Adding an item makes the collection non-empty
+            // The collection becomes non-empty
             Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
             Contract.Ensures(this.Contains(item)); // TODO: Use EqualityComparer?
 
-            // Adding an item increments the count by one
+            // Adding an item increases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) + 1);
 
-            // Adding the item increments the number of equal items by one
+            // Adding the item increases the number of equal items by one
             Contract.Ensures(this.Count(x => x.Equals(item)) == Contract.OldValue(this.Count(x => x.Equals(item))) + 1); // TODO: Use EqualityComparer?
 
             // The added item is at the end of the queue
@@ -162,7 +163,7 @@ namespace C6
             Contract.Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible property, which IQueue doesn't inherit from!
 
 
-            // Dequeuing an item decrements the count by one
+            // Dequeuing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
             // Result is non-null

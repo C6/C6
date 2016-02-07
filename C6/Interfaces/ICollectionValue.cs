@@ -523,7 +523,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<int>() >= 0);
 
                 // Returns the same as the number of items in the enumerator
-                Contract.Ensures(Contract.Result<int>() == Enumerable.Count(this));
+                Contract.Ensures(Contract.Result<int>() == this.Count());
 
 
                 throw new NotImplementedException();
@@ -568,7 +568,7 @@ namespace C6
         {
             // Argument must be non-null
             Contract.Requires(array != null); // TODO: Use <ArgumentNullException>?
-
+            
             // Argument must be within bounds
             Contract.Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
             Contract.Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
