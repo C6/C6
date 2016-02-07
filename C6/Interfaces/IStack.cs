@@ -107,7 +107,8 @@ namespace C6
             get
             {
                 // Argument must be within bounds (collection must be non-empty)
-                Contract.Requires(0 <= index && index < Count); // TODO: Use <IndexOutOfRangeException>?
+                Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
+                Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
 
                 // Result is non-null

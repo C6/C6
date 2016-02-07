@@ -570,8 +570,8 @@ namespace C6
             Contract.Requires(array != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be within bounds
-            Contract.Requires(0 <= arrayIndex && arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
-
+            Contract.Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
+            Contract.Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
 
             // Array contains the collection's items in enumeration order from arrayIndex
             Contract.Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
