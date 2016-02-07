@@ -153,6 +153,8 @@ namespace C6
     [ContractClassFor(typeof(IExtensible<>))]
     internal abstract class IExtensibleContract<T> : IExtensible<T>
     {
+        // ReSharper disable InvocationIsSkipped
+
         public bool IsReadOnly
         {
             get
@@ -256,6 +258,9 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
+        // ReSharper restore InvocationIsSkipped
+
 
         #region Non-Contract Methods
 

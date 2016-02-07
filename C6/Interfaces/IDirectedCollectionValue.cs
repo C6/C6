@@ -38,6 +38,8 @@ namespace C6
     [ContractClassFor(typeof(IDirectedCollectionValue<>))]
     internal abstract class IDirectedCollectionValueContract<T> : IDirectedCollectionValue<T>
     {
+        // ReSharper disable InvocationIsSkipped
+
         IDirectedCollectionValue<T> IDirectedCollectionValue<T>.Backwards()
         {
             // No Requires
@@ -56,6 +58,7 @@ namespace C6
             throw new NotImplementedException();
         }
 
+        // ReSharper restore InvocationIsSkipped
 
 
         #region Non-Contract Methods

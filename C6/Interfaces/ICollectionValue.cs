@@ -233,6 +233,8 @@ namespace C6
     [ContractClassFor(typeof(ICollectionValue<>))]
     internal abstract class ICollectionValueContract<T> : ICollectionValue<T>
     {
+        // ReSharper disable InvocationIsSkipped
+
         public EventTypes ListenableEvents
         {
             get
@@ -593,6 +595,9 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
+        // ReSharper restore InvocationIsSkipped
+
 
         #region Non-Contract Methods
 

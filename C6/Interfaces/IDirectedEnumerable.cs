@@ -45,6 +45,8 @@ namespace C6
     [ContractClassFor(typeof(IDirectedEnumerable<>))]
     internal abstract class IDirectedEnumerableContract<T> : IDirectedEnumerable<T>
     {
+        // ReSharper disable InvocationIsSkipped
+
         public IDirectedEnumerable<T> Backwards()
         {
             // No Requires
@@ -78,8 +80,10 @@ namespace C6
                 throw new NotImplementedException();
             }
         }
+        
+        // ReSharper restore InvocationIsSkipped
 
-
+        
         #region Non-Contract Methods
 
         public abstract SCG.IEnumerator<T> GetEnumerator();

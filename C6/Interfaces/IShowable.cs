@@ -47,6 +47,8 @@ namespace C6
     [ContractClassFor(typeof(IShowable))]
     internal abstract class IShowableContract : IShowable
     {
+        // ReSharper disable InvocationIsSkipped
+
         public bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
         {
             // Argument must be non-null
@@ -61,6 +63,9 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
+        // ReSharper restore InvocationIsSkipped
+
 
         #region Non-Contract Methods
 

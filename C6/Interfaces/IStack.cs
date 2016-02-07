@@ -84,6 +84,8 @@ namespace C6
     [ContractClassFor(typeof(IStack<>))]
     internal abstract class IStackContract<T> : IStack<T>
     {
+        // ReSharper disable InvocationIsSkipped
+
         /*
         // TODO: Not allowed: seems like an error with the statick checker: https://github.com/Microsoft/CodeContracts/issues/331
         public EventTypes ListenableEvents
@@ -174,6 +176,8 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
+        // ReSharper restore InvocationIsSkipped
 
 
         #region Non-Contract Methods

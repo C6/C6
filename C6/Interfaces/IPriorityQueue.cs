@@ -320,6 +320,8 @@ namespace C6
     [ContractClassFor(typeof(IPriorityQueue<>))]
     internal abstract class IPriorityQueueContract<T> : IPriorityQueue<T>
     {
+        // ReSharper disable InvocationIsSkipped
+
         public SCG.IComparer<T> Comparer
         {
             get
@@ -741,6 +743,8 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
+        // ReSharper restore InvocationIsSkipped
 
 
         #region Non-Contract Methods
