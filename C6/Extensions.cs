@@ -55,8 +55,8 @@ namespace C6
 
             // Returns true if Count is zero, otherwise false
             Contract.Ensures(Contract.Result<bool>() != enumerable.Any());
-            
-            
+
+
             return (enumerable as ICollectionValue<T>)?.IsEmpty ?? !enumerable.Any();
         }
 
@@ -87,6 +87,22 @@ namespace C6
             }
 
             return result;
+        }
+
+
+        // TODO: Implement and document
+        [Pure]
+        public static int FindIndex<T>(this IIndexed<T> collection, Func<T, bool> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        // TODO: Implement and document
+        [Pure]
+        public static int FindLastIndex<T>(this IIndexed<T> collection, Func<T, bool> predicate)
+        {
+            throw new NotImplementedException();
         }
     }
 }
