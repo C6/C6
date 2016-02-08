@@ -66,8 +66,8 @@ namespace C6
         /// </summary>
         /// <returns>The least item in the priority queue.</returns>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the least item
@@ -87,8 +87,8 @@ namespace C6
         /// <param name="handle">The handle associated with the least item.</param>
         /// <returns>The least item in the priority queue.</returns>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the least item
@@ -126,8 +126,8 @@ namespace C6
         /// </summary>
         /// <returns>The largest item in the priority queue.</returns>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the largest
@@ -240,8 +240,8 @@ namespace C6
         /// This is typically used for changing the priority of a queued item.
         /// </para>
         /// <para>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the old item
@@ -300,8 +300,8 @@ namespace C6
         /// <returns>The item that the handle was previously associated with.
         /// </returns>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 

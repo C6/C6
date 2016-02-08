@@ -35,8 +35,8 @@ namespace C6
         /// </summary>
         /// <param name="item">The item to add to the queue.</param>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
@@ -61,8 +61,8 @@ namespace C6
         /// The item that is removed from the beginning of the queue.
         /// </returns>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an 

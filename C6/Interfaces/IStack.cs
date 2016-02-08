@@ -36,8 +36,8 @@ namespace C6
         /// <param name="item">The item to push onto the stack. <c>null</c> is
         /// allowed for nullable items.</param>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
@@ -60,8 +60,8 @@ namespace C6
         /// </summary>
         /// <returns>The item removed from the top of the stack.</returns>
         /// <remarks>
-        /// It raises the following events (in that order) with the collection
-        /// as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an 
