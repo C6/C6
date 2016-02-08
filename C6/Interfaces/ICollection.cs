@@ -15,6 +15,7 @@ namespace C6
     /// Defines the simplest set of methods to manipulate a general generic
     /// collection.
     /// </summary>
+    /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(ICollectionContract<>))]
     public interface ICollection<T> : IExtensible<T>, SCG.ICollection<T>
     {
@@ -100,8 +101,8 @@ namespace C6
 
 
         /// <summary>
-        /// Counts the number of items in the collection equal to the specified
-        /// item.
+        /// Returns the item's multiplicity in the collection: the number of
+        /// items in the collection equal to the specified item.
         /// </summary>
         /// <param name="item">The item to count in the collection.</param>
         /// <returns>The number of items equal to the specified item found.
@@ -433,17 +434,17 @@ namespace C6
         void RetainAll(SCG.IEnumerable<T> items);
 
 
+        // TODO: Consider returning a read-only collection instead
         /// <summary>
-        /// Returns a collection value equal to this collection with all 
-        /// duplicates removed.
+        /// Returns a <see cref="ICollectionValue{T}"/> equal to this
+        /// collection without duplicates.
         /// </summary>
         /// <returns>A collection value equal to this collection without
         /// duplicates.</returns>
-        /// <remarks>If the given collection allows duplicates, a new
-        /// collection is created and returned; if not, the given collection is
-        /// returned. The collection's
-        /// <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
-        /// item equality.</remarks>
+        /// <remarks>If the collection allows duplicates, a new collection is
+        /// created and returned; if not, the collection itself is returned.
+        /// The collection's <see cref="IExtensible{T}.EqualityComparer"/> is
+        /// used to determine item equality.</remarks>
         [Pure]
         ICollectionValue<T> UniqueItems();
 
@@ -457,11 +458,24 @@ namespace C6
         /// collection to.</param>
         /// <returns><c>true</c> if the collections contain equal items;
         /// otherwise, <c>false</c>.</returns>
-        /// <remarks>For each item in this collection there must be one equal
+        /// <remarks>
+        /// <para>
+        /// For each item in this collection there must be one equal
         /// to it in the other collection with the same multiplicity, and vice
-        /// versa. The collection's
+        /// versa.
+        /// </para>
+        /// <para>
+        /// <b>This</b> collection's
         /// <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
-        /// item equality.</remarks>
+        /// item equality. If the two collections use different notions of item
+        /// equality, there is no guarantee that this method is symmetric, i.e.
+        /// the following test is undetermined:
+        /// <code>
+        /// // Undetermined when coll1.EqualityComparer and coll2.EqualityComparer are not equal
+        /// coll1.UnsequencedEquals(coll2) == coll2.UnsequencedEquals(coll1)
+        /// </code>
+        /// </para>
+        /// </remarks>
         /// <seealso cref="GetUnsequencedHashCode"/>
         [Pure]
         bool UnsequencedEquals(ICollection<T> otherCollection);
@@ -734,10 +748,12 @@ namespace C6
     }
 
 
-
+    
     [ContractClassFor(typeof(ICollection<>))]
     internal abstract class ICollectionContract<T> : ICollection<T>
     {
+        // ReSharper disable InvocationIsSkipped
+
         // Contracts are copied from IExtensible<T>.Add. Keep both updated!
         public bool Add(T item)
         {
@@ -749,19 +765,26 @@ namespace C6
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer))); // TODO: Fix if EqualityComparer might be null!
+            Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer)));
 
-            // Adding an item makes the collection non-empty
+            // The collection becomes non-empty
             Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Contract.Ensures(this.Contains(item, EqualityComparer)); // TODO: Fix if EqualityComparer might be null!
+            Contract.Ensures(this.Contains(item, EqualityComparer));
 
-            // Adding an item increments the count by one
+            // Adding an item increases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 1 : 0));
 
-            // Adding the item increments the number of equal items by one
-            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0)); // TODO: Fix if EqualityComparer might be null!
+            // Adding the item increases the number of equal items by one
+            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0));
+
+
+            // The collection will contain the item added
+            Contract.Ensures(Contains(item));
+
+            // The number of equal items increase by one
+            Contract.Ensures(ContainsCount(item) == Contract.OldValue(ContainsCount(item)) + (Contract.Result<bool>() ? 1 : 0));
 
 
             throw new NotImplementedException();
@@ -770,24 +793,60 @@ namespace C6
 
         public void Clear()
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // The collection becomes empty
+            Contract.Ensures(IsEmpty);
+            Contract.Ensures(Count == 0);
+            Contract.Ensures(!this.Any());
+
+
             throw new NotImplementedException();
         }
 
 
         public bool Contains(T item)
         {
+            // No Requires
+
+
+            // Returns true if the collection contains the item
+            Contract.Ensures(Contract.Result<bool>() == this.Contains(item, EqualityComparer));
+
+
             throw new NotImplementedException();
         }
 
 
         public bool ContainsAll(SCG.IEnumerable<T> items)
         {
+            // Argument must be non-null
+            Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
+
+            // All items must be non-null
+            // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+
+
+            // The collection contains the same items as items, with a multiplicity equal or greater
+            Contract.Ensures(Contract.Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) >= group.Count()));
+
+
             throw new NotImplementedException();
         }
 
 
         public int ContainsCount(T item)
         {
+            // Argument must be non-null
+            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
+
+            // Result equals the number of items equal to item using the collection's equality comparer
+            Contract.Ensures(Contract.Result<int>() == this.Count(x => EqualityComparer.Equals(x, item)));
+
+
             throw new NotImplementedException();
         }
 
@@ -796,6 +855,13 @@ namespace C6
         {
             get
             {
+                // No Requires
+
+
+                // Result is a valid enum constant
+                Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
+
+
                 throw new NotImplementedException();
             }
         }
@@ -808,7 +874,8 @@ namespace C6
             Contract.Requires(array != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be within bounds
-            Contract.Requires(0 <= arrayIndex && arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
+            Contract.Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
+            Contract.Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
 
 
             // Array contains the collection's items in enumeration order from arrayIndex
@@ -818,7 +885,7 @@ namespace C6
             throw new NotImplementedException();
         }
 
-        
+
         // Contracts are copied from ICollectionValue<T>.Count. Keep both updated!
         public int Count
         {
@@ -831,7 +898,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<int>() >= 0);
 
                 // Returns the same as the number of items in the enumerator
-                Contract.Ensures(Contract.Result<int>() == Enumerable.Count(this));
+                Contract.Ensures(Contract.Result<int>() == this.Count());
 
 
                 throw new NotImplementedException();
@@ -841,12 +908,39 @@ namespace C6
 
         public bool Find(ref T item)
         {
+            // No Requires
+
+
+            // Result is equal to Contains
+            Contract.Ensures(Contract.Result<bool>() == Contains(item));
+
+            // Ref parameter always equals itself
+            Contract.Ensures(EqualityComparer.Equals(item, Contract.ValueAtReturn(out item))); // TODO: Test that this actually catches mistakes - try returning default(T)
+
+            // If a non-value type instance is found and returned, it must come from the collection
+            Contract.Ensures(typeof(T).IsValueType || !Contract.Result<bool>() || this.Contains(Contract.ValueAtReturn(out item), ComparerFactory.CreateReferenceEqualityComparer<T>())); // TODO: Test that this actually catches mistakes - try returning default(T)
+
+
             throw new NotImplementedException();
         }
 
 
         public bool FindOrAdd(ref T item)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // The collection contains the item
+            Contract.Ensures(Contains(item));
+
+            // Result is equal to whether the collection already contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
+
+            // Adding an item increases the count by one
+            Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 0 : 1));
+
+
             throw new NotImplementedException();
         }
 
@@ -869,74 +963,257 @@ namespace C6
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
+            // No Requires
+
+
+            // TODO: Ensure that the result contains the right items
+            // this.GroupBy(key => key, element => element, EqualityComparer)
+            //     .Select(group => new KeyValuePair<T, int>(group.Key, group.Count()))
+
+
             throw new NotImplementedException();
         }
 
 
         public bool Remove(T item)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // Returns true if the collection contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(this.Contains(item, EqualityComparer)));
+
+            // Removing an item decreases the count by one
+            Contract.Ensures(Count == Contract.OldValue(Count) - (Contract.Result<bool>() ? 1 : 0));
+
+            // Removing the item decreases the number of equal items by one
+            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) - (Contract.Result<bool>() ? 1 : 0));
+
+
             throw new NotImplementedException();
         }
 
 
         public bool Remove(T item, out T removedItem)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // Returns true if the collection contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(this.Contains(item, EqualityComparer)));
+
+            // Removing an item decreases the count by one
+            Contract.Ensures(Count == Contract.OldValue(Count) - (Contract.Result<bool>() ? 1 : 0));
+
+            // Removing the item decreases the number of equal items by one
+            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) - (Contract.Result<bool>() ? 1 : 0));
+
+            // If an item was removed, the removed item equals the item to remove; otherwise, it equals the default value of T
+            Contract.Ensures(EqualityComparer.Equals(Contract.ValueAtReturn(out removedItem), Contract.Result<bool>() ? item : default(T)));
+
+
             throw new NotImplementedException();
         }
 
 
         public bool RemoveAll(T item)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // Returns true if the collection contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(this.Contains(item, EqualityComparer)));
+
+            // Removing all instances of an item decreases the count by its multiplicity
+            Contract.Ensures(Count == Contract.OldValue(Count - ContainsCount(item)));
+
+            // Removing the item decreases the number of equal items to zero
+            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == 0);
+
+
             throw new NotImplementedException();
         }
 
 
         public void RemoveAll(SCG.IEnumerable<T> items)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Argument must be non-null
+            Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
+
+            // All items must be non-null
+            // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+
+
+            // TODO: Write ensures
+
+
             throw new NotImplementedException();
         }
 
 
         public void RetainAll(SCG.IEnumerable<T> items)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Argument must be non-null
+            Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
+
+            // All items must be non-null
+            // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+
+
+            // The collection is at most as big as the enumerable
+            Contract.Ensures(Count <= (AllowsDuplicates ? items.Count() : items.Distinct(EqualityComparer).Count()));
+
+            // The collection contains the same items as items, with a multiplicity equal or less
+            Contract.Ensures(items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) <= group.Count()));
+
+            // TODO: Ensure that the collection contains the right items
+
+
             throw new NotImplementedException();
         }
 
 
         public ICollectionValue<T> UniqueItems()
         {
+            // No Requires
+
+
+            // The result size must be equal to the number of distinct items
+            Contract.Ensures(Contract.Result<ICollectionValue<T>>().Count == this.Distinct(EqualityComparer).Count());
+
+            // If the collection allows duplicates a new collection is created; otherwise, this collection is returned
+            Contract.Ensures(AllowsDuplicates != ReferenceEquals(Contract.Result<ICollectionValue<T>>(), this));
+            
+            // TODO: Ensure that the result contains the right items
+
+
             throw new NotImplementedException();
         }
 
 
         public bool UnsequencedEquals(ICollection<T> otherCollection)
         {
+            // No Requires
+
+
+            // If the collections must contain a different number of (distinct) items, then they must be non-equal
+            Contract.Ensures((Count == otherCollection.Count) || !Contract.Result<bool>());
+            Contract.Ensures((this.Distinct(EqualityComparer).Count() == otherCollection.Distinct(EqualityComparer).Count()) || !Contract.Result<bool>());
+
+            // If the collections have different unsequenced hash codes, then they must be non-equal
+            Contract.Ensures((GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode()) || !Contract.Result<bool>());
+
+            // TODO: Require that the collections use the same equality comparer?
+
+
             throw new NotImplementedException();
         }
 
 
         public bool Update(T item)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // Result is equal to whether the collection already contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
+
+            // If the collection contained the item, it still does
+            Contract.Ensures(Contract.OldValue(Contains(item)) == Contains(item));
+
+            // Count remains unchanged
+            Contract.Ensures(Count == Contract.OldValue(Count));
+
+            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+
+
+
             throw new NotImplementedException();
         }
 
 
         public bool Update(T item, out T oldItem)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // Result is equal to whether the collection already contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
+
+            // If the collection contained the item, it still does
+            Contract.Ensures(Contract.OldValue(Contains(item)) == Contains(item));
+
+            // The item returned is either equal to the given item, if it was updated, or the default value of T if it was added
+            Contract.Ensures(EqualityComparer.Equals(Contract.ValueAtReturn(out oldItem), Contract.Result<bool>() ? item : default(T)));
+
+            // Count remains unchanged
+            Contract.Ensures(Count == Contract.OldValue(Count));
+
+            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+
+
             throw new NotImplementedException();
         }
 
 
         public bool UpdateOrAdd(T item)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // The collection contains the item
+            Contract.Ensures(Contains(item));
+
+            // Result is equal to whether the collection already contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
+
+            // Adding an item increases the count by one
+            Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 0 : 1));
+
+            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+
+
             throw new NotImplementedException();
         }
 
 
         public bool UpdateOrAdd(T item, out T oldItem)
         {
+            // Collection must be non-read-only
+            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            // The collection contains the item
+            Contract.Ensures(Contains(item));
+
+            // Result is equal to whether the collection already contained the item
+            Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
+
+            // The item returned is either equal to the given item, if it was updated, or the default value of T if it was added
+            Contract.Ensures(EqualityComparer.Equals(Contract.ValueAtReturn(out oldItem), Contract.Result<bool>() ? item : default(T)));
+
+            // Adding an item increases the count by one
+            Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 0 : 1));
+
+            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+
+            
             throw new NotImplementedException();
         }
+
+        // ReSharper restore InvocationIsSkipped
 
 
         #region Non-Contract Methods
