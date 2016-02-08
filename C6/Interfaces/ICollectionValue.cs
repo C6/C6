@@ -73,6 +73,8 @@ namespace C6
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IExtensible{T}.Add"/>
         /// <seealso cref="IExtensible{T}.AddAll"/>
+        /// <seealso cref="IIndexed{T}.RemoveAt"/>
+        /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
         /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T})"/>
         /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T}, out T)"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
@@ -101,6 +103,7 @@ namespace C6
         /// </remarks>
         /// <seealso cref="EventTypes.Cleared"/>
         /// <seealso cref="ICollection{T}.Clear"/>
+        /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
         event EventHandler<ClearedEventArgs> CollectionCleared;
 
 
@@ -148,6 +151,7 @@ namespace C6
         /// <seealso cref="ICollection{T}.Update(T, out T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
+        /// <seealso cref="IIndexed{T}.RemoveAt"/>
         /// <seealso cref="IPriorityQueue{T}.Remove"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
@@ -186,6 +190,7 @@ namespace C6
         /// the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.RemovedAt"/>
+        /// <seealso cref="IIndexed{T}.RemoveAt"/>
         /// <seealso cref="IQueue{T}.Dequeue"/>
         /// <seealso cref="IStack{T}.Pop"/>
         event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
