@@ -204,6 +204,7 @@
     <Compile Include="Interfaces\ICollection.cs" />
     <Compile Include="Interfaces\ICollectionValue.cs" />
     <Compile Include="Interfaces\IPriorityQueueHandle.cs" />
+    <Compile Include="Interfaces\ISequenced.cs" />
     <Compile Include="Interfaces\IStack.cs" />
     <Compile Include="Interfaces\IDirectedCollectionValue.cs" />
     <Compile Include="Interfaces\IDirectedEnumerable.cs" />

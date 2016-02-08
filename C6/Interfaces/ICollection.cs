@@ -465,9 +465,9 @@ namespace C6
         /// versa.
         /// </para>
         /// <para>
-        /// <b>This</b> collection's
-        /// <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
-        /// item equality. If the two collections use different notions of item
+        /// The comparison uses <b>this</b> collection's
+        /// <see cref="IExtensible{T}.EqualityComparer"/> to determine item
+        /// equality. If the two collections use different notions of item
         /// equality, there is no guarantee that this method is symmetric, i.e.
         /// the following test is undetermined:
         /// <code>
