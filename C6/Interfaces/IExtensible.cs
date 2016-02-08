@@ -155,6 +155,7 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
+        // Contracts are copied to ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
             get
@@ -181,6 +182,9 @@ namespace C6
         {
             get
             {
+                // No Requires
+
+
                 // True by convention for collections with set semantics
                 Contract.Ensures(AllowsDuplicates || Contract.Result<bool>()); // TODO: Replace with Contract.Requires(AllowsDuplicates)? Update documentation accordingly!
 
@@ -194,6 +198,9 @@ namespace C6
         {
             get
             {
+                // No Requires
+
+
                 // Result is non-null
                 Contract.Ensures(Contract.Result<SCG.IEqualityComparer<T>>() != null);
 
@@ -203,6 +210,7 @@ namespace C6
         }
 
 
+        // Contracts are copied to ICollection<T>.Add. Keep both updated!
         public bool Add(T item)
         {
             // Collection must be non-read-only
@@ -213,19 +221,19 @@ namespace C6
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer))); // TODO: Fix if EqualityComparer might be null!
+            Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer)));
 
             // The collection becomes non-empty
             Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Contract.Ensures(this.Contains(item, EqualityComparer)); // TODO: Fix if EqualityComparer might be null!
+            Contract.Ensures(this.Contains(item, EqualityComparer));
 
             // Adding an item increases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 1 : 0));
 
             // Adding the item increases the number of equal items by one
-            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0)); // TODO: Fix if EqualityComparer might be null!
+            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0));
 
 
             throw new NotImplementedException();

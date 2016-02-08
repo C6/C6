@@ -695,13 +695,13 @@ namespace C6
             Contract.Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Contract.Ensures(this.Contains(item, EqualityComparer)); // TODO: Fix if EqualityComparer might be null!
+            Contract.Ensures(this.Contains(item, EqualityComparer));
 
             // Adding an item increases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1); // TODO: Fix if EqualityComparer might be null!
+            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
 
             // Returned handle is non-null
             Contract.Ensures(Contract.ValueAtReturn(out handle) != null);
