@@ -24,6 +24,7 @@ namespace C6
         /// <typeparam name="T">The type of the objects to compare.</typeparam>
         /// <returns>An <see cref="SCG.IComparer{T}"/> that uses the specified
         /// compare function.</returns>
+        [Pure]
         public static SCG.IComparer<T> CreateComparer<T>(Func<T, T, int> compare)
         {
             // Argument must be non-null
@@ -44,7 +45,9 @@ namespace C6
         /// <param name="getHashCode">The hash function.</param>
         /// <returns>An <see cref="SCG.IEqualityComparer{T}"/> that uses the
         /// specified equals and hash functions.</returns>
-        public static SCG.IEqualityComparer<T> CreateEqualityComparer<T>(Func<T, T, bool> equals, Func<T, int> getHashCode){
+        [Pure]
+        public static SCG.IEqualityComparer<T> CreateEqualityComparer<T>(Func<T, T, bool> equals, Func<T, int> getHashCode)
+        {
             // Argument must be non-null
             Contract.Requires(equals != null);
             // Argument must be non-null
@@ -66,6 +69,7 @@ namespace C6
         /// </summary>
         /// <returns>An <see cref="SCG.IEqualityComparer{T}"/> that uses the
         /// specified equals and hash functions.</returns>
+        [Pure]
         public static SCG.IEqualityComparer<T> CreateReferenceEqualityComparer<T>()
         {
             // Result is non-null
@@ -82,6 +86,13 @@ namespace C6
         private class Comparer<T> : SCG.IComparer<T>
         {
             private readonly Func<T, T, int> _compare;
+
+
+            [ContractInvariantMethod]
+            private void Invariants()
+            {
+                Contract.Invariant(_compare != null);
+            }
 
 
             public Comparer(Func<T, T, int> compare)
@@ -103,6 +114,14 @@ namespace C6
         {
             private readonly Func<T, T, bool> _equals;
             private readonly Func<T, int> _getHashCode;
+
+
+            [ContractInvariantMethod]
+            private void Invariants()
+            {
+                Contract.Invariant(_equals != null);
+                Contract.Invariant(_getHashCode != null);
+            }
 
 
             public EqualityComparer(Func<T, T, bool> equals, Func<T, int> getHashCode)
