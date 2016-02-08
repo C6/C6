@@ -12,7 +12,8 @@ using System.Text;
 namespace C6
 {
     /// <summary>
-    /// Represents a sized generic collection, that can be enumerated backwards.
+    /// Represents a sized generic collection, that can be enumerated forwards
+    /// and backwards.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(IDirectedCollectionValueContract<>))]
