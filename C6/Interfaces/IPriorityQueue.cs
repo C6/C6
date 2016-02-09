@@ -733,7 +733,7 @@ namespace C6
             Contract.EnsuresOnThrow<InvalidPriorityQueueHandleException>(Count == Contract.OldValue(Count));
 
             // Count remains the same if an exception is thrown
-            Contract.EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(Contract.OldValue(this.ToArray()), EqualityComparer));
+            Contract.EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(Contract.OldValue(this.ToList()), EqualityComparer));
 
             // Return value is from the collection
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?

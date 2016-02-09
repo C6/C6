@@ -150,7 +150,7 @@ namespace C6
             Contract.Ensures(this.Count(x => x.Equals(item)) == Contract.OldValue(this.Count(x => x.Equals(item))) + 1); // TODO: Use EqualityComparer?
 
             // The added item is at the end of the queue
-            Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.ToArray()).Append(item)));
+            Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.ToList()).Append(item)));
 
             // The item is added to the end
             Contract.Ensures(item.Equals(this.Last()));
@@ -178,7 +178,7 @@ namespace C6
             Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(this.Last())));
 
             // Only the last item in the queue is removed
-            Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.ToArray().Take(Count))));
+            Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.Take(Count).ToList())));
 
 
             throw new NotImplementedException();
