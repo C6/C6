@@ -1,8 +1,8 @@
 // This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-using System.Diagnostics.Contracts;
 
+using System.Diagnostics.Contracts;
 
 
 namespace System.Collections.Generic
@@ -33,22 +33,19 @@ namespace System.Collections.Generic
 
 
     [ContractClassFor(typeof(IReadOnlyList<>))]
-    abstract class IReadOnlyListContract<T> : IReadOnlyList<T>
+    internal abstract class IReadOnlyListContract<T> : IReadOnlyList<T>
     {
         // ReSharper disable InvocationIsSkipped
 
-        public T this[int index]
-        {
-            get
-            {
+        public T this[int index] {
+            get {
                 // Argument must be within bounds (collection must be non-empty)
                 Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
                 Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
                 throw new NotImplementedException();
             }
-            set
-            {
+            set {
                 // Argument must be within bounds (collection must be non-empty)
                 Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
                 Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?

@@ -1,9 +1,11 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+
 
 namespace C6
 {
@@ -40,6 +42,7 @@ namespace C6
         /// otherwise, <c>null</c>.</value>
         [Pure]
         public int? Start { get; }
+
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -79,7 +82,7 @@ namespace C6
             Count = count;
             Start = start;
 
-            
+
             Contract.Assume(Count > 0); // Static checker shortcoming
             Contract.Assume(!Start.HasValue || !Full); // Static checker shortcoming
         }

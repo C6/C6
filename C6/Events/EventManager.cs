@@ -1,9 +1,12 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Diagnostics.Contracts;
+
 using static C6.EventTypes;
+
 
 namespace C6
 {
@@ -17,8 +20,8 @@ namespace C6
     {
         private event EventHandler _collectionChanged;
         private event EventHandler<ClearedEventArgs> _collectionCleared;
-        private event EventHandler<ItemCountEventArgs<T>> _itemsAdded, _itemsRemoved;
-        private event EventHandler<ItemAtEventArgs<T>> _itemInserted, _itemRemovedAt;
+        private event EventHandler<ItemCountEventArgs<T>> _itemsAdded , _itemsRemoved;
+        private event EventHandler<ItemAtEventArgs<T>> _itemInserted , _itemRemovedAt;
 
 
         [ContractInvariantMethod]
@@ -32,18 +35,16 @@ namespace C6
                 (_itemsRemoved != null ? Removed : None) |
                 (_itemInserted != null ? Inserted : None) |
                 (_itemRemovedAt != null ? RemovedAt : None)
-            ));
+                ));
         }
-        
+
 
         [Pure]
         public EventTypes ActiveEvents { get; private set; }
 
 
-        public event EventHandler CollectionChanged
-        {
-            add
-            {
+        public event EventHandler CollectionChanged {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -58,30 +59,28 @@ namespace C6
                 _collectionChanged += value;
                 ActiveEvents |= Changed;
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // The event is inactive, if the event handler is null
                 Contract.Ensures((_collectionChanged == null) == ActiveEvents.HasFlag(Changed));
-                
+
                 // No other events became active
                 Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) & (_collectionChanged == null ? ~Changed : All)));
 
 
                 _collectionChanged -= value;
-                if (_collectionChanged == null)
+                if (_collectionChanged == null) {
                     ActiveEvents &= ~Changed;
+                }
             }
         }
 
 
-        public event EventHandler<ClearedEventArgs> CollectionCleared
-        {
-            add
-            {
+        public event EventHandler<ClearedEventArgs> CollectionCleared {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -96,8 +95,7 @@ namespace C6
                 _collectionCleared += value;
                 ActiveEvents |= Cleared;
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -110,16 +108,15 @@ namespace C6
 
 
                 _collectionCleared -= value;
-                if (_collectionCleared == null)
+                if (_collectionCleared == null) {
                     ActiveEvents &= ~Cleared;
+                }
             }
         }
 
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
-        {
-            add
-            {
+        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -134,8 +131,7 @@ namespace C6
                 _itemsAdded += value;
                 ActiveEvents |= Added;
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -148,16 +144,15 @@ namespace C6
 
 
                 _itemsAdded -= value;
-                if (_itemsAdded == null)
+                if (_itemsAdded == null) {
                     ActiveEvents &= ~Added;
+                }
             }
         }
 
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
-        {
-            add
-            {
+        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -172,8 +167,7 @@ namespace C6
                 _itemsRemoved += value;
                 ActiveEvents |= Removed;
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -186,16 +180,15 @@ namespace C6
 
 
                 _itemsRemoved -= value;
-                if (_itemsRemoved == null)
+                if (_itemsRemoved == null) {
                     ActiveEvents &= ~Removed;
+                }
             }
         }
 
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
-        {
-            add
-            {
+        public event EventHandler<ItemAtEventArgs<T>> ItemInserted {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -210,8 +203,7 @@ namespace C6
                 _itemInserted += value;
                 ActiveEvents |= Inserted;
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -224,16 +216,15 @@ namespace C6
 
 
                 _itemInserted -= value;
-                if (_itemInserted == null)
+                if (_itemInserted == null) {
                     ActiveEvents &= ~Inserted;
+                }
             }
         }
 
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
-        {
-            add
-            {
+        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -248,8 +239,7 @@ namespace C6
                 _itemRemovedAt += value;
                 ActiveEvents |= RemovedAt;
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
 
@@ -262,12 +252,13 @@ namespace C6
 
 
                 _itemRemovedAt -= value;
-                if (_itemRemovedAt == null)
+                if (_itemRemovedAt == null) {
                     ActiveEvents &= ~RemovedAt;
+                }
             }
         }
 
-        
+
         public void OnCollectionChanged(object sender)
         {
             // Argument must be non-null
@@ -342,7 +333,7 @@ namespace C6
             _itemInserted?.Invoke(sender, new ItemAtEventArgs<T>(item, index));
         }
 
-        
+
         public void OnItemRemovedAt(object sender, T item, int index)
         {
             // Argument must be non-null

@@ -1,13 +1,17 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+
 using SCG = System.Collections.Generic;
+
 using static C6.EventTypes;
+
 
 namespace C6
 {
@@ -266,10 +270,8 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        public EventTypes ListenableEvents
-        {
-            get
-            {
+        public EventTypes ListenableEvents {
+            get {
                 // No Requires
 
 
@@ -282,10 +284,8 @@ namespace C6
         }
 
 
-        public EventTypes ActiveEvents
-        {
-            get
-            {
+        public EventTypes ActiveEvents {
+            get {
                 // No Requires
 
 
@@ -303,10 +303,8 @@ namespace C6
         }
 
 
-        public event EventHandler CollectionChanged
-        {
-            add
-            {
+        public event EventHandler CollectionChanged {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -323,8 +321,7 @@ namespace C6
 
                 throw new NotImplementedException();
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -340,10 +337,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ClearedEventArgs> CollectionCleared
-        {
-            add
-            {
+        public event EventHandler<ClearedEventArgs> CollectionCleared {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -360,8 +355,7 @@ namespace C6
 
                 throw new NotImplementedException();
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -377,10 +371,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
-        {
-            add
-            {
+        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -397,8 +389,7 @@ namespace C6
 
                 throw new NotImplementedException();
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -414,10 +405,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
-        {
-            add
-            {
+        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -434,8 +423,7 @@ namespace C6
 
                 throw new NotImplementedException();
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -451,10 +439,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
-        {
-            add
-            {
+        public event EventHandler<ItemAtEventArgs<T>> ItemInserted {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -471,8 +457,7 @@ namespace C6
 
                 throw new NotImplementedException();
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -488,10 +473,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
-        {
-            add
-            {
+        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt {
+            add {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -508,8 +491,7 @@ namespace C6
 
                 throw new NotImplementedException();
             }
-            remove
-            {
+            remove {
                 // Value must be non-null
                 Contract.Requires(value != null);
 
@@ -524,10 +506,8 @@ namespace C6
             }
         }
 
-        public bool IsEmpty
-        {
-            get
-            {
+        public bool IsEmpty {
+            get {
                 // No Requires
 
 
@@ -544,10 +524,8 @@ namespace C6
 
 
         // Contracts are copied to ICollection<T>.Count. Keep both updated!
-        public int Count
-        {
-            get
-            {
+        public int Count {
+            get {
                 // No Requires
 
 
@@ -563,10 +541,8 @@ namespace C6
         }
 
 
-        public Speed CountSpeed
-        {
-            get
-            {
+        public Speed CountSpeed {
+            get {
                 // No Requires
 
 
@@ -601,7 +577,7 @@ namespace C6
         {
             // Argument must be non-null
             Contract.Requires(array != null); // TODO: Use <ArgumentNullException>?
-            
+
             // Argument must be within bounds
             Contract.Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
             Contract.Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
@@ -628,6 +604,7 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
 
         // ReSharper restore InvocationIsSkipped
 

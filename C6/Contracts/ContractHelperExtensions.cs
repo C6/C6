@@ -7,7 +7,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 
 
-
 namespace C6
 {
     public static class ContractHelperExtensions

@@ -1,8 +1,10 @@
-// This file is part of the C6 Generic Collection Library for C# and CLI
+﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+
 
 using System;
 using System.Reflection;
+
 
 [assembly: AssemblyTitle("C6.dll")]
 [assembly: AssemblyDescription("The C6 Generic Collection Library for C# and CLI is a comprehensive collection library supporting lists, sets, bags, dictionaries, priority queues, (FIFO) queues, and (LIFO) stacks.")]

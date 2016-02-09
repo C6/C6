@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Text;
+
 using SCG = System.Collections.Generic;
 
 
@@ -51,7 +52,7 @@ namespace C6
         /// The value is set to the default value of type
         /// <typeparamref name="TValue"/>.
         /// </remarks>
-        public KeyValuePair(TKey key) : this(key, default(TValue)) { }
+        public KeyValuePair(TKey key) : this(key, default(TValue)) {}
 
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace C6
 
 
         #region IShowable Members
-        
+
         [Pure] // TODO: Is [Pure] necessary?
         public bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
         {

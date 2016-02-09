@@ -1,12 +1,15 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+
 using SCG = System.Collections.Generic;
+
 
 namespace C6
 {
@@ -322,10 +325,8 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        public SCG.IComparer<T> Comparer
-        {
-            get
-            {
+        public SCG.IComparer<T> Comparer {
+            get {
                 // No Requires
 
 
@@ -550,10 +551,8 @@ namespace C6
         }
 
 
-        public T this[IPriorityQueueHandle<T> handle]
-        {
-            get
-            {
+        public T this[IPriorityQueueHandle<T> handle] {
+            get {
                 // Handle must be non-null
                 Contract.Requires(handle != null);
 
@@ -569,8 +568,7 @@ namespace C6
             }
 
 
-            set
-            {
+            set {
                 // Collection must be non-empty
                 Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
@@ -579,7 +577,7 @@ namespace C6
 
                 // Handle must be associated with item in the priority queue
                 Contract.Requires(Contains(handle)); // TODO: Use <InvalidPriorityQueueHandleException>?
-                
+
 
                 // Result is non-null
                 // Contract.Ensures(Contract.Result<T>() != null);
@@ -619,7 +617,7 @@ namespace C6
             // Handle must be non-null
             Contract.Requires(handle != null);
 
-            
+
             // Handle must be non-null
             Contract.Ensures(Contract.Result<bool>() == Contains(handle));
 
@@ -741,6 +739,7 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
 
         // ReSharper restore InvocationIsSkipped
 

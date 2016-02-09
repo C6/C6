@@ -1,9 +1,11 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+
 
 namespace C6
 {
@@ -22,7 +24,7 @@ namespace C6
         /// <value>The item inserted or removed from the collection.</value>
         public T Item { get; }
 
-        
+
         /// <summary>
         /// Gets the index the item was inserted at or removed from in the
         /// collection.
@@ -62,7 +64,7 @@ namespace C6
             Item = item;
             Index = index;
 
-            
+
             // Contract.Assume(Item != null); // Static checker shortcoming
             Contract.Assume(Index >= 0); // Static checker shortcoming
         }

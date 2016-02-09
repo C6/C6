@@ -1,6 +1,7 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 
 using SCG = System.Collections.Generic;
+
 
 namespace C6
 {
@@ -748,7 +750,7 @@ namespace C6
     }
 
 
-    
+
     [ContractClassFor(typeof(ICollection<>))]
     internal abstract class ICollectionContract<T> : ICollection<T>
     {
@@ -1092,7 +1094,7 @@ namespace C6
 
             // If the collection allows duplicates a new collection is created; otherwise, this collection is returned
             Contract.Ensures(AllowsDuplicates != ReferenceEquals(Contract.Result<ICollectionValue<T>>(), this));
-            
+
             // TODO: Ensure that the result contains the right items
 
 
@@ -1209,9 +1211,10 @@ namespace C6
 
             // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
 
-            
+
             throw new NotImplementedException();
         }
+
 
         // ReSharper restore InvocationIsSkipped
 

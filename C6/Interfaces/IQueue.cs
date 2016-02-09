@@ -1,15 +1,16 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Collections;
-using SCG = System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
-using static C6.EventTypes;
+using SCG = System.Collections.Generic;
 
+using static C6.EventTypes;
 
 
 namespace C6
@@ -83,6 +84,7 @@ namespace C6
         /// </remarks>
         T Dequeue();
 
+
         // TODO: Add Peek?
     }
 
@@ -94,10 +96,8 @@ namespace C6
         // ReSharper disable InvocationIsSkipped
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public EventTypes ListenableEvents
-        {
-            get
-            {
+        public EventTypes ListenableEvents {
+            get {
                 // No extra Requires allowed
 
 
@@ -110,10 +110,8 @@ namespace C6
         }
 
 
-        public T this[int index]
-        {
-            get
-            {
+        public T this[int index] {
+            get {
                 // Argument must be within bounds (collection must be non-empty)
                 Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
                 Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
@@ -187,6 +185,7 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
 
         // ReSharper restore InvocationIsSkipped
 

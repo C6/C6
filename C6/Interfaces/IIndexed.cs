@@ -11,7 +11,6 @@ using System.Text;
 using SCG = System.Collections.Generic;
 
 
-
 namespace C6
 {
     /// <summary>
@@ -168,10 +167,8 @@ namespace C6
         }
 
 
-        public Speed IndexingSpeed
-        {
-            get
-            {
+        public Speed IndexingSpeed {
+            get {
                 // No Requires
 
 
@@ -269,10 +266,8 @@ namespace C6
 
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public T this[int index]
-        {
-            get
-            {
+        public T this[int index] {
+            get {
                 // No extra Requires allowed
 
 

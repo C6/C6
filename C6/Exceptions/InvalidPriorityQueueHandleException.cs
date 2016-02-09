@@ -1,7 +1,9 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
+
 
 namespace C6
 {
@@ -17,7 +19,7 @@ namespace C6
         /// Initializes a new instance of the
         /// <see cref="InvalidPriorityQueueHandleException"/> class.
         /// </summary>
-        public InvalidPriorityQueueHandleException() { }
+        public InvalidPriorityQueueHandleException() {}
 
 
         /// <summary>
@@ -26,6 +28,6 @@ namespace C6
         /// specified error message.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        public InvalidPriorityQueueHandleException(string message) : base(message) { }
+        public InvalidPriorityQueueHandleException(string message) : base(message) {}
     }
 }

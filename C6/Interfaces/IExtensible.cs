@@ -1,12 +1,15 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+
 using SCG = System.Collections.Generic;
+
 
 namespace C6
 {
@@ -32,7 +35,7 @@ namespace C6
         [Pure]
         bool IsReadOnly { get; }
 
-        
+
         // TODO: Which one does it use, when there is a IComparer as well?!
         /// <summary>
         /// Gets a value indicating whether the collection allows duplicates.
@@ -48,7 +51,7 @@ namespace C6
         [Pure]
         bool AllowsDuplicates { get; }
 
-        
+
         /// <summary>
         /// Gets a value indicating whether the collection only stores an item
         /// once and keeps track of duplicates using a counter.
@@ -165,10 +168,8 @@ namespace C6
         }
 
 
-        public bool AllowsDuplicates
-        {
-            get
-            {
+        public bool AllowsDuplicates {
+            get {
                 // A set only contains distinct items // TODO: Is this the right place to put it?
                 Contract.Ensures(Contract.Result<bool>() || Count == this.Distinct(EqualityComparer).Count());
 
@@ -178,10 +179,8 @@ namespace C6
         }
 
 
-        public bool DuplicatesByCounting
-        {
-            get
-            {
+        public bool DuplicatesByCounting {
+            get {
                 // No Requires
 
 
@@ -194,10 +193,8 @@ namespace C6
         }
 
 
-        public SCG.IEqualityComparer<T> EqualityComparer
-        {
-            get
-            {
+        public SCG.IEqualityComparer<T> EqualityComparer {
+            get {
                 // No Requires
 
 
@@ -266,6 +263,7 @@ namespace C6
 
             throw new NotImplementedException();
         }
+
 
         // ReSharper restore InvocationIsSkipped
 

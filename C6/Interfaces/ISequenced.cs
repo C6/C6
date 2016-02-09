@@ -99,6 +99,7 @@ namespace C6
             throw new NotImplementedException();
         }
 
+
         // ReSharper restore InvocationIsSkipped
 
 
