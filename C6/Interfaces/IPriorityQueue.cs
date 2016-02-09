@@ -663,11 +663,10 @@ namespace C6
         }
 
 
-        /*
-        // TODO: Add extra contract https://github.com/Microsoft/CodeContracts/issues/331
+        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool Add(T item)
         {
-            // No Requires
+            // No extra Requires allowed
 
 
             // Always returns true
@@ -676,7 +675,6 @@ namespace C6
 
             throw new NotImplementedException();
         }
-        */
 
 
         public bool Add(ref IPriorityQueueHandle<T> handle, T item)
@@ -771,7 +769,6 @@ namespace C6
         public abstract bool AllowsDuplicates { get; }
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
-        public abstract bool Add(T item);
         public abstract void AddAll(SCG.IEnumerable<T> items);
 
         #endregion

@@ -8,6 +8,10 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using static C6.EventTypes;
+
+
+
 namespace C6
 {
     // TODO: decide if this should extend ICollection/IExtensible - it at least needs IsReadOnly
@@ -89,12 +93,14 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        /*
-        // TODO: Not allowed: seems like an error with the statick checker: https://github.com/Microsoft/CodeContracts/issues/331
+        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public EventTypes ListenableEvents
         {
             get
             {
+                // No extra Requires allowed
+
+
                 // The events raised by the collection must be listenable
                 Contract.Ensures(Contract.Result<EventTypes>().HasFlag(Changed | Added | Removed | Inserted | RemovedAt));
 
@@ -102,7 +108,6 @@ namespace C6
                 throw new NotImplementedException();
             }
         }
-        */
 
 
         public T this[int index]
@@ -195,7 +200,6 @@ namespace C6
         public abstract EnumerationDirection Direction { get; }
         public abstract string ToString(string format, IFormatProvider formatProvider);
         public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
-        public abstract EventTypes ListenableEvents { get; }
         public abstract EventTypes ActiveEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
