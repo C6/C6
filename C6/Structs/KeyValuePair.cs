@@ -150,7 +150,7 @@ namespace C6
 
 
         #region IShowable Members
-
+        
         [Pure] // TODO: Is [Pure] necessary?
         public bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
         {
@@ -172,6 +172,19 @@ namespace C6
 
         #region IFormattable Members
 
+        /// <summary>
+        /// Formats the value of the current instance using the specified
+        /// format.
+        /// </summary>
+        /// <param name="format">The format to use, or a <c>null</c> reference
+        /// to use the default format defined for the type of the
+        /// <see cref="IFormattable"/> implementation.</param>
+        /// <param name="formatProvider">The provider to use to format the
+        /// value, or a <c>null</c> reference to obtain the numeric format
+        /// information from the current locale setting of the operating
+        /// system.</param>
+        /// <returns>The value of the current instance in the specified format.
+        /// </returns>
         [Pure] // TODO: Is [Pure] necessary?
         public string ToString(string format, IFormatProvider formatProvider)
         {
