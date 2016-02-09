@@ -22,7 +22,7 @@ namespace C6
         /// using at most approximately <paramref name="rest"/> characters and 
         /// appends the (possibly truncated) result to
         /// <paramref name="stringbuilder"/>. Subtracts the actual number of 
-        /// used characters from <code>rest</code>.
+        /// used characters from <c>rest</c>.
         /// </summary>
         /// <param name="stringbuilder">The string builder to which the
         /// formatted string is appended.</param>
