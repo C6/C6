@@ -60,7 +60,6 @@ namespace C6
         Speed IndexingSpeed { get; }
 
 
-        // TODO: Move from IIndexed to IIndexedSorted? Introduce extension method for IIndexed?
         /// <summary>
         /// Searches from the beginning of the collection for the specified
         /// item and returns the zero-based index of the first occurrence
@@ -77,7 +76,6 @@ namespace C6
 
 
         // TODO: Two's complement?!
-        // TODO: Move from IIndexed to IIndexedSorted? Introduce extension method for IIndexed?
         /// <summary>
         /// Searches from the end of the collection for the specified
         /// item and returns the zero-based index of the first occurrence
