@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 
 
@@ -25,7 +24,6 @@ namespace C6
         /// Corresponds to no events.
         /// </summary>
         None = 0,
-
 
         /// <summary>
         /// Corresponds to the
@@ -58,7 +56,6 @@ namespace C6
         /// </summary>
         Basic = Changed | Cleared | Added | Removed,
 
-
         /// <summary>
         /// Corresponds to the
         /// <see cref="ICollectionValue{T}.ItemInserted"/> event.
@@ -76,7 +73,6 @@ namespace C6
         /// <see cref="RemovedAt"/>.
         /// </summary>
         Indexed = Inserted | RemovedAt,
-
 
         /// <summary>
         /// Is the combined value of <see cref="Basic"/> and 

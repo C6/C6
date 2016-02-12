@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 namespace C6
 {
     // TODO: Add information about amortize/expected. See http://docs.scala-lang.org/overviews/collections/performance-characteristics.html
