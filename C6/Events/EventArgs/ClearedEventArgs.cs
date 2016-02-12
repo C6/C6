@@ -47,11 +47,15 @@ namespace C6
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            // ReSharper disable InvocationIsSkipped
+
             // Count is positive
             Contract.Invariant(Count > 0);
 
             // Start is only set, if a list view or index range was cleared
             Contract.Invariant(!Start.HasValue || !Full);
+
+            // ReSharper restore InvocationIsSkipped
         }
 
 

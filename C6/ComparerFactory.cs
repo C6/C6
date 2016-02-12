@@ -89,9 +89,13 @@ namespace C6
 
 
             [ContractInvariantMethod]
-            private void Invariants()
+            private void ObjectInvariant()
             {
+                // ReSharper disable InvocationIsSkipped
+
                 Contract.Invariant(_compare != null);
+
+                // ReSharper enable InvocationIsSkipped
             }
 
 
@@ -117,10 +121,14 @@ namespace C6
 
 
             [ContractInvariantMethod]
-            private void Invariants()
+            private void ObjectInvariant()
             {
+                // ReSharper disable InvocationIsSkipped
+
                 Contract.Invariant(_equals != null);
                 Contract.Invariant(_getHashCode != null);
+
+                // ReSharper enable InvocationIsSkipped
             }
 
 

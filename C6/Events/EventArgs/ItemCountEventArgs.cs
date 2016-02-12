@@ -42,12 +42,16 @@ namespace C6
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            // ReSharper disable InvocationIsSkipped
+
             // Item is non-null
             // Contract.Invariant(Item != null);
 
             // TODO: Contract size more precisely when actually used, i.e. bound the size upwards
             // Count is positive
             Contract.Invariant(Count > 0);
+
+            // ReSharper enable InvocationIsSkipped
         }
 
 

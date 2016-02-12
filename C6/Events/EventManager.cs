@@ -27,6 +27,8 @@ namespace C6
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            // ReSharper disable InvocationIsSkipped
+
             // Active events is equal to the actual active events
             Contract.Invariant(ActiveEvents == (
                 (_collectionChanged != null ? Changed : None) |
@@ -36,6 +38,8 @@ namespace C6
                 (_itemInserted != null ? Inserted : None) |
                 (_itemRemovedAt != null ? RemovedAt : None)
                 ));
+
+            // ReSharper enable InvocationIsSkipped
         }
 
 
