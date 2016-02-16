@@ -195,7 +195,7 @@ namespace C6
         IDirectedCollectionValue<T> IDirectedCollectionValue<T>.Backwards() { throw new NotImplementedException(); }
         public abstract EnumerationDirection Direction { get; }
         public abstract string ToString(string format, IFormatProvider formatProvider);
-        public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
+        public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
         public abstract EventTypes ActiveEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;

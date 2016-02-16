@@ -613,7 +613,7 @@ namespace C6
 
         public abstract SCG.IEnumerator<T> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
+        public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
         public abstract string ToString(string format, IFormatProvider formatProvider);
 
         #endregion

@@ -72,7 +72,7 @@ namespace C6
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         public abstract IDirectedEnumerable<T> Backwards();
         public abstract string ToString(string format, IFormatProvider formatProvider);
-        public abstract bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider);
+        public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
         public abstract EventTypes ListenableEvents { get; }
         public abstract EventTypes ActiveEvents { get; }
         public abstract event EventHandler CollectionChanged;

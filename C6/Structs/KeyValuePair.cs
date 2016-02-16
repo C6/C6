@@ -153,17 +153,17 @@ namespace C6
         #region IShowable Members
 
         [Pure] // TODO: Is [Pure] necessary?
-        public bool Show(StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
+        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
         {
             throw new NotImplementedException();
 
             // if (rest < 0)
             //     return false;
-            // if (!Showing.Show(Key, stringbuilder, ref rest, formatProvider))
+            // if (!Showing.Show(Key, stringBuilder, ref rest, formatProvider))
             //     return false;
-            // stringbuilder.Append(" => ");
+            // stringBuilder.Append(" => ");
             // rest -= 4;
-            // if (!Showing.Show(Value, stringbuilder, ref rest, formatProvider))
+            // if (!Showing.Show(Value, stringBuilder, ref rest, formatProvider))
             //     return false;
             // return rest >= 0;
         }
