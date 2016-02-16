@@ -36,7 +36,7 @@ namespace C6.Tests.Contracts
         /// precondition was violated.
         /// </summary>
         /// <remarks>Allows a precondition violation to be asserted using
-        /// <c>Assert.That(code, Violates.TypedPrecondition&lt;ExceptionType&gt;())</c>.
+        /// <code>Assert.That(code, Violates.TypedPrecondition&lt;ExceptionType&gt;())</code>
         /// </remarks>
         public static EqualConstraint TypedPrecondition<TException>() where TException : Exception
         {
