@@ -26,8 +26,7 @@ namespace C6
         /// <value>The number of items contained in the collection.</value>
         [Pure]
         new int Count { get; }
-
-
+        
         /// <summary>
         /// Gets a value characterizing the asymptotic complexity of
         /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
@@ -59,8 +58,7 @@ namespace C6
         /// </remarks>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
-
-
+        
         /// <summary>
         /// Searches from the beginning of the collection for the specified
         /// item and returns the zero-based index of the first occurrence
@@ -74,9 +72,7 @@ namespace C6
         /// would put the item.</returns>
         [Pure]
         int IndexOf(T item);
-
-
-        // TODO: Two's complement?!
+        
         /// <summary>
         /// Searches from the end of the collection for the specified
         /// item and returns the zero-based index of the first occurrence
@@ -90,8 +86,7 @@ namespace C6
         /// item.</returns>
         [Pure]
         int LastIndexOf(T item);
-
-
+        
         /// <summary>
         /// Removes the item at the specified index of the collection.
         /// </summary>
@@ -115,8 +110,7 @@ namespace C6
         /// </list>
         /// </remarks>
         T RemoveAt(int index);
-
-
+        
         /// <summary>
         /// Remove all items in the specified index range.
         /// </summary>
@@ -198,8 +192,7 @@ namespace C6
 
             return default(IDirectedCollectionValue<T>);
         }
-
-
+        
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
@@ -220,8 +213,7 @@ namespace C6
 
             return default(int);
         }
-
-
+        
         public int LastIndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
@@ -243,9 +235,14 @@ namespace C6
             return default(int);
         }
 
-
         public T RemoveAt(int index)
         {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
+
             // Argument must be within bounds (collection must be non-empty)
             Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
             Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
@@ -266,10 +263,15 @@ namespace C6
 
             return default(T);
         }
-
-
+        
         public void RemoveIndexRange(int startIndex, int count)
         {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
+
             // Argument must be within bounds (collection must be non-empty)
             Requires(0 <= startIndex); // TODO: Use <IndexOutOfRangeException>?
             Requires(startIndex + count < Count); // TODO: Use <IndexOutOfRangeException>?
@@ -362,6 +364,7 @@ namespace C6
         public abstract bool AllowsDuplicates { get; }
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public abstract bool IsFixedSize { get; }
         public abstract void AddAll(SCG.IEnumerable<T> items);
 
         #endregion

@@ -311,6 +311,7 @@ namespace C6
     }
 
 
+    // TODO: Sort members
     [ContractClassFor(typeof(IPriorityQueue<>))]
     internal abstract class IPriorityQueueContract<T> : IPriorityQueue<T>
     {
@@ -387,6 +388,9 @@ namespace C6
             // Collection must be non-empty
             Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
+
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -411,6 +415,9 @@ namespace C6
         {
             // Collection must be non-empty
             Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
 
 
             // Result is non-null
@@ -491,6 +498,9 @@ namespace C6
             // Collection must be non-empty
             Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
+
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -515,6 +525,9 @@ namespace C6
         {
             // Collection must be non-empty
             Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
 
 
             // Result is non-null
@@ -565,6 +578,9 @@ namespace C6
             {
                 // Collection must be non-empty
                 Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+
+                // Collection must be non-fixed-sized
+                Requires(!IsFixedSize);
 
                 // Handle must be non-null
                 Requires(handle != null); // TODO: Use <ArgumentNullException>?
@@ -663,6 +679,9 @@ namespace C6
             // Collection must be non-read-only
             Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
+
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
@@ -698,6 +717,9 @@ namespace C6
         {
             // Collection must be non-empty
             Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
 
             // Handle must be associated with item in the priority queue
             Requires(Contains(handle));
@@ -782,6 +804,7 @@ namespace C6
         public abstract bool AllowsDuplicates { get; }
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public abstract bool IsFixedSize { get; }
         public abstract bool IsReadOnly { get; }
         public abstract void AddAll(SCG.IEnumerable<T> items);
 

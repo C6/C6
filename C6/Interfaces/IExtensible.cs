@@ -59,6 +59,24 @@ namespace C6
         [Pure]
         SCG.IEqualityComparer<T> EqualityComparer { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether the collection has a fixed size.
+        /// </summary>
+        /// <value><c>true</c> if the collection has a fixed size;
+        /// otherwise, <c>false</c>.</value>
+        /// <remarks>
+        /// <para>
+        /// A collection with a fixed size does not allow operations that
+        /// changes the collection's size.
+        /// </para>
+        /// <para>
+        /// Any collection that is read-only (<see cref="IsReadOnly"/> is
+        /// <c>true</c>), has a fixed size; the opposite need not be true.
+        /// </para>
+        /// </remarks>
+        [Pure]
+        bool IsFixedSize { get; }
+
         // TODO: Move to ICollectionValue?
         /// <summary>
         /// Gets a value indicating whether the collection is read-only.
@@ -182,10 +200,28 @@ namespace C6
             }
         }
 
+        public bool IsFixedSize
+        {
+            get
+            {
+                // No Requires
+
+
+                // Read-only list has fixed size
+                Ensures(!IsReadOnly || Result<bool>());
+
+
+                return default(bool);
+            }
+        }
+
         // Contracts are copied to ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get
+            {
+                return default(bool);
+            }
         }
 
         // Contracts are copied to ICollection<T>.Add. Keep both updated!
@@ -193,6 +229,10 @@ namespace C6
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
+            
 
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
@@ -221,6 +261,9 @@ namespace C6
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
 
             // Argument must be non-null
             Requires(items != null); // TODO: Use <ArgumentNullException>?
