@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
@@ -37,7 +36,6 @@ namespace C6
     }
 
 
-
     [ContractClassFor(typeof(IDirectedCollectionValue<>))]
     internal abstract class IDirectedCollectionValueContract<T> : IDirectedCollectionValue<T>
     {
@@ -61,33 +59,50 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         // ReSharper restore InvocationIsSkipped
-
 
         #region Non-Contract Methods
 
-        public abstract EnumerationDirection Direction { get; }
+        #region SCG.IEnumerable<T>
+
         public abstract SCG.IEnumerator<T> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public abstract IDirectedEnumerable<T> Backwards();
+
+        #endregion
+
+        #region IShowable
+
         public abstract string ToString(string format, IFormatProvider formatProvider);
         public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
-        public abstract EventTypes ListenableEvents { get; }
+
+        #endregion
+
+        #region ICollectionValue<T>
+
         public abstract EventTypes ActiveEvents { get; }
-        public abstract event EventHandler CollectionChanged;
-        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
-        public abstract bool IsEmpty { get; }
+        public abstract bool AllowsNull { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
-        public abstract bool AllowsNull { get; }
+        public abstract bool IsEmpty { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();
+        public abstract event EventHandler CollectionChanged;
+        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
+
+        #endregion
+
+        #region IDirectedEnumerable<T>
+
+        public abstract EnumerationDirection Direction { get; }
+        public abstract IDirectedEnumerable<T> Backwards();
+
+        #endregion
 
         #endregion
     }

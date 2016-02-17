@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
@@ -20,6 +19,15 @@ namespace C6
     public interface IDirectedEnumerable<out T> : SCG.IEnumerable<T>
     {
         /// <summary>
+        /// Gets a value indicating the enumeration direction relative to the original collection.
+        /// </summary>
+        /// <value>The enumeration direction relative to the original collection.
+        /// <see cref="EnumerationDirection.Forwards"/> if the same;
+        /// otherwise, <see cref="EnumerationDirection.Backwards"/>.</value>
+        [Pure]
+        EnumerationDirection Direction { get; }
+
+        /// <summary>
         /// Returns an <see cref="IDirectedEnumerable{T}"/> that contains the
         /// same items as this <see cref="IDirectedEnumerable{T}"/>, but whose
         /// enumerator will enumerate the items backwards (in opposite order).
@@ -31,24 +39,28 @@ namespace C6
         /// <c>foreach (var item in coll.Backwards()) {...}</c>.</remarks>
         [Pure]
         IDirectedEnumerable<T> Backwards();
-
-
-        /// <summary>
-        /// Gets a value indicating the enumeration direction relative to the original collection.
-        /// </summary>
-        /// <value>The enumeration direction relative to the original collection.
-        /// <see cref="EnumerationDirection.Forwards"/> if the same;
-        /// otherwise, <see cref="EnumerationDirection.Backwards"/>.</value>
-        [Pure]
-        EnumerationDirection Direction { get; }
     }
-
 
 
     [ContractClassFor(typeof(IDirectedEnumerable<>))]
     internal abstract class IDirectedEnumerableContract<T> : IDirectedEnumerable<T>
     {
         // ReSharper disable InvocationIsSkipped
+
+        public EnumerationDirection Direction
+        {
+            get
+            {
+                // No Requires
+
+
+                // Result is a valid enum constant
+                Contract.Ensures(Enum.IsDefined(typeof(EnumerationDirection), Contract.Result<EnumerationDirection>()));
+
+
+                throw new NotImplementedException();
+            }
+        }
 
         public IDirectedEnumerable<T> Backwards()
         {
@@ -68,27 +80,16 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
-        public EnumerationDirection Direction {
-            get {
-                // No Requires
-
-
-                // Result is a valid enum constant
-                Contract.Ensures(Enum.IsDefined(typeof(EnumerationDirection), Contract.Result<EnumerationDirection>()));
-
-
-                throw new NotImplementedException();
-            }
-        }
-
         // ReSharper restore InvocationIsSkipped
-
 
         #region Non-Contract Methods
 
+        #region SCG.IEnumerable<T>
+
         public abstract SCG.IEnumerator<T> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
 
         #endregion
     }
