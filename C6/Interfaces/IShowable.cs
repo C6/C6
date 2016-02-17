@@ -59,7 +59,7 @@ namespace C6
             // The length of the formatted string is subtracted from rest
             Contract.Ensures(stringBuilder.Length - Contract.OldValue(stringBuilder.Length) == Contract.OldValue(rest) - Contract.ValueAtReturn(out rest));
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         // ReSharper restore InvocationIsSkipped

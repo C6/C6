@@ -298,7 +298,7 @@ namespace C6
                 // TODO: Check this matches the actual active events.
 
 
-                throw new NotImplementedException();
+                return default(EventTypes);
             }
         }
 
@@ -313,7 +313,7 @@ namespace C6
                 Contract.Ensures(!typeof(T).IsValueType || !Contract.Result<bool>());
 
 
-                throw new NotImplementedException();
+                return default(bool);
             }
         }
 
@@ -332,7 +332,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<int>() == this.Count());
 
 
-                throw new NotImplementedException();
+                return default(int);
             }
         }
 
@@ -347,7 +347,7 @@ namespace C6
                 Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
 
 
-                throw new NotImplementedException();
+                return default(Speed);
             }
         }
 
@@ -365,7 +365,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<bool>() != this.Any());
 
 
-                throw new NotImplementedException();
+                return default(bool);
             }
         }
 
@@ -380,7 +380,7 @@ namespace C6
                 Contract.Ensures(All.HasFlag(Contract.Result<EventTypes>()));
 
 
-                throw new NotImplementedException();
+                return default(EventTypes);
             }
         }
 
@@ -397,7 +397,7 @@ namespace C6
             Contract.Ensures(this.Contains(Contract.Result<T>()));
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         // Contracts are copied to ICollection.CopyTo. Keep both updated!
@@ -414,7 +414,7 @@ namespace C6
             Contract.Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         public T[] ToArray()
@@ -429,7 +429,7 @@ namespace C6
             Contract.Ensures(Enumerable.SequenceEqual(Contract.Result<T[]>(), this));
 
 
-            throw new NotImplementedException();
+            return default(T[]);
         }
 
         public event EventHandler CollectionChanged
@@ -450,7 +450,7 @@ namespace C6
                 Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Changed));
 
 
-                throw new NotImplementedException();
+                return;
             }
             remove
             {
@@ -464,7 +464,7 @@ namespace C6
                 // No Ensures
 
 
-                throw new NotImplementedException();
+                return;
             }
         }
 
@@ -486,7 +486,7 @@ namespace C6
                 Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Cleared));
 
 
-                throw new NotImplementedException();
+                return;
             }
             remove
             {
@@ -500,7 +500,7 @@ namespace C6
                 // No Ensures
 
 
-                throw new NotImplementedException();
+                return;
             }
         }
 
@@ -522,7 +522,7 @@ namespace C6
                 Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Inserted));
 
 
-                throw new NotImplementedException();
+                return;
             }
             remove
             {
@@ -536,7 +536,7 @@ namespace C6
                 // No Ensures
 
 
-                throw new NotImplementedException();
+                return;
             }
         }
 
@@ -558,7 +558,7 @@ namespace C6
                 Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | RemovedAt));
 
 
-                throw new NotImplementedException();
+                return;
             }
             remove
             {
@@ -572,7 +572,7 @@ namespace C6
                 // No Ensures
 
 
-                throw new NotImplementedException();
+                return;
             }
         }
 
@@ -594,7 +594,7 @@ namespace C6
                 Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Added));
 
 
-                throw new NotImplementedException();
+                return;
             }
             remove
             {
@@ -608,7 +608,7 @@ namespace C6
                 // No Ensures
 
 
-                throw new NotImplementedException();
+                return;
             }
         }
 
@@ -630,7 +630,7 @@ namespace C6
                 Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Removed));
 
 
-                throw new NotImplementedException();
+                return;
             }
             remove
             {
@@ -644,7 +644,7 @@ namespace C6
                 // No Ensures
 
 
-                throw new NotImplementedException();
+                return;
             }
         }
 

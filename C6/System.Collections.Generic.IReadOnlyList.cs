@@ -43,14 +43,14 @@ namespace System.Collections.Generic
                 Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
                 Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
-                throw new NotImplementedException();
+                return default(T);
             }
             set {
                 // Argument must be within bounds (collection must be non-empty)
                 Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
                 Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
-                throw new NotImplementedException();
+                return;
             }
         }
 
@@ -59,9 +59,9 @@ namespace System.Collections.Generic
 
         #region Non-Contract Methods
 
-        public int Count { get { throw new NotImplementedException(); } }
-        public IEnumerator<T> GetEnumerator() { throw new NotImplementedException(); }
-        IEnumerator IEnumerable.GetEnumerator() { throw new NotImplementedException(); }
+        public abstract int Count { get; }
+        public abstract IEnumerator<T> GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

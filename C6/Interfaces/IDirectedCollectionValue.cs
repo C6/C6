@@ -56,7 +56,7 @@ namespace C6
             Contract.Ensures(Contract.Result<IDirectedEnumerable<T>>().Direction != Direction);
 
 
-            throw new NotImplementedException();
+            return default(IDirectedCollectionValue<T>);
         }
 
         // ReSharper restore InvocationIsSkipped

@@ -105,7 +105,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<T>().Equals(this.Skip(index).First()));
 
 
-                throw new NotImplementedException();
+                return default(T);
             }
         }
 
@@ -131,7 +131,7 @@ namespace C6
             Contract.Ensures(Enumerable.SequenceEqual(this, Contract.OldValue(this.Skip(1).ToList())));
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         public void Enqueue(T item)
@@ -162,7 +162,7 @@ namespace C6
             Contract.Ensures(item.Equals(this.Last()));
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         #region Hardened Postconditions
@@ -179,7 +179,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<EventTypes>().HasFlag(Changed | Added | Removed | Inserted | RemovedAt));
 
 
-                throw new NotImplementedException();
+                return default(EventTypes);
             }
         }
 

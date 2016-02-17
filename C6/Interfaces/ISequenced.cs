@@ -80,7 +80,7 @@ namespace C6
             // TODO: Use static helper class to define result?
 
 
-            throw new NotImplementedException();
+            return default(int);
         }
 
         public bool SequencedEquals(ISequenced<T> otherCollection)
@@ -92,7 +92,7 @@ namespace C6
             Contract.Ensures(Contract.Result<bool>() == this.SequenceEqual(otherCollection ?? Enumerable.Empty<T>(), EqualityComparer));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         // ReSharper restore InvocationIsSkipped

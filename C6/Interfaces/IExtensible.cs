@@ -146,7 +146,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<bool>() || Count == this.Distinct(EqualityComparer).Count());
 
 
-                throw new NotImplementedException();
+                return default(bool);
             }
         }
 
@@ -161,7 +161,7 @@ namespace C6
                 Contract.Ensures(AllowsDuplicates || Contract.Result<bool>()); // TODO: Replace with Contract.Requires(AllowsDuplicates)? Update documentation accordingly!
 
 
-                throw new NotImplementedException();
+                return default(bool);
             }
         }
 
@@ -176,14 +176,14 @@ namespace C6
                 Contract.Ensures(Contract.Result<SCG.IEqualityComparer<T>>() != null);
 
 
-                throw new NotImplementedException();
+                return default(SCG.IEqualityComparer<T>);
             }
         }
 
         // Contracts are copied to ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { throw new NotImplementedException(); }
+            get { return default(bool); }
         }
 
         // Contracts are copied to ICollection<T>.Add. Keep both updated!
@@ -212,7 +212,7 @@ namespace C6
             Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public void AddAll(SCG.IEnumerable<T> items)
@@ -239,7 +239,7 @@ namespace C6
             // TODO: Make more exact check of added items
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         // ReSharper restore InvocationIsSkipped

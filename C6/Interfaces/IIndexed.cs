@@ -156,7 +156,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<int>() == this.Count());
 
 
-                throw new NotImplementedException();
+                return default(int);
             }
         }
 
@@ -171,7 +171,7 @@ namespace C6
                 Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
 
 
-                throw new NotImplementedException();
+                return default(Speed);
             }
         }
 
@@ -192,7 +192,7 @@ namespace C6
             Contract.Ensures(Contract.Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
 
 
-            throw new NotImplementedException();
+            return default(IDirectedCollectionValue<T>);
         }
 
 
@@ -214,7 +214,7 @@ namespace C6
             Contract.Ensures(Contract.Result<int>() < 0 || !this.Take(Contract.Result<int>()).Contains(item, EqualityComparer));
 
 
-            throw new NotImplementedException();
+            return default(int);
         }
 
 
@@ -236,7 +236,7 @@ namespace C6
             Contract.Ensures(Contract.Result<int>() < 0 || !this.Skip(Contract.Result<int>() + 1).Contains(item, EqualityComparer));
 
 
-            throw new NotImplementedException();
+            return default(int);
         }
 
 
@@ -260,7 +260,7 @@ namespace C6
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
 
@@ -281,7 +281,7 @@ namespace C6
             Contract.Ensures(Count == Contract.OldValue(Count) - count);
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         #region Hardened Postconditions
@@ -298,7 +298,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<T>().Equals(this.Skip(index).First()));
 
 
-                throw new NotImplementedException();
+                return default(T);
             }
         }
 

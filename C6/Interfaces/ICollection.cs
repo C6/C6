@@ -742,7 +742,7 @@ namespace C6
                 Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
 
 
-                throw new NotImplementedException();
+                return default(Speed);
             }
         }
 
@@ -762,14 +762,14 @@ namespace C6
                 Contract.Ensures(Contract.Result<int>() == this.Count());
 
 
-                throw new NotImplementedException();
+                return default(int);
             }
         }
 
         // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { throw new NotImplementedException(); }
+            get { return default(bool); }
         }
 
         // Contracts are copied from IExtensible<T>.Add. Keep both updated!
@@ -805,7 +805,7 @@ namespace C6
             Contract.Ensures(ContainsCount(item) == Contract.OldValue(ContainsCount(item)) + (Contract.Result<bool>() ? 1 : 0));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public void Clear()
@@ -820,7 +820,7 @@ namespace C6
             Contract.Ensures(!this.Any());
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         public bool Contains(T item)
@@ -834,7 +834,7 @@ namespace C6
             Contract.Ensures(Contract.Result<bool>() == this.Contains(item, EqualityComparer));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
 
@@ -852,7 +852,7 @@ namespace C6
             Contract.Ensures(Contract.Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) >= group.Count()));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public int ContainsCount(T item)
@@ -866,7 +866,7 @@ namespace C6
             Contract.Ensures(Contract.Result<int>() == this.Count(x => EqualityComparer.Equals(x, item)));
 
 
-            throw new NotImplementedException();
+            return default(int);
         }
 
         // Contracts are copied from ICollectionValue<T>.CopyTo. Keep both updated!
@@ -884,7 +884,7 @@ namespace C6
             Contract.Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         public bool Find(ref T item)
@@ -904,7 +904,7 @@ namespace C6
             Contract.Ensures(typeof(T).IsValueType || !Contract.Result<bool>() || this.Contains(Contract.ValueAtReturn(out item), ComparerFactory.CreateReferenceEqualityComparer<T>())); // TODO: Test that this actually catches mistakes - try returning default(T)
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public bool FindOrAdd(ref T item)
@@ -926,12 +926,12 @@ namespace C6
             Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 0 : 1));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public int GetUnsequencedHashCode()
         {
-            throw new NotImplementedException();
+            return default(int);
         }
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
@@ -947,7 +947,7 @@ namespace C6
             Contract.Ensures(AllowsNull || Contract.ForAll(Contract.Result<ICollectionValue<KeyValuePair<T, int>>>(), pair => pair.Key != null));
 
 
-            throw new NotImplementedException();
+            return default(ICollectionValue<KeyValuePair<T, int>>);
         }
 
         public bool Remove(T item)
@@ -969,7 +969,7 @@ namespace C6
             Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) - (Contract.Result<bool>() ? 1 : 0));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public bool Remove(T item, out T removedItem)
@@ -994,7 +994,8 @@ namespace C6
             Contract.Ensures(EqualityComparer.Equals(Contract.ValueAtReturn(out removedItem), Contract.Result<bool>() ? item : default(T)));
 
 
-            throw new NotImplementedException();
+            removedItem = default(T);
+            return default(bool);
         }
 
         public bool RemoveAll(T item)
@@ -1016,7 +1017,7 @@ namespace C6
             Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == 0);
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public void RemoveAll(SCG.IEnumerable<T> items)
@@ -1034,7 +1035,7 @@ namespace C6
             // TODO: Write ensures
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         public void RetainAll(SCG.IEnumerable<T> items)
@@ -1058,7 +1059,7 @@ namespace C6
             // TODO: Ensure that the collection contains the right items
 
 
-            throw new NotImplementedException();
+            return;
         }
 
         public ICollectionValue<T> UniqueItems()
@@ -1079,7 +1080,7 @@ namespace C6
             // TODO: Ensure that the result contains the right items
 
 
-            throw new NotImplementedException();
+            return default(ICollectionValue<T>);
         }
 
         public bool UnsequencedEquals(ICollection<T> otherCollection)
@@ -1097,7 +1098,7 @@ namespace C6
             // TODO: Require that the collections use the same equality comparer?
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public bool Update(T item)
@@ -1122,7 +1123,7 @@ namespace C6
 
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public bool Update(T item, out T oldItem)
@@ -1152,7 +1153,8 @@ namespace C6
             Contract.Ensures(!Contract.Result<bool>() || AllowsNull || Contract.ValueAtReturn(out oldItem) != null);
 
 
-            throw new NotImplementedException();
+            oldItem = default(T);
+            return default(bool);
         }
 
         public bool UpdateOrAdd(T item)
@@ -1176,7 +1178,7 @@ namespace C6
             // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         public bool UpdateOrAdd(T item, out T oldItem)
@@ -1206,7 +1208,8 @@ namespace C6
             Contract.Ensures(!Contract.Result<bool>() || AllowsNull || Contract.ValueAtReturn(out oldItem) != null);
 
 
-            throw new NotImplementedException();
+            oldItem = default(T);
+            return default(bool);
         }
 
         // ReSharper restore InvocationIsSkipped

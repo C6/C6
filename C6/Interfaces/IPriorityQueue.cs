@@ -325,7 +325,7 @@ namespace C6
                 Contract.Ensures(Contract.Result<SCG.IComparer<T>>() != null);
 
 
-                throw new NotImplementedException();
+                return default(SCG.IComparer<T>);
             }
         }
 
@@ -348,7 +348,7 @@ namespace C6
             Contract.Ensures(this.Contains(Contract.Result<T>()));
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         public T FindMin(out IPriorityQueueHandle<T> handle)
@@ -375,7 +375,9 @@ namespace C6
             // Return value is from the collection
             Contract.Ensures(this.Contains(Contract.Result<T>()));
 
-            throw new NotImplementedException();
+
+            handle = null;
+            return default(T);
         }
 
         public T RemoveMin()
@@ -400,7 +402,7 @@ namespace C6
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         public T RemoveMin(out IPriorityQueueHandle<T> handle)
@@ -428,7 +430,8 @@ namespace C6
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
 
 
-            throw new NotImplementedException();
+            handle = null;
+            return default(T);
         }
 
         public T FindMax()
@@ -449,7 +452,7 @@ namespace C6
             // Return value is from the collection
             Contract.Ensures(this.Contains(Contract.Result<T>()));
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         public T FindMax(out IPriorityQueueHandle<T> handle)
@@ -477,7 +480,8 @@ namespace C6
             Contract.Ensures(this.Contains(Contract.Result<T>()));
 
 
-            throw new NotImplementedException();
+            handle = null;
+            return default(T);
         }
 
         public T RemoveMax()
@@ -502,7 +506,7 @@ namespace C6
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         public T RemoveMax(out IPriorityQueueHandle<T> handle)
@@ -530,7 +534,8 @@ namespace C6
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
 
 
-            throw new NotImplementedException();
+            handle = null;
+            return default(T);
         }
 
         public T this[IPriorityQueueHandle<T> handle]
@@ -551,7 +556,7 @@ namespace C6
                 Contract.Ensures(this.Contains(Contract.Result<T>()));
 
 
-                throw new NotImplementedException();
+                return default(T);
             }
 
             set
@@ -579,7 +584,7 @@ namespace C6
                 Contract.Ensures(this.Contains(value));
 
 
-                throw new NotImplementedException();
+                return;
             }
         }
 
@@ -593,7 +598,7 @@ namespace C6
             // No Ensures
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         // We know very little about handles
@@ -610,7 +615,8 @@ namespace C6
             Contract.Ensures(AllowsNull || Contract.ValueAtReturn(out item) != null);
 
 
-            throw new NotImplementedException();
+            item = default(T);
+            return default(bool);
         }
 
         public T Replace(IPriorityQueueHandle<T> handle, T item)
@@ -647,7 +653,7 @@ namespace C6
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         public bool Add(ref IPriorityQueueHandle<T> handle, T item)
@@ -681,7 +687,7 @@ namespace C6
             Contract.Ensures(EqualityComparer.Equals(this[Contract.ValueAtReturn(out handle)], item));
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         // We do not know the actual item associated with the handle (the one that is removed)
@@ -711,7 +717,7 @@ namespace C6
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         #region Hardened Postconditions
@@ -726,7 +732,7 @@ namespace C6
             Contract.Ensures(Contract.Result<bool>());
 
 
-            throw new NotImplementedException();
+            return default(bool);
         }
 
         #endregion

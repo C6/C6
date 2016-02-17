@@ -58,7 +58,7 @@ namespace C6
                 Contract.Ensures(Enum.IsDefined(typeof(EnumerationDirection), Contract.Result<EnumerationDirection>()));
 
 
-                throw new NotImplementedException();
+                return default(EnumerationDirection);
             }
         }
 
@@ -77,7 +77,7 @@ namespace C6
             Contract.Ensures(Contract.Result<IDirectedEnumerable<T>>().Direction != Direction);
 
 
-            throw new NotImplementedException();
+            return default(IDirectedEnumerable<T>);
         }
 
         // ReSharper restore InvocationIsSkipped
