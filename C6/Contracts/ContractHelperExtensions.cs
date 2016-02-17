@@ -1,9 +1,9 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
-using System.Collections.Generic;
 using System.Linq;
+
+using SCG = System.Collections.Generic;
 
 using static System.Diagnostics.Contracts.Contract;
 
@@ -20,18 +20,18 @@ namespace C6
         /// </summary>
         /// <typeparam name="T">The type of the elements of
         /// <paramref name="enumerable"/>.</typeparam>
-        /// <param name="enumerable">An <see cref="IEnumerable{T}"/> to return
+        /// <param name="enumerable">An <see cref="SCG.IEnumerable{T}"/> to return
         /// elements from.</param>
         /// <param name="startIndex">The number of elements to return before
         /// skipping the next <paramref name="count"/> elements.</param>
         /// <param name="count">The number of elements to skip before returning
         /// the remaining elements.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> containing the elements 
-        /// from the specified <see cref="IEnumerable{T}"/>, but with a range
+        /// <returns>An <see cref="SCG.IEnumerable{T}"/> containing the elements 
+        /// from the specified <see cref="SCG.IEnumerable{T}"/>, but with a range
         /// of items skipped.</returns>
         /// <remarks>This is only intended for code contracts, and is not 
         /// optimal in any sense.</remarks>
-        public static IEnumerable<T> SkipRange<T>(this IEnumerable<T> enumerable, int startIndex, int count)
+        public static SCG.IEnumerable<T> SkipRange<T>(this SCG.IEnumerable<T> enumerable, int startIndex, int count)
         {
             // Argument is non-null
             Requires(enumerable != null);
