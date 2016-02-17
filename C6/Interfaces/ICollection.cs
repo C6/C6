@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
@@ -21,6 +20,36 @@ namespace C6
     [ContractClass(typeof(ICollectionContract<>))]
     public interface ICollection<T> : IExtensible<T>, SCG.ICollection<T>
     {
+        // This is somewhat similar to the RandomAccess marker interface in Java
+        /// <summary>
+        /// Gets a value characterizing the asymptotic complexity of
+        /// <see cref="Contains"/> proportional to collection size (worst-case
+        /// or amortized as relevant).
+        /// </summary>
+        /// <value>A characterization of the asymptotic speed of
+        /// <see cref="Contains"/> proportional to collection size.</value>
+        [Pure]
+        Speed ContainsSpeed { get; }
+
+        /// <summary>
+        /// Gets the number of items contained in the collection.
+        /// </summary>
+        /// <value>The number of items contained in the collection.</value>
+        [Pure]
+        new int Count { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the collection is read-only.
+        /// </summary>
+        /// <value><c>true</c> if the collection is read-only;
+        /// otherwise, <c>false</c>.</value>
+        /// <remarks>A collection that is read-only does not allow the addition
+        /// or removal of items after the collection is created. Note that 
+        /// read-only in this context does not indicate whether individual 
+        /// items of the collection can be modified.</remarks>
+        [Pure]
+        new bool IsReadOnly { get; }
+
         /// <summary>
         /// Adds an item to the collection if possible.
         /// </summary>
@@ -49,7 +78,6 @@ namespace C6
         /// </remarks>
         new bool Add(T item);
 
-
         /// <summary>
         /// Removes all items from the collection.
         /// </summary>
@@ -68,7 +96,6 @@ namespace C6
         /// </remarks>
         new void Clear();
 
-
         /// <summary>
         /// Determines whether the collection contains a specific item.
         /// </summary>
@@ -80,7 +107,6 @@ namespace C6
         /// item equality.</remarks>
         [Pure]
         new bool Contains(T item);
-
 
         /// <summary>
         /// Checks whether the collection contains all the items in the
@@ -101,7 +127,6 @@ namespace C6
         [Pure]
         bool ContainsAll(SCG.IEnumerable<T> items);
 
-
         /// <summary>
         /// Returns the item's multiplicity in the collection: the number of
         /// items in the collection equal to the specified item.
@@ -116,19 +141,6 @@ namespace C6
         [Pure]
         int ContainsCount(T item);
 
-
-        // This is somewhat similar to the RandomAccess marker interface in Java
-        /// <summary>
-        /// Gets a value characterizing the asymptotic complexity of
-        /// <see cref="Contains"/> proportional to collection size (worst-case
-        /// or amortized as relevant).
-        /// </summary>
-        /// <value>A characterization of the asymptotic speed of
-        /// <see cref="Contains"/> proportional to collection size.</value>
-        [Pure]
-        Speed ContainsSpeed { get; }
-
-
         /// <summary>
         /// Copies the items of the collection to an <see cref="Array"/>,
         /// starting at a particular <see cref="Array"/> index.
@@ -140,15 +152,6 @@ namespace C6
         /// which copying begins.</param>
         [Pure]
         new void CopyTo(T[] array, int arrayIndex);
-
-
-        /// <summary>
-        /// Gets the number of items contained in the collection.
-        /// </summary>
-        /// <value>The number of items contained in the collection.</value>
-        [Pure]
-        new int Count { get; }
-
 
         /// <summary>
         /// Determines whether the collection contains a specific item and 
@@ -166,7 +169,6 @@ namespace C6
         /// <seealso cref="Contains"/>
         [Pure]
         bool Find(ref T item);
-
 
         /// <summary>
         /// Determines whether the collection contains a specific item and 
@@ -200,7 +202,6 @@ namespace C6
         /// <seealso cref="Add"/>
         bool FindOrAdd(ref T item);
 
-
         // TODO: Maybe refer to static method, that can be used in contracts as well
         /// <summary>
         /// Returns the unsequenced (order-insensitive) hash code of the
@@ -224,20 +225,6 @@ namespace C6
         [Pure]
         int GetUnsequencedHashCode();
 
-
-        /// <summary>
-        /// Gets a value indicating whether the collection is read-only.
-        /// </summary>
-        /// <value><c>true</c> if the collection is read-only;
-        /// otherwise, <c>false</c>.</value>
-        /// <remarks>A collection that is read-only does not allow the addition
-        /// or removal of items after the collection is created. Note that 
-        /// read-only in this context does not indicate whether individual 
-        /// items of the collection can be modified.</remarks>
-        [Pure]
-        new bool IsReadOnly { get; }
-
-
         /// <summary>
         /// Returns a new collection value whose items are
         /// <see cref="KeyValuePair{T,Int}"/> where
@@ -254,7 +241,6 @@ namespace C6
         /// at least one.</remarks>
         [Pure]
         ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
-
 
         /// <summary>
         /// Removes an occurrence of a specific item from the collection, if
@@ -286,7 +272,6 @@ namespace C6
         /// </para>
         /// </remarks>
         new bool Remove(T item);
-
 
         /// <summary>
         /// Removes an occurrence of a specific item from the collection, if
@@ -320,7 +305,6 @@ namespace C6
         /// </para>
         /// </remarks>
         bool Remove(T item, out T removedItem);
-
 
         // TODO: Reconsider rewriting event behavior documentation
         // TODO: Rename to RemoveCompletely/RemoveEquals/RemoveDuplicates/RemoveCopies and document change
@@ -374,7 +358,6 @@ namespace C6
         /// </remarks>
         bool RemoveAll(T item);
 
-
         /// <summary>
         /// Removes each item of the specified enumerable from the collection, 
         /// if possible, in enumeration order.
@@ -406,7 +389,6 @@ namespace C6
         /// </remarks>
         void RemoveAll(SCG.IEnumerable<T> items);
 
-
         /// <summary>
         /// Removes the items of the current collection that do not exist in
         /// the specified <see cref="SCG.IEnumerable{T}"/>. If the collection
@@ -435,7 +417,6 @@ namespace C6
         /// </remarks>
         void RetainAll(SCG.IEnumerable<T> items);
 
-
         // TODO: Consider returning a read-only collection instead
         /// <summary>
         /// Returns a <see cref="ICollectionValue{T}"/> equal to this
@@ -449,7 +430,6 @@ namespace C6
         /// used to determine item equality.</remarks>
         [Pure]
         ICollectionValue<T> UniqueItems();
-
 
         /// <summary>
         /// Compares the items in this collection to the items in the other 
@@ -481,7 +461,6 @@ namespace C6
         /// <seealso cref="GetUnsequencedHashCode"/>
         [Pure]
         bool UnsequencedEquals(ICollection<T> otherCollection);
-
 
         /// <summary>
         /// Determines whether the collection contains an item equal to
@@ -541,7 +520,6 @@ namespace C6
         /// </remarks>
         bool Update(T item);
 
-
         /// <summary>
         /// Determines whether the collection contains an item equal to
         /// <paramref name="item"/>, in which case that item is replaced with
@@ -600,7 +578,6 @@ namespace C6
         /// </para>
         /// </remarks>
         bool Update(T item, out T oldItem);
-
 
         /// <summary>
         /// Determines whether the collection contains an item equal to
@@ -673,7 +650,6 @@ namespace C6
         /// </para>
         /// </remarks>
         bool UpdateOrAdd(T item);
-
 
         /// <summary>
         /// Determines whether the collection contains an item equal to
@@ -750,11 +726,51 @@ namespace C6
     }
 
 
-
     [ContractClassFor(typeof(ICollection<>))]
     internal abstract class ICollectionContract<T> : ICollection<T>
     {
         // ReSharper disable InvocationIsSkipped
+
+        public Speed ContainsSpeed
+        {
+            get
+            {
+                // No Requires
+
+
+                // Result is a valid enum constant
+                Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
+
+
+                throw new NotImplementedException();
+            }
+        }
+
+        // Contracts are copied from ICollectionValue<T>.Count. Keep both updated!
+        // Contracts are copied to IIndexed<T>.Count. Keep both updated!
+        public int Count
+        {
+            get
+            {
+                // No Requires
+
+
+                // Returns a non-negative number
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
+                // Returns the same as the number of items in the enumerator
+                Contract.Ensures(Contract.Result<int>() == this.Count());
+
+
+                throw new NotImplementedException();
+            }
+        }
+
+        // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
+        public bool IsReadOnly
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         // Contracts are copied from IExtensible<T>.Add. Keep both updated!
         public bool Add(T item)
@@ -764,7 +780,7 @@ namespace C6
 
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
+
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
             Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer)));
@@ -792,7 +808,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public void Clear()
         {
             // Collection must be non-read-only
@@ -808,14 +823,13 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool Contains(T item)
         {
             // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
-            
+
+
             // Returns true if the collection contains the item
             Contract.Ensures(Contract.Result<bool>() == this.Contains(item, EqualityComparer));
 
@@ -841,7 +855,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public int ContainsCount(T item)
         {
             // TODO: Should this be required?
@@ -855,23 +868,6 @@ namespace C6
 
             throw new NotImplementedException();
         }
-
-
-        public Speed ContainsSpeed
-        {
-            get
-            {
-                // No Requires
-
-
-                // Result is a valid enum constant
-                Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
-
-
-                throw new NotImplementedException();
-            }
-        }
-
 
         // Contracts are copied from ICollectionValue<T>.CopyTo. Keep both updated!
         public void CopyTo(T[] array, int arrayIndex)
@@ -891,33 +887,11 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
-        // Contracts are copied from ICollectionValue<T>.Count. Keep both updated!
-        public int Count
-        {
-            get
-            {
-                // No Requires
-
-
-                // Returns a non-negative number
-                Contract.Ensures(Contract.Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Contract.Ensures(Contract.Result<int>() == this.Count());
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
         public bool Find(ref T item)
         {
             // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
 
 
             // Result is equal to Contains
@@ -933,15 +907,13 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool FindOrAdd(ref T item)
         {
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
-            
+
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
 
 
             // The collection contains the item
@@ -957,22 +929,10 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public int GetUnsequencedHashCode()
         {
             throw new NotImplementedException();
         }
-
-
-        // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
-        public bool IsReadOnly
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
@@ -986,10 +946,9 @@ namespace C6
             // Result is non-null
             Contract.Ensures(AllowsNull || Contract.ForAll(Contract.Result<ICollectionValue<KeyValuePair<T, int>>>(), pair => pair.Key != null));
 
-            
+
             throw new NotImplementedException();
         }
-
 
         public bool Remove(T item)
         {
@@ -1012,7 +971,6 @@ namespace C6
 
             throw new NotImplementedException();
         }
-
 
         public bool Remove(T item, out T removedItem)
         {
@@ -1039,7 +997,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool RemoveAll(T item)
         {
             // Collection must be non-read-only
@@ -1062,7 +1019,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public void RemoveAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
@@ -1070,7 +1026,7 @@ namespace C6
 
             // Argument must be non-null
             Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
-            
+
             // All items must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
 
@@ -1080,7 +1036,6 @@ namespace C6
 
             throw new NotImplementedException();
         }
-
 
         public void RetainAll(SCG.IEnumerable<T> items)
         {
@@ -1106,7 +1061,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public ICollectionValue<T> UniqueItems()
         {
             // No Requires
@@ -1128,7 +1082,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool UnsequencedEquals(ICollection<T> otherCollection)
         {
             // No Requires
@@ -1147,7 +1100,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool Update(T item)
         {
             // Collection must be non-read-only
@@ -1155,7 +1107,7 @@ namespace C6
 
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
+
 
             // Result is equal to whether the collection already contained the item
             Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
@@ -1172,7 +1124,6 @@ namespace C6
 
             throw new NotImplementedException();
         }
-
 
         public bool Update(T item, out T oldItem)
         {
@@ -1181,7 +1132,7 @@ namespace C6
 
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
+
 
             // Result is equal to whether the collection already contained the item
             Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
@@ -1204,7 +1155,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool UpdateOrAdd(T item)
         {
             // Collection must be non-read-only
@@ -1212,7 +1162,7 @@ namespace C6
 
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
+
 
             // The collection contains the item
             Contract.Ensures(Contains(item));
@@ -1229,7 +1179,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool UpdateOrAdd(T item, out T oldItem)
         {
             // Collection must be non-read-only
@@ -1237,7 +1186,7 @@ namespace C6
 
             // Argument must be non-null if collection disallows null values
             Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
+
 
             // The collection contains the item
             Contract.Ensures(Contains(item));
@@ -1260,44 +1209,56 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         // ReSharper restore InvocationIsSkipped
-
 
         #region Non-Contract Methods
 
-        public abstract void AddAll(SCG.IEnumerable<T> items);
-        public abstract bool AllowsDuplicates { get; }
-        void ICollectionValue<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
-        void SCG.ICollection<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
-        int SCG.ICollection<T>.Count { get { throw new NotImplementedException(); } }
-        public abstract bool DuplicatesByCounting { get; }
-        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
-        bool IExtensible<T>.IsReadOnly { get { throw new NotImplementedException(); } }
-        bool SCG.ICollection<T>.IsReadOnly { get { throw new NotImplementedException(); } }
-        bool SCG.ICollection<T>.Remove(T item) { throw new NotImplementedException(); }
+        #region SCG.IEnumerable<T>
+
         public abstract SCG.IEnumerator<T> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
+
+        #region IShowable
+
         public abstract string ToString(string format, IFormatProvider formatProvider);
         public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
-        public abstract EventTypes ListenableEvents { get; }
+
+        #endregion
+
+        #region ICollectionValue<T>
+
         public abstract EventTypes ActiveEvents { get; }
-        public abstract event EventHandler CollectionChanged;
-        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
-        void SCG.ICollection<T>.Add(T item) { throw new NotImplementedException(); }
-        bool IExtensible<T>.Add(T item) { throw new NotImplementedException(); }
-        void SCG.ICollection<T>.Clear() { throw new NotImplementedException(); }
         public abstract bool AllowsNull { get; }
-        public abstract T Choose();
-        bool SCG.ICollection<T>.Contains(T item) { throw new NotImplementedException(); }
-        int ICollectionValue<T>.Count { get { throw new NotImplementedException(); } }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
+        public abstract EventTypes ListenableEvents { get; }
+        public abstract T Choose();
         public abstract T[] ToArray();
+        public abstract event EventHandler CollectionChanged;
+        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
+
+        #endregion
+
+        #region IExtensible
+
+        public abstract bool AllowsDuplicates { get; }
+        public abstract bool DuplicatesByCounting { get; }
+        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public abstract void AddAll(SCG.IEnumerable<T> items);
+
+        #endregion
+
+        #region SCG.ICollection<T>
+
+        void SCG.ICollection<T>.Add(T item) {}
+
+        #endregion
 
         #endregion
     }
