@@ -346,7 +346,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
@@ -369,7 +369,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
@@ -397,7 +397,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
@@ -423,7 +423,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
@@ -452,7 +452,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
@@ -474,7 +474,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
@@ -503,7 +503,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
@@ -529,7 +529,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
             Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
@@ -560,13 +560,15 @@ namespace C6
                 Contract.Requires(Contains(handle));
 
 
+                // Result is non-null
+                Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+                
                 // Return value is from the collection
                 Contract.Ensures(this.Contains(Contract.Result<T>()));
 
 
                 throw new NotImplementedException();
             }
-
 
             set {
                 // Collection must be non-empty
@@ -575,12 +577,13 @@ namespace C6
                 // Handle must be non-null
                 Contract.Requires(handle != null); // TODO: Use <ArgumentNullException>?
 
+                // Argument must be non-null if collection disallows null values
+                Contract.Requires(AllowsNull || value != null); // TODO: Use <ArgumentNullException>?
+                
                 // Handle must be associated with item in the priority queue
                 Contract.Requires(Contains(handle)); // TODO: Use <InvalidPriorityQueueHandleException>?
 
-
-                // Result is non-null
-                // Contract.Ensures(Contract.Result<T>() != null);
+                
 
                 // The handle is associated with the result
                 Contract.Ensures(this[handle].Equals(value));
@@ -618,8 +621,11 @@ namespace C6
             Contract.Requires(handle != null);
 
 
-            // Handle must be non-null
+            // Result is equal to Contains' result
             Contract.Ensures(Contract.Result<bool>() == Contains(handle));
+
+            // Item is non-null
+            Contract.Ensures(AllowsNull || Contract.ValueAtReturn(out item) != null);
 
 
             throw new NotImplementedException();
@@ -637,9 +643,9 @@ namespace C6
             // Handle must be associated with item in the priority queue
             Contract.Requires(Contains(handle));
 
-            // Argument must be non-null
-            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Count remains unchanged
             Contract.Ensures(Count == Contract.OldValue(Count));
@@ -652,6 +658,9 @@ namespace C6
 
             // Result is the old item with which the handle was associated
             Contract.Ensures(EqualityComparer.Equals(Contract.OldValue(this[handle]), Contract.Result<T>()));
+
+            // Result is non-null
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // Return value is from the collection
             Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
@@ -680,9 +689,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
-            // Argument must be non-null
-            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Always returns true
             Contract.Ensures(Contract.Result<bool>());
@@ -722,7 +731,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // Removing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
@@ -761,6 +770,7 @@ namespace C6
         public abstract bool IsEmpty { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
+        public abstract bool AllowsNull { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();

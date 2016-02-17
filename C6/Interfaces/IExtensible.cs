@@ -63,20 +63,7 @@ namespace C6
         /// set semantics.</remarks>
         [Pure]
         bool DuplicatesByCounting { get; }
-
-        /*
-        // TODO: Add this? Update contracts on methods.
-        // TODO: Move to ICollectionValue?
-        /// <summary>
-        /// Gets a value indicating whether the collection allows <c>null</c> 
-        /// items.
-        /// </summary>
-        /// <value><c>true</c>, if the collection allows items that are
-        /// <c>null</c>; otherwise, <c>false</c>.</value>
-        [Pure]
-        bool AllowsNull { get; }
-        */
-
+        
 
         // TODO: wonder where the right position of this is. And the semantics. Should at least be in the same class as AllowsDuplicates!
         // TODO: Could the result be null?
@@ -213,9 +200,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
-            // Argument must be non-null
-            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
             Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer)));
@@ -245,8 +232,8 @@ namespace C6
             // Argument must be non-null
             Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
 
-            // All items must be non-null
-            // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            // All items must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
 
 
             // The collection becomes non-empty
@@ -285,6 +272,7 @@ namespace C6
         public abstract bool IsEmpty { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
+        public abstract bool AllowsNull { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();

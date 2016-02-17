@@ -229,6 +229,34 @@ namespace C6
 
 
         /// <summary>
+        /// Gets a value indicating whether the collection allows <c>null</c>
+        /// items.
+        /// </summary>
+        /// <value><c>true</c> if the collection allows <c>null</c> items;
+        /// otherwise, <c>false</c>.</value>
+        /// <remarks>
+        /// <para>
+        /// If the collection disallows <c>null</c> items, none of the items in
+        /// the collection can be <c>null</c>: adding or inserting a
+        /// <c>null</c> item will result in an error, and any property or
+        /// method returning an item from the collection is guaranteed not to
+        /// return <c>null</c>. If the collection allows <c>null</c> items, the
+        /// collection user must check for <c>null</c>.
+        /// </para>
+        /// <para>
+        /// <see cref="AllowsNull"/> does not reflect whether the collection 
+        /// actually contains any <c>null</c> items.
+        /// </para>
+        /// <para>
+        /// If <typeparamref name="T"/> is a value type, then
+        /// <see cref="AllowsNull"/> is always <c>false</c>.
+        /// </para>
+        /// </remarks>
+        [Pure]
+        bool AllowsNull { get; }
+
+
+        /// <summary>
         /// Returns some item from the collection.
         /// </summary>
         /// <returns>Some item in the collection.</returns>
@@ -554,6 +582,20 @@ namespace C6
             }
         }
 
+        public bool AllowsNull
+        {
+            get
+            {
+                // No Requires
+
+
+                // Value types must return false
+                Contract.Ensures(!typeof(T).IsValueType || !Contract.Result<bool>());
+
+
+                throw new NotImplementedException();
+            }
+        }
 
         public T Choose()
         {
@@ -562,7 +604,7 @@ namespace C6
 
 
             // Result is non-null
-            // Contract.Ensures(Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // Return value is from the collection
             Contract.Ensures(this.Contains(Contract.Result<T>()));

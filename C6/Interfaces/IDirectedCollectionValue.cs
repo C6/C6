@@ -84,6 +84,7 @@ namespace C6
         public abstract bool IsEmpty { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
+        public abstract bool AllowsNull { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();

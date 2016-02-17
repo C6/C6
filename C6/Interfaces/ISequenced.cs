@@ -154,6 +154,7 @@ namespace C6
         void SCG.ICollection<T>.Add(T item) { throw new NotImplementedException(); }
         bool IExtensible<T>.Add(T item) { throw new NotImplementedException(); }
         void SCG.ICollection<T>.Clear() { throw new NotImplementedException(); }
+        public abstract bool AllowsNull { get; }
         public abstract T Choose();
         bool SCG.ICollection<T>.Contains(T item) { throw new NotImplementedException(); }
         int ICollectionValue<T>.Count { get { throw new NotImplementedException(); } }

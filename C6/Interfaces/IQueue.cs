@@ -118,7 +118,7 @@ namespace C6
 
 
                 // Result is non-null
-                // Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+                Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
                 // Result is the same as skipping the first index items
                 Contract.Ensures(Contract.Result<T>().Equals(this.Skip(index).First()));
@@ -131,9 +131,9 @@ namespace C6
 
         public void Enqueue(T item)
         {
-            // Argument must be non-null
-            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
             // Collection must be non-read-only
             Contract.Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
 
@@ -174,7 +174,7 @@ namespace C6
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
 
             // Result is non-null
-            // Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // Result is the same the first items
             Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(this.First())));
@@ -209,6 +209,7 @@ namespace C6
         public abstract bool IsEmpty { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
+        public abstract bool AllowsNull { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();

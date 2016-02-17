@@ -762,9 +762,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
-            // Argument must be non-null
-            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
             Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer)));
@@ -811,9 +811,11 @@ namespace C6
 
         public bool Contains(T item)
         {
-            // No Requires
-
-
+            // TODO: Should this be required?
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
+            
             // Returns true if the collection contains the item
             Contract.Ensures(Contract.Result<bool>() == this.Contains(item, EqualityComparer));
 
@@ -827,8 +829,9 @@ namespace C6
             // Argument must be non-null
             Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
 
-            // All items must be non-null
-            // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            // TODO: Should this be required?
+            // All items must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
 
 
             // The collection contains the same items as items, with a multiplicity equal or greater
@@ -841,8 +844,9 @@ namespace C6
 
         public int ContainsCount(T item)
         {
-            // Argument must be non-null
-            // Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            // TODO: Should this be required?
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Result equals the number of items equal to item using the collection's equality comparer
@@ -910,7 +914,10 @@ namespace C6
 
         public bool Find(ref T item)
         {
-            // No Requires
+            // TODO: Should this be required?
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
 
             // Result is equal to Contains
@@ -931,6 +938,10 @@ namespace C6
         {
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
 
             // The collection contains the item
@@ -972,7 +983,10 @@ namespace C6
             // this.GroupBy(key => key, element => element, EqualityComparer)
             //     .Select(group => new KeyValuePair<T, int>(group.Key, group.Count()))
 
+            // Result is non-null
+            Contract.Ensures(AllowsNull || Contract.ForAll(Contract.Result<ICollectionValue<KeyValuePair<T, int>>>(), pair => pair.Key != null));
 
+            
             throw new NotImplementedException();
         }
 
@@ -981,6 +995,9 @@ namespace C6
         {
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Returns true if the collection contained the item
@@ -1001,6 +1018,9 @@ namespace C6
         {
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Returns true if the collection contained the item
@@ -1025,6 +1045,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
 
             // Returns true if the collection contained the item
             Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(this.Contains(item, EqualityComparer)));
@@ -1047,9 +1070,9 @@ namespace C6
 
             // Argument must be non-null
             Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
-
-            // All items must be non-null
-            // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            
+            // All items must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
 
 
             // TODO: Write ensures
@@ -1067,8 +1090,8 @@ namespace C6
             // Argument must be non-null
             Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
 
-            // All items must be non-null
-            // Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            // All items must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
 
 
             // The collection is at most as big as the enumerable
@@ -1094,6 +1117,10 @@ namespace C6
 
             // If the collection allows duplicates a new collection is created; otherwise, this collection is returned
             Contract.Ensures(AllowsDuplicates != ReferenceEquals(Contract.Result<ICollectionValue<T>>(), this));
+
+            // Result is non-null
+            Contract.Ensures(AllowsNull || Contract.ForAll(Contract.Result<ICollectionValue<T>>(), item => item != null));
+
 
             // TODO: Ensure that the result contains the right items
 
@@ -1126,6 +1153,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Result is equal to whether the collection already contained the item
             Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
@@ -1149,6 +1179,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Result is equal to whether the collection already contained the item
             Contract.Ensures(Contract.Result<bool>() == Contract.OldValue(Contains(item)));
@@ -1164,6 +1197,9 @@ namespace C6
 
             // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
 
+            // Old value is non-null
+            Contract.Ensures(!Contract.Result<bool>() || AllowsNull || Contract.ValueAtReturn(out oldItem) != null);
+
 
             throw new NotImplementedException();
         }
@@ -1174,6 +1210,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // The collection contains the item
             Contract.Ensures(Contains(item));
@@ -1196,6 +1235,9 @@ namespace C6
             // Collection must be non-read-only
             Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // The collection contains the item
             Contract.Ensures(Contains(item));
@@ -1210,6 +1252,9 @@ namespace C6
             Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 0 : 1));
 
             // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+
+            // Old value is non-null
+            Contract.Ensures(!Contract.Result<bool>() || AllowsNull || Contract.ValueAtReturn(out oldItem) != null);
 
 
             throw new NotImplementedException();
@@ -1246,6 +1291,7 @@ namespace C6
         void SCG.ICollection<T>.Add(T item) { throw new NotImplementedException(); }
         bool IExtensible<T>.Add(T item) { throw new NotImplementedException(); }
         void SCG.ICollection<T>.Clear() { throw new NotImplementedException(); }
+        public abstract bool AllowsNull { get; }
         public abstract T Choose();
         bool SCG.ICollection<T>.Contains(T item) { throw new NotImplementedException(); }
         int ICollectionValue<T>.Count { get { throw new NotImplementedException(); } }

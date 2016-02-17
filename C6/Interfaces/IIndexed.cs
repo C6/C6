@@ -181,8 +181,9 @@ namespace C6
 
         public int IndexOf(T item)
         {
-            // No Requires
-
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Result is a valid index
             Contract.Ensures(Contains(item)
@@ -202,8 +203,9 @@ namespace C6
 
         public int LastIndexOf(T item)
         {
-            // No Requires
-
+            // Argument must be non-null if collection disallows null values
+            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            
 
             // Result is a valid index
             Contract.Ensures(Contains(item)
@@ -233,6 +235,9 @@ namespace C6
 
             // Only the item at index is removed
             // TODO: Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.SkipRange(index, 1).ToList())));
+
+            // Result is non-null
+            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
 
             // Removing an item decreases the count by one
             Contract.Ensures(Count == Contract.OldValue(Count) - 1);
@@ -332,6 +337,7 @@ namespace C6
         void SCG.ICollection<T>.Add(T item) { throw new NotImplementedException(); }
         bool IExtensible<T>.Add(T item) { throw new NotImplementedException(); }
         void SCG.ICollection<T>.Clear() { throw new NotImplementedException(); }
+        public abstract bool AllowsNull { get; }
         public abstract T Choose();
         bool SCG.ICollection<T>.Contains(T item) { throw new NotImplementedException(); }
         int ICollectionValue<T>.Count { get { throw new NotImplementedException(); } }
