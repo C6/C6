@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace C6
 {
@@ -23,11 +25,11 @@ namespace C6
             // ReSharper disable InvocationIsSkipped
 
             // Item is non-null
-            // Contract.Invariant(Item != null);
+            // Invariant(Item != null);
 
             // TODO: Contract index bounds more precisely when actually used
             // Index is non-negative
-            Contract.Invariant(Index >= 0);
+            Invariant(Index >= 0);
 
             // ReSharper restore InvocationIsSkipped
         }
@@ -42,17 +44,17 @@ namespace C6
         public ItemAtEventArgs(T item, int index)
         {
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-negative
-            Contract.Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
 
 
             Item = item;
             Index = index;
 
-            // Contract.Assume(Item != null); // Static checker shortcoming
-            Contract.Assume(Index >= 0); // Static checker shortcoming
+            // Assume(Item != null); // Static checker shortcoming
+            Assume(Index >= 0); // Static checker shortcoming
         }
 
         /// <summary>

@@ -4,6 +4,8 @@
 
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace System.Collections.Generic
 {
@@ -40,15 +42,15 @@ namespace System.Collections.Generic
         public T this[int index] {
             get {
                 // Argument must be within bounds (collection must be non-empty)
-                Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-                Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+                Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
+                Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
                 return default(T);
             }
             set {
                 // Argument must be within bounds (collection must be non-empty)
-                Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-                Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+                Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
+                Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
                 return;
             }

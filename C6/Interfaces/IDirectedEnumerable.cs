@@ -6,6 +6,8 @@ using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -55,7 +57,7 @@ namespace C6
 
 
                 // Result is a valid enum constant
-                Contract.Ensures(Enum.IsDefined(typeof(EnumerationDirection), Contract.Result<EnumerationDirection>()));
+                Ensures(Enum.IsDefined(typeof(EnumerationDirection), Result<EnumerationDirection>()));
 
 
                 return default(EnumerationDirection);
@@ -68,13 +70,13 @@ namespace C6
 
 
             // Result is non-null
-            Contract.Ensures(Contract.Result<IDirectedEnumerable<T>>() != null);
+            Ensures(Result<IDirectedEnumerable<T>>() != null);
 
             // Result enumeration is backwards
-            Contract.Ensures(this.Reverse().SequenceEqual(Contract.Result<IDirectedEnumerable<T>>())); // TODO: Use specific comparer?
+            Ensures(this.Reverse().SequenceEqual(Result<IDirectedEnumerable<T>>())); // TODO: Use specific comparer?
 
             // Result direction is opposite
-            Contract.Ensures(Contract.Result<IDirectedEnumerable<T>>().Direction != Direction);
+            Ensures(Result<IDirectedEnumerable<T>>().Direction != Direction);
 
 
             return default(IDirectedEnumerable<T>);

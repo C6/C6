@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -150,10 +152,10 @@ namespace C6
 
 
                 // Returns a non-negative number
-                Contract.Ensures(Contract.Result<int>() >= 0);
+                Ensures(Result<int>() >= 0);
 
                 // Returns the same as the number of items in the enumerator
-                Contract.Ensures(Contract.Result<int>() == this.Count());
+                Ensures(Result<int>() == this.Count());
 
 
                 return default(int);
@@ -168,7 +170,7 @@ namespace C6
 
 
                 // Result is a valid enum constant
-                Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
+                Ensures(Enum.IsDefined(typeof(Speed), Result<Speed>()));
 
 
                 return default(Speed);
@@ -178,18 +180,18 @@ namespace C6
         public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
         {
             // Argument must be within bounds
-            Contract.Requires(0 <= startIndex); // TODO: Use <ArgumentOutOfRangeException>?
-            Contract.Requires(startIndex + count <= Count); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(0 <= startIndex); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(startIndex + count <= Count); // TODO: Use <ArgumentOutOfRangeException>?
 
             // Argument must be non-negative
-            Contract.Requires(0 <= count);
+            Requires(0 <= count);
 
 
             // Result has the same count
-            Contract.Ensures(Contract.Result<IDirectedCollectionValue<T>>().Count == count);
+            Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
 
             // Result equals subrange
-            Contract.Ensures(Contract.Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
+            Ensures(Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
 
 
             return default(IDirectedCollectionValue<T>);
@@ -199,19 +201,19 @@ namespace C6
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Result is a valid index
-            Contract.Ensures(Contains(item)
-                ? 0 <= Contract.Result<int>() && Contract.Result<int>() < Count
-                : 0 <= ~Contract.Result<int>() && ~Contract.Result<int>() <= Count);
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : 0 <= ~Result<int>() && ~Result<int>() <= Count);
 
             // Item at index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || EqualityComparer.Equals(item, this[Contract.Result<int>()]));
+            Ensures(Result<int>() < 0 || EqualityComparer.Equals(item, this[Result<int>()]));
 
             // No item before index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || !this.Take(Contract.Result<int>()).Contains(item, EqualityComparer));
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer));
 
 
             return default(int);
@@ -221,19 +223,19 @@ namespace C6
         public int LastIndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Result is a valid index
-            Contract.Ensures(Contains(item)
-                ? 0 <= Contract.Result<int>() && Contract.Result<int>() < Count
-                : 0 <= ~Contract.Result<int>() && ~Contract.Result<int>() <= Count);
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : 0 <= ~Result<int>() && ~Result<int>() <= Count);
 
             // Item at index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || EqualityComparer.Equals(item, this[Contract.Result<int>()]));
+            Ensures(Result<int>() < 0 || EqualityComparer.Equals(item, this[Result<int>()]));
 
             // No item after index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || !this.Skip(Contract.Result<int>() + 1).Contains(item, EqualityComparer));
+            Ensures(Result<int>() < 0 || !this.Skip(Result<int>() + 1).Contains(item, EqualityComparer));
 
 
             return default(int);
@@ -243,21 +245,21 @@ namespace C6
         public T RemoveAt(int index)
         {
             // Argument must be within bounds (collection must be non-empty)
-            Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-            Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+            Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
+            Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
 
             // Result is the item previously at the specified index
-            Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(this[index])));
+            Ensures(Result<T>().Equals(OldValue(this[index])));
 
             // Only the item at index is removed
-            // TODO: Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.SkipRange(index, 1).ToList())));
+            // TODO: Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
 
             return default(T);
@@ -267,18 +269,18 @@ namespace C6
         public void RemoveIndexRange(int startIndex, int count)
         {
             // Argument must be within bounds (collection must be non-empty)
-            Contract.Requires(0 <= startIndex); // TODO: Use <IndexOutOfRangeException>?
-            Contract.Requires(startIndex + count < Count); // TODO: Use <IndexOutOfRangeException>?
+            Requires(0 <= startIndex); // TODO: Use <IndexOutOfRangeException>?
+            Requires(startIndex + count < Count); // TODO: Use <IndexOutOfRangeException>?
 
             // Argument must be non-negative
-            Contract.Requires(0 <= count);
+            Requires(0 <= count);
 
 
             // Only the items in the index range are removed
-            // TODO: Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.SkipRange(startIndex, count).ToList())));
+            // TODO: Ensures(this.SequenceEqual(OldValue(this.SkipRange(startIndex, count).ToList())));
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - count);
+            Ensures(Count == OldValue(Count) - count);
 
 
             return;
@@ -295,7 +297,7 @@ namespace C6
 
 
                 // Result is item at index
-                Contract.Ensures(Contract.Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().Equals(this.Skip(index).First()));
 
 
                 return default(T);

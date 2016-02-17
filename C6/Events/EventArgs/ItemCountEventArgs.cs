@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace C6
 {
@@ -23,10 +25,10 @@ namespace C6
             // ReSharper disable InvocationIsSkipped
 
             // Item is non-null
-            // Contract.Invariant(Item != null);
+            // Invariant(Item != null);
 
             // Count is positive
-            Contract.Invariant(Count > 0); // TODO: Contract size more precisely when actually used, i.e. bound the size upwards
+            Invariant(Count > 0); // TODO: Contract size more precisely when actually used, i.e. bound the size upwards
 
             // ReSharper enable InvocationIsSkipped
         }
@@ -42,17 +44,17 @@ namespace C6
         public ItemCountEventArgs(T item, int count)
         {
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be positive
-            Contract.Requires(count > 0);
+            Requires(count > 0);
 
 
             Item = item;
             Count = count;
 
-            // Contract.Assume(Item != null); // Static checker shortcoming
-            Contract.Assume(Count > 0); // Static checker shortcoming
+            // Assume(Item != null); // Static checker shortcoming
+            Assume(Count > 0); // Static checker shortcoming
         }
 
         // TODO: Validate the comments in remarks with actual implementation

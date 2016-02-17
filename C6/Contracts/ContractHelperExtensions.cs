@@ -3,8 +3,9 @@
 
 
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
+
+using static System.Diagnostics.Contracts.Contract;
 
 
 namespace C6
@@ -33,7 +34,7 @@ namespace C6
         public static IEnumerable<T> SkipRange<T>(this IEnumerable<T> enumerable, int startIndex, int count)
         {
             // Argument is non-null
-            Contract.Requires(enumerable != null);
+            Requires(enumerable != null);
 
             // ReSharper disable PossibleMultipleEnumeration
             return enumerable.Take(startIndex).Concat(enumerable.Skip(startIndex + count));

@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 using static C6.EventTypes;
@@ -94,15 +96,15 @@ namespace C6
             get
             {
                 // Argument must be within bounds (collection must be non-empty)
-                Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-                Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+                Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
+                Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
 
                 // Result is non-null
-                Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+                Ensures(AllowsNull || Result<T>() != null);
 
                 // Result is the same as skipping the first index items
-                Contract.Ensures(Contract.Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().Equals(this.Skip(index).First()));
 
 
                 return default(T);
@@ -112,23 +114,23 @@ namespace C6
         public T Dequeue()
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
             // Collection must be non-read-only
-            Contract.Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible property, which IQueue doesn't inherit from!
+            Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible property, which IQueue doesn't inherit from!
 
 
             // Dequeuing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(this.First())));
+            Ensures(Result<T>().Equals(OldValue(this.First())));
 
             // Only the first item in the queue is removed
-            Contract.Ensures(Enumerable.SequenceEqual(this, Contract.OldValue(this.Skip(1).ToList())));
+            Ensures(Enumerable.SequenceEqual(this, OldValue(this.Skip(1).ToList())));
 
 
             return default(T);
@@ -137,29 +139,29 @@ namespace C6
         public void Enqueue(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
             // Collection must be non-read-only
-            Contract.Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
+            Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
 
 
             // The collection becomes non-empty
-            Contract.Ensures(!IsEmpty);
+            Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Contract.Ensures(this.Contains(item)); // TODO: Use EqualityComparer?
+            Ensures(this.Contains(item)); // TODO: Use EqualityComparer?
 
             // Adding an item increases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) + 1);
+            Ensures(Count == OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Contract.Ensures(this.Count(x => x.Equals(item)) == Contract.OldValue(this.Count(x => x.Equals(item))) + 1); // TODO: Use EqualityComparer?
+            Ensures(this.Count(x => x.Equals(item)) == OldValue(this.Count(x => x.Equals(item))) + 1); // TODO: Use EqualityComparer?
 
             // The added item is at the end of the queue
-            Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.ToList()).Append(item)));
+            Ensures(this.SequenceEqual(OldValue(this.ToList()).Append(item)));
 
             // The item is added to the end
-            Contract.Ensures(item.Equals(this.Last()));
+            Ensures(item.Equals(this.Last()));
 
 
             return;
@@ -176,7 +178,7 @@ namespace C6
 
 
                 // The events raised by the collection must be listenable
-                Contract.Ensures(Contract.Result<EventTypes>().HasFlag(Changed | Added | Removed | Inserted | RemovedAt));
+                Ensures(Result<EventTypes>().HasFlag(Changed | Added | Removed | Inserted | RemovedAt));
 
 
                 return default(EventTypes);

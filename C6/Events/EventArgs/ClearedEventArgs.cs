@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace C6
 {
@@ -22,10 +24,10 @@ namespace C6
             // ReSharper disable InvocationIsSkipped
 
             // Count is positive
-            Contract.Invariant(Count > 0);
+            Invariant(Count > 0);
 
             // Start is only set, if a list view or index range was cleared
-            Contract.Invariant(!Start.HasValue || !Full);
+            Invariant(!Start.HasValue || !Full);
 
             // ReSharper restore InvocationIsSkipped
         }
@@ -47,10 +49,10 @@ namespace C6
         public ClearedEventArgs(bool full, int count, int? start = null)
         {
             // Argument must be positive
-            Contract.Requires(count > 0);
+            Requires(count > 0);
 
             // Start is only set, if a list view or index range was cleared
-            Contract.Requires(!start.HasValue || !full);
+            Requires(!start.HasValue || !full);
 
 
             Full = full;
@@ -58,8 +60,8 @@ namespace C6
             Start = start;
 
 
-            Contract.Assume(Count > 0); // Static checker shortcoming
-            Contract.Assume(!Start.HasValue || !Full); // Static checker shortcoming
+            Assume(Count > 0); // Static checker shortcoming
+            Assume(!Start.HasValue || !Full); // Static checker shortcoming
         }
 
         /// <summary>

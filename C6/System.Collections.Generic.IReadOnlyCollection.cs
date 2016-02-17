@@ -4,6 +4,8 @@
 
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace System.Collections.Generic
 {
@@ -39,7 +41,7 @@ namespace System.Collections.Generic
 
 
                 // Returns a non-negative number
-                Contract.Ensures(Contract.Result<int>() >= 0);
+                Ensures(Result<int>() >= 0);
 
 
                 return default(int);

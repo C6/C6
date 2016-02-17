@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -322,7 +324,7 @@ namespace C6
 
 
                 // Result is non-null
-                Contract.Ensures(Contract.Result<SCG.IComparer<T>>() != null);
+                Ensures(Result<SCG.IComparer<T>>() != null);
 
 
                 return default(SCG.IComparer<T>);
@@ -332,20 +334,20 @@ namespace C6
         public T FindMin()
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // The count remains the same
-            Contract.Ensures(Count == Contract.OldValue(Count));
+            Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Contract.Ensures(this.Contains(Contract.Result<T>()));
+            Ensures(this.Contains(Result<T>()));
 
 
             return default(T);
@@ -354,26 +356,26 @@ namespace C6
         public T FindMin(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Contract.Ensures(Contract.Result<T>().Equals(FindMin()));
+            Ensures(Result<T>().Equals(FindMin()));
 
             // The handle is associated with the result
-            Contract.Ensures(this[Contract.ValueAtReturn(out handle)].Equals(Contract.Result<T>()));
+            Ensures(this[ValueAtReturn(out handle)].Equals(Result<T>()));
 
             // The count remains the same
-            Contract.Ensures(Count == Contract.OldValue(Count));
+            Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Contract.Ensures(this.Contains(Contract.Result<T>()));
+            Ensures(this.Contains(Result<T>()));
 
 
             handle = null;
@@ -383,23 +385,23 @@ namespace C6
         public T RemoveMin()
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMin())));
+            Ensures(Result<T>().Equals(OldValue(FindMin())));
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
             // Return value is from the collection
-            Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
 
 
             return default(T);
@@ -408,26 +410,26 @@ namespace C6
         public T RemoveMin(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are greater than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) >= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMin())));
+            Ensures(Result<T>().Equals(OldValue(FindMin())));
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
             // The handle is no longer associated with an item in the priority queue
-            Contract.Ensures(!Contains(Contract.ValueAtReturn(out handle)));
+            Ensures(!Contains(ValueAtReturn(out handle)));
 
             // Return value is from the collection
-            Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
 
 
             handle = null;
@@ -437,20 +439,20 @@ namespace C6
         public T FindMax()
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // The count remains the same
-            Contract.Ensures(Count == Contract.OldValue(Count));
+            Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Contract.Ensures(this.Contains(Contract.Result<T>()));
+            Ensures(this.Contains(Result<T>()));
 
             return default(T);
         }
@@ -458,26 +460,26 @@ namespace C6
         public T FindMax(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Contract.Ensures(Contract.Result<T>().Equals(FindMax()));
+            Ensures(Result<T>().Equals(FindMax()));
 
             // The handle is associated with the result
-            Contract.Ensures(this[Contract.ValueAtReturn(out handle)].Equals(Contract.Result<T>()));
+            Ensures(this[ValueAtReturn(out handle)].Equals(Result<T>()));
 
             // The count remains the same
-            Contract.Ensures(Count == Contract.OldValue(Count));
+            Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Contract.Ensures(this.Contains(Contract.Result<T>()));
+            Ensures(this.Contains(Result<T>()));
 
 
             handle = null;
@@ -487,23 +489,23 @@ namespace C6
         public T RemoveMax()
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMax())));
+            Ensures(Result<T>().Equals(OldValue(FindMax())));
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
             // Return value is from the collection
-            Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
 
 
             return default(T);
@@ -512,26 +514,26 @@ namespace C6
         public T RemoveMax(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // All items in the collection are less than or equal to the result
-            Contract.Ensures(Contract.ForAll(this, item => Comparer.Compare(item, Contract.Result<T>()) <= 0));
+            Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(FindMax())));
+            Ensures(Result<T>().Equals(OldValue(FindMax())));
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
             // The handle is no longer associated with an item in the priority queue
-            Contract.Ensures(!Contains(Contract.ValueAtReturn(out handle)));
+            Ensures(!Contains(ValueAtReturn(out handle)));
 
             // Return value is from the collection
-            Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
 
 
             handle = null;
@@ -543,17 +545,17 @@ namespace C6
             get
             {
                 // Handle must be non-null
-                Contract.Requires(handle != null);
+                Requires(handle != null);
 
                 // Handle must be associated with item in the priority queue
-                Contract.Requires(Contains(handle));
+                Requires(Contains(handle));
 
 
                 // Result is non-null
-                Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+                Ensures(AllowsNull || Result<T>() != null);
 
                 // Return value is from the collection
-                Contract.Ensures(this.Contains(Contract.Result<T>()));
+                Ensures(this.Contains(Result<T>()));
 
 
                 return default(T);
@@ -562,26 +564,26 @@ namespace C6
             set
             {
                 // Collection must be non-empty
-                Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+                Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
                 // Handle must be non-null
-                Contract.Requires(handle != null); // TODO: Use <ArgumentNullException>?
+                Requires(handle != null); // TODO: Use <ArgumentNullException>?
 
                 // Argument must be non-null if collection disallows null values
-                Contract.Requires(AllowsNull || value != null); // TODO: Use <ArgumentNullException>?
+                Requires(AllowsNull || value != null); // TODO: Use <ArgumentNullException>?
 
                 // Handle must be associated with item in the priority queue
-                Contract.Requires(Contains(handle)); // TODO: Use <InvalidPriorityQueueHandleException>?
+                Requires(Contains(handle)); // TODO: Use <InvalidPriorityQueueHandleException>?
 
 
                 // The handle is associated with the result
-                Contract.Ensures(this[handle].Equals(value));
+                Ensures(this[handle].Equals(value));
 
                 // Replacing an item does not change the count
-                Contract.Ensures(Count == Contract.OldValue(Count));
+                Ensures(Count == OldValue(Count));
 
                 // Return value is from the collection
-                Contract.Ensures(this.Contains(value));
+                Ensures(this.Contains(value));
 
 
                 return;
@@ -592,7 +594,7 @@ namespace C6
         public bool Contains(IPriorityQueueHandle<T> handle)
         {
             // Handle must be non-null
-            Contract.Requires(handle != null);
+            Requires(handle != null);
 
 
             // No Ensures
@@ -605,14 +607,14 @@ namespace C6
         public bool Contains(IPriorityQueueHandle<T> handle, out T item)
         {
             // Handle must be non-null
-            Contract.Requires(handle != null);
+            Requires(handle != null);
 
 
             // Result is equal to Contains' result
-            Contract.Ensures(Contract.Result<bool>() == Contains(handle));
+            Ensures(Result<bool>() == Contains(handle));
 
             // Item is non-null
-            Contract.Ensures(AllowsNull || Contract.ValueAtReturn(out item) != null);
+            Ensures(AllowsNull || ValueAtReturn(out item) != null);
 
 
             item = default(T);
@@ -622,35 +624,35 @@ namespace C6
         public T Replace(IPriorityQueueHandle<T> handle, T item)
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
             // Collection must be non-read-only
-            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
             // Handle must be associated with item in the priority queue
-            Contract.Requires(Contains(handle));
+            Requires(Contains(handle));
 
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Count remains unchanged
-            Contract.Ensures(Count == Contract.OldValue(Count));
+            Ensures(Count == OldValue(Count));
 
             // The collection is non-empty
-            Contract.Ensures(!IsEmpty);
+            Ensures(!IsEmpty);
 
             // Handle is associated with new item
-            Contract.Ensures(EqualityComparer.Equals(this[handle], item));
+            Ensures(EqualityComparer.Equals(this[handle], item));
 
             // Result is the old item with which the handle was associated
-            Contract.Ensures(EqualityComparer.Equals(Contract.OldValue(this[handle]), Contract.Result<T>()));
+            Ensures(EqualityComparer.Equals(OldValue(this[handle]), Result<T>()));
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // Return value is from the collection
-            Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
 
 
             return default(T);
@@ -659,32 +661,32 @@ namespace C6
         public bool Add(ref IPriorityQueueHandle<T> handle, T item)
         {
             // Collection must be non-read-only
-            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Always returns true
-            Contract.Ensures(Contract.Result<bool>());
+            Ensures(Result<bool>());
 
             // The collection becomes non-empty
-            Contract.Ensures(!IsEmpty);
+            Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Contract.Ensures(this.Contains(item, EqualityComparer));
+            Ensures(this.Contains(item, EqualityComparer));
 
             // Adding an item increases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) + 1);
+            Ensures(Count == OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
+            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
 
             // Returned handle is non-null
-            Contract.Ensures(Contract.ValueAtReturn(out handle) != null);
+            Ensures(ValueAtReturn(out handle) != null);
 
             // Returned handle is associated with item
-            Contract.Ensures(EqualityComparer.Equals(this[Contract.ValueAtReturn(out handle)], item));
+            Ensures(EqualityComparer.Equals(this[ValueAtReturn(out handle)], item));
 
 
             return default(bool);
@@ -695,26 +697,26 @@ namespace C6
         public T Remove(IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
             // Handle must be associated with item in the priority queue
-            Contract.Requires(Contains(handle));
+            Requires(Contains(handle));
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
             // Count remains the same if an exception is thrown
-            Contract.EnsuresOnThrow<InvalidPriorityQueueHandleException>(Count == Contract.OldValue(Count));
+            EnsuresOnThrow<InvalidPriorityQueueHandleException>(Count == OldValue(Count));
 
             // Count remains the same if an exception is thrown
-            Contract.EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(Contract.OldValue(this.ToList()), EqualityComparer));
+            EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(OldValue(this.ToList()), EqualityComparer));
 
             // Return value is from the collection
-            Contract.Ensures(Contract.OldValue(this.Contains(Contract.Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
 
 
             return default(T);
@@ -729,7 +731,7 @@ namespace C6
 
 
             // Always returns true
-            Contract.Ensures(Contract.Result<bool>());
+            Ensures(Result<bool>());
 
 
             return default(bool);

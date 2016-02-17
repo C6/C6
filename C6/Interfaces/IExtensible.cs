@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -143,7 +145,7 @@ namespace C6
             get
             {
                 // A set only contains distinct items // TODO: Is this the right place to put it?
-                Contract.Ensures(Contract.Result<bool>() || Count == this.Distinct(EqualityComparer).Count());
+                Ensures(Result<bool>() || Count == this.Distinct(EqualityComparer).Count());
 
 
                 return default(bool);
@@ -158,7 +160,7 @@ namespace C6
 
 
                 // True by convention for collections with set semantics
-                Contract.Ensures(AllowsDuplicates || Contract.Result<bool>()); // TODO: Replace with Contract.Requires(AllowsDuplicates)? Update documentation accordingly!
+                Ensures(AllowsDuplicates || Result<bool>()); // TODO: Replace with Requires(AllowsDuplicates)? Update documentation accordingly!
 
 
                 return default(bool);
@@ -173,7 +175,7 @@ namespace C6
 
 
                 // Result is non-null
-                Contract.Ensures(Contract.Result<SCG.IEqualityComparer<T>>() != null);
+                Ensures(Result<SCG.IEqualityComparer<T>>() != null);
 
 
                 return default(SCG.IEqualityComparer<T>);
@@ -190,26 +192,26 @@ namespace C6
         public bool Add(T item)
         {
             // Collection must be non-read-only
-            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Contract.Ensures(AllowsDuplicates ? Contract.Result<bool>() : !Contract.OldValue(this.Contains(item, EqualityComparer)));
+            Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
 
             // The collection becomes non-empty
-            Contract.Ensures(!IsEmpty);
+            Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Contract.Ensures(this.Contains(item, EqualityComparer));
+            Ensures(this.Contains(item, EqualityComparer));
 
             // Adding an item increases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) + (Contract.Result<bool>() ? 1 : 0));
+            Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
 
             // Adding the item increases the number of equal items by one
-            Contract.Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == Contract.OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Contract.Result<bool>() ? 1 : 0));
+            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Result<bool>() ? 1 : 0));
 
 
             return default(bool);
@@ -218,23 +220,23 @@ namespace C6
         public void AddAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Contract.Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
             // Argument must be non-null
-            Contract.Requires(items != null); // TODO: Use <ArgumentNullException>?
+            Requires(items != null); // TODO: Use <ArgumentNullException>?
 
             // All items must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || Contract.ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
 
 
             // The collection becomes non-empty
-            Contract.Ensures(!IsEmpty);
+            Ensures(!IsEmpty);
 
             // The collection will contain the items added
-            Contract.Ensures(Contract.ForAll(items, item => this.Contains(item, EqualityComparer)));
+            Ensures(ForAll(items, item => this.Contains(item, EqualityComparer)));
 
             // Count can never decrement
-            Contract.Ensures(items.Any() ? Count <= Contract.OldValue(Count) : Count == Contract.OldValue(Count));
+            Ensures(items.Any() ? Count <= OldValue(Count) : Count == OldValue(Count));
 
             // TODO: Make more exact check of added items
 

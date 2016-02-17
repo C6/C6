@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -89,7 +91,7 @@ namespace C6
 
 
             // Enumeration of the collections must yield equal items
-            Contract.Ensures(Contract.Result<bool>() == this.SequenceEqual(otherCollection ?? Enumerable.Empty<T>(), EqualityComparer));
+            Ensures(Result<bool>() == this.SequenceEqual(otherCollection ?? Enumerable.Empty<T>(), EqualityComparer));
 
 
             return default(bool);

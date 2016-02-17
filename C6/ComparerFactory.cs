@@ -5,6 +5,8 @@
 using System;
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -28,10 +30,10 @@ namespace C6
         public static SCG.IComparer<T> CreateComparer<T>(Func<T, T, int> compare)
         {
             // Argument must be non-null
-            Contract.Requires(compare != null);
+            Requires(compare != null);
 
             // Result is non-null
-            Contract.Ensures(Contract.Result<SCG.IComparer<T>>() != null);
+            Ensures(Result<SCG.IComparer<T>>() != null);
 
 
             return new Comparer<T>(compare);
@@ -49,12 +51,12 @@ namespace C6
         public static SCG.IEqualityComparer<T> CreateEqualityComparer<T>(Func<T, T, bool> equals, Func<T, int> getHashCode)
         {
             // Argument must be non-null
-            Contract.Requires(equals != null);
+            Requires(equals != null);
             // Argument must be non-null
-            Contract.Requires(getHashCode != null);
+            Requires(getHashCode != null);
 
             // Result is non-null
-            Contract.Ensures(Contract.Result<SCG.IEqualityComparer<T>>() != null);
+            Ensures(Result<SCG.IEqualityComparer<T>>() != null);
 
 
             return new EqualityComparer<T>(equals, getHashCode);
@@ -73,7 +75,7 @@ namespace C6
         public static SCG.IEqualityComparer<T> CreateReferenceEqualityComparer<T>()
         {
             // Result is non-null
-            Contract.Ensures(Contract.Result<SCG.IEqualityComparer<T>>() != null);
+            Ensures(Result<SCG.IEqualityComparer<T>>() != null);
 
 
             return new EqualityComparer<T>((x, y) => ReferenceEquals(x, y), SCG.EqualityComparer<T>.Default.GetHashCode);
@@ -93,7 +95,7 @@ namespace C6
             {
                 // ReSharper disable InvocationIsSkipped
 
-                Contract.Invariant(_compare != null);
+                Invariant(_compare != null);
 
                 // ReSharper enable InvocationIsSkipped
             }
@@ -102,7 +104,7 @@ namespace C6
             public Comparer(Func<T, T, int> compare)
             {
                 // Argument must be non-null
-                Contract.Requires(compare != null);
+                Requires(compare != null);
 
                 _compare = compare;
             }
@@ -125,8 +127,8 @@ namespace C6
             {
                 // ReSharper disable InvocationIsSkipped
 
-                Contract.Invariant(_equals != null);
-                Contract.Invariant(_getHashCode != null);
+                Invariant(_equals != null);
+                Invariant(_getHashCode != null);
 
                 // ReSharper enable InvocationIsSkipped
             }
@@ -135,10 +137,10 @@ namespace C6
             public EqualityComparer(Func<T, T, bool> equals, Func<T, int> getHashCode)
             {
                 // Argument must be non-null
-                Contract.Requires(equals != null);
+                Requires(equals != null);
 
                 // Argument must be non-null
-                Contract.Requires(getHashCode != null);
+                Requires(getHashCode != null);
 
                 _equals = equals;
                 _getHashCode = getHashCode;

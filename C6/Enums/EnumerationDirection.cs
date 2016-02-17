@@ -4,6 +4,8 @@
 using System;
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace C6
 {
@@ -42,7 +44,7 @@ namespace C6
         public static bool IsForward(this EnumerationDirection direction)
         {
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), direction));
+            Requires(Enum.IsDefined(typeof(EnumerationDirection), direction));
 
 
             return direction == EnumerationDirection.Forwards;

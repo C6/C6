@@ -5,6 +5,8 @@
 using System;
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using static C6.EventTypes;
 
 
@@ -30,7 +32,7 @@ namespace C6
             // ReSharper disable InvocationIsSkipped
 
             // Active events is equal to the actual active events
-            Contract.Invariant(ActiveEvents == (
+            Invariant(ActiveEvents == (
                 (_collectionChanged != null ? Changed : None) |
                 (_collectionCleared != null ? Cleared : None) |
                 (_itemsAdded != null ? Added : None) |
@@ -50,14 +52,14 @@ namespace C6
         public event EventHandler CollectionChanged {
             add {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Changed));
+                Ensures(ActiveEvents.HasFlag(Changed));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Changed));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Changed));
 
 
                 _collectionChanged += value;
@@ -65,14 +67,14 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // The event is inactive, if the event handler is null
-                Contract.Ensures((_collectionChanged == null) == ActiveEvents.HasFlag(Changed));
+                Ensures((_collectionChanged == null) == ActiveEvents.HasFlag(Changed));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) & (_collectionChanged == null ? ~Changed : All)));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) & (_collectionChanged == null ? ~Changed : All)));
 
 
                 _collectionChanged -= value;
@@ -86,14 +88,14 @@ namespace C6
         public event EventHandler<ClearedEventArgs> CollectionCleared {
             add {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Cleared));
+                Ensures(ActiveEvents.HasFlag(Cleared));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Cleared));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Cleared));
 
 
                 _collectionCleared += value;
@@ -101,14 +103,14 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // The event is inactive, if the event handler is null
-                Contract.Ensures((_collectionCleared == null) == ActiveEvents.HasFlag(Cleared));
+                Ensures((_collectionCleared == null) == ActiveEvents.HasFlag(Cleared));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) & (_collectionCleared == null ? ~Cleared : All)));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) & (_collectionCleared == null ? ~Cleared : All)));
 
 
                 _collectionCleared -= value;
@@ -122,14 +124,14 @@ namespace C6
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded {
             add {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Added));
+                Ensures(ActiveEvents.HasFlag(Added));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Added));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Added));
 
 
                 _itemsAdded += value;
@@ -137,14 +139,14 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // The event is inactive, if the event handler is null
-                Contract.Ensures((_itemsAdded == null) == ActiveEvents.HasFlag(Added));
+                Ensures((_itemsAdded == null) == ActiveEvents.HasFlag(Added));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) & (_itemsAdded == null ? ~Added : All)));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) & (_itemsAdded == null ? ~Added : All)));
 
 
                 _itemsAdded -= value;
@@ -158,14 +160,14 @@ namespace C6
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved {
             add {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Removed));
+                Ensures(ActiveEvents.HasFlag(Removed));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Removed));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Removed));
 
 
                 _itemsRemoved += value;
@@ -173,14 +175,14 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // The event is inactive, if the event handler is null
-                Contract.Ensures((_itemsRemoved == null) == ActiveEvents.HasFlag(Removed));
+                Ensures((_itemsRemoved == null) == ActiveEvents.HasFlag(Removed));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) & (_itemsRemoved == null ? ~Removed : All)));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) & (_itemsRemoved == null ? ~Removed : All)));
 
 
                 _itemsRemoved -= value;
@@ -194,14 +196,14 @@ namespace C6
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted {
             add {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Inserted));
+                Ensures(ActiveEvents.HasFlag(Inserted));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Inserted));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Inserted));
 
 
                 _itemInserted += value;
@@ -209,14 +211,14 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // The event is inactive, if the event handler is null
-                Contract.Ensures((_itemInserted == null) == ActiveEvents.HasFlag(Inserted));
+                Ensures((_itemInserted == null) == ActiveEvents.HasFlag(Inserted));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) & (_itemInserted == null ? ~Inserted : All)));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) & (_itemInserted == null ? ~Inserted : All)));
 
 
                 _itemInserted -= value;
@@ -230,14 +232,14 @@ namespace C6
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt {
             add {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(RemovedAt));
+                Ensures(ActiveEvents.HasFlag(RemovedAt));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | RemovedAt));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | RemovedAt));
 
 
                 _itemRemovedAt += value;
@@ -245,14 +247,14 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Contract.Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null); // TODO: Use <ArgumentNullException>?
 
 
                 // The event is inactive, if the event handler is null
-                Contract.Ensures((_itemRemovedAt == null) == ActiveEvents.HasFlag(RemovedAt));
+                Ensures((_itemRemovedAt == null) == ActiveEvents.HasFlag(RemovedAt));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) & (_itemRemovedAt == null ? ~RemovedAt : All)));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) & (_itemRemovedAt == null ? ~RemovedAt : All)));
 
 
                 _itemRemovedAt -= value;
@@ -266,7 +268,7 @@ namespace C6
         public void OnCollectionChanged(object sender)
         {
             // Argument must be non-null
-            Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
 
             _collectionChanged?.Invoke(sender, EventArgs.Empty);
@@ -277,13 +279,13 @@ namespace C6
         public void OnCollectionCleared(object sender, bool full, int count, int? start = null)
         {
             // Argument must be non-null
-            Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be positive
-            Contract.Requires(count > 0);
+            Requires(count > 0);
 
             // Start is only set, if a list view or index range was cleared
-            Contract.Requires(!start.HasValue || !full);
+            Requires(!start.HasValue || !full);
 
 
             _collectionCleared?.Invoke(sender, new ClearedEventArgs(full, count, start));
@@ -293,13 +295,13 @@ namespace C6
         public void OnItemsAdded(object sender, T item, int count)
         {
             // Argument must be non-null
-            Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be positive
-            Contract.Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
 
 
             _itemsAdded?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
@@ -309,13 +311,13 @@ namespace C6
         public void OnItemsRemoved(object sender, T item, int count)
         {
             // Argument must be non-null
-            Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be positive
-            Contract.Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
 
 
             _itemsRemoved?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
@@ -325,13 +327,13 @@ namespace C6
         public void OnItemInserted(object sender, T item, int index)
         {
             // Argument must be non-null
-            Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-negative
-            Contract.Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
 
 
             _itemInserted?.Invoke(sender, new ItemAtEventArgs<T>(item, index));
@@ -341,13 +343,13 @@ namespace C6
         public void OnItemRemovedAt(object sender, T item, int index)
         {
             // Argument must be non-null
-            Contract.Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-negative
-            Contract.Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
 
 
             _itemRemovedAt?.Invoke(sender, new ItemAtEventArgs<T>(item, index));

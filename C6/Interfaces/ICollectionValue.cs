@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 using static C6.EventTypes;
@@ -290,10 +292,10 @@ namespace C6
 
 
                 // The active events must exist
-                Contract.Ensures(All.HasFlag(Contract.Result<EventTypes>()));
+                Ensures(All.HasFlag(Result<EventTypes>()));
 
                 // The active events must be listenable
-                Contract.Ensures(ListenableEvents.HasFlag(Contract.Result<EventTypes>()));
+                Ensures(ListenableEvents.HasFlag(Result<EventTypes>()));
 
                 // TODO: Check this matches the actual active events.
 
@@ -310,7 +312,7 @@ namespace C6
 
 
                 // Value types must return false
-                Contract.Ensures(!typeof(T).IsValueType || !Contract.Result<bool>());
+                Ensures(!typeof(T).IsValueType || !Result<bool>());
 
 
                 return default(bool);
@@ -326,10 +328,10 @@ namespace C6
 
 
                 // Returns a non-negative number
-                Contract.Ensures(Contract.Result<int>() >= 0);
+                Ensures(Result<int>() >= 0);
 
                 // Returns the same as the number of items in the enumerator
-                Contract.Ensures(Contract.Result<int>() == this.Count());
+                Ensures(Result<int>() == this.Count());
 
 
                 return default(int);
@@ -344,7 +346,7 @@ namespace C6
 
 
                 // Result is a valid enum constant
-                Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
+                Ensures(Enum.IsDefined(typeof(Speed), Result<Speed>()));
 
 
                 return default(Speed);
@@ -359,10 +361,10 @@ namespace C6
 
 
                 // Returns true if Count is zero, otherwise false
-                Contract.Ensures(Contract.Result<bool>() == (Count == 0));
+                Ensures(Result<bool>() == (Count == 0));
 
                 // Returns true if the enumerator is empty, otherwise false
-                Contract.Ensures(Contract.Result<bool>() != this.Any());
+                Ensures(Result<bool>() != this.Any());
 
 
                 return default(bool);
@@ -377,7 +379,7 @@ namespace C6
 
 
                 // The listenable events must exist
-                Contract.Ensures(All.HasFlag(Contract.Result<EventTypes>()));
+                Ensures(All.HasFlag(Result<EventTypes>()));
 
 
                 return default(EventTypes);
@@ -387,14 +389,14 @@ namespace C6
         public T Choose()
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // Return value is from the collection
-            Contract.Ensures(this.Contains(Contract.Result<T>()));
+            Ensures(this.Contains(Result<T>()));
 
 
             return default(T);
@@ -404,14 +406,14 @@ namespace C6
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null
-            Contract.Requires(array != null); // TODO: Use <ArgumentNullException>?
+            Requires(array != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be within bounds
-            Contract.Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
-            Contract.Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
 
             // Array contains the collection's items in enumeration order from arrayIndex
-            Contract.Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
+            Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
 
 
             return;
@@ -423,10 +425,10 @@ namespace C6
 
 
             // Result is non-null
-            Contract.Ensures(Contract.Result<T[]>() != null);
+            Ensures(Result<T[]>() != null);
 
             // Result contains the collection's items in enumeration order
-            Contract.Ensures(Enumerable.SequenceEqual(Contract.Result<T[]>(), this));
+            Ensures(Enumerable.SequenceEqual(Result<T[]>(), this));
 
 
             return default(T[]);
@@ -437,17 +439,17 @@ namespace C6
             add
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Changed));
+                Ensures(ActiveEvents.HasFlag(Changed));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Changed));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Changed));
 
 
                 return;
@@ -455,10 +457,10 @@ namespace C6
             remove
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
 
 
                 // No Ensures
@@ -473,17 +475,17 @@ namespace C6
             add
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Cleared));
+                Ensures(ActiveEvents.HasFlag(Cleared));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Cleared));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Cleared));
 
 
                 return;
@@ -491,10 +493,10 @@ namespace C6
             remove
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
 
 
                 // No Ensures
@@ -509,17 +511,17 @@ namespace C6
             add
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Inserted));
+                Ensures(ActiveEvents.HasFlag(Inserted));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Inserted));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Inserted));
 
 
                 return;
@@ -527,10 +529,10 @@ namespace C6
             remove
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
 
 
                 // No Ensures
@@ -545,17 +547,17 @@ namespace C6
             add
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(RemovedAt));
+                Ensures(ActiveEvents.HasFlag(RemovedAt));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | RemovedAt));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | RemovedAt));
 
 
                 return;
@@ -563,10 +565,10 @@ namespace C6
             remove
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
 
 
                 // No Ensures
@@ -581,17 +583,17 @@ namespace C6
             add
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Added));
+                Ensures(ActiveEvents.HasFlag(Added));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Added));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Added));
 
 
                 return;
@@ -599,10 +601,10 @@ namespace C6
             remove
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
 
 
                 // No Ensures
@@ -617,17 +619,17 @@ namespace C6
             add
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
 
 
                 // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Removed));
+                Ensures(ActiveEvents.HasFlag(Removed));
 
                 // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Removed));
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Removed));
 
 
                 return;
@@ -635,10 +637,10 @@ namespace C6
             remove
             {
                 // Value must be non-null
-                Contract.Requires(value != null);
+                Requires(value != null);
 
                 // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
 
 
                 // No Ensures
