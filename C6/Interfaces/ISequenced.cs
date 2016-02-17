@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
@@ -39,7 +38,6 @@ namespace C6
         [Pure]
         int GetSequencedHashCode();
 
-
         /// <summary>
         /// Compares the items in this collection to the items in the other 
         /// collection with regards to multiplicities and sequence order.
@@ -72,7 +70,6 @@ namespace C6
     }
 
 
-
     [ContractClassFor(typeof(ISequenced<>))]
     internal abstract class ISequencedContract<T> : ISequenced<T>
     {
@@ -86,7 +83,6 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         public bool SequencedEquals(ISequenced<T> otherCollection)
         {
             // No Requires
@@ -99,16 +95,85 @@ namespace C6
             throw new NotImplementedException();
         }
 
-
         // ReSharper restore InvocationIsSkipped
-
 
         #region Non-Contract Methods
 
+        #region SCG.IEnumerable<T>
+
+        public abstract SCG.IEnumerator<T> GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
+
+        #region IShowable
+
+        public abstract string ToString(string format, IFormatProvider formatProvider);
+        public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
+
+        #endregion
+
+        #region ICollectionValue<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract bool AllowsNull { get; }
+        public abstract Speed CountSpeed { get; }
+        public abstract bool IsEmpty { get; }
+        public abstract EventTypes ListenableEvents { get; }
+        public abstract T Choose();
+        public abstract T[] ToArray();
+        public abstract event EventHandler CollectionChanged;
+        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
+
+        #endregion
+
+        #region IDirectedEnumerable<T>
+
+        public abstract EnumerationDirection Direction { get; }
+        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => default(IDirectedEnumerable<T>);
+
+        #endregion
+
+        #region IDirectedCollectionValue<T>
+
+        public abstract IDirectedCollectionValue<T> Backwards();
+
+        #endregion
+
+        #region IExtensible
+
+        public abstract bool AllowsDuplicates { get; }
+        public abstract bool DuplicatesByCounting { get; }
+        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public abstract void AddAll(SCG.IEnumerable<T> items);
+
+        #endregion
+
+        #region SCG.ICollection<T>
+
+        void SCG.ICollection<T>.Add(T item) {}
+
+        #endregion
+
+        #region ICollection<T>
+
+        public abstract Speed ContainsSpeed { get; }
+        public abstract int Count { get; }
+        public abstract bool IsReadOnly { get; }
         public abstract bool Add(T item);
         public abstract void Clear();
         public abstract bool Contains(T item);
+        public abstract bool ContainsAll(SCG.IEnumerable<T> items);
+        public abstract int ContainsCount(T item);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract bool Find(ref T item);
+        public abstract bool FindOrAdd(ref T item);
+        public abstract int GetUnsequencedHashCode();
+        public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         public abstract bool Remove(T item);
         public abstract bool Remove(T item, out T removedItem);
         public abstract bool RemoveAll(T item);
@@ -120,50 +185,8 @@ namespace C6
         public abstract bool Update(T item, out T oldItem);
         public abstract bool UpdateOrAdd(T item);
         public abstract bool UpdateOrAdd(T item, out T oldItem);
-        public abstract int Count { get; }
-        public abstract bool Find(ref T item);
-        public abstract bool FindOrAdd(ref T item);
-        public abstract int GetUnsequencedHashCode();
-        public abstract bool IsReadOnly { get; }
-        public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
-        public abstract Speed ContainsSpeed { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
-        public abstract bool AllowsDuplicates { get; }
-        void ICollectionValue<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
-        void SCG.ICollection<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
-        int SCG.ICollection<T>.Count { get { throw new NotImplementedException(); } }
-        public abstract bool DuplicatesByCounting { get; }
-        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
-        bool IExtensible<T>.IsReadOnly { get { throw new NotImplementedException(); } }
-        bool SCG.ICollection<T>.IsReadOnly { get { throw new NotImplementedException(); } }
-        public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
-        bool SCG.ICollection<T>.Remove(T item) { throw new NotImplementedException(); }
-        public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public abstract string ToString(string format, IFormatProvider formatProvider);
-        public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
-        public abstract EventTypes ListenableEvents { get; }
-        public abstract EventTypes ActiveEvents { get; }
-        public abstract event EventHandler CollectionChanged;
-        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
-        void SCG.ICollection<T>.Add(T item) { throw new NotImplementedException(); }
-        bool IExtensible<T>.Add(T item) { throw new NotImplementedException(); }
-        void SCG.ICollection<T>.Clear() { throw new NotImplementedException(); }
-        public abstract bool AllowsNull { get; }
-        public abstract T Choose();
-        bool SCG.ICollection<T>.Contains(T item) { throw new NotImplementedException(); }
-        int ICollectionValue<T>.Count { get { throw new NotImplementedException(); } }
-        public abstract Speed CountSpeed { get; }
-        public abstract bool IsEmpty { get; }
-        public abstract T[] ToArray();
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() { throw new NotImplementedException(); }
-        IDirectedCollectionValue<T> IDirectedCollectionValue<T>.Backwards() { throw new NotImplementedException(); }
-        public abstract EnumerationDirection Direction { get; }
+
+        #endregion
 
         #endregion
     }
