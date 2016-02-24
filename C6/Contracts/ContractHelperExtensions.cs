@@ -33,6 +33,7 @@ namespace C6
         /// of items skipped.</returns>
         /// <remarks>This is only intended for code contracts, and is not 
         /// optimal in any sense.</remarks>
+        [Pure]
         public static SCG.IEnumerable<T> SkipRange<T>(this SCG.IEnumerable<T> enumerable, int startIndex, int count)
         {
             // Argument is non-null

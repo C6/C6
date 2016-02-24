@@ -130,7 +130,7 @@ namespace C6
             Ensures(Result<T>().Equals(OldValue(this.First())));
 
             // Only the first item in the queue is removed
-            Ensures(Enumerable.SequenceEqual(this, OldValue(this.Skip(1).ToList())));
+            Ensures(this.SequenceEqual(OldValue(this.Skip(1).ToList())));
 
 
             return default(T);

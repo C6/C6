@@ -128,7 +128,7 @@ namespace C6
             Ensures(Result<T>().Equals(OldValue(this.Last())));
 
             // Only the last item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Take(Count).ToList())));
+            Ensures(this.SequenceEqual(OldValue(this.Take(Count - 1).ToList())));
 
 
             return default(T);

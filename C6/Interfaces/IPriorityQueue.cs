@@ -712,8 +712,8 @@ namespace C6
             // Count remains the same if an exception is thrown
             EnsuresOnThrow<InvalidPriorityQueueHandleException>(Count == OldValue(Count));
 
-            // Count remains the same if an exception is thrown
-            EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(OldValue(this.ToList()), EqualityComparer));
+            // Collection does not change on exception
+            EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(OldValue(this.ToList())));
 
             // Return value is from the collection
             Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?

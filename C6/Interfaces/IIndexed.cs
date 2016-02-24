@@ -255,7 +255,7 @@ namespace C6
             Ensures(Result<T>().Equals(OldValue(this[index])));
 
             // Only the item at index is removed
-            // TODO: Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
+            Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -279,7 +279,7 @@ namespace C6
 
 
             // Only the items in the index range are removed
-            // TODO: Ensures(this.SequenceEqual(OldValue(this.SkipRange(startIndex, count).ToList())));
+            Ensures(this.SequenceEqual(OldValue(this.SkipRange(startIndex, count).ToList())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - count);
