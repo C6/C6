@@ -200,6 +200,7 @@ namespace C6
             }
         }
 
+        // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsFixedSize
         {
             get

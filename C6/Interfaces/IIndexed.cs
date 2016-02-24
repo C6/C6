@@ -56,6 +56,7 @@ namespace C6
         /// <c>coll.Skip(startIndex).Take(count)</c>, but potentially much
         /// faster.
         /// </remarks>
+        /// <seealso cref="IList{T}.View"/>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
         
@@ -140,6 +141,7 @@ namespace C6
         // ReSharper disable InvocationIsSkipped
 
         // Contracts are copied from ICollection<T>.Count. Keep both updated!
+        // Contracts are copied to IList<T>.Count. Keep both updated!
         public int Count
         {
             get
@@ -192,7 +194,8 @@ namespace C6
 
             return default(IDirectedCollectionValue<T>);
         }
-        
+
+        // Contracts are copied to IList<T>.IndexOf. Keep both updated!
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
@@ -235,6 +238,7 @@ namespace C6
             return default(int);
         }
 
+        // Contracts are copied to IList<T>.RemoveAt. Keep both updated!
         public T RemoveAt(int index)
         {
             // Collection must be non-read-only

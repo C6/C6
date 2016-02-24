@@ -769,6 +769,7 @@ namespace C6
         }
 
         // Contracts are copied from IExtensible<T>.IsReadOnly. Keep both updated!
+        // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
             get
@@ -816,6 +817,7 @@ namespace C6
             return default(bool);
         }
 
+        // Contracts are copied to IList<T>.Clear. Keep both updated!
         public void Clear()
         {
             // Collection must be non-read-only

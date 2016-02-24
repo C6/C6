@@ -163,6 +163,22 @@ namespace C6
         /// <seealso cref="IExtensible{T}.AddAll"/>
         /// <seealso cref="IIndexed{T}.RemoveAt"/>
         /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
+        /// <seealso cref="IList{T}.this"/>
+        /// <seealso cref="IList{T}.Clear"/>
+        /// <seealso cref="IList{T}.Insert(int,T)"/>
+        /// <seealso cref="IList{T}.InsertAll"/>
+        /// <seealso cref="IList{T}.InsertFirst"/>
+        /// <seealso cref="IList{T}.InsertLast"/>
+        /// <seealso cref="IList{T}.Remove()"/>
+        /// <seealso cref="IList{T}.RemoveAt"/>
+        /// <seealso cref="IList{T}.RemoveFirst"/>
+        /// <seealso cref="IList{T}.RemoveLast"/>
+        /// <seealso cref="IList{T}.Reverse"/>
+        /// <seealso cref="IList{T}.Shuffle()"/>
+        /// <seealso cref="IList{T}.Shuffle(Random)"/>
+        /// <seealso cref="IList{T}.Sort()"/>
+        /// <seealso cref="IList{T}.Sort(SCG.IComparer{T})"/>
+        /// <seealso cref="IList{T}.Sort(Comparison{T})"/>
         /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T})"/>
         /// <seealso cref="IPriorityQueue{T}.Contains(IPriorityQueueHandle{T}, out T)"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
@@ -190,6 +206,7 @@ namespace C6
         /// <seealso cref="EventTypes.Cleared"/>
         /// <seealso cref="ICollection{T}.Clear"/>
         /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
+        /// <seealso cref="IList{T}.Clear"/>
         event EventHandler<ClearedEventArgs> CollectionCleared;
 
         /// <summary>
@@ -203,6 +220,11 @@ namespace C6
         /// is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.Inserted"/>
+        /// <seealso cref="IList{T}.this"/>
+        /// <seealso cref="IList{T}.Insert(int,T)"/>
+        /// <seealso cref="IList{T}.InsertAll"/>
+        /// <seealso cref="IList{T}.InsertFirst"/>
+        /// <seealso cref="IList{T}.InsertLast"/>
         /// <seealso cref="IQueue{T}.Enqueue"/>
         /// <seealso cref="IStack{T}.Push"/>
         event EventHandler<ItemAtEventArgs<T>> ItemInserted;
@@ -218,6 +240,11 @@ namespace C6
         /// </remarks>
         /// <seealso cref="EventTypes.RemovedAt"/>
         /// <seealso cref="IIndexed{T}.RemoveAt"/>
+        /// <seealso cref="IList{T}.this"/>
+        /// <seealso cref="IList{T}.Remove()"/>
+        /// <seealso cref="IList{T}.RemoveAt"/>
+        /// <seealso cref="IList{T}.RemoveFirst"/>
+        /// <seealso cref="IList{T}.RemoveLast"/>
         /// <seealso cref="IQueue{T}.Dequeue"/>
         /// <seealso cref="IStack{T}.Pop"/>
         event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
@@ -239,6 +266,11 @@ namespace C6
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IExtensible{T}.Add"/>
         /// <seealso cref="IExtensible{T}.AddAll"/>
+        /// <seealso cref="IList{T}.this"/>
+        /// <seealso cref="IList{T}.Insert(int,T)"/>
+        /// <seealso cref="IList{T}.InsertAll"/>
+        /// <seealso cref="IList{T}.InsertFirst"/>
+        /// <seealso cref="IList{T}.InsertLast"/>
         /// <seealso cref="IPriorityQueue{T}.Replace"/>
         /// <seealso cref="IPriorityQueue{T}.this[IPriorityQueueHandle{T}]"/>
         /// <seealso cref="IQueue{T}.Enqueue"/>
@@ -265,6 +297,11 @@ namespace C6
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IIndexed{T}.RemoveAt"/>
+        /// <seealso cref="IList{T}.this"/>
+        /// <seealso cref="IList{T}.Remove()"/>
+        /// <seealso cref="IList{T}.RemoveAt"/>
+        /// <seealso cref="IList{T}.RemoveFirst"/>
+        /// <seealso cref="IList{T}.RemoveLast"/>
         /// <seealso cref="IPriorityQueue{T}.Remove"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
