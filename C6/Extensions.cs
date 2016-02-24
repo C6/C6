@@ -227,5 +227,152 @@ namespace C6
 
             return enumerable.AllConsecutiveElements((x, y) => comparison(x, y) <= 0);
         }
+        
+        // TODO: Test
+        /// <summary>
+        /// Shuffles the elements in the array.
+        /// </summary>
+        /// <param name="array">The array to shuffle.</param>
+        public static void Shuffle<T>(this T[] array)
+        {
+            // Argument must be non-null
+            Requires(array != null); // TODO: Use <ArgumentNullException>?
+            
+
+            Shuffle(array, new Random());
+        }
+
+        // TODO: Test
+        // TODO: IList extensions?
+        /// <summary>
+        /// Shuffles the elements in the list.
+        /// </summary>
+        /// <param name="list">The list to shuffle.</param>
+        public static void Shuffle<T>(this SCG.IList<T> list)
+        {
+            // Argument must be non-null
+            Requires(list != null); // TODO: Use <ArgumentNullException>?
+            
+
+            Shuffle(list, new Random());
+        }
+        
+        // TODO: Test
+        /// <summary>
+        /// Shuffles the items in the array according to the specified random
+        /// source.
+        /// </summary>
+        /// <param name="array">The array to shuffle.</param>
+        /// <param name="random">The random source.</param>
+        public static void Shuffle<T>(this T[] array, Random random)
+        {
+            // Argument must be non-null
+            Requires(array != null); // TODO: Use <ArgumentNullException>?
+
+
+            random = random ?? new Random(); // TODO: Use C5.Random?
+            var n = array.Length;
+
+            while (--n > 0) {
+                array.Swap(random.Next(n + 1), n);
+            }
+        }
+        
+        // TODO: Test
+        // TODO: IList extensions?
+        /// <summary>
+        /// Shuffles the items in the list according to the specified random
+        /// source.
+        /// </summary>
+        /// <param name="list">The list to shuffle.</param>
+        /// <param name="random">The random source.</param>
+        public static void Shuffle<T>(this SCG.IList<T> list, Random random)
+        {
+            // Argument must be non-null
+            Requires(list != null); // TODO: Use <ArgumentNullException>?
+            
+            // List must be non-read-only
+            Requires(!list.IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+
+            random = random ?? new Random(); // TODO: Use C5.Random?
+            var n = list.Count;
+
+            while (--n > 0) {
+                list.Swap(random.Next(n + 1), n);
+            }
+        }
+        
+        // TODO: Test?
+        /// <summary>
+        /// Swaps the elements at the specified indices in an array.
+        /// </summary>
+        /// <param name="array">The array in which to swap the elements.</param>
+        /// <param name="i">The index of the first element.</param>
+        /// <param name="j">The index of the second element.</param>
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        public static void Swap<T>(this T[] array, int i, int j)
+        {
+            // Argument must be non-null
+            Requires(array != null);
+
+            // Argument must be within bounds
+            Requires(0 <= i);
+            Requires(i < array.Length);
+
+            // Argument must be within bounds
+            Requires(0 <= j);
+            Requires(j < array.Length);
+
+
+            // The values are swapped
+            Ensures(Equals(array[i], OldValue(array[j])));
+            Ensures(Equals(array[j], OldValue(array[i])));
+
+
+            if (i != j) {
+                var element = array[i];
+                array[i] = array[j];
+                array[j] = element;
+            }
+        }
+        
+        // TODO: Test?
+        // TODO: IList extensions?
+        /// <summary>
+        /// Swaps the elements at the specified indices in a list.
+        /// </summary>
+        /// <param name="list">The list in which to swap the elements.</param>
+        /// <param name="i">The index of the first element.</param>
+        /// <param name="j">The index of the second element.</param>
+        /// <typeparam name="T">The type of the elements in the list.</typeparam>
+        public static void Swap<T>(this SCG.IList<T> list, int i, int j)
+        {
+            // Argument must be non-null
+            Requires(list != null); // TODO: Use <ArgumentNullException>?
+
+            // List must be non-read-only
+            Requires(!list.IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Argument must be within bounds
+            Requires(0 <= i); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(i < list.Count); // TODO: Use <ArgumentOutOfRangeException>?
+
+            // Argument must be within bounds
+            Requires(0 <= j); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(j < list.Count); // TODO: Use <ArgumentOutOfRangeException>?
+
+
+            // The values are swapped
+            Ensures(Equals(list[i], OldValue(list[j])));
+            Ensures(Equals(list[j], OldValue(list[i])));
+
+
+            if (i != j) {
+                var element = list[i];
+                list[i] = list[j];
+                list[j] = element;
+            }
+        }
     }
 }
