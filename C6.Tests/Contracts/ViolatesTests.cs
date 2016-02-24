@@ -1,6 +1,11 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
+
 using NUnit.Framework;
+
+using static System.Diagnostics.Contracts.Contract;
+
+using Assert = NUnit.Framework.Assert;
+
 
 namespace C6.Tests.Contracts
 {
@@ -12,7 +17,7 @@ namespace C6.Tests.Contracts
             Assert.That(HasViolatedPrecondition, Violates.Precondition);
 
         private static void HasViolatedPrecondition() =>
-            Contract.Requires(false);
+            Requires(false);
 
 
         [Test]
@@ -20,7 +25,7 @@ namespace C6.Tests.Contracts
             Assert.That(HasViolatedTypedPrecondition, Violates.TypedPrecondition<ViolatesTestException>());
 
         private static void HasViolatedTypedPrecondition() =>
-            Contract.Requires<ViolatesTestException>(false);
+            Requires<ViolatesTestException>(false);
 
 
         [Test]
@@ -28,7 +33,7 @@ namespace C6.Tests.Contracts
             Assert.That(HasNonViolatedPrecondition, Does.Not.ViolatePrecondition());
 
         private static void HasNonViolatedPrecondition() =>
-            Contract.Requires(true);
+            Requires(true);
 
 
         [Test]
@@ -36,7 +41,7 @@ namespace C6.Tests.Contracts
             Assert.That(HasNonViolatedTypedPrecondition, Does.Not.ViolatePrecondition());
 
         private static void HasNonViolatedTypedPrecondition() =>
-            Contract.Requires<ArgumentException>(true);
+            Requires<ArgumentException>(true);
 
 
 

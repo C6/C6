@@ -1,10 +1,11 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+
+using static System.Diagnostics.Contracts.Contract;
 
 
 namespace C6
@@ -18,36 +19,20 @@ namespace C6
     [DebuggerDisplay("(ItemAtEventArgs {Index} '{Item}')")] // TODO: format appropriately
     public class ItemAtEventArgs<T> : EventArgs
     {
-        /// <summary>
-        /// Gets the item inserted or removed from the collection.
-        /// </summary>
-        /// <value>The item inserted or removed from the collection.</value>
-        public T Item { get; }
-
-
-        /// <summary>
-        /// Gets the index the item was inserted at or removed from in the
-        /// collection.
-        /// </summary>
-        /// <value>The index at which the item was inserted or removed.</value>
-        public int Index { get; }
-
-
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             // ReSharper disable InvocationIsSkipped
 
             // Item is non-null
-            // Contract.Invariant(Item != null);
+            // Invariant(Item != null);
 
             // TODO: Contract index bounds more precisely when actually used
             // Index is non-negative
-            Contract.Invariant(Index >= 0);
-            
+            Invariant(Index >= 0);
+
             // ReSharper restore InvocationIsSkipped
         }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemAtEventArgs{T}"/>
@@ -59,18 +44,30 @@ namespace C6
         public ItemAtEventArgs(T item, int index)
         {
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-negative
-            Contract.Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
 
 
             Item = item;
             Index = index;
 
-
-            // Contract.Assume(Item != null); // Static checker shortcoming
-            Contract.Assume(Index >= 0); // Static checker shortcoming
+            // Assume(Item != null); // Static checker shortcoming
+            Assume(Index >= 0); // Static checker shortcoming
         }
+
+        /// <summary>
+        /// Gets the item inserted or removed from the collection.
+        /// </summary>
+        /// <value>The item inserted or removed from the collection.</value>
+        public T Item { get; }
+
+        /// <summary>
+        /// Gets the index the item was inserted at or removed from in the
+        /// collection.
+        /// </summary>
+        /// <value>The index at which the item was inserted or removed.</value>
+        public int Index { get; }
     }
 }

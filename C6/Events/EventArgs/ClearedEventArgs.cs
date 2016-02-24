@@ -1,10 +1,11 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+
+using static System.Diagnostics.Contracts.Contract;
 
 
 namespace C6
@@ -17,47 +18,19 @@ namespace C6
     [DebuggerDisplay("(ClearedEventArgs {Count} {Full})")] // TODO: format appropriately
     public class ClearedEventArgs : EventArgs
     {
-        // TODO: Consider replacing Full with an enum instead of bool.
-        /// <summary>
-        /// Gets a value indicating whether a collection was cleared, or
-        /// whether a list view or an index range was cleared.
-        /// </summary>
-        /// <value><c>true</c> if the operation cleared a collection;
-        /// <c>false</c> if the operation cleared a list view or an index range
-        /// (even if the view or range is the entire collection).</value>
-        public bool Full { get; }
-
-        /// <summary>
-        /// Gets the number of items cleared by the operation.
-        /// </summary>
-        /// <value>The number of items cleared by the operation.</value>
-        [Pure]
-        public int Count { get; }
-
-        /// <summary>
-        /// Gets the position (when known) of the first item if a list view or
-        /// an index range was cleared.
-        /// </summary>
-        /// <value>The index of the first item cleared, when known;
-        /// otherwise, <c>null</c>.</value>
-        [Pure]
-        public int? Start { get; }
-
-
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             // ReSharper disable InvocationIsSkipped
 
             // Count is positive
-            Contract.Invariant(Count > 0);
+            Invariant(Count > 0);
 
             // Start is only set, if a list view or index range was cleared
-            Contract.Invariant(!Start.HasValue || !Full);
+            Invariant(!Start.HasValue || !Full);
 
             // ReSharper restore InvocationIsSkipped
         }
-
 
         // TODO: Default arguments are not CLS compliant!
         // TODO: Look at FDG 8.8
@@ -76,10 +49,10 @@ namespace C6
         public ClearedEventArgs(bool full, int count, int? start = null)
         {
             // Argument must be positive
-            Contract.Requires(count > 0);
+            Requires(count > 0);
 
             // Start is only set, if a list view or index range was cleared
-            Contract.Requires(!start.HasValue || !full);
+            Requires(!start.HasValue || !full);
 
 
             Full = full;
@@ -87,8 +60,35 @@ namespace C6
             Start = start;
 
 
-            Contract.Assume(Count > 0); // Static checker shortcoming
-            Contract.Assume(!Start.HasValue || !Full); // Static checker shortcoming
+            Assume(Count > 0); // Static checker shortcoming
+            Assume(!Start.HasValue || !Full); // Static checker shortcoming
         }
+
+        /// <summary>
+        /// Gets the number of items cleared by the operation.
+        /// </summary>
+        /// <value>The number of items cleared by the operation.</value>
+        [Pure]
+        public int Count { get; }
+
+        // TODO: Consider replacing Full with an enum instead of bool.
+        /// <summary>
+        /// Gets a value indicating whether a collection was cleared, or
+        /// whether a list view or an index range was cleared.
+        /// </summary>
+        /// <value><c>true</c> if the operation cleared a collection;
+        /// <c>false</c> if the operation cleared a list view or an index range
+        /// (even if the view or range is the entire collection).</value>
+        [Pure]
+        public bool Full { get; }
+
+        /// <summary>
+        /// Gets the position (when known) of the first item if a list view or
+        /// an index range was cleared.
+        /// </summary>
+        /// <value>The index of the first item cleared, when known;
+        /// otherwise, <c>null</c>.</value>
+        [Pure]
+        public int? Start { get; }
     }
 }

@@ -6,6 +6,8 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -28,12 +30,12 @@ namespace C6
         public static SCG.IEnumerable<T> Append<T>(this SCG.IEnumerable<T> enumerable, T item)
         {
             // Argument must be non-null
-            Contract.Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
             // Argument must be non-null
-            // Contract.Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null); // TODO: Use <ArgumentNullException>?
 
             // Result is non-null
-            Contract.Ensures(Contract.Result<SCG.IEnumerable<T>>() != null);
+            Ensures(Result<SCG.IEnumerable<T>>() != null);
 
 
             foreach (var t in enumerable) {
@@ -56,11 +58,11 @@ namespace C6
         public static bool IsEmpty<T>(this SCG.IEnumerable<T> enumerable)
         {
             // Argument must be non-null
-            Contract.Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
 
 
             // Returns true if Count is zero, otherwise false
-            Contract.Ensures(Contract.Result<bool>() != enumerable.Any());
+            Ensures(Result<bool>() != enumerable.Any());
 
 
             return (enumerable as ICollectionValue<T>)?.IsEmpty ?? !enumerable.Any();
@@ -71,17 +73,17 @@ namespace C6
         public static bool Find<T>(this SCG.IEnumerable<T> enumerable, Func<T, bool> predicate, out T item)
         {
             // Argument must be non-null
-            Contract.Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
-            Contract.Requires(predicate != null); // TODO: Use <ArgumentNullException>?
+            Requires(predicate != null); // TODO: Use <ArgumentNullException>?
 
 
             // Returns true if p(x) returned true for some item x; otherwise false
-            Contract.Ensures(Contract.Result<bool>() == enumerable.Any(predicate));
+            Ensures(Result<bool>() == enumerable.Any(predicate));
 
             // Result item equals the first (or default) item satisfying the predicate
-            Contract.Ensures(Contract.ValueAtReturn(out item).Equals(enumerable.FirstOrDefault(predicate)));
+            Ensures(ValueAtReturn(out item).Equals(enumerable.FirstOrDefault(predicate)));
 
 
             bool result;

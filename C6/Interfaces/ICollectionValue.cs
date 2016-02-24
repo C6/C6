@@ -1,12 +1,13 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+
+using static System.Diagnostics.Contracts.Contract;
 
 using SCG = System.Collections.Generic;
 
@@ -29,28 +30,111 @@ namespace C6
     public interface ICollectionValue<T> : SCG.IEnumerable<T>, IShowable
     {
         /// <summary>
-        /// Gets a bit flag indicating the collection's subscribable events.
-        /// </summary>
-        /// <value>
-        /// The bit flag indicating the collection's subscribable events.
-        /// </value>
-        [Pure]
-        EventTypes ListenableEvents { get; }
-
-
-        /// <summary>
         /// Gets a bit flag indicating the collection's currently subscribed
         /// events.
         /// </summary>
         /// <value>
         /// The bit flag indicating the collection's currently subscribed events.
         /// </value>
+        /// <seealso cref="ListenableEvents"/>
         [Pure]
         EventTypes ActiveEvents { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether the collection allows <c>null</c>
+        /// items.
+        /// </summary>
+        /// <value><c>true</c> if the collection allows <c>null</c> items;
+        /// otherwise, <c>false</c>.</value>
+        /// <remarks>
+        /// <para>
+        /// If the collection disallows <c>null</c> items, none of the items in
+        /// the collection can be <c>null</c>: adding or inserting a
+        /// <c>null</c> item will result in an error, and any property or
+        /// method returning an item from the collection is guaranteed not to
+        /// return <c>null</c>. If the collection allows <c>null</c> items, the
+        /// collection user must check for <c>null</c>.
+        /// </para>
+        /// <para>
+        /// <see cref="AllowsNull"/> does not reflect whether the collection 
+        /// actually contains any <c>null</c> items.
+        /// </para>
+        /// <para>
+        /// If <typeparamref name="T"/> is a value type, then
+        /// <see cref="AllowsNull"/> is always <c>false</c>.
+        /// </para>
+        /// </remarks>
+        [Pure]
+        bool AllowsNull { get; }
 
         /// <summary>
-        /// Occurs when the collection is changed.
+        /// Gets the number of items contained in the collection.
+        /// </summary>
+        /// <value>The number of items contained in the collection.</value>
+        [Pure]
+        int Count { get; }
+
+        /// <summary>
+        /// Gets a value characterizing the asymptotic complexity of
+        /// <see cref="Count"/> proportional to collection size (worst-case or
+        /// amortized as relevant).
+        /// </summary>
+        /// <value>A characterization of the asymptotic speed of
+        /// <see cref="Count"/> proportional to collection size.</value>
+        [Pure]
+        Speed CountSpeed { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the collection is empty.
+        /// </summary>
+        /// <value><c>true</c> if the collection is empty;
+        /// otherwise, <c>false</c>.</value>
+        [Pure]
+        bool IsEmpty { get; }
+
+        /// <summary>
+        /// Gets a bit flag indicating the collection's subscribable events.
+        /// </summary>
+        /// <value>
+        /// The bit flag indicating the collection's subscribable events.
+        /// </value>
+        /// <seealso cref="ActiveEvents"/>
+        [Pure]
+        EventTypes ListenableEvents { get; }
+
+        /// <summary>
+        /// Returns some item from the collection.
+        /// </summary>
+        /// <returns>Some item in the collection.</returns>
+        /// <remarks>
+        /// Implementations must assure that the item returned may be 
+        /// efficiently removed. However, it is not required that repeated 
+        /// calls give the same result.
+        /// </remarks>
+        [Pure]
+        T Choose();
+
+        /// <summary>
+        /// Copies the items of the collection to an <see cref="Array"/>,
+        /// starting at a particular <see cref="Array"/> index.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="Array"/> that is
+        /// the destination of the items copied from the collection. The
+        /// <see cref="Array"/> must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based arrayIndex in array at 
+        /// which copying begins.</param>
+        [Pure]
+        void CopyTo(T[] array, int arrayIndex);
+
+        /// <summary>
+        /// Creates an array from the collection in the same order as the enumerator would output them.
+        /// </summary>
+        /// <returns>An array that contains the items from the collection.</returns>
+        [Pure]
+        T[] ToArray();
+
+        /// <summary>
+        /// Occurs when the collection has changed.
         /// </summary>
         /// <remarks>
         /// <para>The event is raised after an operation on the collection has 
@@ -94,10 +178,8 @@ namespace C6
         /// <seealso cref="IStack{T}.Push"/>
         event EventHandler CollectionChanged;
 
-
-        // TODO: Document different scenarios (8.8.5)
         /// <summary>
-        /// Occurs when the collection is cleared.
+        /// Occurs when (part of) the collection has been cleared.
         /// </summary>
         /// <remarks>
         /// The event is raised after the collection (or a part of it) is 
@@ -110,10 +192,38 @@ namespace C6
         /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
         event EventHandler<ClearedEventArgs> CollectionCleared;
 
-
-        // TODO: When an item is inserted into a list, both ItemInserted and ItemsAdded events will be fired.
         /// <summary>
-        /// Occurs when an item is added to the collection.
+        /// Occurs when an item was inserted at a specific position in the
+        /// collection.
+        /// </summary>
+        /// <remarks>
+        /// The event is raised after an item has been inserted into the
+        /// collection and the collection in an internally consistent state,
+        /// and before the corresponding <see cref="CollectionChanged"/> event
+        /// is raised.
+        /// </remarks>
+        /// <seealso cref="EventTypes.Inserted"/>
+        /// <seealso cref="IQueue{T}.Enqueue"/>
+        /// <seealso cref="IStack{T}.Push"/>
+        event EventHandler<ItemAtEventArgs<T>> ItemInserted;
+
+        /// <summary>
+        /// Occurs when an item was removed from a specific position in the
+        /// collection.
+        /// </summary>
+        /// <remarks>
+        /// The event is raised after an item has been removed from the collection 
+        /// and the collection in an internally consistent state, and before
+        /// the corresponding <see cref="CollectionChanged"/> event is raised.
+        /// </remarks>
+        /// <seealso cref="EventTypes.RemovedAt"/>
+        /// <seealso cref="IIndexed{T}.RemoveAt"/>
+        /// <seealso cref="IQueue{T}.Dequeue"/>
+        /// <seealso cref="IStack{T}.Pop"/>
+        event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+
+        /// <summary>
+        /// Occurs when an item was added to the collection.
         /// </summary>
         /// <remarks>
         /// The event is raised after an item has been added to the collection 
@@ -135,9 +245,8 @@ namespace C6
         /// <seealso cref="IStack{T}.Push"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
 
-
         /// <summary>
-        /// Occurs when an item is removed from the collection.
+        /// Occurs when an item was removed from the collection.
         /// </summary>
         /// <remarks>
         /// The event is raised after an item has been removed from the
@@ -166,130 +275,7 @@ namespace C6
         /// <seealso cref="IQueue{T}.Dequeue"/>
         /// <seealso cref="IStack{T}.Pop"/>
         event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
-
-
-        /// <summary>
-        /// Occurs when an item is inserted at a specific position in the
-        /// collection.
-        /// </summary>
-        /// <remarks>
-        /// The event is raised after an item has been inserted into the
-        /// collection and the collection in an internally consistent state,
-        /// and before the corresponding <see cref="CollectionChanged"/> event
-        /// is raised.
-        /// </remarks>
-        /// <seealso cref="EventTypes.Inserted"/>
-        /// <seealso cref="IQueue{T}.Enqueue"/>
-        /// <seealso cref="IStack{T}.Push"/>
-        event EventHandler<ItemAtEventArgs<T>> ItemInserted;
-
-
-        /// <summary>
-        /// Occurs when an item is removed from a specific position in the
-        /// collection.
-        /// </summary>
-        /// <remarks>
-        /// The event is raised after an item has been removed from the collection 
-        /// and the collection in an internally consistent state, and before
-        /// the corresponding <see cref="CollectionChanged"/> event is raised.
-        /// </remarks>
-        /// <seealso cref="EventTypes.RemovedAt"/>
-        /// <seealso cref="IIndexed{T}.RemoveAt"/>
-        /// <seealso cref="IQueue{T}.Dequeue"/>
-        /// <seealso cref="IStack{T}.Pop"/>
-        event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
-
-
-        /// <summary>
-        /// Gets a value indicating whether the collection is empty.
-        /// </summary>
-        /// <value><c>true</c> if the collection is empty;
-        /// otherwise, <c>false</c>.</value>
-        [Pure]
-        bool IsEmpty { get; }
-
-
-        /// <summary>
-        /// Gets the number of items contained in the collection.
-        /// </summary>
-        /// <value>The number of items contained in the collection.</value>
-        [Pure]
-        int Count { get; }
-
-
-        /// <summary>
-        /// Gets a value characterizing the asymptotic complexity of
-        /// <see cref="Count"/> proportional to collection size (worst-case or
-        /// amortized as relevant).
-        /// </summary>
-        /// <value>A characterization of the asymptotic speed of
-        /// <see cref="Count"/> proportional to collection size.</value>
-        [Pure]
-        Speed CountSpeed { get; }
-
-
-        /// <summary>
-        /// Gets a value indicating whether the collection allows <c>null</c>
-        /// items.
-        /// </summary>
-        /// <value><c>true</c> if the collection allows <c>null</c> items;
-        /// otherwise, <c>false</c>.</value>
-        /// <remarks>
-        /// <para>
-        /// If the collection disallows <c>null</c> items, none of the items in
-        /// the collection can be <c>null</c>: adding or inserting a
-        /// <c>null</c> item will result in an error, and any property or
-        /// method returning an item from the collection is guaranteed not to
-        /// return <c>null</c>. If the collection allows <c>null</c> items, the
-        /// collection user must check for <c>null</c>.
-        /// </para>
-        /// <para>
-        /// <see cref="AllowsNull"/> does not reflect whether the collection 
-        /// actually contains any <c>null</c> items.
-        /// </para>
-        /// <para>
-        /// If <typeparamref name="T"/> is a value type, then
-        /// <see cref="AllowsNull"/> is always <c>false</c>.
-        /// </para>
-        /// </remarks>
-        [Pure]
-        bool AllowsNull { get; }
-
-
-        /// <summary>
-        /// Returns some item from the collection.
-        /// </summary>
-        /// <returns>Some item in the collection.</returns>
-        /// <remarks>
-        /// Implementations must assure that the item returned may be 
-        /// efficiently removed. However, it is not required that repeated 
-        /// calls give the same result.
-        /// </remarks>
-        [Pure]
-        T Choose();
-
-
-        /// <summary>
-        /// Copies the items of the collection to an <see cref="Array"/>,
-        /// starting at a particular <see cref="Array"/> index.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="Array"/> that is
-        /// the destination of the items copied from the collection. The
-        /// <see cref="Array"/> must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based arrayIndex in array at 
-        /// which copying begins.</param>
-        [Pure]
-        void CopyTo(T[] array, int arrayIndex);
-
-
-        /// <summary>
-        /// Creates an array from the collection in the same order as the enumerator would output them.
-        /// </summary>
-        /// <returns>An array that contains the items from the collection.</returns>
-        [Pure]
-        T[] ToArray();
     }
-
 
 
     // TODO: Add contracts on the events to ensure they are thrown http://stackoverflow.com/questions/34591107/writing-code-contracts-on-methods-throwing-events
@@ -298,287 +284,23 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        public EventTypes ListenableEvents {
-            get {
-                // No Requires
-
-
-                // The listenable events must exist
-                Contract.Ensures(All.HasFlag(Contract.Result<EventTypes>()));
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public EventTypes ActiveEvents {
-            get {
+        public EventTypes ActiveEvents
+        {
+            get
+            {
                 // No Requires
 
 
                 // The active events must exist
-                Contract.Ensures(All.HasFlag(Contract.Result<EventTypes>()));
+                Ensures(All.HasFlag(Result<EventTypes>()));
 
                 // The active events must be listenable
-                Contract.Ensures(ListenableEvents.HasFlag(Contract.Result<EventTypes>()));
+                Ensures(ListenableEvents.HasFlag(Result<EventTypes>()));
 
                 // TODO: Check this matches the actual active events.
 
 
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public event EventHandler CollectionChanged {
-            add {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
-
-
-                // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Changed));
-
-                // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Changed));
-
-
-                throw new NotImplementedException();
-            }
-            remove {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
-
-
-                // No Ensures
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public event EventHandler<ClearedEventArgs> CollectionCleared {
-            add {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
-
-
-                // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Cleared));
-
-                // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Cleared));
-
-
-                throw new NotImplementedException();
-            }
-            remove {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
-
-
-                // No Ensures
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded {
-            add {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
-
-
-                // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Added));
-
-                // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Added));
-
-
-                throw new NotImplementedException();
-            }
-            remove {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
-
-
-                // No Ensures
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved {
-            add {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
-
-
-                // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Removed));
-
-                // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Removed));
-
-
-                throw new NotImplementedException();
-            }
-            remove {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
-
-
-                // No Ensures
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted {
-            add {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
-
-
-                // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(Inserted));
-
-                // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | Inserted));
-
-
-                throw new NotImplementedException();
-            }
-            remove {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
-
-
-                // No Ensures
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt {
-            add {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
-
-
-                // Event is active
-                Contract.Ensures(ActiveEvents.HasFlag(RemovedAt));
-
-                // No other events became active
-                Contract.Ensures(ActiveEvents == (Contract.OldValue(ActiveEvents) | RemovedAt));
-
-
-                throw new NotImplementedException();
-            }
-            remove {
-                // Value must be non-null
-                Contract.Requires(value != null);
-
-                // Event is listenable
-                Contract.Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
-
-
-                // No Ensures
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-        public bool IsEmpty {
-            get {
-                // No Requires
-
-
-                // Returns true if Count is zero, otherwise false
-                Contract.Ensures(Contract.Result<bool>() == (Count == 0));
-
-                // Returns true if the enumerator is empty, otherwise false
-                Contract.Ensures(Contract.Result<bool>() != this.Any());
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        // Contracts are copied to ICollection<T>.Count. Keep both updated!
-        public int Count {
-            get {
-                // No Requires
-
-
-                // Returns a non-negative number
-                Contract.Ensures(Contract.Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Contract.Ensures(Contract.Result<int>() == this.Count());
-
-
-                throw new NotImplementedException();
-            }
-        }
-
-
-        public Speed CountSpeed {
-            get {
-                // No Requires
-
-
-                // Result is a valid enum constant
-                Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
-
-
-                throw new NotImplementedException();
+                return default(EventTypes);
             }
         }
 
@@ -590,47 +312,112 @@ namespace C6
 
 
                 // Value types must return false
-                Contract.Ensures(!typeof(T).IsValueType || !Contract.Result<bool>());
+                Ensures(!typeof(T).IsValueType || !Result<bool>());
 
 
-                throw new NotImplementedException();
+                return default(bool);
+            }
+        }
+
+        // Contracts are copied to ICollection<T>.Count. Keep both updated!
+        public int Count
+        {
+            get
+            {
+                // No Requires
+
+
+                // Returns a non-negative number
+                Ensures(Result<int>() >= 0);
+
+                // Returns the same as the number of items in the enumerator
+                Ensures(Result<int>() == this.Count());
+
+
+                return default(int);
+            }
+        }
+
+        public Speed CountSpeed
+        {
+            get
+            {
+                // No Requires
+
+
+                // Result is a valid enum constant
+                Ensures(Enum.IsDefined(typeof(Speed), Result<Speed>()));
+
+
+                return default(Speed);
+            }
+        }
+
+        public bool IsEmpty
+        {
+            get
+            {
+                // No Requires
+
+
+                // Returns true if Count is zero, otherwise false
+                Ensures(Result<bool>() == (Count == 0));
+
+                // Returns true if the enumerator is empty, otherwise false
+                Ensures(Result<bool>() != this.Any());
+
+
+                return default(bool);
+            }
+        }
+
+        public EventTypes ListenableEvents
+        {
+            get
+            {
+                // No Requires
+
+
+                // The listenable events must exist
+                Ensures(All.HasFlag(Result<EventTypes>()));
+
+
+                return default(EventTypes);
             }
         }
 
         public T Choose()
         {
             // Collection must be non-empty
-            Contract.Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
 
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // Return value is from the collection
-            Contract.Ensures(this.Contains(Contract.Result<T>()));
+            Ensures(this.Contains(Result<T>()));
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
-
 
         // Contracts are copied to ICollection.CopyTo. Keep both updated!
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null
-            Contract.Requires(array != null); // TODO: Use <ArgumentNullException>?
+            Requires(array != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be within bounds
-            Contract.Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
-            Contract.Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
 
             // Array contains the collection's items in enumeration order from arrayIndex
-            Contract.Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
+            Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
 
 
-            throw new NotImplementedException();
+            return;
         }
-
 
         public T[] ToArray()
         {
@@ -638,25 +425,248 @@ namespace C6
 
 
             // Result is non-null
-            Contract.Ensures(Contract.Result<T[]>() != null);
+            Ensures(Result<T[]>() != null);
 
             // Result contains the collection's items in enumeration order
-            Contract.Ensures(Enumerable.SequenceEqual(Contract.Result<T[]>(), this));
+            Ensures(Enumerable.SequenceEqual(Result<T[]>(), this));
 
 
-            throw new NotImplementedException();
+            return default(T[]);
         }
 
+        public event EventHandler CollectionChanged
+        {
+            add
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
+
+
+                // Event is active
+                Ensures(ActiveEvents.HasFlag(Changed));
+
+                // No other events became active
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Changed));
+
+
+                return;
+            }
+            remove
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
+
+
+                // No Ensures
+
+
+                return;
+            }
+        }
+
+        public event EventHandler<ClearedEventArgs> CollectionCleared
+        {
+            add
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
+
+
+                // Event is active
+                Ensures(ActiveEvents.HasFlag(Cleared));
+
+                // No other events became active
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Cleared));
+
+
+                return;
+            }
+            remove
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
+
+
+                // No Ensures
+
+
+                return;
+            }
+        }
+
+        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
+        {
+            add
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
+
+
+                // Event is active
+                Ensures(ActiveEvents.HasFlag(Inserted));
+
+                // No other events became active
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Inserted));
+
+
+                return;
+            }
+            remove
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
+
+
+                // No Ensures
+
+
+                return;
+            }
+        }
+
+        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
+        {
+            add
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
+
+
+                // Event is active
+                Ensures(ActiveEvents.HasFlag(RemovedAt));
+
+                // No other events became active
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | RemovedAt));
+
+
+                return;
+            }
+            remove
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
+
+
+                // No Ensures
+
+
+                return;
+            }
+        }
+
+        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
+        {
+            add
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
+
+
+                // Event is active
+                Ensures(ActiveEvents.HasFlag(Added));
+
+                // No other events became active
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Added));
+
+
+                return;
+            }
+            remove
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
+
+
+                // No Ensures
+
+
+                return;
+            }
+        }
+
+        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
+        {
+            add
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
+
+
+                // Event is active
+                Ensures(ActiveEvents.HasFlag(Removed));
+
+                // No other events became active
+                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Removed));
+
+
+                return;
+            }
+            remove
+            {
+                // Value must be non-null
+                Requires(value != null);
+
+                // Event is listenable
+                Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
+
+
+                // No Ensures
+
+
+                return;
+            }
+        }
 
         // ReSharper restore InvocationIsSkipped
 
-
         #region Non-Contract Methods
+
+        #region SCG.IEnumerable<T>
 
         public abstract SCG.IEnumerator<T> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
+
+        #region IShowable
+
         public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
         public abstract string ToString(string format, IFormatProvider formatProvider);
+
+        #endregion
 
         #endregion
     }

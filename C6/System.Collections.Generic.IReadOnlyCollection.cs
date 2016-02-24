@@ -4,6 +4,8 @@
 
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace System.Collections.Generic
 {
@@ -39,10 +41,10 @@ namespace System.Collections.Generic
 
 
                 // Returns a non-negative number
-                Contract.Ensures(Contract.Result<int>() >= 0);
+                Ensures(Result<int>() >= 0);
 
 
-                throw new NotImplementedException();
+                return default(int);
             }
         }
 
@@ -51,8 +53,8 @@ namespace System.Collections.Generic
 
         #region Non-Contract Methods
 
-        public IEnumerator<T> GetEnumerator() { throw new NotImplementedException(); }
-        IEnumerator IEnumerable.GetEnumerator() { throw new NotImplementedException(); }
+        public abstract IEnumerator<T> GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

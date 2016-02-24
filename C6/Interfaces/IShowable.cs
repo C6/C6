@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Text;
 
+using static System.Diagnostics.Contracts.Contract;
+
 
 namespace C6
 {
@@ -52,14 +54,17 @@ namespace C6
         public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
         {
             // Argument must be non-null
-            Contract.Requires(stringBuilder != null); // TODO: Use <ArgumentNullException>?
+            Requires(stringBuilder != null); // TODO: Use <ArgumentNullException>?
+
 
             // Returns true if rest >= 0 on return; otherwise, false.
-            Contract.Ensures(Contract.Result<bool>() == (Contract.ValueAtReturn(out rest) >= 0));
+            Ensures(Result<bool>() == (ValueAtReturn(out rest) >= 0));
+            
             // The length of the formatted string is subtracted from rest
-            Contract.Ensures(stringBuilder.Length - Contract.OldValue(stringBuilder.Length) == Contract.OldValue(rest) - Contract.ValueAtReturn(out rest));
+            Ensures(stringBuilder.Length - OldValue(stringBuilder.Length) == OldValue(rest) - ValueAtReturn(out rest));
 
-            throw new NotImplementedException();
+
+            return default(bool);
         }
 
         // ReSharper restore InvocationIsSkipped

@@ -1,12 +1,13 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+
+using static System.Diagnostics.Contracts.Contract;
 
 using SCG = System.Collections.Generic;
 
@@ -28,6 +29,17 @@ namespace C6
 
 
         /// <summary>
+        /// Gets a value characterizing the asymptotic complexity of
+        /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
+        /// size (worst-case or amortized as relevant).
+        /// </summary>
+        /// <value>A characterization of the asymptotic speed of
+        /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
+        /// size.</value>
+        [Pure]
+        Speed IndexingSpeed { get; }
+
+        /// <summary>
         /// Returns an <see cref="IDirectedCollectionValue{T}"/> containing 
         /// the items in the specified index range of this collection.
         /// </summary>
@@ -46,18 +58,6 @@ namespace C6
         /// </remarks>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
-
-
-        /// <summary>
-        /// Gets a value characterizing the asymptotic complexity of
-        /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
-        /// size (worst-case or amortized as relevant).
-        /// </summary>
-        /// <value>A characterization of the asymptotic speed of
-        /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
-        /// size.</value>
-        [Pure]
-        Speed IndexingSpeed { get; }
 
 
         /// <summary>
@@ -138,160 +138,252 @@ namespace C6
     }
 
 
-
     [ContractClassFor(typeof(IIndexed<>))]
     internal abstract class IIndexedContract<T> : IIndexed<T>
     {
         // ReSharper disable InvocationIsSkipped
 
-        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
+        // Contracts are copied from ICollection<T>.Count. Keep both updated!
+        public int Count
         {
-            // Argument must be within bounds
-            Contract.Requires(0 <= startIndex); // TODO: Use <ArgumentOutOfRangeException>?
-            Contract.Requires(startIndex + count <= Count); // TODO: Use <ArgumentOutOfRangeException>?
-
-            // Argument must be non-negative
-            Contract.Requires(0 <= count);
+            get
+            {
+                // No Requires
 
 
-            // Result has the same count
-            Contract.Ensures(Contract.Result<IDirectedCollectionValue<T>>().Count == count);
+                // Returns a non-negative number
+                Ensures(Result<int>() >= 0);
 
-            // Result equals subrange
-            Contract.Ensures(Contract.Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
+                // Returns the same as the number of items in the enumerator
+                Ensures(Result<int>() == this.Count());
 
 
-            throw new NotImplementedException();
+                return default(int);
+            }
         }
 
-
-        public Speed IndexingSpeed {
-            get {
+        public Speed IndexingSpeed
+        {
+            get
+            {
                 // No Requires
 
 
                 // Result is a valid enum constant
-                Contract.Ensures(Enum.IsDefined(typeof(Speed), Contract.Result<Speed>()));
+                Ensures(Enum.IsDefined(typeof(Speed), Result<Speed>()));
 
 
-                throw new NotImplementedException();
+                return default(Speed);
             }
+        }
+
+        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
+        {
+            // Argument must be within bounds
+            Requires(0 <= startIndex); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(startIndex + count <= Count); // TODO: Use <ArgumentOutOfRangeException>?
+
+            // Argument must be non-negative
+            Requires(0 <= count);
+
+
+            // Result has the same count
+            Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
+
+            // Result equals subrange
+            Ensures(Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
+
+
+            return default(IDirectedCollectionValue<T>);
         }
 
 
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
 
             // Result is a valid index
-            Contract.Ensures(Contains(item)
-                ? 0 <= Contract.Result<int>() && Contract.Result<int>() < Count
-                : 0 <= ~Contract.Result<int>() && ~Contract.Result<int>() <= Count);
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : 0 <= ~Result<int>() && ~Result<int>() <= Count);
 
             // Item at index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || EqualityComparer.Equals(item, this[Contract.Result<int>()]));
+            Ensures(Result<int>() < 0 || EqualityComparer.Equals(item, this[Result<int>()]));
 
             // No item before index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || !this.Take(Contract.Result<int>()).Contains(item, EqualityComparer));
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer));
 
 
-            throw new NotImplementedException();
+            return default(int);
         }
 
 
         public int LastIndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Contract.Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-            
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
 
             // Result is a valid index
-            Contract.Ensures(Contains(item)
-                ? 0 <= Contract.Result<int>() && Contract.Result<int>() < Count
-                : 0 <= ~Contract.Result<int>() && ~Contract.Result<int>() <= Count);
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : 0 <= ~Result<int>() && ~Result<int>() <= Count);
 
             // Item at index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || EqualityComparer.Equals(item, this[Contract.Result<int>()]));
+            Ensures(Result<int>() < 0 || EqualityComparer.Equals(item, this[Result<int>()]));
 
             // No item after index equals item
-            Contract.Ensures(Contract.Result<int>() < 0 || !this.Skip(Contract.Result<int>() + 1).Contains(item, EqualityComparer));
+            Ensures(Result<int>() < 0 || !this.Skip(Result<int>() + 1).Contains(item, EqualityComparer));
 
 
-            throw new NotImplementedException();
+            return default(int);
         }
 
 
         public T RemoveAt(int index)
         {
             // Argument must be within bounds (collection must be non-empty)
-            Contract.Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-            Contract.Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+            Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
+            Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
 
 
             // Result is the item previously at the specified index
-            Contract.Ensures(Contract.Result<T>().Equals(Contract.OldValue(this[index])));
+            Ensures(Result<T>().Equals(OldValue(this[index])));
 
             // Only the item at index is removed
-            // TODO: Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.SkipRange(index, 1).ToList())));
+            // TODO: Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
 
             // Result is non-null
-            Contract.Ensures(AllowsNull || Contract.Result<T>() != null);
+            Ensures(AllowsNull || Result<T>() != null);
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - 1);
+            Ensures(Count == OldValue(Count) - 1);
 
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
 
         public void RemoveIndexRange(int startIndex, int count)
         {
             // Argument must be within bounds (collection must be non-empty)
-            Contract.Requires(0 <= startIndex); // TODO: Use <IndexOutOfRangeException>?
-            Contract.Requires(startIndex + count < Count); // TODO: Use <IndexOutOfRangeException>?
+            Requires(0 <= startIndex); // TODO: Use <IndexOutOfRangeException>?
+            Requires(startIndex + count < Count); // TODO: Use <IndexOutOfRangeException>?
 
             // Argument must be non-negative
-            Contract.Requires(0 <= count);
+            Requires(0 <= count);
 
 
             // Only the items in the index range are removed
-            // TODO: Contract.Ensures(this.SequenceEqual(Contract.OldValue(this.SkipRange(startIndex, count).ToList())));
+            // TODO: Ensures(this.SequenceEqual(OldValue(this.SkipRange(startIndex, count).ToList())));
 
             // Removing an item decreases the count by one
-            Contract.Ensures(Count == Contract.OldValue(Count) - count);
+            Ensures(Count == OldValue(Count) - count);
 
 
-            throw new NotImplementedException();
+            return;
         }
 
+        #region Hardened Postconditions
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public T this[int index] {
-            get {
+        public T this[int index]
+        {
+            get
+            {
                 // No extra Requires allowed
 
 
                 // Result is item at index
-                Contract.Ensures(Contract.Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().Equals(this.Skip(index).First()));
 
 
-                throw new NotImplementedException();
+                return default(T);
             }
         }
 
+        #endregion
 
         // ReSharper restore InvocationIsSkipped
 
-
         #region Non-Contract Methods
 
+        #region SCG.IEnumerable<T>
+
+        public abstract SCG.IEnumerator<T> GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
+
+        #region IShowable
+
+        public abstract string ToString(string format, IFormatProvider formatProvider);
+        public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
+
+        #endregion
+
+        #region ICollectionValue<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract bool AllowsNull { get; }
+        public abstract Speed CountSpeed { get; }
+        public abstract bool IsEmpty { get; }
+        public abstract EventTypes ListenableEvents { get; }
+        public abstract T Choose();
+        public abstract T[] ToArray();
+        public abstract event EventHandler CollectionChanged;
+        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
+        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
+        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
+
+        #endregion
+
+        #region IDirectedEnumerable<T>
+
+        public abstract EnumerationDirection Direction { get; }
+        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => default(IDirectedEnumerable<T>);
+
+        #endregion
+
+        #region IDirectedCollectionValue<T>
+
+        public abstract IDirectedCollectionValue<T> Backwards();
+
+        #endregion
+
+        #region IExtensible
+
+        public abstract bool AllowsDuplicates { get; }
+        public abstract bool DuplicatesByCounting { get; }
+        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public abstract void AddAll(SCG.IEnumerable<T> items);
+
+        #endregion
+
+        #region SCG.ICollection<T>
+
+        void SCG.ICollection<T>.Add(T item) {}
+
+        #endregion
+
+        #region ICollection<T>
+
+        public abstract Speed ContainsSpeed { get; }
+        public abstract bool IsReadOnly { get; }
         public abstract bool Add(T item);
         public abstract void Clear();
         public abstract bool Contains(T item);
+        public abstract bool ContainsAll(SCG.IEnumerable<T> items);
+        public abstract int ContainsCount(T item);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract bool Find(ref T item);
+        public abstract bool FindOrAdd(ref T item);
+        public abstract int GetUnsequencedHashCode();
+        public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         public abstract bool Remove(T item);
         public abstract bool Remove(T item, out T removedItem);
         public abstract bool RemoveAll(T item);
@@ -303,52 +395,15 @@ namespace C6
         public abstract bool Update(T item, out T oldItem);
         public abstract bool UpdateOrAdd(T item);
         public abstract bool UpdateOrAdd(T item, out T oldItem);
-        public abstract int Count { get; }
-        public abstract bool Find(ref T item);
-        public abstract bool FindOrAdd(ref T item);
-        public abstract int GetUnsequencedHashCode();
-        public abstract bool IsReadOnly { get; }
-        public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
-        public abstract Speed ContainsSpeed { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
-        public abstract bool AllowsDuplicates { get; }
-        void ICollectionValue<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
-        void SCG.ICollection<T>.CopyTo(T[] array, int arrayIndex) { throw new NotImplementedException(); }
-        int SCG.ICollection<T>.Count { get { throw new NotImplementedException(); } }
-        public abstract bool DuplicatesByCounting { get; }
-        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
-        bool IExtensible<T>.IsReadOnly { get { throw new NotImplementedException(); } }
-        bool SCG.ICollection<T>.IsReadOnly { get { throw new NotImplementedException(); } }
-        public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
-        bool SCG.ICollection<T>.Remove(T item) { throw new NotImplementedException(); }
-        public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public abstract string ToString(string format, IFormatProvider formatProvider);
-        public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
-        public abstract EventTypes ListenableEvents { get; }
-        public abstract EventTypes ActiveEvents { get; }
-        public abstract event EventHandler CollectionChanged;
-        public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
-        public abstract event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
-        public abstract event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
-        void SCG.ICollection<T>.Add(T item) { throw new NotImplementedException(); }
-        bool IExtensible<T>.Add(T item) { throw new NotImplementedException(); }
-        void SCG.ICollection<T>.Clear() { throw new NotImplementedException(); }
-        public abstract bool AllowsNull { get; }
-        public abstract T Choose();
-        bool SCG.ICollection<T>.Contains(T item) { throw new NotImplementedException(); }
-        int ICollectionValue<T>.Count { get { throw new NotImplementedException(); } }
-        public abstract Speed CountSpeed { get; }
-        public abstract bool IsEmpty { get; }
-        public abstract T[] ToArray();
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() { throw new NotImplementedException(); }
-        IDirectedCollectionValue<T> IDirectedCollectionValue<T>.Backwards() { throw new NotImplementedException(); }
-        public abstract EnumerationDirection Direction { get; }
+
+        #endregion
+
+        #region ISequenced<T>
+
         public abstract int GetSequencedHashCode();
         public abstract bool SequencedEquals(ISequenced<T> otherCollection);
+
+        #endregion
 
         #endregion
     }
