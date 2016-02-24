@@ -43,7 +43,8 @@ namespace C6
         /// Returns an <see cref="IDirectedCollectionValue{T}"/> containing 
         /// the items in the specified index range of this collection.
         /// </summary>
-        /// <param name="startIndex"></param>
+        /// <param name="startIndex">The index of the first item in the
+        /// <see cref="IDirectedCollectionValue{T}"/>.</param>
         /// <param name="count">The number of items in the
         ///     <see cref="IDirectedCollectionValue{T}"/>.</param>
         /// <returns>An <see cref="IDirectedCollectionValue{T}"/> containing 
@@ -119,7 +120,8 @@ namespace C6
         /// <summary>
         /// Remove all items in the specified index range.
         /// </summary>
-        /// <param name="startIndex"></param>
+        /// <param name="startIndex">The index of the first item to remove.
+        /// </param>
         /// <param name="count">The number of items to remove.</param>
         /// <remarks>
         /// If the cleared index range is non-empty, it raises the following

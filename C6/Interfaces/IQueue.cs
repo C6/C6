@@ -45,8 +45,8 @@ namespace C6
         /// sender:
         /// <list type="bullet">
         /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an 
-        /// index of <c>0</c>.
+        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and
+        /// an index of <c>0</c>.
         /// </description></item>
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the item and a 
@@ -69,7 +69,7 @@ namespace C6
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
-        /// index of <c>coll.Count - 1</c>.
+        /// index of <c>Count - 1</c>.
         /// </description></item>
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
