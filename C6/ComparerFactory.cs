@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Diagnostics.Contracts;
 
@@ -29,16 +28,18 @@ namespace C6
         [Pure]
         public static SCG.IComparer<T> CreateComparer<T>(Func<T, T, int> compare)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(compare != null);
 
             // Result is non-null
             Ensures(Result<SCG.IComparer<T>>() != null);
 
+            #endregion
 
             return new Comparer<T>(compare);
         }
-
 
         /// <summary>
         /// Creates a new equality comparer using the specified functions.
@@ -50,6 +51,8 @@ namespace C6
         [Pure]
         public static SCG.IEqualityComparer<T> CreateEqualityComparer<T>(Func<T, T, bool> equals, Func<T, int> getHashCode)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(equals != null);
             // Argument must be non-null
@@ -58,10 +61,10 @@ namespace C6
             // Result is non-null
             Ensures(Result<SCG.IEqualityComparer<T>>() != null);
 
+            #endregion
 
             return new EqualityComparer<T>(equals, getHashCode);
         }
-
 
         // TODO: Overload with a custom hash function
         /// <summary>
@@ -74,13 +77,15 @@ namespace C6
         [Pure]
         public static SCG.IEqualityComparer<T> CreateReferenceEqualityComparer<T>()
         {
+            #region Code Contracts
+
             // Result is non-null
             Ensures(Result<SCG.IEqualityComparer<T>>() != null);
 
+            #endregion
 
             return new EqualityComparer<T>((x, y) => ReferenceEquals(x, y), SCG.EqualityComparer<T>.Default.GetHashCode);
         }
-
 
         #region Nested Types
 
@@ -88,7 +93,6 @@ namespace C6
         private class Comparer<T> : SCG.IComparer<T>
         {
             private readonly Func<T, T, int> _compare;
-
 
             [ContractInvariantMethod]
             private void ObjectInvariant()
@@ -100,19 +104,20 @@ namespace C6
                 // ReSharper enable InvocationIsSkipped
             }
 
-
             public Comparer(Func<T, T, int> compare)
             {
+                #region Code Contracts
+
                 // Argument must be non-null
                 Requires(compare != null);
+
+                #endregion
 
                 _compare = compare;
             }
 
-
             public int Compare(T x, T y) => _compare(x, y);
         }
-
 
 
         [Serializable]
@@ -120,7 +125,6 @@ namespace C6
         {
             private readonly Func<T, T, bool> _equals;
             private readonly Func<T, int> _getHashCode;
-
 
             [ContractInvariantMethod]
             private void ObjectInvariant()
@@ -133,22 +137,23 @@ namespace C6
                 // ReSharper enable InvocationIsSkipped
             }
 
-
             public EqualityComparer(Func<T, T, bool> equals, Func<T, int> getHashCode)
             {
+                #region Code Contracts
+
                 // Argument must be non-null
                 Requires(equals != null);
 
                 // Argument must be non-null
                 Requires(getHashCode != null);
 
+                #endregion
+
                 _equals = equals;
                 _getHashCode = getHashCode;
             }
 
-
             public bool Equals(T x, T y) => _equals(x, y);
-
 
             public int GetHashCode(T obj) => _getHashCode(obj);
         }
