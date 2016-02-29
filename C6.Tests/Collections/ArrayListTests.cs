@@ -17,7 +17,7 @@ namespace C6.Tests
 
         private static ICollectionValue<T> GetEmptyList<T>() => new ArrayList<T>();
 
-        private static SCG.IEnumerable<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
+        private static ICollectionValue<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
 
         #endregion
 
@@ -79,6 +79,22 @@ namespace C6.Tests
             // Assert
             Assert.That(count, Is.EqualTo(0));
             // TODO: Assert.That(count, Is.Zero);
+        }
+
+        [Test]
+        public void Count_RandomlySizedCollection_Size()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var size = random.Next(5, 20);
+            var enumerable = Enumerable.Range(0, size);
+            var collection = GetList(enumerable);
+
+            // Act
+            var count = collection.Count;
+
+            // Assert
+            Assert.That(count, Is.EqualTo(size));
         }
 
         #endregion

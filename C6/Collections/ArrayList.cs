@@ -46,7 +46,7 @@ namespace C6
 
         public int Count
         {
-            get { throw new NotImplementedException(); }
+            get { return 0; }
         }
 
         public Speed CountSpeed
