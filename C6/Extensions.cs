@@ -28,6 +28,8 @@ namespace C6
         [Pure]
         public static SCG.IEnumerable<T> Append<T>(this SCG.IEnumerable<T> enumerable, T item)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
             // Argument must be non-null
@@ -36,6 +38,7 @@ namespace C6
             // Result is non-null
             Ensures(Result<SCG.IEnumerable<T>>() != null);
 
+            #endregion
 
             foreach (var t in enumerable) {
                 yield return t;
@@ -56,6 +59,8 @@ namespace C6
         [Pure]
         public static bool IsEmpty<T>(this SCG.IEnumerable<T> enumerable)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
 
@@ -63,6 +68,7 @@ namespace C6
             // Returns true if Count is zero, otherwise false
             Ensures(Result<bool>() != enumerable.Any());
 
+            #endregion
 
             return (enumerable as ICollectionValue<T>)?.IsEmpty ?? !enumerable.Any();
         }
@@ -71,6 +77,8 @@ namespace C6
         [Pure]
         public static bool Find<T>(this SCG.IEnumerable<T> enumerable, Func<T, bool> predicate, out T item)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
 
@@ -84,6 +92,7 @@ namespace C6
             // Result item equals the first (or default) item satisfying the predicate
             Ensures(ValueAtReturn(out item).Equals(enumerable.FirstOrDefault(predicate)));
 
+            #endregion
 
             bool result;
 
@@ -128,12 +137,15 @@ namespace C6
         [Pure]
         public static bool AllConsecutiveElements<T>(this SCG.IEnumerable<T> enumerable, Func<T, T, bool> predicate)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
             Requires(predicate != null); // TODO: Use <ArgumentNullException>?
 
+            #endregion
 
             using (var enumerator = enumerable.GetEnumerator()) {
                 if (enumerator.MoveNext()) {
@@ -168,8 +180,12 @@ namespace C6
         [Pure]
         public static bool IsSorted<T>(this SCG.IEnumerable<T> enumerable)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+
+            #endregion
 
             return enumerable.IsSorted(SCG.Comparer<T>.Default);
         }
@@ -196,8 +212,12 @@ namespace C6
         [Pure]
         public static bool IsSorted<T>(this SCG.IEnumerable<T> enumerable, SCG.IComparer<T> comparer)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+
+            #endregion
 
             comparer = comparer ?? SCG.Comparer<T>.Default;
 
@@ -219,15 +239,19 @@ namespace C6
         [Pure]
         public static bool IsSorted<T>(this SCG.IEnumerable<T> enumerable, Comparison<T> comparison)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
 
             // Argument must be non-null
             Requires(comparison != null); // TODO: Use <ArgumentNullException>?
 
+            #endregion
+
             return enumerable.AllConsecutiveElements((x, y) => comparison(x, y) <= 0);
         }
-        
+
         // TODO: Test
         /// <summary>
         /// Shuffles the elements in the array.
@@ -235,9 +259,12 @@ namespace C6
         /// <param name="array">The array to shuffle.</param>
         public static void Shuffle<T>(this T[] array)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(array != null); // TODO: Use <ArgumentNullException>?
-            
+
+            #endregion
 
             Shuffle(array, new Random());
         }
@@ -250,13 +277,16 @@ namespace C6
         /// <param name="list">The list to shuffle.</param>
         public static void Shuffle<T>(this SCG.IList<T> list)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(list != null); // TODO: Use <ArgumentNullException>?
-            
+
+            #endregion
 
             Shuffle(list, new Random());
         }
-        
+
         // TODO: Test
         /// <summary>
         /// Shuffles the items in the array according to the specified random
@@ -266,9 +296,12 @@ namespace C6
         /// <param name="random">The random source.</param>
         public static void Shuffle<T>(this T[] array, Random random)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(array != null); // TODO: Use <ArgumentNullException>?
 
+            #endregion
 
             random = random ?? new Random(); // TODO: Use C5.Random?
             var n = array.Length;
@@ -277,7 +310,7 @@ namespace C6
                 array.Swap(random.Next(n + 1), n);
             }
         }
-        
+
         // TODO: Test
         // TODO: IList extensions?
         /// <summary>
@@ -288,12 +321,15 @@ namespace C6
         /// <param name="random">The random source.</param>
         public static void Shuffle<T>(this SCG.IList<T> list, Random random)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(list != null); // TODO: Use <ArgumentNullException>?
-            
+
             // List must be non-read-only
             Requires(!list.IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
 
+            #endregion
 
             random = random ?? new Random(); // TODO: Use C5.Random?
             var n = list.Count;
@@ -302,7 +338,7 @@ namespace C6
                 list.Swap(random.Next(n + 1), n);
             }
         }
-        
+
         // TODO: Test?
         /// <summary>
         /// Swaps the elements at the specified indices in an array.
@@ -313,6 +349,8 @@ namespace C6
         /// <typeparam name="T">The type of the elements in the array.</typeparam>
         public static void Swap<T>(this T[] array, int i, int j)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(array != null);
 
@@ -329,6 +367,7 @@ namespace C6
             Ensures(Equals(array[i], OldValue(array[j])));
             Ensures(Equals(array[j], OldValue(array[i])));
 
+            #endregion
 
             if (i != j) {
                 var element = array[i];
@@ -336,7 +375,7 @@ namespace C6
                 array[j] = element;
             }
         }
-        
+
         // TODO: Test?
         // TODO: IList extensions?
         /// <summary>
@@ -348,6 +387,8 @@ namespace C6
         /// <typeparam name="T">The type of the elements in the list.</typeparam>
         public static void Swap<T>(this SCG.IList<T> list, int i, int j)
         {
+            #region Code Contracts
+
             // Argument must be non-null
             Requires(list != null); // TODO: Use <ArgumentNullException>?
 
@@ -367,6 +408,7 @@ namespace C6
             Ensures(Equals(list[i], OldValue(list[j])));
             Ensures(Equals(list[j], OldValue(list[i])));
 
+            #endregion
 
             if (i != j) {
                 var element = list[i];
