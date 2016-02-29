@@ -28,9 +28,14 @@ namespace C6
             return _enumerable.GetEnumerator();
         }
 
+        #region Explicit Implementations
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
+
+        #endregion
+
     }
 }
