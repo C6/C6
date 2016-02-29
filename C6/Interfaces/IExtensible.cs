@@ -234,13 +234,12 @@ namespace C6
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
             
-
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
-
+            
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
+            Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
 
             // The collection becomes non-empty
             Ensures(!IsEmpty);

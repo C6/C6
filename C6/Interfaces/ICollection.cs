@@ -979,7 +979,7 @@ namespace C6
 
 
             // Returns true if the collection contained the item
-            Ensures(Result<bool>() == OldValue(this.Contains(item, EqualityComparer)));
+            Ensures(Result<bool>() == OldValue(Contains(item)));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - (Result<bool>() ? 1 : 0));
@@ -1004,7 +1004,7 @@ namespace C6
 
 
             // Returns true if the collection contained the item
-            Ensures(Result<bool>() == OldValue(this.Contains(item, EqualityComparer)));
+            Ensures(Result<bool>() == OldValue(Contains(item)));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - (Result<bool>() ? 1 : 0));
@@ -1033,7 +1033,7 @@ namespace C6
 
 
             // Returns true if the collection contained the item
-            Ensures(Result<bool>() == OldValue(this.Contains(item, EqualityComparer)));
+            Ensures(Result<bool>() == OldValue(Contains(item)));
 
             // Removing all instances of an item decreases the count by its multiplicity
             Ensures(Count == OldValue(Count - ContainsCount(item)));
@@ -1101,14 +1101,15 @@ namespace C6
             // The result size must be equal to the number of distinct items
             Ensures(Result<ICollectionValue<T>>().Count == this.Distinct(EqualityComparer).Count());
 
+            // TODO: Consider if this is the best solution. Maybe return read-only version/copy.
             // If the collection allows duplicates a new collection is created; otherwise, this collection is returned
             Ensures(AllowsDuplicates != ReferenceEquals(Result<ICollectionValue<T>>(), this));
 
             // Result is non-null
             Ensures(AllowsNull || ForAll(Result<ICollectionValue<T>>(), item => item != null));
 
-
-            // TODO: Ensure that the result contains the right items
+            // Result contains the distinct items
+            Ensures(Result<ICollectionValue<T>>().UnsequenceEqual(this.Distinct(EqualityComparer), EqualityComparer));
 
 
             return default(ICollectionValue<T>);
@@ -1123,10 +1124,11 @@ namespace C6
             Ensures((Count == otherCollection.Count) || !Result<bool>());
             Ensures((this.Distinct(EqualityComparer).Count() == otherCollection.Distinct(EqualityComparer).Count()) || !Result<bool>());
 
+            // Result reflects whether they are unsequenced equal
+            Ensures(Result<bool>() == this.UnsequenceEqual(otherCollection, EqualityComparer));
+            
             // If the collections have different unsequenced hash codes, then they must be non-equal
             Ensures((GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode()) || !Result<bool>());
-
-            // TODO: Require that the collections use the same equality comparer?
 
 
             return default(bool);
