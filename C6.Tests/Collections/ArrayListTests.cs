@@ -22,6 +22,8 @@ namespace C6.Tests
 
         private static ICollectionValue<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
 
+        private static ICollectionValue<int> GetRandomIntList(Random random, int count) => GetList(GetRandomIntEnumerable(random, count));
+
         #endregion
 
         #region IEnumerable<T>
@@ -90,8 +92,7 @@ namespace C6.Tests
             // Arrange
             var random = TestContext.CurrentContext.Random;
             var size = random.Next(5, 20);
-            var enumerable = Enumerable.Range(0, size);
-            var collection = GetList(enumerable);
+            var collection = GetRandomIntList(random, size);
 
             // Act
             var count = collection.Count;
@@ -140,8 +141,7 @@ namespace C6.Tests
             // Arrange
             var random = TestContext.CurrentContext.Random;
             var size = random.Next(5, 20);
-            var enumerable = GetRandomIntEnumerable(random, size);
-            var collection = GetList(enumerable);
+            var collection = GetRandomIntList(random, size);
 
             // Act
             var isEmpty = collection.IsEmpty;
