@@ -27,7 +27,7 @@ namespace C6
     /// is to be the return type of query operations on generic collection.
     /// </remarks>
     [ContractClass(typeof(ICollectionValueContract<>))]
-    public interface ICollectionValue<T> : SCG.IEnumerable<T>, IShowable
+    public interface ICollectionValue<T> : SCG.IEnumerable<T> // TODO: Add IShowable again
     {
         /// <summary>
         /// Gets a bit flag indicating the collection's currently subscribed
