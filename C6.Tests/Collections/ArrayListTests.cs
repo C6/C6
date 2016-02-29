@@ -4,9 +4,9 @@
 using System;
 using System.Linq;
 
-using SCG = System.Collections.Generic;
-
 using NUnit.Framework;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests
@@ -149,7 +149,48 @@ namespace C6.Tests
             // Assert
             Assert.That(isEmpty, Is.False);
         }
-        
+
+        #endregion
+
+        #endregion
+
+        #region ArrayList<T>
+
+        #region ArrayList<T>()
+
+        [Test]
+        public void Constructor_EmptyEnumerable_Empty()
+        {
+            // Act
+            var collection = new ArrayList<int>();
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        #endregion
+
+        #region ArrayList(SCG.IEnumerable<T>)
+
+        [Test]
+        public void Constructor_RandomEnumerableBeingChanged_Unequal()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var size = random.Next(5, 20);
+            var array = GetRandomIntEnumerable(random, size).ToArray();
+
+            // Act
+            var collection = new ArrayList<int>(array);
+            for (var i = 0; i < size; i++) {
+                array[i] *= -1;
+            }
+            var result = collection.SequenceEqual(array);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
         #endregion
 
         #endregion

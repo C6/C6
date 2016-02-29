@@ -14,22 +14,18 @@ namespace C6
     {
         #region Fields
 
-        private readonly SCG.IEnumerable<T> _enumerable;
+        private readonly T[] _array;
 
         #endregion
 
         #region Constructors
 
-        public ArrayList()
-        {
-            _enumerable = Enumerable.Empty<T>();
-            Count = 0;
-        }
+        public ArrayList() : this(Enumerable.Empty<T>()) {}
 
         public ArrayList(SCG.IEnumerable<T> enumerable)
         {
-            _enumerable = enumerable;
-            Count = enumerable.Count();
+            _array = enumerable.ToArray();
+            Count = _array.Length;
         }
 
         #endregion
@@ -63,7 +59,9 @@ namespace C6
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
-            return _enumerable.GetEnumerator();
+            for (var i = 0; i < Count; i++) {
+                yield return _array[i];
+            }
         }
 
         public T Choose()
