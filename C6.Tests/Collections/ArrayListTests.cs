@@ -1,6 +1,8 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+using System.Linq;
+
 using SCG = System.Collections.Generic;
 
 using NUnit.Framework;
@@ -39,6 +41,20 @@ namespace C6.Tests
 
             // Assert
             Assert.That(collection, Is.Not.Empty);
+        }
+
+        [Test]
+        public void GetEnumerator_NonEmptyCollection_ContainsInitialItems()
+        {
+            // Arrange
+            var enumerable = new [] {1, 2, 3};
+            var collection = GetList(enumerable);
+
+            // Act
+            var result = enumerable.SequenceEqual(collection);
+
+            // Assert
+            Assert.That(result, Is.True);
         }
 
         #endregion

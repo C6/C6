@@ -11,13 +11,21 @@ namespace C6
 {
     public class ArrayList<T> : SCG.IEnumerable<T>
     {
-        public ArrayList() {}
+        private readonly SCG.IEnumerable<T> _enumerable;
 
-        public ArrayList(SCG.IEnumerable<T> enumerable) {}
+        public ArrayList()
+        {
+            _enumerable = Enumerable.Empty<T>();
+        }
+
+        public ArrayList(SCG.IEnumerable<T> enumerable)
+        {
+            _enumerable = enumerable;
+        }
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
-            return Enumerable.Empty<T>().GetEnumerator();
+            return _enumerable.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
