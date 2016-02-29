@@ -23,7 +23,7 @@ namespace C6
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(IListContract<>))]
-    public interface IList<T> : IIndexed<T>, SCG.IList<T>, IList
+    public interface IList<T> : IIndexed<T>, SCG.IList<T>, IList, IDisposable
     {
         /// <summary>
         /// Gets the number of items contained in the collection.
@@ -86,12 +86,42 @@ namespace C6
         new bool IsReadOnly { get; }
         
         /// <summary>
+        /// Gets a value indicating whether the list is valid.
+        /// </summary>
+        /// <value><c>true</c> if the list is a proper list or a valid view;
+        /// <c>false</c> if the list is an invalidated view.</value>
+        /// <remarks>
+        /// A newly created view is valid, but may be invalidated by a call to 
+        /// <see cref="IDisposable.Dispose"/> or by multi-item operations such
+        /// as <see cref="Clear"/>, <see cref="Reverse"/>,
+        /// <see cref="Shuffle()"/>, and <see cref="Sort()"/> on the underlying
+        /// list and by the Dispose() method.</remarks>
+        [Pure]
+        bool IsValid { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the list is a view.
+        /// </summary>
+        /// <value><c>true</c> if the list is a view with an underlying list;
+        /// otherwise, <c>false</c>.</value>
+        [Pure]
+        bool IsView { get; }
+
+        /// <summary>
         /// Gets the last item in the list.
         /// </summary>
         /// <value>The last item in the list.</value>
         [Pure]
         T Last { get; }
         
+        /// <summary>
+        /// Gets the offset for a view relative to its underlying list, or zero
+        /// if the list is a not a view.
+        /// </summary>
+        /// <value>Offset for this list view or 0 for an underlying list.</value>
+        [Pure]
+        int Offset { get; }
+
         /// <summary>
         /// Gets or sets the item at the specified index.
         /// </summary>
@@ -130,10 +160,25 @@ namespace C6
             set;
         }
         
+        // TODO: Should this return Underlying ?? this?
+        /// <summary>
+        /// Gets the underlying list for this list.
+        /// </summary>
+        /// <value>The underlying list if this list is a view;
+        /// otherwise, <c>null</c>.</value>
+        [Pure]
+        IList<T> Underlying { get; }
+
         /// <summary>
         /// Removes all items from the collection.
         /// </summary>
         /// <remarks>
+        /// <para>
+        /// Clearing a list/view has the same effect on other views as removing
+        /// each item individually. Clearing a list/view will never invalidate
+        /// other views on the same list.
+        /// </para>
+        /// <para>
         /// If the collection is non-empty, it raises the following events (in
         /// that order) with the collection as sender:
         /// <list type="bullet">
@@ -145,6 +190,7 @@ namespace C6
         /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
         /// </description></item>
         /// </list>
+        /// </para>
         /// </remarks>
         new void Clear();
 
@@ -215,7 +261,38 @@ namespace C6
         /// </para>
         /// </remarks>
         new bool Insert(int index, T item);
+
         
+        /// <summary>
+        /// Inserts an item into this list or view at the first index after the
+        /// specified pointer list or view.
+        /// </summary>
+        /// <param name="pointer">The list or view after which to insert the
+        /// item into this list or view.</param>
+        /// <param name="item">The item to insert into this list after the
+        /// view.</param>
+        /// <remarks>
+        /// <para>
+        /// This method will not alter the view.
+        /// </para>
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
+        /// <list type="bullet">
+        /// <item><description>
+        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
+        /// index of <c>view.Offset + view.Count</c>.
+        /// </description></item>
+        /// <item><description>
+        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
+        /// count of one.
+        /// </description></item>
+        /// <item><description>
+        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        /// </description></item>
+        /// </list>
+        /// </remarks>
+        void InsertAfter(IList<T> pointer, T item);
+
         /// <summary>
         /// Inserts the items of a collection into the list starting at the
         /// specified index.
@@ -349,6 +426,18 @@ namespace C6
         [Pure]
         bool IsSorted(Comparison<T> comparison);
         
+        /// <summary>
+        /// Creates a view on this list containing only the last occurrence of
+        /// the specified item, if any.
+        /// </summary>
+        /// <param name="item">The item to make a view of.</param>
+        /// <returns>A view containing only the last occurrence of the
+        /// specified item, if this list contains it; otherwise, <c>null</c>.
+        /// </returns>
+        /// <seealso cref="ViewOf"/>
+        [Pure]
+        IList<T> LastViewOf(T item);
+
         // TODO: Deprecate?
         /// <summary>
         /// Creates a new list consisting of the results of mapping all items
@@ -499,11 +588,13 @@ namespace C6
         /// </para>
         /// </remarks>
         T RemoveLast();
-        
+
+        // TODO: Document effects on views
         /// <summary>
         /// Reverses the sequence order of the items in the list.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// Raises the following events (in that order) with the collection as
         /// sender:
         /// <list type="bullet">
@@ -511,9 +602,15 @@ namespace C6
         /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
         /// </description></item>
         /// </list>
+        /// </para>
+        /// <para>
+        /// Reversing a list will reverse all its views. Clearing a view will
+        /// invalidate any view that it partly overlaps.
+        /// </para>
         /// </remarks>
         void Reverse();
-        
+
+        // TODO: Document effects on views
         /// <summary>
         /// Randomly shuffles the items in the list.
         /// </summary>
@@ -527,7 +624,8 @@ namespace C6
         /// </list>
         /// </remarks>
         void Shuffle();
-        
+
+        // TODO: Document effects on views
         /// <summary>
         /// Shuffles the items in the list according to the specified random
         /// source.
@@ -544,6 +642,27 @@ namespace C6
         /// </remarks>
         void Shuffle(Random random);
         
+        /// <summary>
+        /// Slides the view by the specified offset.
+        /// </summary>
+        /// <param name="offset">The number of items to slide the view. Slides 
+        /// the view to the left if <paramref name="offset"/> &lt; 0 and to the
+        /// right if <paramref name="offset"/> &gt; 0.</param>
+        /// <seealso cref="TrySlide(int)"/>
+        void Slide(int offset);
+
+        /// <summary>
+        /// Slides the view by the specified offset and resizes it to the 
+        /// specified count.
+        /// </summary>
+        /// <param name="offset">The number of items to slide the view. Slides 
+        /// the view to the left if <paramref name="offset"/> &lt; 0 and to the
+        /// right if <paramref name="offset"/> &gt; 0.</param>
+        /// <param name="count">The new number of items in the view.</param>
+        /// <seealso cref="TrySlide(int, int)"/>
+        void Slide(int offset, int count);
+
+        // TODO: Document effects on views
         /// <summary>
         /// Sorts the items in the list using the default comparer.
         /// </summary>
@@ -562,7 +681,8 @@ namespace C6
         /// </list>
         /// </remarks>
         void Sort();
-        
+
+        // TODO: Document effects on views
         /// <summary>
         /// Sorts the items in the list using the specified comparer.
         /// </summary>
@@ -589,7 +709,8 @@ namespace C6
         /// </list>
         /// </remarks>
         void Sort(SCG.IComparer<T> comparer);
-        
+
+        // TODO: Document effects on views
         /// <summary>
         /// Sorts the items in the list using the specified
         /// <see cref="Comparison{T}"/>.
@@ -610,6 +731,68 @@ namespace C6
         /// </list>
         /// </remarks>
         void Sort(Comparison<T> comparison);
+        
+        /*
+        // DEPRECATED: Made into extension method
+        /// <summary>
+        /// Returns a new view that starts where this list starts and ends where
+        /// <paramref name="otherView"/> ends, if possible.
+        /// </summary>
+        /// <param name="otherView"></param>
+        /// <returns>A new view</returns>
+        IList<T> Span(IList<T> otherView);
+        */
+
+        /// <summary>
+        /// Slides the view by the specified offset, if possible.
+        /// </summary>
+        /// <param name="offset">The number of items to slide the view. Slides 
+        /// the view to the left if <paramref name="offset"/> &lt; 0 and to the
+        /// right if <paramref name="offset"/> &gt; 0.</param>
+        /// <returns><c>true</c> if the view was slid;
+        /// otherwise, <c>false</c> in which case the view remains unchanged.
+        /// </returns>
+        /// <seealso cref="Slide(int)"/>
+        bool TrySlide(int offset);
+
+        /// <summary>
+        /// Slides the view by the specified offset and resizes it to the 
+        /// specified count, if possible.
+        /// </summary>
+        /// <param name="offset">The number of items to slide the view. Slides 
+        /// the view to the left if <paramref name="offset"/> &lt; 0 and to the
+        /// right if <paramref name="offset"/> &gt; 0.</param>
+        /// <param name="count">The new number of items in the view.</param>
+        /// <returns><c>true</c> if the view was slid;
+        /// otherwise, <c>false</c> in which case the view remains unchanged.
+        /// </returns>
+        /// <seealso cref="Slide(int, int)"/>
+        bool TrySlide(int offset, int count);
+
+        /// <summary>
+        /// Creates a view on this list containing the items in the specified
+        /// index range of this list.
+        /// </summary>
+        /// <param name="startIndex">The index in this list at which the view
+        /// starts.</param>
+        /// <param name="count">The number of items in the view.</param>
+        /// <returns>A view containing the items in the specified index range
+        /// of this list.</returns>
+        /// <seealso cref="IIndexed{T}.GetIndexRange"/>
+        [Pure]
+        IList<T> View(int startIndex, int count);
+        
+        /// <summary>
+        /// Creates a view on this list containing only the first occurrence of
+        /// the specified item, if any.
+        /// </summary>
+        /// <param name="item">The item to make a view of.</param>
+        /// <returns>A view containing only the first occurrence of the
+        /// specified item, if this list contains it; otherwise, <c>null</c>.
+        /// </returns>
+        /// <seealso cref="LastViewOf"/>
+        [Pure]
+        IList<T> ViewOf(T item);
     }
 
 
@@ -680,8 +863,10 @@ namespace C6
 
 
                 // Read-only list has fixed size
-                Ensures(!IsReadOnly || Result<bool>());
-
+                Ensures(!IsReadOnly || Result<bool>()); // VIEW TODO: What about view? Are they necessarily fixed?
+                
+                // A view from a fixed-sized list is also fixed-sized
+                Ensures(!IsView || Result<bool>() == Underlying.IsFixedSize);
 
                 return default(bool);
             }
@@ -692,10 +877,47 @@ namespace C6
         {
             get
             {
+                // No Requires
+                
+
+                // A view from a read-only list is also read-only
+                Ensures(!IsView || Result<bool>() == Underlying.IsReadOnly);
+                
+
                 return default(bool);
             }
         }
         
+        public bool IsValid
+        {
+            get
+            {
+                // No Requires
+
+
+                // Always true for lists
+                Ensures(IsView || Result<bool>());
+
+
+                return default(bool);
+            }
+        }
+
+        public bool IsView
+        {
+            get
+            {
+                // No Requires
+
+
+                // A view has an underlying list
+                Ensures(Result<bool>() == (Underlying != null));
+
+
+                return default(bool);
+            }
+        }
+
         public T Last
         {
             get
@@ -713,6 +935,24 @@ namespace C6
             }
         }
         
+        public int Offset
+        {
+            get
+            {
+                // No Requires
+
+
+                // Returns a non-negative number
+                Ensures(IsView ? Result<int>() >= 0 : Result<int>() == 0);
+
+                // Offset not greater than count
+                Ensures(Result<int>() + Count <= (Underlying ?? this).Count);
+
+
+                return default(int);
+            }
+        }
+
         public T this[int index]
         {
             get
@@ -752,6 +992,14 @@ namespace C6
             }
         }
         
+        public IList<T> Underlying
+        {
+            get
+            {
+                return default(IList<T>);
+            }
+        }
+
         // Contracts are copied from ICollection<T>.Clear. Keep both updated!
         public void Clear()
         {
@@ -835,6 +1083,41 @@ namespace C6
             return default(bool);
         }
         
+        public void InsertAfter(IList<T> pointer, T item)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize);
+            
+            // Argument must be non-null
+            Requires(pointer != null); // TODO: Use <ArgumentNullException>?
+            
+            // The underlying list must be the same
+            Requires(ReferenceEquals(Underlying ?? this, pointer.Underlying ?? pointer));
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
+            // Argument must be within bounds
+            Requires(0 <= pointer.Offset + pointer.Count - Offset); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(pointer.Offset + pointer.Count - Offset <= Count); // TODO: Use <ArgumentOutOfRangeException>?
+            
+
+            // View does not change
+            Ensures(pointer.SequenceEqual(OldValue(pointer.ToList())));
+
+            // Item is insert after view
+            Ensures(this[pointer.Offset + pointer.Count].Equals(item));
+
+            // Adding an item increases the count by one
+            Ensures(Count == OldValue(Count) + 1);
+
+
+            return;
+        }
+
         public void InsertAll(int index, SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
@@ -965,6 +1248,28 @@ namespace C6
             return default(bool);
         }
         
+        public IList<T> LastViewOf(T item)
+        {
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
+
+            // Returns view if an item equals item
+            Ensures(Contains(item) ? Result<IList<T>>() != null : Result<IList<T>>() == null);
+
+            // The view has a length of 1
+            Ensures((Result<IList<T>>()?.Count ?? 1) == 1);
+
+            // The view's offset is the index of the last item equal to item
+            Ensures(Result<IList<T>>() == null || Result<IList<T>>().Offset == LastIndexOf(item));
+
+            // The view is on this list
+            Ensures(ReferenceEquals(Result<IList<T>>().Underlying, Underlying ?? this));
+
+
+            return default(IList<T>);
+        }
+
         public IList<V> Map<V>(Func<T, V> mapper)
         {
             // Argument must be non-null
@@ -1151,6 +1456,44 @@ namespace C6
             return;
         }
         
+        public void Slide(int offset)
+        {
+            // List must be a view
+            Requires(IsView);
+
+            // Sliding the view must keep the view within its list
+            Requires(0 <= offset + Offset && offset + Offset + Count <= Underlying.Count);
+
+
+            // Offset updates
+            Ensures(Offset == offset + OldValue(Offset));
+
+            // Count remains unchanged
+            Ensures(Count == OldValue(Count));
+
+
+            return;
+        }
+        
+        public void Slide(int offset, int count)
+        {
+            // List must be a view
+            Requires(IsView);
+
+            // Sliding the view must keep the view within its list
+            Requires(0 <= offset + Offset && offset + Offset + count <= Underlying.Count);
+
+
+            // Offset updates
+            Ensures(Offset == offset + OldValue(Offset));
+
+            // Count remains unchanged
+            Ensures(Count == OldValue(Count));
+
+
+            return;
+        }
+
         public void Sort()
         {
             // Collection must be non-read-only
@@ -1202,6 +1545,121 @@ namespace C6
             return;
         }
         
+        public IList<T> Span(IList<T> otherView)
+        {
+            // Argument must be non-null
+            Requires(otherView != null); // TODO: Use <ArgumentNullException>?
+
+            // The underlying list must be the same
+            Requires(ReferenceEquals(Underlying ?? this, otherView.Underlying ?? otherView));
+
+
+            // The other view must not end before this starts
+            Ensures(otherView.Offset + otherView.Count - Offset >= 0 ? Result<IList<T>>() != null : Result<IList<T>>() == null);
+            
+            // The view is on this list
+            Ensures(Result<IList<T>>() == null || ReferenceEquals(Result<IList<T>>().Underlying, Underlying ?? this));
+
+            // The view start where this list starts
+            Ensures(Result<IList<T>>() == null || Result<IList<T>>().Offset == Offset);
+
+            // The view ends where this list ends
+            Ensures(Result<IList<T>>() == null || Result<IList<T>>().Count == otherView.Offset + otherView.Count - Offset);
+
+            // Result is a new view
+            Ensures(!ReferenceEquals(Result<IList<T>>(), this));
+            Ensures(!ReferenceEquals(Result<IList<T>>(), otherView));
+
+
+            return default(IList<T>);
+        }
+
+        public bool TrySlide(int offset)
+        {
+            // List must be a view
+            Requires(IsView);
+
+
+            // Returns true if view was slid
+            Ensures(Result<bool>() == (0 <= offset + OldValue(Offset) && offset + OldValue(Offset) + Count <= Underlying.Count));
+
+            // If view was slid, offset updates
+            Ensures(Offset == (Result<bool>() ? offset + OldValue(Offset) : OldValue(Offset)));
+
+            // Count remains unchanged
+            Ensures(Count == OldValue(Count));
+
+
+            return default(bool);
+        }
+
+        public bool TrySlide(int offset, int count)
+        {
+            // List must be a view
+            Requires(IsView);
+
+
+            // Returns true if view was slid
+            Ensures(Result<bool>() == (0 <= offset + OldValue(Offset) && offset + OldValue(Offset) + count <= Underlying.Count));
+
+            // If view was slid, offset updates
+            Ensures(Offset == (Result<bool>() ? offset + OldValue(Offset) : OldValue(Offset)));
+
+            // If view was slid, count updates
+            Ensures(Count == (Result<bool>() ? count : OldValue(Count)));
+
+
+            return default(bool);
+        }
+
+        public IList<T> View(int startIndex, int count)
+        {
+            // Argument must be within bounds
+            Requires(0 <= startIndex); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(startIndex + count <= Count); // TODO: Use <ArgumentOutOfRangeException>?
+
+            // Argument must be non-negative
+            Requires(0 <= count);
+
+
+            // Result has the same count
+            Ensures(Result<IList<T>>().Count == count);
+
+            // Offset is original offset plus start index
+            Ensures(Result<IList<T>>().Offset == Offset + startIndex);
+
+            // Result equals subrange
+            Ensures(Result<IList<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
+
+            // The view is on this list
+            Ensures(ReferenceEquals(Result<IList<T>>().Underlying, Underlying ?? this));
+
+
+            return default(IList<T>);
+        }
+
+        public IList<T> ViewOf(T item)
+        {
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+
+
+            // Returns view if an item equals item
+            Ensures(Contains(item) ? Result<IList<T>>() != null : Result<IList<T>>() == null);
+
+            // The view has a length of 1
+            Ensures((Result<IList<T>>()?.Count ?? 1) == 1);
+
+            // The view's offset is the index of the first item equal to item
+            Ensures(Result<IList<T>>() == null || Result<IList<T>>().Offset == IndexOf(item));
+
+            // The view is on this list
+            Ensures(ReferenceEquals(Result<IList<T>>().Underlying, Underlying ?? this));
+
+
+            return default(IList<T>);
+        }
+
         #region Hardened Postconditions
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
@@ -1351,11 +1809,11 @@ namespace C6
 
         #endregion
 
-        /*#region IDisposable
+        #region IDisposable
 
         public abstract void Dispose();
 
-        #endregion*/
+        #endregion
 
         #region SC.IList
 

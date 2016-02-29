@@ -374,5 +374,66 @@ namespace C6
                 list[j] = element;
             }
         }
+        
+        // TODO: Test?
+        // TODO: Is null really the best thing to return? Why not try it the other way around instead?
+        // TODO: Rename to avoid colliding with C6.Intervals?
+        // TODO: IList extensions?
+        /// <summary>
+        /// Returns a new view that starts where
+        /// <paramref name="startPointer"/> starts and ends where
+        /// <paramref name="endPointer"/> ends, if possible.
+        /// </summary>
+        /// <param name="startPointer">A list/view starting where the new view
+        /// must start.</param>
+        /// <param name="endPointer">A list/view ending where the new view must
+        /// end.</param>
+        /// <returns>A new view starting where <paramref name="startPointer"/>
+        /// starts and ends where <paramref name="endPointer"/> ends, if
+        /// <paramref name="startPointer"/> starts before
+        /// <paramref name="endPointer"/> ends;
+        /// otherwise, <c>null</c>.</returns>
+        /// <remarks>
+        /// The two lists/views must have the same underlying list.
+        /// </remarks>
+        [Pure]
+        public static IList<T> Span<T>(this IList<T> startPointer, IList<T> endPointer)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(startPointer != null); // TODO: Use <ArgumentNullException>?
+
+            // Argument must be non-null
+            Requires(endPointer != null); // TODO: Use <ArgumentNullException>?
+
+            // The underlying list must be the same
+            Requires(ReferenceEquals(startPointer.Underlying ?? startPointer, endPointer.Underlying ?? endPointer));
+
+
+            // The other view must not end before this starts
+            Ensures(endPointer.Offset + endPointer.Count - startPointer.Offset >= 0 ? Result<IList<T>>() != null : Result<IList<T>>() == null);
+
+            // The view is on this list
+            Ensures(Result<IList<T>>() == null || ReferenceEquals(Result<IList<T>>().Underlying, startPointer.Underlying ?? startPointer));
+
+            // The view start where this list starts
+            Ensures(Result<IList<T>>() == null || Result<IList<T>>().Offset == startPointer.Offset);
+
+            // The view ends where this list ends
+            Ensures(Result<IList<T>>() == null || Result<IList<T>>().Count == endPointer.Offset + endPointer.Count - startPointer.Offset);
+
+            // Result is a new view
+            Ensures(!ReferenceEquals(Result<IList<T>>(), startPointer));
+            Ensures(!ReferenceEquals(Result<IList<T>>(), endPointer));
+
+            #endregion
+
+            var offset = startPointer.Offset;
+            var count = endPointer.Offset + endPointer.Count - offset;
+
+            // Make the view on the underlying list
+            return count < 0 ? null : (startPointer.Underlying ?? startPointer).View(offset, count);
+        }
     }
 }
