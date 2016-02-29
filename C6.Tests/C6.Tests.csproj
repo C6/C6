@@ -135,6 +135,7 @@
     <Compile Include="Enums\EnumerationDirectionExtensionTests.cs" />
     <Compile Include="Enums\SpeedTests.cs" />
     <Compile Include="Contracts\PreconditionException.cs" />
+    <Compile Include="ExtensionsTests.cs" />
     <Compile Include="Structs\KeyValuePairTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Contracts\TestFailureMethods.cs" />

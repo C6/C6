@@ -151,6 +151,7 @@ namespace C6
         public abstract bool AllowsDuplicates { get; }
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public abstract bool IsFixedSize { get; }
         public abstract void AddAll(SCG.IEnumerable<T> items);
 
         #endregion
