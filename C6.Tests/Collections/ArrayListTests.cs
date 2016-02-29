@@ -99,6 +99,23 @@ namespace C6.Tests
 
         #endregion
 
+        #region CountSpeed
+
+        [Test]
+        public void CountSpeed_EmptyCollection_Constant()
+        {
+            // Arrange
+            var collection = GetEmptyList<int>();
+
+            // Act
+            var speed = collection.CountSpeed;
+
+            // Assert
+            Assert.That(speed, Is.EqualTo(Speed.Constant));
+        }
+
+        #endregion
+
         #endregion
     }
 }

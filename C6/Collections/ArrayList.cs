@@ -48,10 +48,7 @@ namespace C6
 
         public int Count { get; }
 
-        public Speed CountSpeed
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Speed CountSpeed => Speed.Constant;
 
         public bool IsEmpty
         {
