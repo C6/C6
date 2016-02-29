@@ -23,11 +23,13 @@ namespace C6
         public ArrayList()
         {
             _enumerable = Enumerable.Empty<T>();
+            Count = 0;
         }
 
         public ArrayList(SCG.IEnumerable<T> enumerable)
         {
             _enumerable = enumerable;
+            Count = enumerable.Count();
         }
 
         #endregion
@@ -44,10 +46,7 @@ namespace C6
             get { throw new NotImplementedException(); }
         }
 
-        public int Count
-        {
-            get { return 0; }
-        }
+        public int Count { get; }
 
         public Speed CountSpeed
         {
