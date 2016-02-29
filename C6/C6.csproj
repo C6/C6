@@ -191,6 +191,7 @@
     <None Include="C6.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ArrayList.cs" />
     <Compile Include="ComparerFactory.cs" />
     <Compile Include="Contracts\ContractExtensions.cs" />
     <Compile Include="Contracts\ContractHelperExtensions.cs" />

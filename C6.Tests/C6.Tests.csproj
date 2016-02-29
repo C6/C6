@@ -130,6 +130,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ArrayListTests.cs" />
     <Compile Include="Contracts\ContractHelperExtensionsTests.cs" />
     <Compile Include="Contracts\ViolatesTests.cs" />
     <Compile Include="Enums\EnumerationDirectionExtensionTests.cs" />
