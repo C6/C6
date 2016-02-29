@@ -15,6 +15,8 @@ namespace C6.Tests
 
         private static SCG.IEnumerable<int> GetEmptyList() => new ArrayList<int>();
 
+        private static SCG.IEnumerable<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
+
         #endregion
 
         #region IEnumerable<T>
@@ -27,6 +29,16 @@ namespace C6.Tests
 
             // Assert
             Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void GetEnumerator_NonEmptyCollection_NotEmpty()
+        {
+            // Arrange
+            var collection = GetList(new [] {1, 2, 3});
+
+            // Assert
+            Assert.That(collection, Is.Not.Empty);
         }
 
         #endregion
