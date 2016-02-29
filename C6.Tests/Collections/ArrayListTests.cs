@@ -15,7 +15,7 @@ namespace C6.Tests
     {
         #region Helper Methods
 
-        private static SCG.IEnumerable<int> GetEmptyList() => new ArrayList<int>();
+        private static ICollectionValue<T> GetEmptyList<T>() => new ArrayList<T>();
 
         private static SCG.IEnumerable<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
 
@@ -23,11 +23,13 @@ namespace C6.Tests
 
         #region IEnumerable<T>
 
+        #region GetEnumerator()
+
         [Test]
         public void GetEnumerator_EmptyCollection_Empty()
         {
             // Arrange
-            var collection = GetEmptyList();
+            var collection = GetEmptyList<int>();
 
             // Assert
             Assert.That(collection, Is.Empty);
@@ -37,7 +39,7 @@ namespace C6.Tests
         public void GetEnumerator_NonEmptyCollection_NotEmpty()
         {
             // Arrange
-            var collection = GetList(new [] {1, 2, 3});
+            var collection = GetList(new[] { 1, 2, 3 });
 
             // Assert
             Assert.That(collection, Is.Not.Empty);
@@ -47,7 +49,7 @@ namespace C6.Tests
         public void GetEnumerator_NonEmptyCollection_ContainsInitialItems()
         {
             // Arrange
-            var enumerable = new [] {1, 2, 3};
+            var enumerable = new[] { 1, 2, 3 };
             var collection = GetList(enumerable);
 
             // Act
@@ -59,5 +61,28 @@ namespace C6.Tests
 
         #endregion
 
+        #endregion
+
+        #region ICollectionValue<T>
+
+        #region Count
+
+        [Test]
+        public void Count_EmptyCollection_Zero()
+        {
+            // Arrange
+            var collection = GetEmptyList<int>();
+
+            // Act
+            var count = collection.Count;
+
+            // Assert
+            Assert.That(count, Is.EqualTo(0));
+            // TODO: Assert.That(count, Is.Zero);
+        }
+
+        #endregion
+
+        #endregion
     }
 }
