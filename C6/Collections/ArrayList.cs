@@ -50,10 +50,7 @@ namespace C6
 
         public Speed CountSpeed => Speed.Constant;
 
-        public bool IsEmpty
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsEmpty => Count == 0;
 
         public EventTypes ListenableEvents
         {

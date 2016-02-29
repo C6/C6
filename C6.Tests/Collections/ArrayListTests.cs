@@ -1,6 +1,7 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+using System;
 using System.Linq;
 
 using SCG = System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace C6.Tests
     public class ArrayListTests
     {
         #region Helper Methods
+
+        private static SCG.IEnumerable<int> GetRandomIntEnumerable(Random random, int count) => Enumerable.Range(0, count).Select(i => random.Next());
 
         private static ICollectionValue<T> GetEmptyList<T>() => new ArrayList<T>();
 
@@ -114,6 +117,39 @@ namespace C6.Tests
             Assert.That(speed, Is.EqualTo(Speed.Constant));
         }
 
+        #endregion
+
+        #region IsEmpty
+
+        [Test]
+        public void IsEmpty_EmptyCollection_True()
+        {
+            // Arrange
+            var collection = GetEmptyList<int>();
+
+            // Act
+            var isEmpty = collection.IsEmpty;
+
+            // Assert
+            Assert.That(isEmpty, Is.True);
+        }
+
+        [Test]
+        public void IsEmpty_RandomCollection_False()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var size = random.Next(5, 20);
+            var enumerable = GetRandomIntEnumerable(random, size);
+            var collection = GetList(enumerable);
+
+            // Act
+            var isEmpty = collection.IsEmpty;
+
+            // Assert
+            Assert.That(isEmpty, Is.False);
+        }
+        
         #endregion
 
         #endregion
