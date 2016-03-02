@@ -5,6 +5,8 @@ using System;
 using System.Collections;
 using System.Linq;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using SCG = System.Collections.Generic;
 
 
@@ -20,12 +22,43 @@ namespace C6
 
         #region Constructors
 
-        public ArrayList() : this(Enumerable.Empty<T>()) {}
+        // TODO: Document
+        public ArrayList() : this(false) {}
 
-        public ArrayList(SCG.IEnumerable<T> enumerable)
+        // TODO: Document
+        public ArrayList(bool allowsNull) : this(Enumerable.Empty<T>(), allowsNull)
         {
-            _array = enumerable.ToArray();
+            // Value types cannot be null
+            Requires(!typeof(T).IsValueType || !allowsNull);
+        }
+
+        // TODO: Document
+        public ArrayList(SCG.IEnumerable<T> items) : this(items, false)
+        {
+            // Argument must be non-null
+            Requires(items != null); // TODO: Use <ArgumentNullException>?
+        }
+
+        // TODO: Document
+        public ArrayList(SCG.IEnumerable<T> items, bool allowsNull)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(items != null); // TODO: Use <ArgumentNullException>?
+
+            // All items must be non-null if collection disallows null values
+            Requires(allowsNull || ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+
+            // Value types cannot be null
+            Requires(!typeof(T).IsValueType || !allowsNull);
+
+            #endregion
+
+            _array = items.ToArray();
             Count = _array.Length;
+
+            AllowsNull = allowsNull;
         }
 
         #endregion
@@ -37,10 +70,7 @@ namespace C6
             get { throw new NotImplementedException(); }
         }
 
-        public bool AllowsNull
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool AllowsNull { get; }
 
         public int Count { get; }
 

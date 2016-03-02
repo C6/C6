@@ -30,6 +30,9 @@ namespace C6.Tests.Contracts
             }
         }
 
+        // TODO: Remove this once the issue is solved: https://github.com/Microsoft/CodeContracts/issues/392
+        public static StartsWithConstraint ConstructorPrecondition => Throws.InstanceOf<Exception>().With.Property("Message").StartsWith("Precondition failed");
+
 
         /// <summary>
         /// Returns an <see cref="EqualConstraint"/> that checks if a typed

@@ -4,7 +4,10 @@
 using System;
 using System.Linq;
 
+using C6.Tests.Contracts;
+
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 using SCG = System.Collections.Generic;
 
@@ -16,7 +19,15 @@ namespace C6.Tests
     {
         #region Helper Methods
 
+        private static SCG.IEnumerable<int> GetRandomIntEnumerable(Random random) => GetRandomIntEnumerable(random, random.Next(5, 20));
+
         private static SCG.IEnumerable<int> GetRandomIntEnumerable(Random random, int count) => Enumerable.Range(0, count).Select(i => random.Next());
+
+        private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random) =>
+            GetRandomStringEnumerable(random, random.Next(5, 20));
+
+        private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random, int count) =>
+            Enumerable.Range(0, count).Select(i => random.GetString());
 
         private static ICollectionValue<T> GetEmptyList<T>() => new ArrayList<T>();
 
@@ -159,7 +170,7 @@ namespace C6.Tests
         #region ArrayList<T>()
 
         [Test]
-        public void Constructor_EmptyEnumerable_Empty()
+        public void Constructor_DefaultConstructor_Empty()
         {
             // Act
             var collection = new ArrayList<int>();
@@ -168,27 +179,149 @@ namespace C6.Tests
             Assert.That(collection, Is.Empty);
         }
 
+        [Test]
+        public void Constructor_DefaultValueTypeConstructor_DisallowsNull()
+        {
+            // Act
+            var collection = new ArrayList<int>();
+
+            // Assert
+            Assert.That(collection.AllowsNull, Is.False);
+        }
+
+        [Test]
+        public void Constructor_DefaultNonValueTypeConstructor_DisallowsNull()
+        {
+            // Act
+            var collection = new ArrayList<string>();
+
+            // Assert
+            Assert.That(collection.AllowsNull, Is.False);
+        }
+
+        #endregion
+
+        #region ArrayList<T>(bool)
+
+        [Test]
+        public void Constructor_ValueTypeCollectionAllowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var allowsNull = true;
+
+            // Act & Assert
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            Assert.That(() => new ArrayList<int>(allowsNull), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+        }
+
+        [Test]
+        public void Constructor_ValueTypeCollectionDisallowsNull_DisallowsNull()
+        {
+            // Arrange
+            var allowsNull = false;
+
+            // Act
+            var collection = new ArrayList<int>(allowsNull);
+
+            // Assert
+            Assert.That(collection.AllowsNull, Is.False);
+        }
+
+        [Test]
+        public void Constructor_NonValueTypeCollection_AllowNull([Values(true, false)] bool allowNull)
+        {
+            // Act
+            var collection = new ArrayList<string>(allowNull);
+
+            // Assert
+            Assert.That(collection.AllowsNull, Is.EqualTo(allowNull));
+        }
+
         #endregion
 
         #region ArrayList(SCG.IEnumerable<T>)
 
         [Test]
-        public void Constructor_RandomEnumerableBeingChanged_Unequal()
+        public void Constructor_NullEnumerable_ViolatesPrecondition()
+        {
+            // Arrange
+            SCG.IEnumerable<string> enumerable = null;
+
+            // Act & Assert
+            // ReSharper disable once ExpressionIsAlwaysNull
+            Assert.That(() => new ArrayList<string>(enumerable), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+        }
+
+        [Test]
+        public void Constructor_EmptyEnumerable_Empty()
+        {
+            // Arrange
+            var enumerable = Enumerable.Empty<int>();
+
+            // Act
+            var list = new ArrayList<int>(enumerable);
+
+            // Assert
+            Assert.That(list, Is.Empty);
+        }
+
+        [Test]
+        public void Constructor_RandomNonValueTypeEnumerable_Equal()
+        {
+            // Arrange
+            var array = GetRandomStringEnumerable(TestContext.CurrentContext.Random).ToArray();
+
+            // Act
+            var list = new ArrayList<string>(array);
+
+            // Assert
+            Assert.That(list, Is.EqualTo(array));
+        }
+
+        [Test]
+        public void Constructor_EnumerableWithNull_ViolatesPrecondition()
         {
             // Arrange
             var random = TestContext.CurrentContext.Random;
-            var size = random.Next(5, 20);
-            var array = GetRandomIntEnumerable(random, size).ToArray();
+            var array = GetRandomStringEnumerable(random).ToArray();
+            array[random.Next(0, array.Length)] = null;
+
+            // Act & Assert
+            Assert.That(() => new ArrayList<string>(array), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+        }
+
+        [Test]
+        public void Constructor_EnumerableBeingChanged_Unequal()
+        {
+            // Arrange
+            var array = GetRandomIntEnumerable(TestContext.CurrentContext.Random).ToArray();
 
             // Act
             var collection = new ArrayList<int>(array);
-            for (var i = 0; i < size; i++) {
+            for (var i = 0; i < array.Length; i++) {
                 array[i] *= -1;
             }
-            var result = collection.SequenceEqual(array);
 
             // Assert
-            Assert.That(result, Is.False);
+            Assert.That(collection, Is.Not.EqualTo(array));
+        }
+
+        #endregion
+
+        #region ArrayList(SCG.IEnumerable<T>, bool)
+
+        // TODO: Test different combinations
+
+        [Test]
+        public void Constructor_EnumerableWithNullDisallowNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var array = GetRandomStringEnumerable(random).ToArray();
+            array[random.Next(0, array.Length)] = null;
+
+            // Act & Assert
+            Assert.That(() => new ArrayList<string>(array, false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
         }
 
         #endregion
