@@ -27,7 +27,7 @@ namespace C6
     /// is to be the return type of query operations on generic collection.
     /// </remarks>
     [ContractClass(typeof(ICollectionValueContract<>))]
-    public interface ICollectionValue<T> : SCG.IEnumerable<T>, IShowable
+    public interface ICollectionValue<T> : SCG.IEnumerable<T> // TODO: Add IShowable again
     {
         /// <summary>
         /// Gets a bit flag indicating the collection's currently subscribed
@@ -449,8 +449,13 @@ namespace C6
             Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
             Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
 
+
             // Array contains the collection's items in enumeration order from arrayIndex
-            Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
+            Ensures(array.Skip(arrayIndex).Take(Count).SequenceEqual(this));
+
+            // The rest of the array is unchanged
+            Ensures(OldValue(array.Take(arrayIndex).ToList()).SequenceEqual(array.Take(arrayIndex)));
+            Ensures(OldValue(array.Skip(arrayIndex + Count).ToList()).SequenceEqual(array.Skip(arrayIndex + Count)));
 
 
             return;
@@ -465,7 +470,7 @@ namespace C6
             Ensures(Result<T[]>() != null);
 
             // Result contains the collection's items in enumeration order
-            Ensures(Enumerable.SequenceEqual(Result<T[]>(), this));
+            Ensures(Result<T[]>().SequenceEqual(this));
 
 
             return default(T[]);
