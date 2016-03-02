@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 using static System.Diagnostics.Contracts.Contract;
@@ -17,6 +18,22 @@ namespace C6
         #region Fields
 
         private readonly T[] _array;
+
+        #endregion
+
+        #region Code Contracts
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            // ReSharper disable InvocationIsSkipped
+
+            Invariant(_array != null);
+
+            Invariant(AllowsNull || ForAll(this, item => item != null));
+
+            // ReSharper restore InvocationIsSkipped
+        }
 
         #endregion
 
