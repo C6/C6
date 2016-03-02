@@ -34,29 +34,29 @@ namespace C6.Tests
         private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random, int count)
             => Enumerable.Range(0, count).Select(i => random.GetString());
 
-        private static ICollectionValue<T> GetEmptyList<T>()
+        private static IExtensible<T> GetEmptyList<T>()
             => GetList(Enumerable.Empty<T>());
 
-        private static ICollectionValue<T> GetList<T>(params T[] array)
+        private static IExtensible<T> GetList<T>(params T[] array)
             => GetList((SCG.IEnumerable<T>) array);
 
-        private static ICollectionValue<int> GetRandomIntList(Random random)
+        private static IExtensible<int> GetRandomIntList(Random random)
             => GetList(GetRandomIntEnumerable(random, GetRandomCount(random)));
 
-        private static ICollectionValue<int> GetRandomIntList(Random random, int count)
+        private static IExtensible<int> GetRandomIntList(Random random, int count)
             => GetList(GetRandomIntEnumerable(random, count));
 
-        private static ICollectionValue<string> GetRandomStringList(Randomizer random)
+        private static IExtensible<string> GetRandomStringList(Randomizer random)
             => GetList(GetRandomStringEnumerable(random, GetRandomCount(random)));
 
-        private static ICollectionValue<string> GetRandomStringList(Randomizer random, int count)
+        private static IExtensible<string> GetRandomStringList(Randomizer random, int count)
             => GetList(GetRandomStringEnumerable(random, count));
 
         #endregion
 
         #region Factories
 
-        private static ICollectionValue<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
+        private static IExtensible<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
 
         #endregion
 
