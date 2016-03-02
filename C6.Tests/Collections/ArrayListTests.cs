@@ -36,7 +36,7 @@ namespace C6.Tests
 
         private static ICollectionValue<T> GetEmptyList<T>()
             => GetList(Enumerable.Empty<T>());
-        
+
         private static ICollectionValue<T> GetList<T>(params T[] array)
             => GetList((SCG.IEnumerable<T>) array);
 
@@ -55,7 +55,7 @@ namespace C6.Tests
         #endregion
 
         #region Factories
-        
+
         private static ICollectionValue<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
 
         #endregion
@@ -182,6 +182,48 @@ namespace C6.Tests
 
             // Assert
             Assert.That(isEmpty, Is.False);
+        }
+
+        #endregion
+
+        #region Choose()
+
+        [Test]
+        public void Choose_EmptyCollection_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetEmptyList<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.Choose(), Violates.Precondition);
+        }
+
+        [Test]
+        public void Choose_SingleItemCollection_Item()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var item = random.GetString();
+            var list = GetList(item);
+
+            // Act
+            var choose = list.Choose();
+
+            // Assert
+            Assert.That(choose, Is.EqualTo(item));
+        }
+
+        [Test]
+        public void Choose_RandomCollection_ItemFromCollection()
+        {
+            // Arrange
+            var list = GetRandomStringList(TestContext.CurrentContext.Random);
+
+            // Act
+            var choose = list.Choose();
+
+            // Assert
+            Assert.That(list, Contains.Item(choose));
         }
 
         #endregion
@@ -350,6 +392,25 @@ namespace C6.Tests
         }
 
         #endregion
+
+        #endregion
+
+        #region Choose
+
+        [Test]
+        public void Choose_RandomCollection_LastItem()
+        {
+            // Arrange
+            var enumerable = GetRandomStringEnumerable(TestContext.CurrentContext.Random).ToArray();
+            var list = GetList(enumerable);
+            var lastItem = enumerable.Last();
+
+            // Act
+            var choose = list.Choose();
+
+            // Assert
+            Assert.That(choose, Is.EqualTo(lastItem));
+        }
 
         #endregion
 

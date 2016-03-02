@@ -111,10 +111,7 @@ namespace C6
             }
         }
 
-        public T Choose()
-        {
-            throw new NotImplementedException();
-        }
+        public T Choose() => _array[Count - 1];
 
         public void CopyTo(T[] array, int arrayIndex)
         {
