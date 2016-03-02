@@ -104,18 +104,18 @@ namespace C6
 
         #region Public Methods
 
-        public SCG.IEnumerator<T> GetEnumerator()
-        {
-            for (var i = 0; i < Count; i++) {
-                yield return _array[i];
-            }
-        }
-
         public T Choose() => _array[Count - 1];
 
         public void CopyTo(T[] array, int arrayIndex)
         {
             throw new NotImplementedException();
+        }
+
+        public SCG.IEnumerator<T> GetEnumerator()
+        {
+            for (var i = 0; i < Count; i++) {
+                yield return _array[i];
+            }
         }
 
         public T[] ToArray()
