@@ -19,21 +19,44 @@ namespace C6.Tests
     {
         #region Helper Methods
 
-        private static SCG.IEnumerable<int> GetRandomIntEnumerable(Random random) => GetRandomIntEnumerable(random, random.Next(5, 20));
+        private static int GetRandomCount(Random random)
+            => random.Next(5, 20);
 
-        private static SCG.IEnumerable<int> GetRandomIntEnumerable(Random random, int count) => Enumerable.Range(0, count).Select(i => random.Next());
+        private static SCG.IEnumerable<int> GetRandomIntEnumerable(Random random)
+            => GetRandomIntEnumerable(random, GetRandomCount(random));
 
-        private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random) =>
-            GetRandomStringEnumerable(random, random.Next(5, 20));
+        private static SCG.IEnumerable<int> GetRandomIntEnumerable(Random random, int count)
+            => Enumerable.Range(0, count).Select(i => random.Next());
 
-        private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random, int count) =>
-            Enumerable.Range(0, count).Select(i => random.GetString());
+        private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random)
+            => GetRandomStringEnumerable(random, GetRandomCount(random));
 
-        private static ICollectionValue<T> GetEmptyList<T>() => new ArrayList<T>();
+        private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random, int count)
+            => Enumerable.Range(0, count).Select(i => random.GetString());
 
+        private static ICollectionValue<T> GetEmptyList<T>()
+            => GetList(Enumerable.Empty<T>());
+        
+        private static ICollectionValue<T> GetList<T>(params T[] array)
+            => GetList((SCG.IEnumerable<T>) array);
+
+        private static ICollectionValue<int> GetRandomIntList(Random random)
+            => GetList(GetRandomIntEnumerable(random, GetRandomCount(random)));
+
+        private static ICollectionValue<int> GetRandomIntList(Random random, int count)
+            => GetList(GetRandomIntEnumerable(random, count));
+
+        private static ICollectionValue<string> GetRandomStringList(Randomizer random)
+            => GetList(GetRandomStringEnumerable(random, GetRandomCount(random)));
+
+        private static ICollectionValue<string> GetRandomStringList(Randomizer random, int count)
+            => GetList(GetRandomStringEnumerable(random, count));
+
+        #endregion
+
+        #region Factories
+        
         private static ICollectionValue<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
-
-        private static ICollectionValue<int> GetRandomIntList(Random random, int count) => GetList(GetRandomIntEnumerable(random, count));
 
         #endregion
 
@@ -102,7 +125,7 @@ namespace C6.Tests
         {
             // Arrange
             var random = TestContext.CurrentContext.Random;
-            var size = random.Next(5, 20);
+            var size = GetRandomCount(random);
             var collection = GetRandomIntList(random, size);
 
             // Act
@@ -151,7 +174,7 @@ namespace C6.Tests
         {
             // Arrange
             var random = TestContext.CurrentContext.Random;
-            var size = random.Next(5, 20);
+            var size = GetRandomCount(random);
             var collection = GetRandomIntList(random, size);
 
             // Act
@@ -166,6 +189,8 @@ namespace C6.Tests
         #endregion
 
         #region ArrayList<T>
+
+        #region Constructors
 
         #region ArrayList<T>()
 
@@ -323,6 +348,8 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => new ArrayList<string>(array, false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
         }
+
+        #endregion
 
         #endregion
 
