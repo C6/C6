@@ -13,7 +13,7 @@ using SCG = System.Collections.Generic;
 
 namespace C6
 {
-    public class ArrayList<T> : ICollectionValue<T>
+    public class ArrayList<T> : IExtensible<T>
     {
         #region Fields
 
@@ -87,13 +87,38 @@ namespace C6
             get { throw new NotImplementedException(); }
         }
 
+        public bool AllowsDuplicates
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public bool AllowsNull { get; }
 
         public int Count { get; }
 
         public Speed CountSpeed => Speed.Constant;
 
+        public bool DuplicatesByCounting
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public SCG.IEqualityComparer<T> EqualityComparer
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public bool IsEmpty => Count == 0;
+
+        public bool IsFixedSize
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsReadOnly
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         public EventTypes ListenableEvents
         {
@@ -103,6 +128,16 @@ namespace C6
         #endregion
 
         #region Public Methods
+
+        public bool Add(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
 
         public T Choose() => _array[Count - 1];
 
