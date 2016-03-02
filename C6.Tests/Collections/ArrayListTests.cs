@@ -297,6 +297,66 @@ namespace C6.Tests
 
         #endregion
 
+        #region ToArray()
+
+        [Test]
+        public void ToArray_EmptyCollection_Empty()
+        {
+            // Arrange
+            var list = GetEmptyList<int>();
+
+            // Act
+            var array = list.ToArray();
+
+            // Assert
+            Assert.That(array, Is.Empty);
+        }
+
+        [Test]
+        public void ToArray_EmptyCollection_NotNull()
+        {
+            // Arrange
+            var list = GetEmptyList<int>();
+
+            // Act
+            var array = list.ToArray();
+
+            // Assert
+            Assert.That(array, Is.Not.Null);
+        }
+
+        [Test]
+        public void ToArray_SingleItemCollection_SingleItemArray()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var item = random.GetString();
+            var list = GetList(item);
+            var itemArray = new[] { item };
+
+            // Act
+            var array = list.ToArray();
+
+            // Assert
+            Assert.That(array, Is.EqualTo(itemArray));
+        }
+
+        [Test]
+        public void ToArray_RandomNonValueTypeCollection_Equal()
+        {
+            // Arrange
+            var items = GetRandomStringEnumerable(TestContext.CurrentContext.Random).ToArray();
+            var list = GetList(items);
+
+            // Act
+            var array = list.ToArray();
+
+            // Assert
+            Assert.That(array, Is.EqualTo(items));
+        }
+
+        #endregion
+
         #endregion
 
         #region ArrayList<T>

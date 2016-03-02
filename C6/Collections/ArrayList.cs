@@ -118,7 +118,9 @@ namespace C6
 
         public T[] ToArray()
         {
-            throw new NotImplementedException();
+            var result = new T[Count];
+            Array.Copy(_array, result, Count);
+            return result;
         }
 
         #endregion
