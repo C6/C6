@@ -449,8 +449,13 @@ namespace C6
             Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
             Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
 
+
             // Array contains the collection's items in enumeration order from arrayIndex
-            Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
+            Ensures(array.Skip(arrayIndex).Take(Count).SequenceEqual(this));
+
+            // The rest of the array is unchanged
+            Ensures(OldValue(array.Take(arrayIndex).ToList()).SequenceEqual(array.Take(arrayIndex)));
+            Ensures(OldValue(array.Skip(arrayIndex + Count).ToList()).SequenceEqual(array.Skip(arrayIndex + Count)));
 
 
             return;

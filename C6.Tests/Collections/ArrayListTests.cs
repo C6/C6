@@ -228,6 +228,75 @@ namespace C6.Tests
 
         #endregion
 
+        #region CopyTo(T[], int)
+
+        [Test]
+        public void CopyTo_NullArray_ViolatesPrecondition()
+        {
+            // Arrange
+            var list = GetRandomIntList(TestContext.CurrentContext.Random);
+
+            // Act & Assert
+            Assert.That(() => list.CopyTo(null, 0), Violates.Precondition);
+        }
+
+        [Test]
+        public void CopyTo_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var list = GetRandomIntList(TestContext.CurrentContext.Random);
+            var array = new int[list.Count];
+
+            // Act & Assert
+            Assert.That(() => list.CopyTo(array, -1), Violates.Precondition);
+        }
+
+        [Test]
+        public void CopyTo_IndexOutOfBound_ViolatesPrecondition()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var list = GetRandomIntList(random);
+            var array = new int[list.Count];
+            var index = random.Next(1, list.Count);
+
+            // Act & Assert
+            Assert.That(() => list.CopyTo(array, index), Violates.Precondition);
+        }
+
+        [Test]
+        public void CopyTo_EqualSizeArray_Equals()
+        {
+            // Arrange
+            var list = GetRandomIntList(TestContext.CurrentContext.Random);
+            var array = new int[list.Count];
+
+            // Act
+            list.CopyTo(array, 0);
+
+            // Assert
+            Assert.That(array, Is.EqualTo(list));
+        }
+
+        [Test]
+        public void CopyTo_CopyToRandomIndex_SectionEquals()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var list = GetRandomIntList(random);
+            var array = GetRandomIntEnumerable(random, (int) (list.Count * 1.7)).ToArray();
+            var arrayIndex = random.Next(0, array.Length - list.Count);
+
+            // Act
+            list.CopyTo(array, arrayIndex);
+            var section = array.Skip(arrayIndex).Take(list.Count);
+
+            // Assert
+            Assert.That(section, Is.EqualTo(list));
+        }
+
+        #endregion
+
         #endregion
 
         #region ArrayList<T>

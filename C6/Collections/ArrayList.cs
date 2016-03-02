@@ -107,9 +107,7 @@ namespace C6
         public T Choose() => _array[Count - 1];
 
         public void CopyTo(T[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
+            => Array.Copy(_array, 0, array, arrayIndex, Count);
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
