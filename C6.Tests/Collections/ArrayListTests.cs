@@ -524,7 +524,81 @@ namespace C6.Tests
 
         #endregion
 
-        #region Choose
+        #region Properties
+
+        #region AllowsDuplicates
+
+        [Test]
+        public void AllowsDuplicates_RandomCollection_False()
+        {
+            // Arrange
+            var list = GetRandomStringList(TestContext.CurrentContext.Random);
+
+            // Act
+            var allowsDuplicates = list.AllowsDuplicates;
+
+            // Assert
+            Assert.That(allowsDuplicates, Is.True);
+        }
+
+        #endregion
+
+        #region DuplicatesByCounting
+
+        [Test]
+        public void DuplicatesByCounting_RandomCollection_False()
+        {
+            // Arrange
+            var list = GetRandomStringList(TestContext.CurrentContext.Random);
+
+            // Act
+            var duplicatesByCounting = list.DuplicatesByCounting;
+
+            // Assert
+            Assert.That(duplicatesByCounting, Is.False);
+        }
+
+        #endregion
+
+        #region IsFixedSize
+
+        [Test]
+        public void IsFixedSize_RandomCollection_False()
+        {
+            // Arrange
+            var list = GetRandomStringList(TestContext.CurrentContext.Random);
+
+            // Act
+            var isFixedSize = list.IsFixedSize;
+
+            // Assert
+            Assert.That(isFixedSize, Is.False);
+        }
+
+        #endregion
+
+        #region IsReadOnly
+
+        [Test]
+        public void IsReadOnly_RandomCollection_False()
+        {
+            // Arrange
+            var list = GetRandomStringList(TestContext.CurrentContext.Random);
+
+            // Act
+            var isReadOnly = list.IsReadOnly;
+
+            // Assert
+            Assert.That(isReadOnly, Is.False);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Methods
+
+        #region Choose()
 
         [Test]
         public void Choose_RandomCollection_LastItem()
@@ -540,6 +614,8 @@ namespace C6.Tests
             // Assert
             Assert.That(choose, Is.EqualTo(lastItem));
         }
+
+        #endregion
 
         #endregion
 

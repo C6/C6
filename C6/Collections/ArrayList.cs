@@ -87,10 +87,7 @@ namespace C6
             get { throw new NotImplementedException(); }
         }
 
-        public bool AllowsDuplicates
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool AllowsDuplicates => true;
 
         public bool AllowsNull { get; }
 
@@ -98,10 +95,7 @@ namespace C6
 
         public Speed CountSpeed => Speed.Constant;
 
-        public bool DuplicatesByCounting
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool DuplicatesByCounting => false;
 
         public SCG.IEqualityComparer<T> EqualityComparer
         {
@@ -110,15 +104,9 @@ namespace C6
 
         public bool IsEmpty => Count == 0;
 
-        public bool IsFixedSize
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsFixedSize => false;
 
-        public bool IsReadOnly
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsReadOnly => false;
 
         public EventTypes ListenableEvents
         {
