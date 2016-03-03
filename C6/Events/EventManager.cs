@@ -52,7 +52,7 @@ namespace C6
         public event EventHandler CollectionChanged {
             add {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // Event is active
@@ -67,7 +67,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // The event is inactive, if the event handler is null
@@ -88,7 +88,7 @@ namespace C6
         public event EventHandler<ClearedEventArgs> CollectionCleared {
             add {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // Event is active
@@ -103,7 +103,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // The event is inactive, if the event handler is null
@@ -124,7 +124,7 @@ namespace C6
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded {
             add {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // Event is active
@@ -139,7 +139,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // The event is inactive, if the event handler is null
@@ -160,7 +160,7 @@ namespace C6
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved {
             add {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // Event is active
@@ -175,7 +175,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // The event is inactive, if the event handler is null
@@ -196,7 +196,7 @@ namespace C6
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted {
             add {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // Event is active
@@ -211,7 +211,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // The event is inactive, if the event handler is null
@@ -232,7 +232,7 @@ namespace C6
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt {
             add {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // Event is active
@@ -247,7 +247,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null); // TODO: Use <ArgumentNullException>?
+                Requires(value != null);
 
 
                 // The event is inactive, if the event handler is null
@@ -268,7 +268,7 @@ namespace C6
         public void OnCollectionChanged(object sender)
         {
             // Argument must be non-null
-            Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null);
 
 
             _collectionChanged?.Invoke(sender, EventArgs.Empty);
@@ -279,7 +279,7 @@ namespace C6
         public void OnCollectionCleared(object sender, bool full, int count, int? start = null)
         {
             // Argument must be non-null
-            Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null);
 
             // Argument must be positive
             Requires(count > 0);
@@ -295,13 +295,13 @@ namespace C6
         public void OnItemsAdded(object sender, T item, int count)
         {
             // Argument must be non-null
-            Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null);
 
             // Argument must be non-null
-            // Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null);
 
             // Argument must be positive
-            Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(count > 0);
 
 
             _itemsAdded?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
@@ -311,13 +311,13 @@ namespace C6
         public void OnItemsRemoved(object sender, T item, int count)
         {
             // Argument must be non-null
-            Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null);
 
             // Argument must be non-null
-            // Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null);
 
             // Argument must be positive
-            Requires(count > 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(count > 0);
 
 
             _itemsRemoved?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
@@ -327,13 +327,13 @@ namespace C6
         public void OnItemInserted(object sender, T item, int index)
         {
             // Argument must be non-null
-            Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null);
 
             // Argument must be non-null
-            // Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null);
 
             // Argument must be non-negative
-            Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(index >= 0);
 
 
             _itemInserted?.Invoke(sender, new ItemAtEventArgs<T>(item, index));
@@ -343,13 +343,13 @@ namespace C6
         public void OnItemRemovedAt(object sender, T item, int index)
         {
             // Argument must be non-null
-            Requires(sender != null); // TODO: Use <ArgumentNullException>?
+            Requires(sender != null);
 
             // Argument must be non-null
-            // Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null);
 
             // Argument must be non-negative
-            Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(index >= 0);
 
 
             _itemRemovedAt?.Invoke(sender, new ItemAtEventArgs<T>(item, index));

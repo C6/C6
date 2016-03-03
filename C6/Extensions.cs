@@ -31,9 +31,9 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null);
             // Argument must be non-null
-            // Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null);
 
             // Result is non-null
             Ensures(Result<SCG.IEnumerable<T>>() != null);
@@ -62,7 +62,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null);
 
 
             // Returns true if Count is zero, otherwise false
@@ -80,10 +80,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null);
 
             // Argument must be non-null
-            Requires(predicate != null); // TODO: Use <ArgumentNullException>?
+            Requires(predicate != null);
 
 
             // Returns true if p(x) returned true for some item x; otherwise false
@@ -140,10 +140,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null);
 
             // Argument must be non-null
-            Requires(predicate != null); // TODO: Use <ArgumentNullException>?
+            Requires(predicate != null);
 
             #endregion
 
@@ -183,7 +183,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null);
 
             #endregion
 
@@ -215,7 +215,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null);
 
             #endregion
 
@@ -242,10 +242,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null); // TODO: Use <ArgumentNullException>?
+            Requires(enumerable != null);
 
             // Argument must be non-null
-            Requires(comparison != null); // TODO: Use <ArgumentNullException>?
+            Requires(comparison != null);
 
             #endregion
 
@@ -262,7 +262,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(array != null); // TODO: Use <ArgumentNullException>?
+            Requires(array != null);
 
             #endregion
 
@@ -280,7 +280,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(list != null); // TODO: Use <ArgumentNullException>?
+            Requires(list != null);
 
             #endregion
 
@@ -299,7 +299,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(array != null); // TODO: Use <ArgumentNullException>?
+            Requires(array != null);
 
             #endregion
 
@@ -324,10 +324,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(list != null); // TODO: Use <ArgumentNullException>?
+            Requires(list != null);
 
             // List must be non-read-only
-            Requires(!list.IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!list.IsReadOnly);
 
             #endregion
 
@@ -390,18 +390,18 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(list != null); // TODO: Use <ArgumentNullException>?
+            Requires(list != null);
 
             // List must be non-read-only
-            Requires(!list.IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!list.IsReadOnly);
 
             // Argument must be within bounds
-            Requires(0 <= i); // TODO: Use <ArgumentOutOfRangeException>?
-            Requires(i < list.Count); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(0 <= i);
+            Requires(i < list.Count);
 
             // Argument must be within bounds
-            Requires(0 <= j); // TODO: Use <ArgumentOutOfRangeException>?
-            Requires(j < list.Count); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(0 <= j);
+            Requires(j < list.Count);
 
 
             // The values are swapped

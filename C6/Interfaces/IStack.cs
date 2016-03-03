@@ -94,8 +94,8 @@ namespace C6
             get
             {
                 // Argument must be within bounds (collection must be non-empty)
-                Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-                Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+                Requires(0 <= index);
+                Requires(index < Count);
 
 
                 // Result is non-null
@@ -112,7 +112,7 @@ namespace C6
         public T Pop()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
             // Collection must be non-read-only
             Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible property, which IQueue doesn't inherit from!
@@ -137,7 +137,7 @@ namespace C6
         public void Push(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null);
 
             // Collection must be non-read-only
             Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!

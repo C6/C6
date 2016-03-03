@@ -426,7 +426,7 @@ namespace C6
         public T Choose()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
 
             // Result is non-null
@@ -443,11 +443,11 @@ namespace C6
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null
-            Requires(array != null); // TODO: Use <ArgumentNullException>?
+            Requires(array != null);
 
             // Argument must be within bounds
-            Requires(0 <= arrayIndex); // TODO: Use <ArgumentOutOfRangeException>?
-            Requires(arrayIndex + Count <= array.Length); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(0 <= arrayIndex);
+            Requires(arrayIndex + Count <= array.Length);
 
             // Array contains the collection's items in enumeration order from arrayIndex
             Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
@@ -479,7 +479,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Changed));
 
 
                 // Event is active
@@ -497,7 +497,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Changed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Changed));
 
 
                 // No Ensures
@@ -515,7 +515,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Cleared));
 
 
                 // Event is active
@@ -533,7 +533,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Cleared)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Cleared));
 
 
                 // No Ensures
@@ -551,7 +551,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Inserted));
 
 
                 // Event is active
@@ -569,7 +569,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Inserted)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Inserted));
 
 
                 // No Ensures
@@ -587,7 +587,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(RemovedAt));
 
 
                 // Event is active
@@ -605,7 +605,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(RemovedAt)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(RemovedAt));
 
 
                 // No Ensures
@@ -623,7 +623,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Added));
 
 
                 // Event is active
@@ -641,7 +641,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Added)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Added));
 
 
                 // No Ensures
@@ -659,7 +659,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Removed));
 
 
                 // Event is active
@@ -677,7 +677,7 @@ namespace C6
                 Requires(value != null);
 
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Removed)); // TODO: Use <UnlistenableEventException>?
+                Requires(ListenableEvents.HasFlag(Removed));
 
 
                 // No Ensures
