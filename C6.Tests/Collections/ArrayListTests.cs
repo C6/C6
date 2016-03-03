@@ -78,7 +78,7 @@ namespace C6.Tests
         public void GetEnumerator_NonEmptyCollection_NotEmpty()
         {
             // Arrange
-            var collection = GetList(new[] { 1, 2, 3 });
+            var collection = GetList(1, 2, 3);
 
             // Assert
             Assert.That(collection, Is.Not.Empty);
@@ -88,14 +88,11 @@ namespace C6.Tests
         public void GetEnumerator_NonEmptyCollection_ContainsInitialItems()
         {
             // Arrange
-            var enumerable = new[] { 1, 2, 3 };
-            var collection = GetList(enumerable);
+            var array = new[] { 1, 2, 3 };
+            var collection = GetList(array);
 
-            // Act
-            var result = enumerable.SequenceEqual(collection);
-
-            // Assert
-            Assert.That(result, Is.True);
+            // Act & Assert
+            Assert.That(collection, Is.EqualTo(array));
         }
 
         #endregion
@@ -204,6 +201,21 @@ namespace C6.Tests
             // Arrange
             var random = TestContext.CurrentContext.Random;
             var item = random.GetString();
+            var list = GetList(item);
+
+            // Act
+            var choose = list.Choose();
+
+            // Assert
+            Assert.That(choose, Is.SameAs(item));
+        }
+
+        [Test]
+        public void Choose_SingleValueTypeCollection_Item()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var item = random.Next();
             var list = GetList(item);
 
             // Act
