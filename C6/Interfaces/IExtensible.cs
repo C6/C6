@@ -174,7 +174,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // True by convention for collections with set semantics
@@ -189,7 +189,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is non-null
@@ -205,7 +205,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Read-only list has fixed size

@@ -325,7 +325,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // The active events must exist
@@ -345,7 +345,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Value types must return false
@@ -361,7 +361,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Returns a non-negative number
@@ -379,7 +379,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is a valid enum constant
@@ -394,7 +394,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Returns true if Count is zero, otherwise false
@@ -412,7 +412,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // The listenable events must exist
@@ -458,7 +458,7 @@ namespace C6
 
         public T[] ToArray()
         {
-            // No Requires
+            // No preconditions
 
 
             // Result is non-null
@@ -500,7 +500,7 @@ namespace C6
                 Requires(ListenableEvents.HasFlag(Changed));
 
 
-                // No Ensures
+                // No postconditions
 
 
                 return;
@@ -536,7 +536,7 @@ namespace C6
                 Requires(ListenableEvents.HasFlag(Cleared));
 
 
-                // No Ensures
+                // No postconditions
 
 
                 return;
@@ -572,7 +572,7 @@ namespace C6
                 Requires(ListenableEvents.HasFlag(Inserted));
 
 
-                // No Ensures
+                // No postconditions
 
 
                 return;
@@ -608,7 +608,7 @@ namespace C6
                 Requires(ListenableEvents.HasFlag(RemovedAt));
 
 
-                // No Ensures
+                // No postconditions
 
 
                 return;
@@ -644,7 +644,7 @@ namespace C6
                 Requires(ListenableEvents.HasFlag(Added));
 
 
-                // No Ensures
+                // No postconditions
 
 
                 return;
@@ -680,7 +680,7 @@ namespace C6
                 Requires(ListenableEvents.HasFlag(Removed));
 
 
-                // No Ensures
+                // No postconditions
 
 
                 return;

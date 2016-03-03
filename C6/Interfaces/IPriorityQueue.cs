@@ -321,7 +321,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is non-null
@@ -613,7 +613,7 @@ namespace C6
             Requires(handle != null);
 
 
-            // No Ensures
+            // No postconditions
 
 
             return default(bool);
@@ -749,7 +749,7 @@ namespace C6
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool Add(T item)
         {
-            // No extra Requires allowed
+            // No additional preconditions allowed
 
 
             // Always returns true

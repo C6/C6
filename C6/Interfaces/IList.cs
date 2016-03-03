@@ -623,7 +623,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Returns a non-negative number
@@ -676,7 +676,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Read-only list has fixed size
@@ -930,7 +930,7 @@ namespace C6
 
         public bool IsSorted()
         {
-            // No Requires
+            // No preconditions
 
 
             // True if sorted
@@ -942,7 +942,7 @@ namespace C6
 
         public bool IsSorted(SCG.IComparer<T> comparer)
         {
-            // No Requires
+            // No preconditions
 
 
             // True if sorted
@@ -1209,7 +1209,7 @@ namespace C6
         {
             get
             {
-                // No extra Requires allowed
+                // No additional preconditions allowed
 
 
                 // Always true for lists
@@ -1225,7 +1225,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Always false

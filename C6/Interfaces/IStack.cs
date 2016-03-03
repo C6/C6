@@ -172,7 +172,7 @@ namespace C6
         {
             get
             {
-                // No extra Requires allowed
+                // No additional preconditions allowed
 
 
                 // The events raised by the collection must be listenable

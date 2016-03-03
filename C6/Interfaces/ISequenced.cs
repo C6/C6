@@ -87,7 +87,7 @@ namespace C6
 
         public bool SequencedEquals(ISequenced<T> otherCollection)
         {
-            // No Requires
+            // No preconditions
 
 
             // Enumeration of the collections must yield equal items

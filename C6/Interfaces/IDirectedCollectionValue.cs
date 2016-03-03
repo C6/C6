@@ -45,7 +45,7 @@ namespace C6
 
         IDirectedCollectionValue<T> IDirectedCollectionValue<T>.Backwards()
         {
-            // No Requires
+            // No preconditions
 
 
             // Result is non-null

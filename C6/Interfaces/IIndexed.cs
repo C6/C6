@@ -146,7 +146,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Returns a non-negative number
@@ -164,7 +164,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is a valid enum constant
@@ -301,7 +301,7 @@ namespace C6
         {
             get
             {
-                // No extra Requires allowed
+                // No additional preconditions allowed
 
 
                 // Result is item at index

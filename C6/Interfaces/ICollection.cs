@@ -737,7 +737,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is a valid enum constant
@@ -754,7 +754,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Returns a non-negative number
@@ -952,7 +952,7 @@ namespace C6
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
-            // No Requires
+            // No preconditions
 
 
             // TODO: Ensure that the result contains the right items
@@ -1095,7 +1095,7 @@ namespace C6
 
         public ICollectionValue<T> UniqueItems()
         {
-            // No Requires
+            // No preconditions
 
 
             // The result size must be equal to the number of distinct items
@@ -1117,7 +1117,7 @@ namespace C6
 
         public bool UnsequencedEquals(ICollection<T> otherCollection)
         {
-            // No Requires
+            // No preconditions
 
 
             // If the collections must contain a different number of (distinct) items, then they must be non-equal

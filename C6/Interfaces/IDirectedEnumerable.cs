@@ -53,7 +53,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is a valid enum constant
@@ -66,7 +66,7 @@ namespace C6
 
         public IDirectedEnumerable<T> Backwards()
         {
-            // No Requires
+            // No preconditions
 
 
             // Result is non-null
