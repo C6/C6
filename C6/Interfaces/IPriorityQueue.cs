@@ -17,9 +17,9 @@ namespace C6
     // TODO: How does Add handle duplicates?
     // TODO: Break into Min and Max priority queues?
     /// <summary>
-    /// Represents a generic collection of items prioritized by a comparison
-    /// (order) relation. Supports adding items and reporting or removing
-    /// extremal elements.
+    /// Represents an extensible generic collection that supports reporting
+    /// and removing extremal items efficiently based on a comparison (order)
+    /// relation.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     /// <remarks>
@@ -321,7 +321,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is non-null
@@ -335,7 +335,7 @@ namespace C6
         public T FindMin()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
 
             // Result is non-null
@@ -357,7 +357,7 @@ namespace C6
         public T FindMin(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
 
             // Result is non-null
@@ -386,7 +386,7 @@ namespace C6
         public T RemoveMin()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
@@ -414,7 +414,7 @@ namespace C6
         public T RemoveMin(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
@@ -446,7 +446,7 @@ namespace C6
         public T FindMax()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
 
             // Result is non-null
@@ -467,7 +467,7 @@ namespace C6
         public T FindMax(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
 
             // Result is non-null
@@ -496,7 +496,7 @@ namespace C6
         public T RemoveMax()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
@@ -524,7 +524,7 @@ namespace C6
         public T RemoveMax(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
@@ -577,19 +577,19 @@ namespace C6
             set
             {
                 // Collection must be non-empty
-                Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+                Requires(!IsEmpty);
 
                 // Collection must be non-fixed-sized
                 Requires(!IsFixedSize);
 
                 // Handle must be non-null
-                Requires(handle != null); // TODO: Use <ArgumentNullException>?
+                Requires(handle != null);
 
                 // Argument must be non-null if collection disallows null values
-                Requires(AllowsNull || value != null); // TODO: Use <ArgumentNullException>?
+                Requires(AllowsNull || value != null);
 
                 // Handle must be associated with item in the priority queue
-                Requires(Contains(handle)); // TODO: Use <InvalidPriorityQueueHandleException>?
+                Requires(Contains(handle));
 
 
                 // The handle is associated with the result
@@ -613,7 +613,7 @@ namespace C6
             Requires(handle != null);
 
 
-            // No Ensures
+            // No postconditions
 
 
             return default(bool);
@@ -640,16 +640,16 @@ namespace C6
         public T Replace(IPriorityQueueHandle<T> handle, T item)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
             // Collection must be non-read-only
-            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly);
 
             // Handle must be associated with item in the priority queue
             Requires(Contains(handle));
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null);
 
 
             // Count remains unchanged
@@ -677,13 +677,13 @@ namespace C6
         public bool Add(ref IPriorityQueueHandle<T> handle, T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null);
 
 
             // Always returns true
@@ -716,7 +716,7 @@ namespace C6
         public T Remove(IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty); // TODO: Use <NoSuchItemException>?
+            Requires(!IsEmpty);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
@@ -749,7 +749,7 @@ namespace C6
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool Add(T item)
         {
-            // No extra Requires allowed
+            // No additional preconditions allowed
 
 
             // Always returns true

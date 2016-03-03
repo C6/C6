@@ -17,7 +17,7 @@ namespace C6
     // This is mainly the intersection of the main stream generic collection
     // interfaces and the priority queue interface, ICollection<T> and IPriorityQueue<T>.
     /// <summary>
-    /// Represents a generic collection to which one may add items.
+    /// Represents a generic collection to which items can be added.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(IExtensibleContract<>))]
@@ -174,7 +174,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // True by convention for collections with set semantics
@@ -189,7 +189,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is non-null
@@ -205,7 +205,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Read-only list has fixed size
@@ -229,13 +229,13 @@ namespace C6
         public bool Add(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
             
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null);
             
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
@@ -260,16 +260,16 @@ namespace C6
         public void AddAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
 
             // Argument must be non-null
-            Requires(items != null); // TODO: Use <ArgumentNullException>?
+            Requires(items != null);
 
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || ForAll(items, item => item != null));
 
 
             // The collection becomes non-empty

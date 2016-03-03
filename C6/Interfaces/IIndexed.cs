@@ -15,7 +15,8 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Represents a sequenced collection whose items are accessible by index.
+    /// Represents a sequenced generic collection whose items are accessible by
+    /// index.
     /// </summary>
     [ContractClass(typeof(IIndexedContract<>))]
     public interface IIndexed<T> : ISequenced<T>, SCG.IReadOnlyList<T>
@@ -146,7 +147,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Returns a non-negative number
@@ -164,7 +165,7 @@ namespace C6
         {
             get
             {
-                // No Requires
+                // No preconditions
 
 
                 // Result is a valid enum constant
@@ -178,8 +179,8 @@ namespace C6
         public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
         {
             // Argument must be within bounds
-            Requires(0 <= startIndex); // TODO: Use <ArgumentOutOfRangeException>?
-            Requires(startIndex + count <= Count); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(0 <= startIndex);
+            Requires(startIndex + count <= Count);
 
             // Argument must be non-negative
             Requires(0 <= count);
@@ -199,7 +200,7 @@ namespace C6
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null);
 
 
             // Result is a valid index
@@ -220,7 +221,7 @@ namespace C6
         public int LastIndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null); // TODO: Use <ArgumentNullException>?
+            Requires(AllowsNull || item != null);
 
 
             // Result is a valid index
@@ -242,14 +243,14 @@ namespace C6
         public T RemoveAt(int index)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly);
             
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
 
             // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-            Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+            Requires(0 <= index);
+            Requires(index < Count);
 
 
             // Result is the item previously at the specified index
@@ -271,14 +272,14 @@ namespace C6
         public void RemoveIndexRange(int startIndex, int count)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly); // TODO: Use <ReadOnlyCollectionException>?
+            Requires(!IsReadOnly);
 
             // Collection must be non-fixed-sized
             Requires(!IsFixedSize);
 
             // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= startIndex); // TODO: Use <IndexOutOfRangeException>?
-            Requires(startIndex + count < Count); // TODO: Use <IndexOutOfRangeException>?
+            Requires(0 <= startIndex);
+            Requires(startIndex + count < Count);
 
             // Argument must be non-negative
             Requires(0 <= count);
@@ -301,7 +302,7 @@ namespace C6
         {
             get
             {
-                // No extra Requires allowed
+                // No additional preconditions allowed
 
 
                 // Result is item at index

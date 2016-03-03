@@ -42,15 +42,15 @@ namespace System.Collections.Generic
         public T this[int index] {
             get {
                 // Argument must be within bounds (collection must be non-empty)
-                Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-                Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+                Requires(0 <= index);
+                Requires(index < Count);
 
                 return default(T);
             }
             set {
                 // Argument must be within bounds (collection must be non-empty)
-                Requires(0 <= index); // TODO: Use <IndexOutOfRangeException>?
-                Requires(index < Count); // TODO: Use <IndexOutOfRangeException>?
+                Requires(0 <= index);
+                Requires(index < Count);
 
                 return;
             }

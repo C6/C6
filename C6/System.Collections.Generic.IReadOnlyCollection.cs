@@ -37,7 +37,7 @@ namespace System.Collections.Generic
 
         public int Count {
             get {
-                // No Requires
+                // No preconditions
 
 
                 // Returns a non-negative number

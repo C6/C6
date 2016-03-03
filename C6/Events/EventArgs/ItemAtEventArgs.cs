@@ -44,10 +44,10 @@ namespace C6
         public ItemAtEventArgs(T item, int index)
         {
             // Argument must be non-null
-            // Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null);
 
             // Argument must be non-negative
-            Requires(index >= 0); // TODO: Use <ArgumentOutOfRangeException>?
+            Requires(index >= 0);
 
 
             Item = item;

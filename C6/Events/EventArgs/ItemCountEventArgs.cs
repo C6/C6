@@ -44,7 +44,7 @@ namespace C6
         public ItemCountEventArgs(T item, int count)
         {
             // Argument must be non-null
-            // Requires(item != null); // TODO: Use <ArgumentNullException>?
+            // Requires(item != null);
 
             // Argument must be positive
             Requires(count > 0);

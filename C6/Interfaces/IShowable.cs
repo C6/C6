@@ -54,7 +54,7 @@ namespace C6
         public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
         {
             // Argument must be non-null
-            Requires(stringBuilder != null); // TODO: Use <ArgumentNullException>?
+            Requires(stringBuilder != null);
 
 
             // Returns true if rest >= 0 on return; otherwise, false.
