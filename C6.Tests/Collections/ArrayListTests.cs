@@ -371,6 +371,27 @@ namespace C6.Tests
 
         #endregion
 
+        #region IExtensible<T>
+
+        #region EqualityComparer
+
+        [Test]
+        public void EqualityComparer_DefaultComparer_NotNull()
+        {
+            // Arrange
+            var list = GetRandomStringList(TestContext.CurrentContext.Random);
+
+            // Act
+            var equalityComparer = list.EqualityComparer;
+
+            // Assert
+            Assert.That(equalityComparer, Is.Not.Null);
+        }
+
+        #endregion
+
+        #endregion
+
         #region ArrayList<T>
 
         #region Constructors
