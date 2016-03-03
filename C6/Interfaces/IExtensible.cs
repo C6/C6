@@ -17,7 +17,7 @@ namespace C6
     // This is mainly the intersection of the main stream generic collection
     // interfaces and the priority queue interface, ICollection<T> and IPriorityQueue<T>.
     /// <summary>
-    /// Represents a generic collection to which one may add items.
+    /// Represents a generic collection to which items can be added.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(IExtensibleContract<>))]

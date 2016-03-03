@@ -15,8 +15,8 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Defines the simplest set of methods to manipulate a general generic
-    /// collection.
+    /// Represents an extensible generic collection from which items can also
+    /// be removed.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(ICollectionContract<>))]

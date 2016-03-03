@@ -14,7 +14,8 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Describes an enumerable that can be enumerated forwards and backwards.
+    /// Represents a generic enumerable that can be reversed and enumerated
+    /// backwards.
     /// </summary>
     /// <typeparam name="T">The type of items to enumerate.</typeparam>
     [ContractClass(typeof(IDirectedEnumerableContract<>))]

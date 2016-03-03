@@ -15,8 +15,8 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Represents a sized generic collection, that can be enumerated forwards
-    /// and backwards.
+    /// Represents a generic collection value that can be reversed and
+    /// enumerated backwards.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [ContractClass(typeof(IDirectedCollectionValueContract<>))]

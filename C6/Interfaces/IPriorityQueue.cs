@@ -17,9 +17,9 @@ namespace C6
     // TODO: How does Add handle duplicates?
     // TODO: Break into Min and Max priority queues?
     /// <summary>
-    /// Represents a generic collection of items prioritized by a comparison
-    /// (order) relation. Supports adding items and reporting or removing
-    /// extremal elements.
+    /// Represents an extensible generic collection that supports reporting
+    /// and removing extremal items efficiently based on a comparison (order)
+    /// relation.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     /// <remarks>

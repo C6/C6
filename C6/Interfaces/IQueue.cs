@@ -18,7 +18,8 @@ namespace C6
 {
     // TODO: decide if this should extend ICollection/IExtensible - it at least needs IsReadOnly
     /// <summary>
-    /// Represents a generic first-in-first-out (FIFO) queue data structure.
+    /// Represents a generic first-in-first-out (FIFO) queue that also supports
+    /// indexing.
     /// </summary>
     /// <typeparam name="T">The type of items in the stack.</typeparam>
     [ContractClass(typeof(IQueueContract<>))]

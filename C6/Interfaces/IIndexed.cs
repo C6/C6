@@ -15,7 +15,8 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Represents a sequenced collection whose items are accessible by index.
+    /// Represents a sequenced generic collection whose items are accessible by
+    /// index.
     /// </summary>
     [ContractClass(typeof(IIndexedContract<>))]
     public interface IIndexed<T> : ISequenced<T>, SCG.IReadOnlyList<T>

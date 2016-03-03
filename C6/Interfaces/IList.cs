@@ -16,9 +16,8 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     // TODO: Setup contracts to avoid exceptions?
-
     /// <summary>
-    /// Represents an indexed, sequenced collection, where item order is
+    /// Represents an indexed, sequenced generic collection where item order is
     /// determined by insertion and removal order.
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>

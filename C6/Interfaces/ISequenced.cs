@@ -16,13 +16,18 @@ namespace C6
 {
     // TODO: Rewrite documentation based on hash code solution.
     /// <summary>
-    /// Represents an editable collection maintaining a definite sequence order
-    /// of its items.
+    /// Represents an editable generic collection that maintains a particular
+    /// item sequence order.
     /// </summary>
     /// <remarks>
+    /// <para>
+    /// The sequence order can be determined either by insertion order or item ordering.
+    /// </para>
+    /// <para>
     /// Implementations of this interface must compute the hash code and 
     /// equality exactly as prescribed in the method definitions in order to be
     /// consistent with other collection classes implementing this interface.
+    /// </para>
     /// </remarks>
     [ContractClass(typeof(ISequencedContract<>))]
     public interface ISequenced<T> : ICollection<T>, IDirectedCollectionValue<T>
