@@ -450,7 +450,7 @@ namespace C6
             Requires(arrayIndex + Count <= array.Length);
 
             // Array contains the collection's items in enumeration order from arrayIndex
-            Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
+            Ensures(array.Skip(arrayIndex).SequenceEqual(this));
 
 
             return;
@@ -465,7 +465,7 @@ namespace C6
             Ensures(Result<T[]>() != null);
 
             // Result contains the collection's items in enumeration order
-            Ensures(Enumerable.SequenceEqual(Result<T[]>(), this));
+            Ensures(Result<T[]>().SequenceEqual(this));
 
 
             return default(T[]);
