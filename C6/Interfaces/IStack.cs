@@ -64,7 +64,8 @@ namespace C6
         /// Inserts an item at the top of the stack.
         /// </summary>
         /// <param name="item">The item to push onto the stack. <c>null</c> is
-        /// allowed for nullable items.</param>
+        /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <remarks>
         /// Raises the following events (in that order) with the collection as
         /// sender:

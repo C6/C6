@@ -57,8 +57,9 @@ namespace C6
         /// <summary>
         /// Adds an item to the collection if possible.
         /// </summary>
-        /// <param name="item">The item to add to the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <param name="item">The item to add to the collection. <c>null</c> 
+        /// is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <returns><c>true</c> if item was added;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -103,7 +104,10 @@ namespace C6
         /// <summary>
         /// Determines whether the collection contains a specific item.
         /// </summary>
-        /// <param name="item">The item to locate in the collection.</param>
+        /// <param name="item">The item to locate in the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item is found in the collection;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>The collection's
@@ -118,8 +122,8 @@ namespace C6
         /// bag semantics, multiplicities is taken into account.
         /// </summary>
         /// <param name="items">The specified <see cref="SCG.IEnumerable{T}"/>.
-        /// <c>null</c> is allowed for nullable items, but not for the
-        /// enumerable itself.
+        /// The enumerable itself cannot be <c>null</c>, but its items can, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <returns><c>true</c> if all items in <paramref name="items"/> are
         /// in the collection; otherwise, <c>false</c>.</returns>
@@ -135,7 +139,9 @@ namespace C6
         /// Returns the item's multiplicity in the collection: the number of
         /// items in the collection equal to the specified item.
         /// </summary>
-        /// <param name="item">The item to count in the collection.</param>
+        /// <param name="item">The item to count in the collection. <c>null</c>
+        /// is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <returns>The number of items equal to the specified item found.
         /// Returns 0 if and only if the value is not in the collection.
         /// </returns>
@@ -162,7 +168,8 @@ namespace C6
         /// assigns it to <paramref name="item"/> if so.
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items. If the
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>. If the
         /// collection contains the item, the item is assigned to the reference
         /// parameter on return.</param>
         /// <returns><c>true</c> if item is found in the collection;
@@ -180,9 +187,11 @@ namespace C6
         /// item to the collection.
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items. If the collection 
-        /// already contains the item, the item is assigned to the parameter on
-        /// return; otherwise, the item is added to the collection.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>. If the
+        /// collection already contains the item, the item is assigned to the
+        /// parameter on return; otherwise, the item is added to the
+        /// collection.</param>
         /// <returns><c>true</c> if item was found and therefore not added;
         /// otherwise, <c>false</c> in which case the item is added.</returns>
         /// <remarks>
@@ -250,7 +259,10 @@ namespace C6
         /// Removes an occurrence of a specific item from the collection, if
         /// any.
         /// </summary>
-        /// <param name="item">The item to remove from the collection.</param>
+        /// <param name="item">The item to remove from the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item was successfully removed from the
         /// collection; otherwise, <c>false</c> if item is not found in
         /// the original collection.</returns>
@@ -282,7 +294,10 @@ namespace C6
         /// any, and assigns the removed item to
         /// <paramref name="removedItem"/>.
         /// </summary>
-        /// <param name="item">The item to remove from the collection.</param>
+        /// <param name="item">The item to remove from the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <param name="removedItem">The removed item if any.</param>
         /// <returns><c>true</c> if item was successfully removed from the
         /// collection; otherwise, <c>false</c> if item is not found in
@@ -316,7 +331,10 @@ namespace C6
         /// Removes all occurrences of a specific item from the collection, if
         /// any.
         /// </summary>
-        /// <param name="item">The item to remove from the collection.</param>
+        /// <param name="item">The item to remove from the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item was successfully removed from the
         /// collection; otherwise, <c>false</c> if item is not found in
         /// the original collection.</returns>
@@ -367,8 +385,9 @@ namespace C6
         /// if possible, in enumeration order.
         /// </summary>
         /// <param name="items">The enumerable whose items should be removed
-        /// from the collection. <c>null</c> is allowed for nullable items, but
-        /// not for the enumerable itself.</param>
+        /// from the collection. The enumerable itself cannot be <c>null</c>,
+        /// but its items can, if <see cref="ICollectionValue{T}.AllowsNull"/>
+        /// is <c>true</c>.</param>
         /// <remarks>
         /// <para>
         /// If the collection has bag semantics, this means reducing the item
@@ -399,7 +418,10 @@ namespace C6
         /// has bag semantics, multiplicities is taken into account.
         /// </summary>
         /// <param name="items">The specified <see cref="SCG.IEnumerable{T}"/>
-        /// whose items should be retained in the collection.</param>
+        /// whose items should be retained in the collection. The enumerable 
+        /// itself cannot be <c>null</c>, but its items can, if 
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <remarks>
         /// <para>The items remaining in the collection is the intersection
         /// between the original collection and the specified collection.</para>
@@ -471,7 +493,10 @@ namespace C6
         /// <paramref name="item"/>, in which case that item is replaced with
         /// <paramref name="item"/>.
         /// </summary>
-        /// <param name="item">The item to update in the collection.</param>
+        /// <param name="item">The item to update in the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if the item was found and hence updated;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -529,7 +554,10 @@ namespace C6
         /// <paramref name="item"/>, in which case that item is replaced with
         /// <paramref name="item"/>.
         /// </summary>
-        /// <param name="item">The item to update in the collection.</param>
+        /// <param name="item">The item to update in the collection. 
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <param name="oldItem">The removed item if any.</param>
         /// <returns><c>true</c> if the item was found and hence updated;
         /// otherwise, <c>false</c>.</returns>
@@ -589,6 +617,8 @@ namespace C6
         /// <paramref name="item"/>; otherwise, the item is added.
         /// </summary>
         /// <param name="item">The item to update or add to the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <returns><c>true</c> if the item was found and hence updated;
         /// otherwise, <c>false</c> in which case the item is added.</returns>
@@ -661,6 +691,8 @@ namespace C6
         /// <paramref name="item"/>; otherwise, the item is added.
         /// </summary>
         /// <param name="item">The item to update or add to the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <param name="oldItem">The removed item if any.</param>
         /// <returns><c>true</c> if the item was found and hence updated;
@@ -837,7 +869,6 @@ namespace C6
 
         public bool Contains(T item)
         {
-            // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
@@ -854,8 +885,7 @@ namespace C6
         {
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
-
-            // TODO: Should this be required?
+            
             // All items must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
@@ -869,7 +899,6 @@ namespace C6
 
         public int ContainsCount(T item)
         {
-            // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
@@ -901,7 +930,6 @@ namespace C6
 
         public bool Find(ref T item)
         {
-            // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 

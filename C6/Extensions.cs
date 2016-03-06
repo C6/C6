@@ -34,6 +34,7 @@ namespace C6
 
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);
+
             // Argument must be non-null
             // Requires(item != null, ItemMustBeNonNull);
 

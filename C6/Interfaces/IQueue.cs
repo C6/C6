@@ -65,7 +65,9 @@ namespace C6
         /// <summary>
         /// Adds an item to the end of the queue.
         /// </summary>
-        /// <param name="item">The item to add to the queue.</param>
+        /// <param name="item">The item to add to the queue. <c>null</c> is
+        /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <remarks>
         /// Raises the following events (in that order) with the collection as
         /// sender:

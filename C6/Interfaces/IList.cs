@@ -97,7 +97,9 @@ namespace C6
         /// Gets or sets the item at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the item to get or set.</param>
-        /// <value>The item at the specified index.</value>
+        /// <value>The item at the specified index. <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </value>
         /// <remarks>
         /// The setter raises the following events (in that order) with the
         /// collection as sender:
@@ -169,7 +171,9 @@ namespace C6
         /// within the collection. 
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns>The zero-based index of the first occurrence of item
         /// within the entire collection, if found; otherwise, a negative
         /// number that is the bitwise complement of the index at which
@@ -182,7 +186,9 @@ namespace C6
         /// </summary>
         /// <param name="index">The zero-based index at which value should be
         /// inserted.</param>
-        /// <param name="item">The item to insert into the list.</param>
+        /// <param name="item">The item to insert into the list. <c>null</c> is
+        /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <returns><c>true</c> if item was added;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -224,9 +230,9 @@ namespace C6
         /// <param name="index">The zero-based index at which the new items
         /// should be inserted.</param>
         /// <param name="items">The enumerable whose items should be inserted
-        /// into the list. The enumerable itself cannot be <c>null</c>, but it
-        /// can contain items that are null, if type <typeparamref name="T"/>
-        /// is a reference type and the collection allows it.</param>
+        /// into the list. The enumerable itself cannot be <c>null</c>, but its
+        /// items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <remarks>
         /// If any items are added, it raises the following events (in 
         /// that order) with the collection as sender:
@@ -251,7 +257,9 @@ namespace C6
         /// Inserts an item at the beginning of the list.
         /// </summary>
         /// <param name="item">The item to insert at the beginning of the list.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item was inserted;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -277,7 +285,9 @@ namespace C6
         /// Inserts an item at the end of the list.
         /// </summary>
         /// <param name="item">The item to insert at the end of the list.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item was inserted;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>

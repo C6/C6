@@ -96,8 +96,9 @@ namespace C6
         /// <summary>
         /// Adds an item to the collection if possible.
         /// </summary>
-        /// <param name="item">The item to add to the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <param name="item">The item to add to the collection. <c>null</c>
+        /// is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <returns><c>true</c> if item was added;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -127,8 +128,9 @@ namespace C6
         /// possible, in enumeration order.
         /// </summary>
         /// <param name="items">The enumerable whose items should be added to
-        /// the collection. <c>null</c> is allowed for nullable items, but not 
-        /// for the enumerable itself.</param>
+        /// the collection. The enumerable itself cannot be <c>null</c>, but 
+        /// its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <remarks>
         /// <para>If the collection has set semantics, each item will be added
         /// if not already in the collection. If bag semantics, the items will

@@ -53,7 +53,9 @@ namespace C6
         /// associated.
         /// </summary>
         /// <value>The item with which the specified handle is/should be
-        /// associated with. <c>null</c> is allowed for nullable items.</value>
+        /// associated with. <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </value>
         /// <param name="handle">
         /// The handle associated with the item to get or set. The handle must
         /// be associated with an item in the priority queue.
@@ -91,17 +93,21 @@ namespace C6
         }
 
         // TODO: Reorder parameters?
+        // TODO: Review handle documentation
         /// <summary>
         /// Add an item to the priority queue, receiving a handle for the item 
         /// in the queue, or reusing an existing unused handle.
         /// </summary>
         /// <param name="handle">On output: a handle for the added item. 
-        /// On input: null for allocating a new handle, or a currently unused handle for reuse. 
-        /// A handle for reuse must be compatible with this priority queue, 
-        /// by being created by a priority queue of the same runtime type, but not 
-        /// necessarily the same priority queue object.</param>
+        /// On input: <c>null</c> for allocating a new handle, or a currently
+        /// unused handle for reuse. A handle for reuse must be compatible with
+        /// this priority queue, by being created by a priority queue of the 
+        /// same runtime type, but not necessarily the same priority queue
+        /// object.</param>
         /// <param name="item">The item with which the handle should be 
-        /// associated. <c>null</c> is allowed for nullable items.</param>
+        /// associated. <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c>.</returns>
         /// <remarks>
         /// <para>If the item is added, it raises the following events (in that 
@@ -279,7 +285,9 @@ namespace C6
         /// </summary>
         /// <param name="handle">The specified handle.</param>
         /// <param name="item">The new item with which the handle should be 
-        /// associated. <c>null</c> is allowed for nullable items.</param>
+        /// associated. <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns>The item that the handle was previously associated with.
         /// </returns>
         /// <exception cref="InvalidPriorityQueueHandleException">

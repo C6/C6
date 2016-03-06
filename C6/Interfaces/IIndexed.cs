@@ -69,7 +69,9 @@ namespace C6
         /// within the collection. 
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns>The zero-based index of the first occurrence of item
         /// within the entire collection, if found; otherwise, the one's
         /// complement of the index at which <see cref="ICollection{T}.Add"/>
@@ -83,7 +85,9 @@ namespace C6
         /// within the collection.
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns>The zero-based index of the last occurrence of item within
         /// the entire collection, if found; otherwise, the one's complement of
         /// the index at which <see cref="ICollection{T}.Add"/> would put the
