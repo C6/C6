@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 using static C6.EventTypes;
@@ -95,8 +97,8 @@ namespace C6
             get
             {
                 // Argument must be within bounds (collection must be non-empty)
-                Requires(0 <= index);
-                Requires(index < Count);
+                Requires(0 <= index, ArgumentMustBeWithinBounds);
+                Requires(index < Count, ArgumentMustBeWithinBounds);
 
 
                 // Result is non-null
@@ -113,10 +115,10 @@ namespace C6
         public T Pop()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
             // Collection must be non-read-only
-            Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible property, which IQueue doesn't inherit from!
+            Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true, CollectionMustBeNonReadOnly); // TODO: IsReadOnly is a IExtensible property, which IQueue doesn't inherit from!
 
 
             // Dequeuing an item decreases the count by one
@@ -138,10 +140,10 @@ namespace C6
         public void Push(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
             // Collection must be non-read-only
-            Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
+            Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true, CollectionMustBeNonReadOnly); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
 
 
             // The collection becomes non-empty

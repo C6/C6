@@ -10,6 +10,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -83,14 +85,14 @@ namespace C6
         /// items of the collection can be modified.</remarks>
         [Pure]
         new bool IsReadOnly { get; }
-        
+
         /// <summary>
         /// Gets the last item in the list.
         /// </summary>
         /// <value>The last item in the list.</value>
         [Pure]
         T Last { get; }
-        
+
         /// <summary>
         /// Gets or sets the item at the specified index.
         /// </summary>
@@ -128,7 +130,7 @@ namespace C6
             get;
             set;
         }
-        
+
         /// <summary>
         /// Removes all items from the collection.
         /// </summary>
@@ -214,7 +216,7 @@ namespace C6
         /// </para>
         /// </remarks>
         new bool Insert(int index, T item);
-        
+
         /// <summary>
         /// Inserts the items of a collection into the list starting at the
         /// specified index.
@@ -244,7 +246,7 @@ namespace C6
         /// </list>
         /// </remarks>
         void InsertAll(int index, SCG.IEnumerable<T> items);
-        
+
         /// <summary>
         /// Inserts an item at the beginning of the list.
         /// </summary>
@@ -270,7 +272,7 @@ namespace C6
         /// </list>
         /// </remarks>
         bool InsertFirst(T item);
-        
+
         /// <summary>
         /// Inserts an item at the end of the list.
         /// </summary>
@@ -296,7 +298,7 @@ namespace C6
         /// </list>
         /// </remarks>
         bool InsertLast(T item);
-        
+
         /// <summary>
         /// Determines whether the list is sorted in non-descending order
         /// according to the default comparer.
@@ -347,7 +349,7 @@ namespace C6
         /// otherwise, <c>false</c>.</returns>
         [Pure]
         bool IsSorted(Comparison<T> comparison);
-        
+
         // TODO: Deprecate?
         /// <summary>
         /// Creates a new list consisting of the results of mapping all items
@@ -363,7 +365,7 @@ namespace C6
         /// items in this list.</returns>
         [Pure]
         IList<V> Map<V>(Func<T, V> mapper);
-        
+
         // TODO: Deprecate?
         /// <summary>
         /// Creates a new list consisting of the results of mapping all items
@@ -498,7 +500,7 @@ namespace C6
         /// </para>
         /// </remarks>
         T RemoveLast();
-        
+
         /// <summary>
         /// Reverses the sequence order of the items in the list.
         /// </summary>
@@ -512,7 +514,7 @@ namespace C6
         /// </list>
         /// </remarks>
         void Reverse();
-        
+
         /// <summary>
         /// Randomly shuffles the items in the list.
         /// </summary>
@@ -526,7 +528,7 @@ namespace C6
         /// </list>
         /// </remarks>
         void Shuffle();
-        
+
         /// <summary>
         /// Shuffles the items in the list according to the specified random
         /// source.
@@ -542,7 +544,7 @@ namespace C6
         /// </list>
         /// </remarks>
         void Shuffle(Random random);
-        
+
         /// <summary>
         /// Sorts the items in the list using the default comparer.
         /// </summary>
@@ -561,7 +563,7 @@ namespace C6
         /// </list>
         /// </remarks>
         void Sort();
-        
+
         /// <summary>
         /// Sorts the items in the list using the specified comparer.
         /// </summary>
@@ -588,7 +590,7 @@ namespace C6
         /// </list>
         /// </remarks>
         void Sort(SCG.IComparer<T> comparer);
-        
+
         /// <summary>
         /// Sorts the items in the list using the specified
         /// <see cref="Comparison{T}"/>.
@@ -641,7 +643,7 @@ namespace C6
             get
             {
                 // Collection must be non-empty
-                Requires(!IsEmpty);
+                Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
                 // Equals first item
@@ -659,7 +661,7 @@ namespace C6
             set
             {
                 // Collection must be non-read-only
-                Requires(!IsReadOnly);
+                Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
 
                 // Value is updated
@@ -689,18 +691,15 @@ namespace C6
         // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get
-            {
-                return default(bool);
-            }
+            get { return default(bool); }
         }
-        
+
         public T Last
         {
             get
             {
                 // Collection must be non-empty
-                Requires(!IsEmpty);
+                Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
                 // Equals first item
@@ -711,14 +710,14 @@ namespace C6
                 return default(T);
             }
         }
-        
+
         public T this[int index]
         {
             get
             {
                 // Argument must be within bounds
-                Requires(0 <= index);
-                Requires(index < Count);
+                Requires(0 <= index, ArgumentMustBeWithinBounds);
+                Requires(index < Count, ArgumentMustBeWithinBounds);
 
 
                 // Result is the same as skipping the first index items
@@ -730,19 +729,19 @@ namespace C6
             set
             {
                 // Collection must be non-read-only
-                Requires(!IsReadOnly);
+                Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
                 // Argument must be non-null if collection disallows null values
-                Requires(AllowsNull || value != null);
+                Requires(AllowsNull || value != null, ArgumentMustBeNonNull);
 
                 // Argument must be within bounds
-                Requires(0 <= index);
-                Requires(index < Count);
+                Requires(0 <= index, ArgumentMustBeWithinBounds);
+                Requires(index < Count, ArgumentMustBeWithinBounds);
 
                 // Collection must not already contain item if collection disallows duplicate values
-                Requires(AllowsDuplicates || !Contains(value));
-                
-                
+                Requires(AllowsDuplicates || !Contains(value), CollectionMustAllowDuplicates); // TODO: Behavior mismatch with Insert methods
+
+
                 // Value is the same as skipping the first index items
                 Ensures(value.Equals(this.Skip(index).First()));
 
@@ -750,15 +749,15 @@ namespace C6
                 return;
             }
         }
-        
+
         // Contracts are copied from ICollection<T>.Clear. Keep both updated!
         public void Clear()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // The collection becomes empty
@@ -773,7 +772,7 @@ namespace C6
         public IList<T> FindAll(Func<T, bool> predicate)
         {
             // Argument must be non-null
-            Requires(predicate != null);
+            Requires(predicate != null, ArgumentMustBeNonNull);
 
 
             // The result is equal to filtering this list based on the predicate
@@ -787,7 +786,7 @@ namespace C6
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is a valid index
@@ -808,17 +807,17 @@ namespace C6
         public bool Insert(int index, T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be within bounds
-            Requires(0 <= index);
-            Requires(index <= Count);
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
@@ -833,24 +832,24 @@ namespace C6
 
             return default(bool);
         }
-        
+
         public void InsertAll(int index, SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be within bounds
-            Requires(0 <= index);
-            Requires(index < Count);
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index < Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-null
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // TODO: Ensures
@@ -862,10 +861,10 @@ namespace C6
         public bool InsertFirst(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
@@ -896,10 +895,10 @@ namespace C6
         public bool InsertLast(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
@@ -954,7 +953,7 @@ namespace C6
         public bool IsSorted(Comparison<T> comparison)
         {
             // Argument must be non-null
-            Requires(comparison != null);
+            Requires(comparison != null, ArgumentMustBeNonNull);
 
 
             // True if sorted
@@ -963,11 +962,11 @@ namespace C6
 
             return default(bool);
         }
-        
+
         public IList<V> Map<V>(Func<T, V> mapper)
         {
             // Argument must be non-null
-            Requires(mapper != null);
+            Requires(mapper != null, ArgumentMustBeNonNull);
 
 
             // Result is equal to mapping each item
@@ -980,7 +979,7 @@ namespace C6
         public IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer)
         {
             // Argument must be non-null
-            Requires(mapper != null);
+            Requires(mapper != null, ArgumentMustBeNonNull);
 
 
             // Result is equal to mapping each item
@@ -996,13 +995,13 @@ namespace C6
         public T Remove()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
-            
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
+
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // Result is the item previously first/last
@@ -1026,14 +1025,14 @@ namespace C6
         public T RemoveAt(int index)
         {
             // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= index);
-            Requires(index < Count);
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index < Count, ArgumentMustBeWithinBounds);
 
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // Result is the item previously at the specified index
@@ -1055,13 +1054,13 @@ namespace C6
         public T RemoveFirst()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
             // Dequeuing an item decreases the count by one
@@ -1083,13 +1082,13 @@ namespace C6
         public T RemoveLast()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
-            
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
             // Dequeuing an item decreases the count by one
@@ -1111,7 +1110,7 @@ namespace C6
         public void Reverse()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
 
             // The collection is reversed
@@ -1124,7 +1123,7 @@ namespace C6
         public void Shuffle()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
 
             // The collection remains the same
@@ -1137,10 +1136,10 @@ namespace C6
         public void Shuffle(Random random)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null
-            Requires(random != null);
+            Requires(random != null, ArgumentMustBeNonNull);
 
 
             // The collection remains the same
@@ -1149,11 +1148,11 @@ namespace C6
 
             return;
         }
-        
+
         public void Sort()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
 
             // List becomes sorted
@@ -1169,7 +1168,7 @@ namespace C6
         public void Sort(SCG.IComparer<T> comparer)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
 
             // List becomes sorted
@@ -1185,10 +1184,10 @@ namespace C6
         public void Sort(Comparison<T> comparison)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null
-            Requires(comparison != null);
+            Requires(comparison != null, ArgumentMustBeNonNull);
 
 
             // List becomes sorted
@@ -1200,7 +1199,7 @@ namespace C6
 
             return;
         }
-        
+
         #region Hardened Postconditions
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
