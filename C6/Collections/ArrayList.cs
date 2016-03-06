@@ -28,9 +28,14 @@ namespace C6
         {
             // ReSharper disable InvocationIsSkipped
 
+            // Array is non-null
             Invariant(_array != null);
 
+            // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
+            
+            // Equality comparer is non-null
+            Invariant(EqualityComparer != null);
 
             // ReSharper restore InvocationIsSkipped
         }
@@ -38,42 +43,46 @@ namespace C6
         #endregion
 
         #region Constructors
-
-        // TODO: Document
-        public ArrayList() : this(false) {}
-
-        // TODO: Document
-        public ArrayList(bool allowsNull) : this(Enumerable.Empty<T>(), allowsNull)
-        {
-            // Value types cannot be null
-            Requires(!typeof(T).IsValueType || !allowsNull);
-        }
-
-        // TODO: Document
-        public ArrayList(SCG.IEnumerable<T> items) : this(items, false)
-        {
-            // Argument must be non-null
-            Requires(items != null); // TODO: Use <ArgumentNullException>?
-        }
-
-        // TODO: Document
-        public ArrayList(SCG.IEnumerable<T> items, bool allowsNull)
+        
+        public ArrayList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(items != null); // TODO: Use <ArgumentNullException>?
+            Requires(items != null);
 
             // All items must be non-null if collection disallows null values
-            Requires(allowsNull || ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            Requires(allowsNull || ForAll(items, item => item != null));
 
             // Value types cannot be null
             Requires(!typeof(T).IsValueType || !allowsNull);
 
             #endregion
 
+            // TODO: Check for null items when copying?
             _array = items.ToArray();
             Count = _array.Length;
+
+            EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            AllowsNull = allowsNull;
+        }
+
+        public ArrayList(int capacity = 8, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        {
+            #region Code Contracts
+
+            // Argument must be within bounds
+            Contract.Requires(0 <= capacity);
+
+            // Value types cannot be null
+            Requires(!typeof(T).IsValueType || !allowsNull);
+
+            #endregion
+            
+            _array = new T[capacity];
+
+            EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
 
             AllowsNull = allowsNull;
         }
@@ -97,10 +106,7 @@ namespace C6
 
         public bool DuplicatesByCounting => false;
 
-        public SCG.IEqualityComparer<T> EqualityComparer
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public SCG.IEqualityComparer<T> EqualityComparer { get; }
 
         public bool IsEmpty => Count == 0;
 

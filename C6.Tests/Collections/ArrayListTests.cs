@@ -395,10 +395,8 @@ namespace C6.Tests
 
         #region Constructors
 
-        #region ArrayList<T>()
-
         [Test]
-        public void Constructor_DefaultConstructor_Empty()
+        public void Constructor_Default_Empty()
         {
             // Act
             var collection = new ArrayList<int>();
@@ -408,28 +406,40 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Constructor_DefaultValueTypeConstructor_DisallowsNull()
+        public void Constructor_Default_DefaultEqualityComparer()
         {
+            // Arrange
+            var defaultEqualityComparer = SCG.EqualityComparer<string>.Default;
+
             // Act
-            var collection = new ArrayList<int>();
+            var collection = new ArrayList<string>();
+            var equalityComparer = collection.EqualityComparer;
 
             // Assert
-            Assert.That(collection.AllowsNull, Is.False);
+            Assert.That(equalityComparer, Is.SameAs(defaultEqualityComparer));
         }
 
         [Test]
-        public void Constructor_DefaultNonValueTypeConstructor_DisallowsNull()
+        public void Constructor_DefaultForValueType_DisallowsNull()
+        {
+            // Act
+            var collection = new ArrayList<int>();
+            var allowsNull = collection.AllowsNull;
+
+            // Assert
+            Assert.That(allowsNull, Is.False);
+        }
+
+        [Test]
+        public void Constructor_DefaultForNonValue_DisallowsNull()
         {
             // Act
             var collection = new ArrayList<string>();
+            var allowsNull = collection.AllowsNull;
 
             // Assert
-            Assert.That(collection.AllowsNull, Is.False);
+            Assert.That(allowsNull, Is.False);
         }
-
-        #endregion
-
-        #region ArrayList<T>(bool)
 
         [Test]
         public void Constructor_ValueTypeCollectionAllowsNull_ViolatesPrecondition()
@@ -439,7 +449,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            Assert.That(() => new ArrayList<int>(allowsNull), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
         }
 
         [Test]
@@ -449,7 +459,7 @@ namespace C6.Tests
             var allowsNull = false;
 
             // Act
-            var collection = new ArrayList<int>(allowsNull);
+            var collection = new ArrayList<int>(allowsNull: allowsNull);
 
             // Assert
             Assert.That(collection.AllowsNull, Is.False);
@@ -459,15 +469,12 @@ namespace C6.Tests
         public void Constructor_NonValueTypeCollection_AllowNull([Values(true, false)] bool allowNull)
         {
             // Act
-            var collection = new ArrayList<string>(allowNull);
+            var collection = new ArrayList<string>(allowsNull: allowNull);
+            var allowsNull = collection.AllowsNull;
 
             // Assert
-            Assert.That(collection.AllowsNull, Is.EqualTo(allowNull));
+            Assert.That(allowsNull, Is.EqualTo(allowNull));
         }
-
-        #endregion
-
-        #region ArrayList(SCG.IEnumerable<T>)
 
         [Test]
         public void Constructor_NullEnumerable_ViolatesPrecondition()
@@ -534,12 +541,6 @@ namespace C6.Tests
             Assert.That(collection, Is.Not.EqualTo(array));
         }
 
-        #endregion
-
-        #region ArrayList(SCG.IEnumerable<T>, bool)
-
-        // TODO: Test different combinations
-
         [Test]
         public void Constructor_EnumerableWithNullDisallowNull_ViolatesPrecondition()
         {
@@ -549,10 +550,37 @@ namespace C6.Tests
             array[random.Next(0, array.Length)] = null;
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array, false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
         }
 
-        #endregion
+        [Test]
+        public void Constructor_EqualityComparer_EqualsGivenEqualityComparer()
+        {
+            // Arrange
+            var customEqualityComparer = ComparerFactory.CreateEqualityComparer<int>((i, j) => i == j, i => i);
+
+            // Act
+            var list = new ArrayList<int>(equalityComparer: customEqualityComparer);
+            var equalityComparer = list.EqualityComparer;
+
+            // Assert
+            Assert.That(equalityComparer, Is.SameAs(customEqualityComparer));
+        }
+
+        [Test]
+        public void Constructor_EnumerableConstructorEqualityComparer_EqualsGivenEqualityComparer()
+        {
+            // Arrange
+            var enumerable = Enumerable.Empty<int>();
+            var customEqualityComparer = ComparerFactory.CreateEqualityComparer<int>((i, j) => i == j, i => i);
+
+            // Act
+            var list = new ArrayList<int>(enumerable, customEqualityComparer);
+            var equalityComparer = list.EqualityComparer;
+
+            // Assert
+            Assert.That(equalityComparer, Is.SameAs(customEqualityComparer));
+        }
 
         #endregion
 
