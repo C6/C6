@@ -113,8 +113,7 @@ namespace C6.Tests
             var count = collection.Count;
 
             // Assert
-            Assert.That(count, Is.EqualTo(0));
-            // TODO: Assert.That(count, Is.Zero);
+            Assert.That(count, Is.Zero);
         }
 
         [Test]
