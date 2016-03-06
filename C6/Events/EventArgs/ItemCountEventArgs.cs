@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 
 namespace C6
 {
@@ -44,10 +46,10 @@ namespace C6
         public ItemCountEventArgs(T item, int count)
         {
             // Argument must be non-null
-            // Requires(item != null);
+            // Requires(item != null, ItemMustBeNonNull);
 
             // Argument must be positive
-            Requires(count > 0);
+            Requires(count > 0, ArgumentMustBePositive);
 
 
             Item = item;

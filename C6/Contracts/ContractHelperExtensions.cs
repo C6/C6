@@ -9,6 +9,8 @@ using SCG = System.Collections.Generic;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 
 namespace C6
 {
@@ -37,7 +39,7 @@ namespace C6
         public static SCG.IEnumerable<T> SkipRange<T>(this SCG.IEnumerable<T> enumerable, int startIndex, int count)
         {
             // Argument is non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
             // ReSharper disable PossibleMultipleEnumeration
             return enumerable.Take(startIndex).Concat(enumerable.Skip(startIndex + count));

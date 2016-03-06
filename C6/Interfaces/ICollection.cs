@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -772,23 +774,20 @@ namespace C6
         // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get
-            {
-                return default(bool);
-            }
+            get { return default(bool); }
         }
 
         // Contracts are copied from IExtensible<T>.Add. Keep both updated!
         public bool Add(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
@@ -821,10 +820,10 @@ namespace C6
         public void Clear()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // The collection becomes empty
@@ -840,7 +839,7 @@ namespace C6
         {
             // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contains the item
@@ -854,11 +853,11 @@ namespace C6
         public bool ContainsAll(SCG.IEnumerable<T> items)
         {
             // Argument must be non-null
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // TODO: Should this be required?
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // The collection contains the same items as items, with a multiplicity equal or greater
@@ -872,7 +871,7 @@ namespace C6
         {
             // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result equals the number of items equal to item using the collection's equality comparer
@@ -886,11 +885,11 @@ namespace C6
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null
-            Requires(array != null);
+            Requires(array != null, ArgumentMustBeNonNull);
 
             // Argument must be within bounds
-            Requires(0 <= arrayIndex);
-            Requires(arrayIndex + Count <= array.Length);
+            Requires(0 <= arrayIndex, ArgumentMustBeWithinBounds);
+            Requires(arrayIndex + Count <= array.Length, ArgumentMustBeWithinBounds);
 
 
             // Array contains the collection's items in enumeration order from arrayIndex
@@ -904,7 +903,7 @@ namespace C6
         {
             // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is equal to Contains
@@ -923,13 +922,13 @@ namespace C6
         public bool FindOrAdd(ref T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // The collection contains the item
@@ -969,13 +968,13 @@ namespace C6
         public bool Remove(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contained the item
@@ -994,13 +993,13 @@ namespace C6
         public bool Remove(T item, out T removedItem)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contained the item
@@ -1023,13 +1022,13 @@ namespace C6
         public bool RemoveAll(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contained the item
@@ -1048,16 +1047,16 @@ namespace C6
         public void RemoveAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // TODO: Write ensures
@@ -1069,16 +1068,16 @@ namespace C6
         public void RetainAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // The collection is at most as big as the enumerable
@@ -1126,7 +1125,7 @@ namespace C6
 
             // Result reflects whether they are unsequenced equal
             Ensures(Result<bool>() == this.UnsequenceEqual(otherCollection, EqualityComparer));
-            
+
             // If the collections have different unsequenced hash codes, then they must be non-equal
             Ensures((GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode()) || !Result<bool>());
 
@@ -1137,10 +1136,10 @@ namespace C6
         public bool Update(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is equal to whether the collection already contained the item
@@ -1162,10 +1161,10 @@ namespace C6
         public bool Update(T item, out T oldItem)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is equal to whether the collection already contained the item
@@ -1193,13 +1192,13 @@ namespace C6
         public bool UpdateOrAdd(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // The collection contains the item
@@ -1220,13 +1219,13 @@ namespace C6
         public bool UpdateOrAdd(T item, out T oldItem)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // The collection contains the item

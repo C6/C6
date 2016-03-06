@@ -1,6 +1,11 @@
-﻿using System;
+﻿// This file is part of the C6 Generic Collection Library for C# and CLI
+// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+
+using System;
+
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
+
 
 namespace C6.Tests.Contracts
 {
@@ -18,6 +23,8 @@ namespace C6.Tests.Contracts
         /// <see cref="PreconditionException"/>.</value>
         /// <remarks>Allows a precondition violation to be asserted using
         /// <c>Assert.That(code, Violates.Precondition)</c>.</remarks>
+        /// <remarks>Allows a precondition violation to be asserted:
+        /// <code>Assert.That(code, Violates.Precondition);</code></remarks>
         public static TypeConstraint Precondition
         {
             get
@@ -30,6 +37,22 @@ namespace C6.Tests.Contracts
             }
         }
 
+        /// <summary>
+        /// Gets <see cref="Throws.TypeOf"/> with a
+        /// <see cref="PreconditionException"/> and a user message.
+        /// </summary>
+        /// <returns><see cref="Throws.TypeOf"/> with a
+        /// <see cref="PreconditionException"/> and a user message.</returns>
+        /// <remarks>Allows a precondition violation to be asserted:
+        /// <code>Assert.That(code, Violates.PreconditionSaying("Argument must be non-null"));</code></remarks>
+        public static EqualConstraint PreconditionSaying(string userMessage)
+        {
+#if (!DEBUG)
+            Assert.Ignore("Ignore preconditions in release.");
+#endif
+
+            return Throws.TypeOf<PreconditionException>().With.Property("UserMessage").EqualTo(userMessage);
+        }
 
         /// <summary>
         /// Returns an <see cref="EqualConstraint"/> that checks if a typed
@@ -44,9 +67,8 @@ namespace C6.Tests.Contracts
             Assert.Ignore("Ignore preconditions in release.");
 #endif
 
-            return Throws.TypeOf<PreconditionException>().With.Property("ExceptionType").EqualTo(typeof (TException));
+            return Throws.TypeOf<PreconditionException>().With.Property("ExceptionType").EqualTo(typeof(TException));
         }
-
 
         /// <summary>
         /// Returns a <see cref="Throws.Nothing"/> constraint.

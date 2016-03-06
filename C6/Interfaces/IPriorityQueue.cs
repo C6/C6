@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -335,7 +337,7 @@ namespace C6
         public T FindMin()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
             // Result is non-null
@@ -357,7 +359,7 @@ namespace C6
         public T FindMin(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
             // Result is non-null
@@ -386,10 +388,10 @@ namespace C6
         public T RemoveMin()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // Result is non-null
@@ -414,10 +416,10 @@ namespace C6
         public T RemoveMin(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // Result is non-null
@@ -446,7 +448,7 @@ namespace C6
         public T FindMax()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
             // Result is non-null
@@ -467,7 +469,7 @@ namespace C6
         public T FindMax(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
             // Result is non-null
@@ -496,10 +498,10 @@ namespace C6
         public T RemoveMax()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // Result is non-null
@@ -524,10 +526,10 @@ namespace C6
         public T RemoveMax(out IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // Result is non-null
@@ -558,10 +560,10 @@ namespace C6
             get
             {
                 // Handle must be non-null
-                Requires(handle != null);
+                Requires(handle != null, ArgumentMustBeNonNull);
 
                 // Handle must be associated with item in the priority queue
-                Requires(Contains(handle));
+                Requires(Contains(handle), CollectionMustContainArgument);
 
 
                 // Result is non-null
@@ -577,19 +579,19 @@ namespace C6
             set
             {
                 // Collection must be non-empty
-                Requires(!IsEmpty);
+                Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
                 // Collection must be non-fixed-sized
-                Requires(!IsFixedSize);
+                Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
                 // Handle must be non-null
-                Requires(handle != null);
+                Requires(handle != null, ArgumentMustBeNonNull);
 
                 // Argument must be non-null if collection disallows null values
-                Requires(AllowsNull || value != null);
+                Requires(AllowsNull || value != null, ArgumentMustBeNonNull);
 
                 // Handle must be associated with item in the priority queue
-                Requires(Contains(handle));
+                Requires(Contains(handle), CollectionMustContainArgument);
 
 
                 // The handle is associated with the result
@@ -610,7 +612,7 @@ namespace C6
         public bool Contains(IPriorityQueueHandle<T> handle)
         {
             // Handle must be non-null
-            Requires(handle != null);
+            Requires(handle != null, ArgumentMustBeNonNull);
 
 
             // No postconditions
@@ -623,7 +625,7 @@ namespace C6
         public bool Contains(IPriorityQueueHandle<T> handle, out T item)
         {
             // Handle must be non-null
-            Requires(handle != null);
+            Requires(handle != null, ArgumentMustBeNonNull);
 
 
             // Result is equal to Contains' result
@@ -640,16 +642,16 @@ namespace C6
         public T Replace(IPriorityQueueHandle<T> handle, T item)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Handle must be associated with item in the priority queue
-            Requires(Contains(handle));
+            Requires(Contains(handle), CollectionMustContainArgument);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Count remains unchanged
@@ -677,13 +679,13 @@ namespace C6
         public bool Add(ref IPriorityQueueHandle<T> handle, T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Always returns true
@@ -716,13 +718,13 @@ namespace C6
         public T Remove(IPriorityQueueHandle<T> handle)
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Handle must be associated with item in the priority queue
-            Requires(Contains(handle));
+            Requires(Contains(handle), CollectionMustContainArgument);
 
 
             // Result is non-null
