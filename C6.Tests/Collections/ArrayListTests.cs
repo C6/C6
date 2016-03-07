@@ -9,6 +9,8 @@ using C6.Tests.Contracts;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -191,7 +193,7 @@ namespace C6.Tests
             var collection = GetEmptyList<int>();
 
             // Act & Assert
-            Assert.That(() => collection.Choose(), Violates.Precondition);
+            Assert.That(() => collection.Choose(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
         }
 
         [Test]
@@ -234,7 +236,7 @@ namespace C6.Tests
             var choose = list.Choose();
 
             // Assert
-            Assert.That(list, Contains.Item(choose));
+            Assert.That(list, Has.Some.SameAs(choose));
         }
 
         #endregion
@@ -248,7 +250,7 @@ namespace C6.Tests
             var list = GetRandomIntList(TestContext.CurrentContext.Random);
 
             // Act & Assert
-            Assert.That(() => list.CopyTo(null, 0), Violates.Precondition);
+            Assert.That(() => list.CopyTo(null, 0), Violates.PreconditionSaying(ArgumentMustBeNonNull));
         }
 
         [Test]
@@ -259,7 +261,7 @@ namespace C6.Tests
             var array = new int[list.Count];
 
             // Act & Assert
-            Assert.That(() => list.CopyTo(array, -1), Violates.Precondition);
+            Assert.That(() => list.CopyTo(array, -1), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
 
         [Test]
@@ -272,7 +274,7 @@ namespace C6.Tests
             var index = random.Next(1, list.Count);
 
             // Act & Assert
-            Assert.That(() => list.CopyTo(array, index), Violates.Precondition);
+            Assert.That(() => list.CopyTo(array, index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
 
         [Test]
@@ -386,6 +388,8 @@ namespace C6.Tests
             // Assert
             Assert.That(equalityComparer, Is.Not.Null);
         }
+
+        // TODO: Check is equal to provided
 
         #endregion
 
@@ -672,7 +676,7 @@ namespace C6.Tests
             var choose = list.Choose();
 
             // Assert
-            Assert.That(choose, Is.EqualTo(lastItem));
+            Assert.That(choose, Is.SameAs(lastItem));
         }
 
         #endregion
