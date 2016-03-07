@@ -36,29 +36,29 @@ namespace C6.Tests
         private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random, int count)
             => Enumerable.Range(0, count).Select(i => random.GetString());
 
-        private static IExtensible<T> GetEmptyList<T>()
-            => GetList(Enumerable.Empty<T>());
+        private static IExtensible<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null)
+            => GetList(Enumerable.Empty<T>(), equalityComparer);
 
         private static IExtensible<T> GetList<T>(params T[] array)
             => GetList((SCG.IEnumerable<T>) array);
 
-        private static IExtensible<int> GetRandomIntList(Random random)
-            => GetList(GetRandomIntEnumerable(random, GetRandomCount(random)));
+        private static IExtensible<int> GetRandomIntList(Random random, SCG.IEqualityComparer<int> equalityComparer = null)
+            => GetList(GetRandomIntEnumerable(random, GetRandomCount(random)), equalityComparer);
 
-        private static IExtensible<int> GetRandomIntList(Random random, int count)
-            => GetList(GetRandomIntEnumerable(random, count));
+        private static IExtensible<int> GetRandomIntList(Random random, int count, SCG.IEqualityComparer<int> equalityComparer = null)
+            => GetList(GetRandomIntEnumerable(random, count), equalityComparer);
 
-        private static IExtensible<string> GetRandomStringList(Randomizer random)
-            => GetList(GetRandomStringEnumerable(random, GetRandomCount(random)));
+        private static IExtensible<string> GetRandomStringList(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null)
+            => GetList(GetRandomStringEnumerable(random, GetRandomCount(random)), equalityComparer);
 
-        private static IExtensible<string> GetRandomStringList(Randomizer random, int count)
-            => GetList(GetRandomStringEnumerable(random, count));
+        private static IExtensible<string> GetRandomStringList(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null)
+            => GetList(GetRandomStringEnumerable(random, count), equalityComparer);
 
         #endregion
 
         #region Factories
 
-        private static IExtensible<T> GetList<T>(SCG.IEnumerable<T> enumerable) => new ArrayList<T>(enumerable);
+        private static IExtensible<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null) => new ArrayList<T>(enumerable, equalityComparer);
 
         #endregion
 
