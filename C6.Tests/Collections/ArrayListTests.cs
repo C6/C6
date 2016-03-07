@@ -389,7 +389,33 @@ namespace C6.Tests
             Assert.That(equalityComparer, Is.Not.Null);
         }
 
-        // TODO: Check is equal to provided
+        [Test]
+        public void EqualityComparer_CustomEqualityComparer_Equal()
+        {
+            // Arrange
+            var customEqualityComparer = ComparerFactory.CreateEqualityComparer<int>((i, j) => i == j, i => i);
+            var list = GetEmptyList(customEqualityComparer);
+
+            // Act
+            var equalityComparer = list.EqualityComparer;
+
+            // Assert
+            Assert.That(equalityComparer, Is.SameAs(customEqualityComparer));
+        }
+
+        [Test]
+        public void EqualityComparer_DefaultEqualityComparer_Equal()
+        {
+            // Arrange
+            var defaultEqualityComparer = SCG.EqualityComparer<int>.Default;
+            var list = GetEmptyList<int>();
+
+            // Act
+            var equalityComparer = list.EqualityComparer;
+
+            // Assert
+            Assert.That(equalityComparer, Is.SameAs(defaultEqualityComparer));
+        }
 
         #endregion
 
