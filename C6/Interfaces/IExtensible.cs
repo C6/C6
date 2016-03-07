@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -94,8 +96,9 @@ namespace C6
         /// <summary>
         /// Adds an item to the collection if possible.
         /// </summary>
-        /// <param name="item">The item to add to the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <param name="item">The item to add to the collection. <c>null</c>
+        /// is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <returns><c>true</c> if item was added;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -125,8 +128,9 @@ namespace C6
         /// possible, in enumeration order.
         /// </summary>
         /// <param name="items">The enumerable whose items should be added to
-        /// the collection. <c>null</c> is allowed for nullable items, but not 
-        /// for the enumerable itself.</param>
+        /// the collection. The enumerable itself cannot be <c>null</c>, but 
+        /// its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <remarks>
         /// <para>If the collection has set semantics, each item will be added
         /// if not already in the collection. If bag semantics, the items will
@@ -219,24 +223,21 @@ namespace C6
         // Contracts are copied to ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get
-            {
-                return default(bool);
-            }
+            get { return default(bool); }
         }
 
         // Contracts are copied to ICollection<T>.Add. Keep both updated!
         public bool Add(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
-            
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
-            
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
             Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
@@ -260,16 +261,16 @@ namespace C6
         public void AddAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // The collection becomes non-empty

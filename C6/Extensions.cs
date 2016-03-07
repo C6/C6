@@ -7,6 +7,8 @@ using System.Linq;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -31,9 +33,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
+
             // Argument must be non-null
-            // Requires(item != null);
+            // Requires(item != null, ItemMustBeNonNull);
 
             // Result is non-null
             Ensures(Result<SCG.IEnumerable<T>>() != null);
@@ -62,7 +65,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
 
             // Returns true if Count is zero, otherwise false
@@ -80,10 +83,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null
-            Requires(predicate != null);
+            Requires(predicate != null, ArgumentMustBeNonNull);
 
 
             // Returns true if p(x) returned true for some item x; otherwise false
@@ -140,10 +143,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null
-            Requires(predicate != null);
+            Requires(predicate != null, ArgumentMustBeNonNull);
 
             #endregion
 
@@ -183,7 +186,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
             #endregion
 
@@ -215,7 +218,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
             #endregion
 
@@ -242,10 +245,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(enumerable != null);
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null
-            Requires(comparison != null);
+            Requires(comparison != null, ArgumentMustBeNonNull);
 
             #endregion
 
@@ -262,7 +265,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(array != null);
+            Requires(array != null, ArgumentMustBeNonNull);
 
             #endregion
 
@@ -280,7 +283,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(list != null);
+            Requires(list != null, ArgumentMustBeNonNull);
 
             #endregion
 
@@ -299,7 +302,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(array != null);
+            Requires(array != null, ArgumentMustBeNonNull);
 
             #endregion
 
@@ -324,10 +327,10 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(list != null);
+            Requires(list != null, ArgumentMustBeNonNull);
 
             // List must be non-read-only
-            Requires(!list.IsReadOnly);
+            Requires(!list.IsReadOnly, CollectionMustBeNonReadOnly);
 
             #endregion
 
@@ -352,15 +355,15 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(array != null);
+            Requires(array != null, ArgumentMustBeNonNull);
 
             // Argument must be within bounds
-            Requires(0 <= i);
-            Requires(i < array.Length);
+            Requires(0 <= i, ArgumentMustBeWithinBounds);
+            Requires(i < array.Length, ArgumentMustBeWithinBounds);
 
             // Argument must be within bounds
-            Requires(0 <= j);
-            Requires(j < array.Length);
+            Requires(0 <= j, ArgumentMustBeWithinBounds);
+            Requires(j < array.Length, ArgumentMustBeWithinBounds);
 
 
             // The values are swapped
@@ -390,18 +393,18 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(list != null);
+            Requires(list != null, ArgumentMustBeNonNull);
 
             // List must be non-read-only
-            Requires(!list.IsReadOnly);
+            Requires(!list.IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be within bounds
-            Requires(0 <= i);
-            Requires(i < list.Count);
+            Requires(0 <= i, ArgumentMustBeWithinBounds);
+            Requires(i < list.Count, ArgumentMustBeWithinBounds);
 
             // Argument must be within bounds
-            Requires(0 <= j);
-            Requires(j < list.Count);
+            Requires(0 <= j, ArgumentMustBeWithinBounds);
+            Requires(j < list.Count, ArgumentMustBeWithinBounds);
 
 
             // The values are swapped

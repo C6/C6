@@ -1,5 +1,7 @@
 ﻿using C6.Tests.Contracts;
 using NUnit.Framework;
+
+using static C6.Contracts.ContractMessage;
 using static C6.EnumerationDirection;
 
 
@@ -22,7 +24,7 @@ namespace C6.Tests.Enums
         {
             var invalidEnumerationDirection = (EnumerationDirection)2;
 
-            Assert.That(() => invalidEnumerationDirection.IsForward(), Violates.Precondition);
+            Assert.That(() => invalidEnumerationDirection.IsForward(), Violates.PreconditionSaying(EnumMustBeDefined));
         }
     }
 }

@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 
 namespace C6
 {
@@ -49,10 +51,10 @@ namespace C6
         public ClearedEventArgs(bool full, int count, int? start = null)
         {
             // Argument must be positive
-            Requires(count > 0);
+            Requires(0 < count, ArgumentMustBePositive);
 
             // Start is only set, if a list view or index range was cleared
-            Requires(!start.HasValue || !full);
+            Requires(!start.HasValue || !full); // TODO: Add user message
 
 
             Full = full;
