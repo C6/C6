@@ -36,29 +36,29 @@ namespace C6.Tests
         private static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random, int count)
             => Enumerable.Range(0, count).Select(i => random.GetString());
 
-        private static IExtensible<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null)
-            => GetList(Enumerable.Empty<T>(), equalityComparer);
+        private static IExtensible<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+            => GetList(Enumerable.Empty<T>(), equalityComparer, allowsNull);
 
         private static IExtensible<T> GetList<T>(params T[] array)
             => GetList((SCG.IEnumerable<T>) array);
 
-        private static IExtensible<int> GetRandomIntList(Random random, SCG.IEqualityComparer<int> equalityComparer = null)
-            => GetList(GetRandomIntEnumerable(random, GetRandomCount(random)), equalityComparer);
+        private static IExtensible<int> GetRandomIntList(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
+            => GetList(GetRandomIntEnumerable(random, GetRandomCount(random)), equalityComparer, allowsNull);
 
-        private static IExtensible<int> GetRandomIntList(Random random, int count, SCG.IEqualityComparer<int> equalityComparer = null)
-            => GetList(GetRandomIntEnumerable(random, count), equalityComparer);
+        private static IExtensible<int> GetRandomIntList(Random random, int count, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
+            => GetList(GetRandomIntEnumerable(random, count), equalityComparer, allowsNull);
 
-        private static IExtensible<string> GetRandomStringList(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null)
-            => GetList(GetRandomStringEnumerable(random, GetRandomCount(random)), equalityComparer);
+        private static IExtensible<string> GetRandomStringList(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetList(GetRandomStringEnumerable(random, GetRandomCount(random)), equalityComparer, allowsNull);
 
-        private static IExtensible<string> GetRandomStringList(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null)
-            => GetList(GetRandomStringEnumerable(random, count), equalityComparer);
+        private static IExtensible<string> GetRandomStringList(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetList(GetRandomStringEnumerable(random, count), equalityComparer, allowsNull);
 
         #endregion
 
         #region Factories
 
-        private static IExtensible<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null) => new ArrayList<T>(enumerable, equalityComparer);
+        private static IExtensible<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
 
         #endregion
 
@@ -419,6 +419,91 @@ namespace C6.Tests
 
         #endregion
 
+        #region Add(T)
+
+        // TODO: Test read-only collections
+        // TODO: Test fixed-size collections
+
+        [Test]
+        public void Add_NullDisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var allowNull = false;
+            var list = GetEmptyList<string>(allowsNull: allowNull);
+
+            // Act & Assert
+            Assert.That(() => list.Add(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void Add_EmptyCollectionAddItem_ContainsItem()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var list = GetEmptyList<string>();
+            var item = random.GetString();
+            var itemArray = new[] { item };
+
+            // Act
+            list.Add(item);
+
+            // Assert
+            Assert.That(list, Is.EqualTo(itemArray));
+        }
+
+        [Test]
+        public void Add_EmptyCollection_ItemIsAdded()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var list = GetEmptyList<string>();
+            var item = random.GetString();
+
+            // Act
+            var result = list.Add(item);
+
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+        [Test]
+        public void Add_SingleItemCollectionAddsDuplicate_ItemIsAddedIfAllowsDuplicatesIsTrue()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var item = random.GetString();
+            var duplicate = string.Copy(item);
+            var list = GetList(item);
+            var allowsDuplicates = list.AllowsDuplicates;
+
+            // Act
+            var result = list.Add(duplicate);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(allowsDuplicates));
+        }
+
+        [Test]
+        public void Add_ManyItems_Equivalent()
+        {
+            // Arrange
+            var equalityComparer = ComparerFactory.CreateReferenceEqualityComparer<string>();
+            var list = GetEmptyList(equalityComparer);
+            var random = TestContext.CurrentContext.Random;
+            var count = random.Next(100, 250);
+            var items = GetRandomStringEnumerable(random, count).ToArray();
+
+            // Act
+            foreach (var item in items) {
+                list.Add(item); // TODO: Verify that items were added?
+            }
+
+            // Assert
+            Assert.That(list, Is.EquivalentTo(items));
+        }
+
+        #endregion
+
         #endregion
 
         #region ArrayList<T>
@@ -687,6 +772,25 @@ namespace C6.Tests
         #endregion
 
         #region Methods
+
+        #region Add(T)
+
+        [Test]
+        public void Add_InsertAddedToTheEnd_LastItemSame()
+        {
+            // Arrange
+            var random = TestContext.CurrentContext.Random;
+            var list = GetRandomStringList(random);
+            var item = random.GetString();
+
+            // Act
+            list.Add(item);
+
+            // Assert
+            Assert.That(list.Last(), Is.SameAs(item)); // TODO: Update to Last
+        }
+
+        #endregion
 
         #region Choose()
 

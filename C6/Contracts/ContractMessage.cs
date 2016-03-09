@@ -13,6 +13,7 @@ namespace C6.Contracts
         public static string CollectionMustAllowDuplicates => "Duplicates are not allowed";
         public static string CollectionMustContainItem => "Collection must contain item";
         public static string CollectionMustContainArgument => "Collection must contain argument";
+        public static string AllowsNullMustBeFalseForValueTypes => "Value types cannot be null";
 
         // Events
         public static string EventMustBeListenable => "Event must be listenable";

@@ -8,6 +8,8 @@ using System.Linq;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -15,9 +17,11 @@ namespace C6
 {
     public class ArrayList<T> : IExtensible<T>
     {
+        private const int MinimumCapacity = 8;
+
         #region Fields
 
-        private readonly T[] _array;
+        private T[] _array;
 
         #endregion
 
@@ -33,6 +37,9 @@ namespace C6
 
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
+
+            // The unused part of the array contains default values
+            Invariant(ForAll(Count, _array.Length, i => Equals(_array[i], default(T))));
             
             // Equality comparer is non-null
             Invariant(EqualityComparer != null);
@@ -49,13 +56,13 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(items != null);
-
+            Requires(items != null, ArgumentMustBeNonNull);
+            
             // All items must be non-null if collection disallows null values
-            Requires(allowsNull || ForAll(items, item => item != null));
-
+            Requires(allowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
+            
             // Value types cannot be null
-            Requires(!typeof(T).IsValueType || !allowsNull);
+            Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
 
             #endregion
 
@@ -68,15 +75,15 @@ namespace C6
             AllowsNull = allowsNull;
         }
 
-        public ArrayList(int capacity = 8, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        public ArrayList(int capacity = MinimumCapacity, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             #region Code Contracts
 
-            // Argument must be within bounds
-            Contract.Requires(0 <= capacity);
+            // Argument must be non-negative
+            Contract.Requires(0 <= capacity, ArgumentMustBeNonNegative);
 
             // Value types cannot be null
-            Requires(!typeof(T).IsValueType || !allowsNull);
+            Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
 
             #endregion
             
@@ -100,7 +107,7 @@ namespace C6
 
         public bool AllowsNull { get; }
 
-        public int Count { get; }
+        public int Count { get; private set; }
 
         public Speed CountSpeed => Speed.Constant;
 
@@ -125,7 +132,20 @@ namespace C6
 
         public bool Add(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // Item is added to the end
+            Ensures(this.Last().Equals(item));
+            
+            #endregion
+
+            // TODO: Increment stamp
+
+            InsertPrivate(Count, item);
+
+            // TODO: Raise events
+
+            return true;
         }
 
         public void AddAll(SCG.IEnumerable<T> items)
@@ -170,6 +190,61 @@ namespace C6
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        #endregion
+
+        #region Private Members
+
+        // TODO: Rename?
+        private void InsertPrivate(int index, T item)
+        {
+            #region Code Contracts
+
+            // Argument must be within bounds
+            Contract.Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Contract.Requires(index <= Count, ArgumentMustBeWithinBounds);
+            
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+            #endregion
+
+            if (_array.Length == Count) {
+                Resize();
+            }
+
+            // Move items one index to the right
+            if (index < Count)
+            {
+                Array.Copy(_array, index, _array, index + 1, Count - index);
+            }
+
+            _array[index] = item;
+            Count += 1;
+        }
+
+        private void Resize()
+        {
+            var size = Math.Max(Count * 2, MinimumCapacity);
+            Resize(size);
+        }
+
+        private void Resize(int size)
+        {
+            #region Code Contracts
+
+            // Array must fit the items in the collection
+            Requires(size >= Count);
+
+            #endregion
+
+            // TODO: Ensure size is a power of two
+            // TODO: Use empty array
+
+            var newArray = new T[size];
+            Array.Copy(_array, newArray, Count);
+            _array = newArray;
         }
 
         #endregion
