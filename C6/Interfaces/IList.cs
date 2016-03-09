@@ -361,6 +361,7 @@ namespace C6
         bool IsSorted(Comparison<T> comparison);
 
         // TODO: Deprecate?
+        // TODO: Check List<T>.ConvertAll
         /// <summary>
         /// Creates a new list consisting of the results of mapping all items
         /// in this list using the specified mapper. The new list will use the
@@ -1329,9 +1330,12 @@ namespace C6
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
+        // TODO: override to change documentation
         public abstract bool Remove(T item);
+        // TODO: override to change documentation
         public abstract bool Remove(T item, out T removedItem);
         public abstract bool RemoveAll(T item);
+        // TODO: override to change documentation
         public abstract void RemoveAll(SCG.IEnumerable<T> items);
         public abstract void RetainAll(SCG.IEnumerable<T> items);
         public abstract ICollectionValue<T> UniqueItems();
