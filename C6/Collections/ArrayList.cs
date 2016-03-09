@@ -21,7 +21,7 @@ namespace C6
 
         #region Fields
 
-        private T[] _array;
+        private T[] _items;
 
         #endregion
 
@@ -33,13 +33,13 @@ namespace C6
             // ReSharper disable InvocationIsSkipped
 
             // Array is non-null
-            Invariant(_array != null);
+            Invariant(_items != null);
 
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
             // The unused part of the array contains default values
-            Invariant(ForAll(Count, _array.Length, i => Equals(_array[i], default(T))));
+            Invariant(ForAll(Count, _items.Length, i => Equals(_items[i], default(T))));
             
             // Equality comparer is non-null
             Invariant(EqualityComparer != null);
@@ -67,8 +67,8 @@ namespace C6
             #endregion
 
             // TODO: Check for null items when copying?
-            _array = items.ToArray();
-            Count = _array.Length;
+            _items = items.ToArray();
+            Count = _items.Length;
 
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
 
@@ -87,7 +87,7 @@ namespace C6
 
             #endregion
             
-            _array = new T[capacity];
+            _items = new T[capacity];
 
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
 
@@ -153,23 +153,23 @@ namespace C6
             throw new NotImplementedException();
         }
 
-        public T Choose() => _array[Count - 1];
+        public T Choose() => _items[Count - 1];
 
         public void CopyTo(T[] array, int arrayIndex)
-            => Array.Copy(_array, 0, array, arrayIndex, Count);
+            => Array.Copy(_items, 0, array, arrayIndex, Count);
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
             for (var i = 0; i < Count; i++) {
-                yield return _array[i];
+                yield return _items[i];
             }
         }
 
         public T[] ToArray()
         {
-            var result = new T[Count];
-            Array.Copy(_array, result, Count);
-            return result;
+            var array = new T[Count];
+            Array.Copy(_items, array, Count);
+            return array;
         }
 
         #endregion
@@ -210,17 +210,17 @@ namespace C6
 
             #endregion
 
-            if (_array.Length == Count) {
+            if (_items.Length == Count) {
                 Resize();
             }
 
             // Move items one index to the right
             if (index < Count)
             {
-                Array.Copy(_array, index, _array, index + 1, Count - index);
+                Array.Copy(_items, index, _items, index + 1, Count - index);
             }
 
-            _array[index] = item;
+            _items[index] = item;
             Count += 1;
         }
 
@@ -242,9 +242,9 @@ namespace C6
             // TODO: Ensure size is a power of two
             // TODO: Use empty array
 
-            var newArray = new T[size];
-            Array.Copy(_array, newArray, Count);
-            _array = newArray;
+            var array = new T[size];
+            Array.Copy(_items, array, Count);
+            _items = array;
         }
 
         #endregion
