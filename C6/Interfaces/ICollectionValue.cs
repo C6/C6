@@ -699,7 +699,7 @@ namespace C6
         #region Non-Contract Methods
 
         #region SCG.IEnumerable<T>
-        
+
         // TODO: Ensure that no item is null if AllowsNull is false?
         public abstract SCG.IEnumerator<T> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
