@@ -103,7 +103,7 @@ namespace C6
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
         /// <para>If the collection has set semantics, the item will be
-        /// added if not already in the collection. If bag semantics, the item 
+        /// added if not already in the collection. If bag semantics, the item
         /// will always be added. The collection's
         /// <see cref="EqualityComparer"/> is used to determine item equality.
         /// </para>
