@@ -9,6 +9,7 @@ using System.Linq;
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EventTypes;
 
 using SCG = System.Collections.Generic;
 
@@ -22,6 +23,11 @@ namespace C6
         #region Fields
 
         private T[] _items;
+
+        private event EventHandler _collectionChanged;
+        private event EventHandler<ClearedEventArgs> _collectionCleared;
+        private event EventHandler<ItemAtEventArgs<T>> _itemInserted, _itemRemovedAt;
+        private event EventHandler<ItemCountEventArgs<T>> _itemsAdded, _itemsRemoved;
 
         #endregion
 
@@ -40,7 +46,7 @@ namespace C6
 
             // The unused part of the array contains default values
             Invariant(ForAll(Count, _items.Length, i => Equals(_items[i], default(T))));
-            
+
             // Equality comparer is non-null
             Invariant(EqualityComparer != null);
 
@@ -50,17 +56,17 @@ namespace C6
         #endregion
 
         #region Constructors
-        
+
         public ArrayList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             #region Code Contracts
 
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
-            
+
             // All items must be non-null if collection disallows null values
             Requires(allowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
-            
+
             // Value types cannot be null
             Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
 
@@ -80,13 +86,13 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-negative
-            Contract.Requires(0 <= capacity, ArgumentMustBeNonNegative);
+            Requires(0 <= capacity, ArgumentMustBeNonNegative);
 
             // Value types cannot be null
             Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
 
             #endregion
-            
+
             _items = new T[capacity];
 
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
@@ -98,10 +104,7 @@ namespace C6
 
         #region Properties
 
-        public EventTypes ActiveEvents
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public EventTypes ActiveEvents { get; private set; }
 
         public bool AllowsDuplicates => true;
 
@@ -121,10 +124,7 @@ namespace C6
 
         public bool IsReadOnly => false;
 
-        public EventTypes ListenableEvents
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public EventTypes ListenableEvents => All;
 
         #endregion
 
@@ -136,7 +136,7 @@ namespace C6
 
             // Item is added to the end
             Ensures(this.Last().Equals(item));
-            
+
             #endregion
 
             // TODO: Increment stamp
@@ -144,6 +144,9 @@ namespace C6
             InsertPrivate(Count, item);
 
             // TODO: Raise events
+
+            _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, 1));
+            _collectionChanged?.Invoke(this, EventArgs.Empty);
 
             return true;
         }
@@ -176,12 +179,101 @@ namespace C6
 
         #region Events
 
-        public event EventHandler CollectionChanged;
-        public event EventHandler<ClearedEventArgs> CollectionCleared;
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted;
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
+        public event EventHandler CollectionChanged
+        {
+            add
+            {
+                _collectionChanged += value;
+                ActiveEvents |= Changed;
+            }
+            remove
+            {
+                _collectionChanged -= value;
+                if (_collectionChanged == null) {
+                    ActiveEvents &= ~Changed;
+                }
+            }
+        }
+
+        public event EventHandler<ClearedEventArgs> CollectionCleared
+        {
+            add
+            {
+                _collectionCleared += value;
+                ActiveEvents |= Cleared;
+            }
+            remove
+            {
+                _collectionCleared -= value;
+                if (_collectionCleared == null) {
+                    ActiveEvents &= ~Cleared;
+                }
+            }
+        }
+
+        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
+        {
+            add
+            {
+                _itemInserted += value;
+                ActiveEvents |= Inserted;
+            }
+            remove
+            {
+                _itemInserted -= value;
+                if (_itemInserted == null) {
+                    ActiveEvents &= ~Inserted;
+                }
+            }
+        }
+
+        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
+        {
+            add
+            {
+                _itemRemovedAt += value;
+                ActiveEvents |= RemovedAt;
+            }
+            remove
+            {
+                _itemRemovedAt -= value;
+                if (_itemRemovedAt == null) {
+                    ActiveEvents &= ~RemovedAt;
+                }
+            }
+        }
+
+        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
+        {
+            add
+            {
+                _itemsAdded += value;
+                ActiveEvents |= Added;
+            }
+            remove
+            {
+                _itemsAdded -= value;
+                if (_itemsAdded == null) {
+                    ActiveEvents &= ~Added;
+                }
+            }
+        }
+
+        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
+        {
+            add
+            {
+                _itemsRemoved += value;
+                ActiveEvents |= Removed;
+            }
+            remove
+            {
+                _itemsRemoved -= value;
+                if (_itemsRemoved == null) {
+                    ActiveEvents &= ~Removed;
+                }
+            }
+        }
 
         #endregion
 
@@ -202,9 +294,9 @@ namespace C6
             #region Code Contracts
 
             // Argument must be within bounds
-            Contract.Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Contract.Requires(index <= Count, ArgumentMustBeWithinBounds);
-            
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
+
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
@@ -215,8 +307,7 @@ namespace C6
             }
 
             // Move items one index to the right
-            if (index < Count)
-            {
+            if (index < Count) {
                 Array.Copy(_items, index, _items, index + 1, Count - index);
             }
 

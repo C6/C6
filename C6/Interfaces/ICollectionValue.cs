@@ -493,15 +493,15 @@ namespace C6
                 Ensures(ActiveEvents.HasFlag(Changed));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Changed));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Changed));
 
 
                 return;
             }
             remove
             {
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Changed), EventMustBeListenable);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Changed), EventMustBeActive);
 
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -529,15 +529,15 @@ namespace C6
                 Ensures(ActiveEvents.HasFlag(Cleared));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Cleared));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Cleared));
 
 
                 return;
             }
             remove
             {
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Cleared), EventMustBeListenable);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Cleared), EventMustBeActive);
 
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -565,15 +565,15 @@ namespace C6
                 Ensures(ActiveEvents.HasFlag(Inserted));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Inserted));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Inserted));
 
 
                 return;
             }
             remove
             {
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Inserted), EventMustBeListenable);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Inserted), EventMustBeActive);
 
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -601,15 +601,15 @@ namespace C6
                 Ensures(ActiveEvents.HasFlag(RemovedAt));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | RemovedAt));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | RemovedAt));
 
 
                 return;
             }
             remove
             {
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(RemovedAt), EventMustBeListenable);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(RemovedAt), EventMustBeActive);
 
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -637,15 +637,15 @@ namespace C6
                 Ensures(ActiveEvents.HasFlag(Added));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Added));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Added));
 
 
                 return;
             }
             remove
             {
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Added), EventMustBeListenable);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Added), EventMustBeActive);
 
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -673,15 +673,15 @@ namespace C6
                 Ensures(ActiveEvents.HasFlag(Removed));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Removed));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Removed));
 
 
                 return;
             }
             remove
             {
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Removed), EventMustBeListenable);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Removed), EventMustBeActive);
 
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);

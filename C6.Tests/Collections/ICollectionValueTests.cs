@@ -12,6 +12,7 @@ using NUnit.Framework.Internal;
 using SCG = System.Collections.Generic;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
 
 
@@ -20,7 +21,27 @@ namespace C6.Tests.Collections
     [TestFixture]
     public abstract class ICollectionValueTests : IEnumerableTests
     {
+        #region Fields
+
+        private readonly EventHandler _changed = (sender, args) => { };
+        private readonly EventHandler<ClearedEventArgs> _cleared = (sender, args) => { };
+        private readonly EventHandler<ItemCountEventArgs<int>> _added = (sender, args) => { }, _removed = (sender, args) => { };
+        private readonly EventHandler<ItemAtEventArgs<int>> _inserted = (sender, args) => { }, _removedAt = (sender, args) => { };
+
+        #endregion
+
         #region Factories
+
+        /// <summary>
+        /// Gets a bit flag indicating the expected value for the collection's
+        /// <see cref="ICollectionValue{T}.ListenableEvents"/>.
+        /// </summary>
+        /// <value>
+        /// The bit flag indicating the expected value for the collection's
+        /// <see cref="ICollectionValue{T}.ListenableEvents"/>.
+        /// </value>
+        /// <seealso cref="ICollectionValue{T}.ListenableEvents"/>
+        protected abstract EventTypes ListenableEvents { get; }
 
         /// <summary>
         /// Creates an empty collection value.
@@ -57,6 +78,51 @@ namespace C6.Tests.Collections
         private ICollectionValue<string> GetRandomStringCollectionValue(Randomizer random, int count, bool allowsNull = false)
             => GetCollectionValue(GetRandomStringEnumerable(random, count), allowsNull);
 
+
+        private void ListenToEvents(ICollectionValue<int> collection, EventTypes events)
+        {
+            if (events.HasFlag(Changed)) {
+                collection.CollectionChanged += _changed;
+            }
+            if (events.HasFlag(Cleared)) {
+                collection.CollectionCleared += _cleared;
+            }
+            if (events.HasFlag(Removed)) {
+                collection.ItemsRemoved += _removed;
+            }
+            if (events.HasFlag(Added)) {
+                collection.ItemsAdded += _added;
+            }
+            if (events.HasFlag(Inserted)) {
+                collection.ItemInserted += _inserted;
+            }
+            if (events.HasFlag(RemovedAt)) {
+                collection.ItemRemovedAt += _removedAt;
+            }
+        }
+
+        private void StopListeningToEvents(ICollectionValue<int> collection, EventTypes events)
+        {
+            if (events.HasFlag(Changed)) {
+                collection.CollectionChanged -= _changed;
+            }
+            if (events.HasFlag(Cleared)) {
+                collection.CollectionCleared -= _cleared;
+            }
+            if (events.HasFlag(Removed)) {
+                collection.ItemsRemoved -= _removed;
+            }
+            if (events.HasFlag(Added)) {
+                collection.ItemsAdded -= _added;
+            }
+            if (events.HasFlag(Inserted)) {
+                collection.ItemInserted -= _inserted;
+            }
+            if (events.HasFlag(RemovedAt)) {
+                collection.ItemRemovedAt -= _removedAt;
+            }
+        }
+
         #endregion
 
         #region Inherited
@@ -70,6 +136,54 @@ namespace C6.Tests.Collections
         #endregion
 
         #region Test Methods
+
+        #region Active Events
+
+        [Test]
+        public void ActiveEvents_NoActiveEvents_None()
+        {
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        [Test]
+        public void ActiveEvents_ListenToAllListableEvents_EqualsListenableEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            var listenableEvents = collection.ListenableEvents;
+            ListenToEvents(collection, listenableEvents);
+
+            // Act
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(listenableEvents));
+        }
+
+        [Test]
+        public void ActiveEvents_ListenToAllListenableEventsThenNone_None()
+        {
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            var listenableEvents = collection.ListenableEvents;
+            ListenToEvents(collection, listenableEvents);
+            StopListeningToEvents(collection, listenableEvents);
+
+            // Act
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        #endregion
 
         #region Count
 
@@ -152,6 +266,23 @@ namespace C6.Tests.Collections
 
         #endregion
 
+        #region Listenable Events
+
+        [Test]
+        public void ListenableEvents_EmptyCollection_ListenableEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            var listenableEvents = collection.ListenableEvents;
+
+            // Assert
+            Assert.That(listenableEvents, Is.EqualTo(ListenableEvents));
+        }
+
+        #endregion
+
         #region Choose()
 
         [Test]
@@ -185,7 +316,7 @@ namespace C6.Tests.Collections
             // Arrange
             var random = TestContext.CurrentContext.Random;
             var item = random.Next();
-            var collection = GetCollectionValue(new[] { item });
+            var collection = GetCollectionValue(item);
 
             // Act
             var choose = collection.Choose();
@@ -334,6 +465,714 @@ namespace C6.Tests.Collections
 
             // Assert
             Assert.That(array, Is.EqualTo(items));
+        }
+
+        #endregion
+
+        #region CollectionChanged
+
+        [Test]
+        public void CollectionChanged_ListenToUnlistenableEvent_ViolatesPrecondition()
+        {
+            if (ListenableEvents.HasFlag(Changed)) {
+                Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionChanged += _changed, Violates.PreconditionSaying(EventMustBeListenable));
+        }
+
+        [Test]
+        public void CollectionChanged_ListenWithNull_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Changed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionChanged += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void CollectionChanged_Listen_BecomesActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Changed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.CollectionChanged += _changed;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Changed));
+        }
+
+        [Test]
+        public void CollectionChanged_ListenAndUnlisten_BecomesInactiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Changed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.CollectionChanged += _changed;
+            collection.CollectionChanged -= _changed;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        [Test]
+        public void CollectionChanged_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Changed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.CollectionChanged += _changed;
+            collection.CollectionChanged += _changed;
+            collection.CollectionChanged -= _changed;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Changed));
+        }
+
+        [Test]
+        public void CollectionChanged_RemovesInactiveEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Changed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionChanged -= _changed, Violates.PreconditionSaying(EventMustBeActive));
+        }
+
+        [Test]
+        public void CollectionChanged_RemovesNullEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Changed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            collection.CollectionChanged += _changed;
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionChanged -= null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        #endregion
+
+        #region CollectionCleared
+
+        [Test]
+        public void CollectionCleared_ListenToUnlistenableEvent_ViolatesPrecondition()
+        {
+            if (ListenableEvents.HasFlag(Cleared)) {
+                Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionCleared += _cleared, Violates.PreconditionSaying(EventMustBeListenable));
+        }
+
+        [Test]
+        public void CollectionCleared_ListenWithNull_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Cleared)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionCleared += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void CollectionCleared_Listen_BecomesActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Cleared)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.CollectionCleared += _cleared;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Cleared));
+        }
+
+        [Test]
+        public void CollectionCleared_ListenAndUnlisten_BecomesInactiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Cleared)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.CollectionCleared += _cleared;
+            collection.CollectionCleared -= _cleared;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        [Test]
+        public void CollectionCleared_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Cleared)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.CollectionCleared += _cleared;
+            collection.CollectionCleared += _cleared;
+            collection.CollectionCleared -= _cleared;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Cleared));
+        }
+
+        [Test]
+        public void CollectionCleared_RemovesInactiveEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Cleared)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionCleared -= _cleared, Violates.PreconditionSaying(EventMustBeActive));
+        }
+
+        [Test]
+        public void CollectionCleared_RemovesNullEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Cleared)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            collection.CollectionCleared += _cleared;
+
+            // Act & Assert
+            Assert.That(() => collection.CollectionCleared -= null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        #endregion
+
+        #region ItemInserted
+
+        [Test]
+        public void ItemInserted_ListenToUnlistenableEvent_ViolatesPrecondition()
+        {
+            if (ListenableEvents.HasFlag(Inserted)) {
+                Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemInserted += _inserted, Violates.PreconditionSaying(EventMustBeListenable));
+        }
+
+        [Test]
+        public void ItemInserted_ListenWithNull_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Inserted)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemInserted += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void ItemInserted_Listen_BecomesActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Inserted)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemInserted += _inserted;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Inserted));
+        }
+
+        [Test]
+        public void ItemInserted_ListenAndUnlisten_BecomesInactiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Inserted)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemInserted += _inserted;
+            collection.ItemInserted -= _inserted;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        [Test]
+        public void ItemInserted_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Inserted)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemInserted += _inserted;
+            collection.ItemInserted += _inserted;
+            collection.ItemInserted -= _inserted;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Inserted));
+        }
+
+        [Test]
+        public void ItemInserted_RemovesInactiveEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Inserted)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemInserted -= _inserted, Violates.PreconditionSaying(EventMustBeActive));
+        }
+
+        [Test]
+        public void ItemInserted_RemovesNullEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Inserted)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            collection.ItemInserted += _inserted;
+
+            // Act & Assert
+            Assert.That(() => collection.ItemInserted -= null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        #endregion
+
+        #region ItemRemovedAt
+
+        [Test]
+        public void ItemRemovedAt_ListenToUnlistenableEvent_ViolatesPrecondition()
+        {
+            if (ListenableEvents.HasFlag(RemovedAt)) {
+                Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemRemovedAt += _removedAt, Violates.PreconditionSaying(EventMustBeListenable));
+        }
+
+        [Test]
+        public void ItemRemovedAt_ListenWithNull_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(RemovedAt)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemRemovedAt += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void ItemRemovedAt_Listen_BecomesActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(RemovedAt)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemRemovedAt += _removedAt;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(RemovedAt));
+        }
+
+        [Test]
+        public void ItemRemovedAt_ListenAndUnlisten_BecomesInactiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(RemovedAt)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemRemovedAt += _removedAt;
+            collection.ItemRemovedAt -= _removedAt;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        [Test]
+        public void ItemRemovedAt_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(RemovedAt)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemRemovedAt += _removedAt;
+            collection.ItemRemovedAt += _removedAt;
+            collection.ItemRemovedAt -= _removedAt;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(RemovedAt));
+        }
+
+        [Test]
+        public void ItemRemovedAt_RemovesInactiveEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(RemovedAt)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemRemovedAt -= _removedAt, Violates.PreconditionSaying(EventMustBeActive));
+        }
+
+        [Test]
+        public void ItemRemovedAt_RemovesNullEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(RemovedAt)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            collection.ItemRemovedAt += _removedAt;
+
+            // Act & Assert
+            Assert.That(() => collection.ItemRemovedAt -= null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        #endregion
+
+        #region ItemsAdded
+
+        [Test]
+        public void ItemsAdded_ListenToUnlistenableEvent_ViolatesPrecondition()
+        {
+            if (ListenableEvents.HasFlag(Added)) {
+                Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsAdded += _added, Violates.PreconditionSaying(EventMustBeListenable));
+        }
+
+        [Test]
+        public void ItemsAdded_ListenWithNull_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Added)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsAdded += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void ItemsAdded_Listen_BecomesActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Added)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemsAdded += _added;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Added));
+        }
+
+        [Test]
+        public void ItemsAdded_ListenAndUnlisten_BecomesInactiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Added)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemsAdded += _added;
+            collection.ItemsAdded -= _added;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        [Test]
+        public void ItemsAdded_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Added)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemsAdded += _added;
+            collection.ItemsAdded += _added;
+            collection.ItemsAdded -= _added;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Added));
+        }
+
+        [Test]
+        public void ItemsAdded_RemovesInactiveEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Added)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsAdded -= _added, Violates.PreconditionSaying(EventMustBeActive));
+        }
+
+        [Test]
+        public void ItemsAdded_RemovesNullEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Added)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            collection.ItemsAdded += _added;
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsAdded -= null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        #endregion
+
+        #region ItemsRemoved
+
+        [Test]
+        public void ItemsRemoved_ListenToUnlistenableEvent_ViolatesPrecondition()
+        {
+            if (ListenableEvents.HasFlag(Removed)) {
+                Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsRemoved += _removed, Violates.PreconditionSaying(EventMustBeListenable));
+        }
+
+        [Test]
+        public void ItemsRemoved_ListenWithNull_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Removed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsRemoved += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void ItemsRemoved_Listen_BecomesActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Removed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemsRemoved += _removed;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Removed));
+        }
+
+        [Test]
+        public void ItemsRemoved_ListenAndUnlisten_BecomesInactiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Removed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemsRemoved += _removed;
+            collection.ItemsRemoved -= _removed;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        [Test]
+        public void ItemsRemoved_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
+        {
+            if (!ListenableEvents.HasFlag(Removed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act
+            collection.ItemsRemoved += _removed;
+            collection.ItemsRemoved += _removed;
+            collection.ItemsRemoved -= _removed;
+            var activeEvents = collection.ActiveEvents;
+
+            // Assert
+            Assert.That(activeEvents, Is.EqualTo(Removed));
+        }
+
+        [Test]
+        public void ItemsRemoved_RemovesInactiveEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Removed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsRemoved -= _removed, Violates.PreconditionSaying(EventMustBeActive));
+        }
+
+        [Test]
+        public void ItemsRemoved_RemovesNullEvent_ViolatesPrecondition()
+        {
+            if (!ListenableEvents.HasFlag(Removed)) {
+                Assert.Pass("Collection does not allow listening to this event."); // TODO: Ignore instead?
+            }
+
+            // Arrange
+            var collection = GetEmptyCollectionValue<int>();
+            collection.ItemsRemoved += _removed;
+
+            // Act & Assert
+            Assert.That(() => collection.ItemsRemoved -= null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
         }
 
         #endregion

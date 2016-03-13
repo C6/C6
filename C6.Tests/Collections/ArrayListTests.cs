@@ -11,6 +11,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -491,6 +492,8 @@ namespace C6.Tests
         #endregion
 
         #endregion
+
+        protected override EventTypes ListenableEvents => All;
 
         protected override ICollectionValue<T> GetEmptyCollectionValue<T>() => new ArrayList<T>();
 
