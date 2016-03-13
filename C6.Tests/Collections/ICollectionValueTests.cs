@@ -46,10 +46,12 @@ namespace C6.Tests.Collections
         /// <summary>
         /// Creates an empty collection value.
         /// </summary>
+        /// <param name="allowsNull">A value indicating whether the collection
+        /// allows <c>null</c> items.</param>
         /// <typeparam name="T">The type of the items in the collection value.
         /// </typeparam>
         /// <returns>An empty collection value.</returns>
-        protected abstract ICollectionValue<T> GetEmptyCollectionValue<T>();
+        protected abstract ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false);
 
         /// <summary>
         /// Creates a collection value containing the items in the enumerable.
@@ -58,6 +60,8 @@ namespace C6.Tests.Collections
         /// </typeparam>
         /// <param name="enumerable">The collection whose items are copied to
         /// the new collection value.</param>
+        /// <param name="allowsNull">A value indicating whether the collection
+        /// allows <c>null</c> items.</param>
         /// <returns>A collection value containing the items in the enumerable.
         /// </returns>
         protected abstract ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
@@ -137,6 +141,8 @@ namespace C6.Tests.Collections
 
         #region Test Methods
 
+        #region Properties
+
         #region Active Events
 
         [Test]
@@ -181,6 +187,64 @@ namespace C6.Tests.Collections
 
             // Assert
             Assert.That(activeEvents, Is.EqualTo(None));
+        }
+
+        #endregion
+
+        #region AllowsNull
+
+        // TODO: Are the better tests to perform here?
+
+        [Test]
+        public void AllowsNull_EmptyCollectionAllowsNull_True()
+        {
+            // Arrange
+            var collection = GetEmptyCollectionValue<string>(allowsNull: true);
+
+            // Act
+            var allowsNull = collection.AllowsNull;
+
+            // Assert
+            Assert.That(allowsNull, Is.True);
+        }
+
+        [Test]
+        public void AllowsNull_EmptyCollectionAllowsNull_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollectionValue<string>(allowsNull: false);
+
+            // Act
+            var allowsNull = collection.AllowsNull;
+
+            // Assert
+            Assert.That(allowsNull, Is.False);
+        }
+
+        [Test]
+        public void AllowsNull_AllowsNull_True()
+        {
+            // Arrange
+            var collection = GetCollectionValue(Enumerable.Empty<string>(), allowsNull: true);
+
+            // Act
+            var allowsNull = collection.AllowsNull;
+
+            // Assert
+            Assert.That(allowsNull, Is.True);
+        }
+
+        [Test]
+        public void AllowsNull_AllowsNull_False()
+        {
+            // Arrange
+            var collection = GetCollectionValue(Enumerable.Empty<string>(), allowsNull: false);
+
+            // Act
+            var allowsNull = collection.AllowsNull;
+
+            // Assert
+            Assert.That(allowsNull, Is.False);
         }
 
         #endregion
@@ -282,6 +346,10 @@ namespace C6.Tests.Collections
         }
 
         #endregion
+
+        #endregion
+
+        #region Methods
 
         #region Choose()
 
@@ -468,6 +536,10 @@ namespace C6.Tests.Collections
         }
 
         #endregion
+
+        #endregion
+
+        #region Events
 
         #region CollectionChanged
 
@@ -1174,6 +1246,8 @@ namespace C6.Tests.Collections
             // Act & Assert
             Assert.That(() => collection.ItemsRemoved -= null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
         }
+
+        #endregion
 
         #endregion
 

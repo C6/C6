@@ -495,7 +495,7 @@ namespace C6.Tests
 
         protected override EventTypes ListenableEvents => All;
 
-        protected override ICollectionValue<T> GetEmptyCollectionValue<T>() => new ArrayList<T>();
+        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => new ArrayList<T>(allowsNull: allowsNull);
 
         protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new ArrayList<T>(enumerable, allowsNull: allowsNull);
     }
