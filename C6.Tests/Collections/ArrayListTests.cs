@@ -141,7 +141,7 @@ namespace C6.Tests
         public void Constructor_RandomNonValueTypeEnumerable_Equal()
         {
             // Arrange
-            var array = GetRandomStringEnumerable(Random).ToArray();
+            var array = GetStrings(Random).ToArray();
 
             // Act
             var list = new ArrayList<string>(array);
@@ -154,7 +154,7 @@ namespace C6.Tests
         public void Constructor_EnumerableWithNull_ViolatesPrecondition()
         {
             // Arrange
-            var array = GetRandomStringEnumerable(Random).ToArray();
+            var array = GetStrings(Random).ToArray();
             array[Random.Next(0, array.Length)] = null;
 
             // Act & Assert
@@ -165,7 +165,7 @@ namespace C6.Tests
         public void Constructor_EnumerableBeingChanged_Unequal()
         {
             // Arrange
-            var array = GetRandomIntEnumerable(Random).ToArray();
+            var array = GetIntegers(Random).ToArray();
 
             // Act
             var collection = new ArrayList<int>(array);
@@ -181,7 +181,7 @@ namespace C6.Tests
         public void Constructor_EnumerableWithNullDisallowNull_ViolatesPrecondition()
         {
             // Arrange
-            var array = GetRandomStringEnumerable(Random).ToArray();
+            var array = GetStrings(Random).ToArray();
             array[Random.Next(0, array.Length)] = null;
 
             // Act & Assert
@@ -227,7 +227,7 @@ namespace C6.Tests
         public void Add_InsertAddedToTheEnd_LastItemSame()
         {
             // Arrange
-            var items = GetRandomStringEnumerable(Random).ToArray();
+            var items = GetStrings(Random).ToArray();
             var list = new ArrayList<string>(items);
             var item = Random.GetString();
 
@@ -246,7 +246,7 @@ namespace C6.Tests
         public void Choose_RandomCollection_LastItem()
         {
             // Arrange
-            var enumerable = GetRandomStringEnumerable(Random).ToArray();
+            var enumerable = GetStrings(Random).ToArray();
             var list = new ArrayList<string>(enumerable);
             var lastItem = enumerable.Last();
 

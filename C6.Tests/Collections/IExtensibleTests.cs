@@ -39,16 +39,16 @@ namespace C6.Tests.Collections
         private IExtensible<T> GetExtensible<T>(params T[] array) => GetExtensible((SCG.IEnumerable<T>) array);
 
         private IExtensible<int> GetRandomIntExtensible(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
-            => GetExtensible(GetRandomIntEnumerable(random, GetRandomCount(random)), equalityComparer, allowsNull);
+            => GetExtensible(GetIntegers(random, GetRandomCount(random)), equalityComparer, allowsNull);
 
         private IExtensible<int> GetRandomIntExtensible(Random random, int count, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
-            => GetExtensible(GetRandomIntEnumerable(random, count), equalityComparer, allowsNull);
+            => GetExtensible(GetIntegers(random, count), equalityComparer, allowsNull);
 
         private IExtensible<string> GetRandomStringExtensible(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
-            => GetExtensible(GetRandomStringEnumerable(random, GetRandomCount(random)), equalityComparer, allowsNull);
+            => GetExtensible(GetStrings(random, GetRandomCount(random)), equalityComparer, allowsNull);
 
         private IExtensible<string> GetRandomStringExtensible(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
-            => GetExtensible(GetRandomStringEnumerable(random, count), equalityComparer, allowsNull);
+            => GetExtensible(GetStrings(random, count), equalityComparer, allowsNull);
 
         #endregion
 
@@ -262,7 +262,7 @@ namespace C6.Tests.Collections
             OnlyTestIfCollectionDoesNotAllowDuplicates();
 
             // Arrange
-            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var items = GetUppercaseStrings(Random).ToArray();
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
             var duplicateItem = items.SelectRandom(Random).ToLower();
 
@@ -279,7 +279,7 @@ namespace C6.Tests.Collections
             OnlyTestIfCollectionAllowsDuplicates();
 
             // Arrange
-            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var items = GetUppercaseStrings(Random).ToArray();
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
             var duplicateItem = items.SelectRandom(Random).ToLower();
 
@@ -313,7 +313,7 @@ namespace C6.Tests.Collections
             var equalityComparer = ComparerFactory.CreateReferenceEqualityComparer<string>();
             var collection = GetEmptyExtensible(equalityComparer);
             var count = Random.Next(100, 250);
-            var items = GetRandomStringEnumerable(Random, count).Distinct().ToArray();
+            var items = GetStrings(Random, count).Distinct().ToArray();
 
             // Act
             foreach (var item in items) {
@@ -328,9 +328,9 @@ namespace C6.Tests.Collections
         public void Add_AddItem_RaisesExpectedEvents()
         {
             // Arrange
-            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var items = GetUppercaseStrings(Random).ToArray();
             var collection = GetExtensible(items);
-            var item = GetRandomLowercaseString(Random);
+            var item = GetLowercaseString(Random);
             var expectedEvents = new[] {
                 Added(item, 1, collection),
                 Changed(collection)
@@ -346,7 +346,7 @@ namespace C6.Tests.Collections
             OnlyTestIfCollectionDoesNotAllowDuplicates();
 
             // Arrange
-            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var items = GetUppercaseStrings(Random).ToArray();
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
             var duplicateItem = items.SelectRandom(Random).ToLower();
 

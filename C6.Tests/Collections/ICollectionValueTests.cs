@@ -71,16 +71,16 @@ namespace C6.Tests.Collections
         private ICollectionValue<T> GetCollectionValue<T>(params T[] items) => GetCollectionValue((SCG.IEnumerable<T>) items);
 
         private ICollectionValue<int> GetRandomIntCollectionValue(Random random, bool allowsNull = false)
-            => GetCollectionValue(GetRandomIntEnumerable(random, GetRandomCount(random)), allowsNull);
+            => GetCollectionValue(GetIntegers(random, GetRandomCount(random)), allowsNull);
 
         private ICollectionValue<int> GetRandomIntCollectionValue(Random random, int count, bool allowsNull = false)
-            => GetCollectionValue(GetRandomIntEnumerable(random, count), allowsNull);
+            => GetCollectionValue(GetIntegers(random, count), allowsNull);
 
         private ICollectionValue<string> GetRandomStringCollectionValue(Randomizer random, bool allowsNull = false)
-            => GetCollectionValue(GetRandomStringEnumerable(random, GetRandomCount(random)), allowsNull);
+            => GetCollectionValue(GetStrings(random, GetRandomCount(random)), allowsNull);
 
         private ICollectionValue<string> GetRandomStringCollectionValue(Randomizer random, int count, bool allowsNull = false)
-            => GetCollectionValue(GetRandomStringEnumerable(random, count), allowsNull);
+            => GetCollectionValue(GetStrings(random, count), allowsNull);
 
 
         private void ListenToEvents(ICollectionValue<int> collection, EventTypes events)
@@ -458,7 +458,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var collection = GetRandomIntCollectionValue(Random);
-            var array = GetRandomIntEnumerable(Random, (int) (collection.Count * 1.7)).ToArray();
+            var array = GetIntegers(Random, (int) (collection.Count * 1.7)).ToArray();
             var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act
@@ -518,7 +518,7 @@ namespace C6.Tests.Collections
         public void ToArray_RandomNonValueTypeCollection_Equal()
         {
             // Arrange
-            var items = GetRandomStringEnumerable(Random).ToArray();
+            var items = GetStrings(Random).ToArray();
             var collection = GetCollectionValue(items);
 
             // Act
