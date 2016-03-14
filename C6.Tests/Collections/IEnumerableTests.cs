@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public abstract class IEnumerableTests
+    public abstract class IEnumerableTests : TestBase
     {
         #region Factories
 

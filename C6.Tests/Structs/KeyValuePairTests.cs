@@ -1,12 +1,14 @@
 ﻿using System;
 
+using C6.Tests.Collections;
+
 using NUnit.Framework;
 
 
 namespace C6.Tests
 {
     [TestFixture]
-    public class KeyValuePairTests
+    public class KeyValuePairTests : TestBase
     {
         #region Constructors
 
@@ -14,8 +16,7 @@ namespace C6.Tests
         public void Constructor_OnlyKey_KeyIsGivenValue()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
+            var key = Random.Next();
 
             // Act
             var kvp = new KeyValuePair<int, string>(key);
@@ -40,9 +41,8 @@ namespace C6.Tests
         public void Constructor_KeyAndValue_KeyAndValueHasGivenValues()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
 
             // Act
             var kvp = new KeyValuePair<int, string>(key, value);
@@ -61,9 +61,8 @@ namespace C6.Tests
         public void ToString_RandomPair_ContainsKeyBeforeValue()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
             var kvp = new KeyValuePair<int, string>(key, value);
             var toString = kvp.ToString();
 
@@ -84,9 +83,8 @@ namespace C6.Tests
         public void Equals_EqualPairs_True()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
             var kvp1 = new KeyValuePair<int, string>(key, value);
             var kvp2 = new KeyValuePair<int, string>(key, value);
 
@@ -102,9 +100,8 @@ namespace C6.Tests
         public void Equals_DifferentKeys_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var negativeKey = random.Next(int.MinValue, 0);
-            var positiveKey = random.Next(0, int.MaxValue);
+            var negativeKey = Random.Next(int.MinValue, 0);
+            var positiveKey = Random.Next(0, int.MaxValue);
             var kvp1 = new KeyValuePair<int, string>(negativeKey);
             var kvp2 = new KeyValuePair<int, string>(positiveKey);
 
@@ -120,10 +117,9 @@ namespace C6.Tests
         public void Equals_DifferentValues_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var lowercaseValue = random.GetString(10, "abcdefghijkmnopqrstuvwxyz");
-            var uppercaseValue = random.GetString(10, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
+            var key = Random.Next();
+            var lowercaseValue = Random.GetString(10, "abcdefghijkmnopqrstuvwxyz");
+            var uppercaseValue = Random.GetString(10, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
             var kvp1 = new KeyValuePair<int, string>(key, lowercaseValue);
             var kvp2 = new KeyValuePair<int, string>(key, uppercaseValue);
 
@@ -139,9 +135,8 @@ namespace C6.Tests
         public void Equals_Null_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
             var kvp1 = new KeyValuePair<int, string>(key, value);
 
             // Act
@@ -156,9 +151,8 @@ namespace C6.Tests
         public void Equals_SystemCollectionsGenericKeyValuePair_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
             var c6Kvp = new KeyValuePair<int, string>(key, value);
             var scgKvp = new System.Collections.Generic.KeyValuePair<int, string>(key, value);
 
@@ -195,9 +189,8 @@ namespace C6.Tests
         public void GetHashCode_EqualPairs_EqualHashCodes()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
             var kvp1 = new KeyValuePair<int, string>(key, value);
             var kvp2 = new KeyValuePair<int, string>(key, value);
 
@@ -218,9 +211,8 @@ namespace C6.Tests
         public void OperatorEquality_EqualPairs_True()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
             var kvp1 = new KeyValuePair<int, string>(key, value);
             var kvp2 = new KeyValuePair<int, string>(key, value);
 
@@ -236,9 +228,8 @@ namespace C6.Tests
         public void OperatorEquality_DifferentKeys_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var negativeKey = random.Next(int.MinValue, 0);
-            var positiveKey = random.Next(0, int.MaxValue);
+            var negativeKey = Random.Next(int.MinValue, 0);
+            var positiveKey = Random.Next(0, int.MaxValue);
             var kvp1 = new KeyValuePair<int, string>(negativeKey);
             var kvp2 = new KeyValuePair<int, string>(positiveKey);
 
@@ -254,10 +245,9 @@ namespace C6.Tests
         public void OperatorEquality_DifferentValues_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var lowercaseValue = random.GetString(10, "abcdefghijkmnopqrstuvwxyz");
-            var uppercaseValue = random.GetString(10, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
+            var key = Random.Next();
+            var lowercaseValue = Random.GetString(10, "abcdefghijkmnopqrstuvwxyz");
+            var uppercaseValue = Random.GetString(10, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
             var kvp1 = new KeyValuePair<int, string>(key, lowercaseValue);
             var kvp2 = new KeyValuePair<int, string>(key, uppercaseValue);
 
@@ -277,9 +267,8 @@ namespace C6.Tests
         public void OperatorInequality_EqualPairs_True()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var value = random.GetString(10);
+            var key = Random.Next();
+            var value = Random.GetString(10);
             var kvp1 = new KeyValuePair<int, string>(key, value);
             var kvp2 = new KeyValuePair<int, string>(key, value);
 
@@ -295,9 +284,8 @@ namespace C6.Tests
         public void OperatorInequality_DifferentKeys_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var negativeKey = random.Next(int.MinValue, 0);
-            var positiveKey = random.Next(0, int.MaxValue);
+            var negativeKey = Random.Next(int.MinValue, 0);
+            var positiveKey = Random.Next(0, int.MaxValue);
             var kvp1 = new KeyValuePair<int, string>(negativeKey);
             var kvp2 = new KeyValuePair<int, string>(positiveKey);
 
@@ -313,10 +301,9 @@ namespace C6.Tests
         public void OperatorInequality_DifferentValues_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var key = random.Next();
-            var lowercaseValue = random.GetString(10, "abcdefghijkmnopqrstuvwxyz");
-            var uppercaseValue = random.GetString(10, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
+            var key = Random.Next();
+            var lowercaseValue = Random.GetString(10, "abcdefghijkmnopqrstuvwxyz");
+            var uppercaseValue = Random.GetString(10, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
             var kvp1 = new KeyValuePair<int, string>(key, lowercaseValue);
             var kvp2 = new KeyValuePair<int, string>(key, uppercaseValue);
 

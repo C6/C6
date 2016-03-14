@@ -7,6 +7,7 @@ using C6.Tests.Collections;
 using C6.Tests.Contracts;
 
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
@@ -140,7 +141,7 @@ namespace C6.Tests
         public void Constructor_RandomNonValueTypeEnumerable_Equal()
         {
             // Arrange
-            var array = GetRandomStringEnumerable(TestContext.CurrentContext.Random).ToArray();
+            var array = GetRandomStringEnumerable(Random).ToArray();
 
             // Act
             var list = new ArrayList<string>(array);
@@ -153,9 +154,8 @@ namespace C6.Tests
         public void Constructor_EnumerableWithNull_ViolatesPrecondition()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var array = GetRandomStringEnumerable(random).ToArray();
-            array[random.Next(0, array.Length)] = null;
+            var array = GetRandomStringEnumerable(Random).ToArray();
+            array[Random.Next(0, array.Length)] = null;
 
             // Act & Assert
             Assert.That(() => new ArrayList<string>(array), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
@@ -165,7 +165,7 @@ namespace C6.Tests
         public void Constructor_EnumerableBeingChanged_Unequal()
         {
             // Arrange
-            var array = GetRandomIntEnumerable(TestContext.CurrentContext.Random).ToArray();
+            var array = GetRandomIntEnumerable(Random).ToArray();
 
             // Act
             var collection = new ArrayList<int>(array);
@@ -181,9 +181,8 @@ namespace C6.Tests
         public void Constructor_EnumerableWithNullDisallowNull_ViolatesPrecondition()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var array = GetRandomStringEnumerable(random).ToArray();
-            array[random.Next(0, array.Length)] = null;
+            var array = GetRandomStringEnumerable(Random).ToArray();
+            array[Random.Next(0, array.Length)] = null;
 
             // Act & Assert
             Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
@@ -228,10 +227,9 @@ namespace C6.Tests
         public void Add_InsertAddedToTheEnd_LastItemSame()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var items = GetRandomStringEnumerable(random).ToArray();
+            var items = GetRandomStringEnumerable(Random).ToArray();
             var list = new ArrayList<string>(items);
-            var item = random.GetString();
+            var item = Random.GetString();
 
             // Act
             list.Add(item);
@@ -248,7 +246,7 @@ namespace C6.Tests
         public void Choose_RandomCollection_LastItem()
         {
             // Arrange
-            var enumerable = GetRandomStringEnumerable(TestContext.CurrentContext.Random).ToArray();
+            var enumerable = GetRandomStringEnumerable(Random).ToArray();
             var list = new ArrayList<string>(enumerable);
             var lastItem = enumerable.Last();
 

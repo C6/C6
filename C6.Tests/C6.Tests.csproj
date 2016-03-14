@@ -134,6 +134,7 @@
     <Compile Include="Collections\ICollectionValueTests.cs" />
     <Compile Include="Collections\IEnumerableTests.cs" />
     <Compile Include="Collections\IExtensibleTests.cs" />
+    <Compile Include="Collections\TestBase.cs" />
     <Compile Include="Contracts\ContractHelperExtensionsTests.cs" />
     <Compile Include="Contracts\ViolatesTests.cs" />
     <Compile Include="Enums\EnumerationDirectionExtensionTests.cs" />

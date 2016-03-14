@@ -268,9 +268,8 @@ namespace C6.Tests.Collections
         public void Count_RandomlySizedCollection_Size()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var size = GetRandomCount(random);
-            var collection = GetRandomIntCollectionValue(random, size);
+            var size = GetRandomCount(Random);
+            var collection = GetRandomIntCollectionValue(Random, size);
 
             // Act
             var count = collection.Count;
@@ -317,9 +316,8 @@ namespace C6.Tests.Collections
         public void IsEmpty_RandomCollection_False()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var size = GetRandomCount(random);
-            var collection = GetRandomIntCollectionValue(random, size);
+            var size = GetRandomCount(Random);
+            var collection = GetRandomIntCollectionValue(Random, size);
 
             // Act
             var isEmpty = collection.IsEmpty;
@@ -367,8 +365,7 @@ namespace C6.Tests.Collections
         public void Choose_SingleItemCollection_Item()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var item = random.GetString();
+            var item = Random.GetString();
             var collection = GetCollectionValue(item);
 
             // Act
@@ -382,8 +379,7 @@ namespace C6.Tests.Collections
         public void Choose_SingleValueTypeCollection_Item()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var item = random.Next();
+            var item = Random.Next();
             var collection = GetCollectionValue(item);
 
             // Act
@@ -397,7 +393,7 @@ namespace C6.Tests.Collections
         public void Choose_RandomCollection_ItemFromCollection()
         {
             // Arrange
-            var collection = GetRandomStringCollectionValue(TestContext.CurrentContext.Random);
+            var collection = GetRandomStringCollectionValue(Random);
 
             // Act
             var choose = collection.Choose();
@@ -414,7 +410,7 @@ namespace C6.Tests.Collections
         public void CopyTo_NullArray_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetRandomIntCollectionValue(TestContext.CurrentContext.Random);
+            var collection = GetRandomIntCollectionValue(Random);
 
             // Act & Assert
             Assert.That(() => collection.CopyTo(null, 0), Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -424,7 +420,7 @@ namespace C6.Tests.Collections
         public void CopyTo_NegativeIndex_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetRandomIntCollectionValue(TestContext.CurrentContext.Random);
+            var collection = GetRandomIntCollectionValue(Random);
             var array = new int[collection.Count];
 
             // Act & Assert
@@ -435,10 +431,9 @@ namespace C6.Tests.Collections
         public void CopyTo_IndexOutOfBound_ViolatesPrecondition()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var collection = GetRandomIntCollectionValue(random);
+            var collection = GetRandomIntCollectionValue(Random);
             var array = new int[collection.Count];
-            var index = random.Next(1, collection.Count);
+            var index = Random.Next(1, collection.Count);
 
             // Act & Assert
             Assert.That(() => collection.CopyTo(array, index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -448,7 +443,7 @@ namespace C6.Tests.Collections
         public void CopyTo_EqualSizeArray_Equals()
         {
             // Arrange
-            var collection = GetRandomIntCollectionValue(TestContext.CurrentContext.Random);
+            var collection = GetRandomIntCollectionValue(Random);
             var array = new int[collection.Count];
 
             // Act
@@ -462,10 +457,9 @@ namespace C6.Tests.Collections
         public void CopyTo_CopyToRandomIndex_SectionEquals()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var collection = GetRandomIntCollectionValue(random);
-            var array = GetRandomIntEnumerable(random, (int) (collection.Count * 1.7)).ToArray();
-            var arrayIndex = random.Next(0, array.Length - collection.Count);
+            var collection = GetRandomIntCollectionValue(Random);
+            var array = GetRandomIntEnumerable(Random, (int) (collection.Count * 1.7)).ToArray();
+            var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act
             collection.CopyTo(array, arrayIndex);
@@ -509,8 +503,7 @@ namespace C6.Tests.Collections
         public void ToArray_SingleItemCollection_SingleItemArray()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var item = random.GetString();
+            var item = Random.GetString();
             var collection = GetCollectionValue(item);
             var itemArray = new[] { item };
 
@@ -525,7 +518,7 @@ namespace C6.Tests.Collections
         public void ToArray_RandomNonValueTypeCollection_Equal()
         {
             // Arrange
-            var items = GetRandomStringEnumerable(TestContext.CurrentContext.Random).ToArray();
+            var items = GetRandomStringEnumerable(Random).ToArray();
             var collection = GetCollectionValue(items);
 
             // Act

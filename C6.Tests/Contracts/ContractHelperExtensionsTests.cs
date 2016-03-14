@@ -5,13 +5,15 @@ using System;
 using System.Collections;
 using System.Linq;
 
+using C6.Tests.Collections;
+
 using NUnit.Framework;
 
 
 namespace C6.Tests.Contracts
 {
     [TestFixture]
-    public sealed class ContractHelperExtensionsTests
+    public sealed class ContractHelperExtensionsTests : TestBase
     {
         #region UnsequenceEqual TestCases
 
@@ -150,11 +152,10 @@ namespace C6.Tests.Contracts
         {
             // Arrange
             const int count = 10000;
-            var random = TestContext.CurrentContext.Random;
-            var randomStrings = Enumerable.Range(0, count).Select(i => random.GetString()).ToList();
+            var randomStrings = Enumerable.Range(0, count).Select(i => Random.GetString()).ToList();
             var first = randomStrings.ToList();
             var second = randomStrings.ToList();
-            second.Shuffle(random);
+            second.Shuffle(Random);
 
             // Act
             var result = first.UnsequenceEqual(second);

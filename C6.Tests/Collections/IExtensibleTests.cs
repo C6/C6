@@ -71,7 +71,7 @@ namespace C6.Tests.Collections
         public void AllowsDuplicates_RandomCollection_AllowsDuplicates()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(TestContext.CurrentContext.Random);
+            var collection = GetRandomStringExtensible(Random);
 
             // Act
             var allowsDuplicates = collection.AllowsDuplicates;
@@ -88,7 +88,7 @@ namespace C6.Tests.Collections
         public void DuplicatesByCounting_RandomCollection_DuplicatesByCounting()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(TestContext.CurrentContext.Random);
+            var collection = GetRandomStringExtensible(Random);
 
             // Act
             var duplicatesByCounting = collection.DuplicatesByCounting;
@@ -105,7 +105,7 @@ namespace C6.Tests.Collections
         public void EqualityComparer_DefaultComparer_NotNull()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(TestContext.CurrentContext.Random);
+            var collection = GetRandomStringExtensible(Random);
 
             // Act
             var equalityComparer = collection.EqualityComparer;
@@ -150,7 +150,7 @@ namespace C6.Tests.Collections
         public void IsFixedSize_RandomCollection_IsFixedSize()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(TestContext.CurrentContext.Random);
+            var collection = GetRandomStringExtensible(Random);
 
             // Act
             var isFixedSize = collection.IsFixedSize;
@@ -167,7 +167,7 @@ namespace C6.Tests.Collections
         public void IsReadOnly_RandomCollection_IsReadOnly()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(TestContext.CurrentContext.Random);
+            var collection = GetRandomStringExtensible(Random);
 
             // Act
             var isReadOnly = collection.IsReadOnly;
@@ -202,9 +202,8 @@ namespace C6.Tests.Collections
         public void Add_EmptyCollectionAddItem_ContainsItem()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
             var collection = GetEmptyExtensible<string>();
-            var item = random.GetString();
+            var item = Random.GetString();
             var itemArray = new[] { item };
 
             // Act
@@ -218,9 +217,8 @@ namespace C6.Tests.Collections
         public void Add_EmptyCollection_ItemIsAdded()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
             var collection = GetEmptyExtensible<string>();
-            var item = random.GetString();
+            var item = Random.GetString();
 
             // Act
             var result = collection.Add(item);
@@ -233,8 +231,7 @@ namespace C6.Tests.Collections
         public void Add_SingleItemCollectionAddsDuplicate_ItemIsAddedIfAllowsDuplicatesIsTrue()
         {
             // Arrange
-            var random = TestContext.CurrentContext.Random;
-            var item = random.GetString();
+            var item = Random.GetString();
             var duplicate = string.Copy(item);
             var collection = GetExtensible(item);
             var allowsDuplicates = collection.AllowsDuplicates;
@@ -252,9 +249,8 @@ namespace C6.Tests.Collections
             // Arrange
             var equalityComparer = ComparerFactory.CreateReferenceEqualityComparer<string>();
             var collection = GetEmptyExtensible(equalityComparer);
-            var random = TestContext.CurrentContext.Random;
-            var count = random.Next(100, 250);
-            var items = GetRandomStringEnumerable(random, count).ToArray();
+            var count = Random.Next(100, 250);
+            var items = GetRandomStringEnumerable(Random, count).ToArray();
 
             // Act
             foreach (var item in items) {
