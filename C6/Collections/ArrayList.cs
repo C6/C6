@@ -144,7 +144,6 @@ namespace C6
             InsertPrivate(Count, item);
 
             // TODO: Raise events
-
             _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, 1));
             _collectionChanged?.Invoke(this, EventArgs.Empty);
 

@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
+using SCG = System.Collections.Generic;
+
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
@@ -71,5 +73,48 @@ namespace C6
         /// </summary>
         /// <value>The index at which the item was inserted or removed.</value>
         public int Index { get; }
+
+        public bool Equals(ItemAtEventArgs<T> other, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            return Index == other.Index && equalityComparer.Equals(Item, other.Item);
+        }
+
+        public bool Equals(object obj, SCG.IEqualityComparer<T> equalityComparer)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+            return Equals((ItemAtEventArgs<T>)obj, equalityComparer);
+        }
+
+        public int GetHashCode(SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            unchecked
+            {
+                return (Index * 397) ^ equalityComparer.GetHashCode(Item);
+            }
+        }
     }
 }

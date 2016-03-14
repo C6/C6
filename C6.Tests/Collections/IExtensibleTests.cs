@@ -2,14 +2,17 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Collections;
 using System.Linq;
 
 using C6.Tests.Contracts;
+using C6.Tests.Helpers;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
+using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -46,6 +49,28 @@ namespace C6.Tests.Collections
 
         private IExtensible<string> GetRandomStringExtensible(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetRandomStringEnumerable(random, count), equalityComparer, allowsNull);
+
+        #endregion
+
+        #region Test Condition Methods
+
+        protected void OnlyTestIfCollectionAllowsDuplicates()
+        {
+            if (AllowsDuplicates) {
+                return;
+            }
+
+            Assert.Pass("Collection does not allow duplicates."); // TODO: Ignore instead?
+        }
+
+        protected void OnlyTestIfCollectionDoesNotAllowDuplicates()
+        {
+            if (!AllowsDuplicates) {
+                return;
+            }
+
+            Assert.Pass("Collection allows duplicates."); // TODO: Ignore instead?
+        }
 
         #endregion
 
@@ -199,7 +224,7 @@ namespace C6.Tests.Collections
         }
 
         [Test]
-        public void Add_EmptyCollectionAddItem_ContainsItem()
+        public void Add_EmptyCollectionAddItem_CollectionIsSingleItemCollection()
         {
             // Arrange
             var collection = GetEmptyExtensible<string>();
@@ -207,21 +232,59 @@ namespace C6.Tests.Collections
             var itemArray = new[] { item };
 
             // Act
-            collection.Add(item);
+            var result = collection.Add(item);
 
             // Assert
+            Assert.That(result, Is.True);
             Assert.That(collection, Is.EqualTo(itemArray));
         }
 
         [Test]
-        public void Add_EmptyCollection_ItemIsAdded()
+        public void Add_RandomCollectionAddDuplicateItem_False()
         {
+            OnlyTestIfCollectionDoesNotAllowDuplicates();
+
             // Arrange
-            var collection = GetEmptyExtensible<string>();
-            var item = Random.GetString();
+            var items = GetRandomStringExtensible(Random).ToArray();
+            var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = items.SelectRandom(Random).ToLower();
 
             // Act
-            var result = collection.Add(item);
+            var result = collection.Add(duplicateItem);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public void Add_AddDuplicateItem_False()
+        {
+            OnlyTestIfCollectionDoesNotAllowDuplicates();
+
+            // Arrange
+            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = items.SelectRandom(Random).ToLower();
+
+            // Act
+            var result = collection.Add(duplicateItem);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public void Add_AddDuplicateItem_True()
+        {
+            OnlyTestIfCollectionAllowsDuplicates();
+
+            // Arrange
+            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = items.SelectRandom(Random).ToLower();
+
+            // Act
+            var result = collection.Add(duplicateItem);
 
             // Assert
             Assert.That(result, Is.True);
@@ -250,7 +313,7 @@ namespace C6.Tests.Collections
             var equalityComparer = ComparerFactory.CreateReferenceEqualityComparer<string>();
             var collection = GetEmptyExtensible(equalityComparer);
             var count = Random.Next(100, 250);
-            var items = GetRandomStringEnumerable(Random, count).ToArray();
+            var items = GetRandomStringEnumerable(Random, count).Distinct().ToArray();
 
             // Act
             foreach (var item in items) {
@@ -259,6 +322,36 @@ namespace C6.Tests.Collections
 
             // Assert
             Assert.That(collection, Is.EquivalentTo(items));
+        }
+
+        [Test]
+        public void Add_AddItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var collection = GetExtensible(items);
+            var item = GetRandomLowercaseString(Random);
+            var expectedEvents = new[] {
+                Added(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Add(item), _Is.Raising(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void Add_AddDuplicateItem_RaisesNoEvents()
+        {
+            OnlyTestIfCollectionDoesNotAllowDuplicates();
+
+            // Arrange
+            var items = GetRandomUppercaseStringEnumerable(Random).ToArray();
+            var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = items.SelectRandom(Random).ToLower();
+
+            // Act & Assert
+            Assert.That(() => collection.Add(duplicateItem), Is.Not.RaisingEventsFor(collection));
         }
 
         #endregion

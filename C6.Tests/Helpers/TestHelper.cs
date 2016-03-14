@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 
+using NUnit.Framework.Constraints;
 using NUnit.Framework.Internal;
 
 using SCG = System.Collections.Generic;
@@ -27,5 +28,18 @@ namespace C6.Tests.Helpers
 
         public static SCG.IEnumerable<string> GetRandomStringEnumerable(Randomizer random, int count)
             => Enumerable.Range(0, count).Select(i => random.GetString());
+
+        public static SCG.IEnumerable<string> GetRandomUppercaseStringEnumerable(Randomizer random)
+            => GetRandomUppercaseStringEnumerable(random, GetRandomCount(random));
+
+        public static SCG.IEnumerable<string> GetRandomUppercaseStringEnumerable(Randomizer random, int count)
+            => Enumerable.Range(0, count).Select(i => GetRandomUppercaseString(random));
+
+        public static string GetRandomUppercaseString(Randomizer random) => random.GetString(25, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
+        public static string GetRandomLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");
+
+        public static T SelectRandom<T>(this T[] array, Random random) => array[random.Next(array.Length)];
+
+        public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
     }
 }
