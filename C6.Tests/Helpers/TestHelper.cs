@@ -39,7 +39,7 @@ namespace C6.Tests.Helpers
         public static string GetUppercaseString(Randomizer random) => random.GetString(25, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
         public static string GetLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");
 
-        public static T SelectRandom<T>(this T[] array, Random random) => array[random.Next(array.Length)];
+        public static T Choose<T>(this T[] array, Random random) => array[random.Next(array.Length)];
 
         public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
     }

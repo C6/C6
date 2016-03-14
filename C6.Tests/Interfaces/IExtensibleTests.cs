@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
 using System.Linq;
 
 using C6.Tests.Contracts;
@@ -49,28 +48,6 @@ namespace C6.Tests.Collections
 
         private IExtensible<string> GetStringExtensible(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetStrings(random, count), equalityComparer, allowsNull);
-
-        #endregion
-
-        #region Test Condition Methods
-
-        protected void OnlyTestIfCollectionAllowsDuplicates()
-        {
-            if (AllowsDuplicates) {
-                return;
-            }
-
-            Assert.Pass("Collection does not allow duplicates."); // TODO: Ignore instead?
-        }
-
-        protected void OnlyTestIfCollectionDoesNotAllowDuplicates()
-        {
-            if (!AllowsDuplicates) {
-                return;
-            }
-
-            Assert.Pass("Collection allows duplicates."); // TODO: Ignore instead?
-        }
 
         #endregion
 
@@ -240,70 +217,18 @@ namespace C6.Tests.Collections
         }
 
         [Test]
-        public void Add_RandomCollectionAddDuplicateItem_False()
+        public void Add_AddDuplicateItem_AllowsDuplicates()
         {
-            OnlyTestIfCollectionDoesNotAllowDuplicates();
-
-            // Arrange
-            var items = GetStringExtensible(Random).ToArray();
-            var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
-            var duplicateItem = items.SelectRandom(Random).ToLower();
-
-            // Act
-            var result = collection.Add(duplicateItem);
-
-            // Assert
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void Add_AddDuplicateItem_False()
-        {
-            OnlyTestIfCollectionDoesNotAllowDuplicates();
-
             // Arrange
             var items = GetUppercaseStrings(Random).ToArray();
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
-            var duplicateItem = items.SelectRandom(Random).ToLower();
+            var duplicateItem = items.Choose(Random).ToLower();
 
             // Act
             var result = collection.Add(duplicateItem);
 
             // Assert
-            Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void Add_AddDuplicateItem_True()
-        {
-            OnlyTestIfCollectionAllowsDuplicates();
-
-            // Arrange
-            var items = GetUppercaseStrings(Random).ToArray();
-            var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
-            var duplicateItem = items.SelectRandom(Random).ToLower();
-
-            // Act
-            var result = collection.Add(duplicateItem);
-
-            // Assert
-            Assert.That(result, Is.True);
-        }
-
-        [Test]
-        public void Add_SingleItemCollectionAddsDuplicate_ItemIsAddedIfAllowsDuplicatesIsTrue()
-        {
-            // Arrange
-            var item = Random.GetString();
-            var duplicate = string.Copy(item);
-            var collection = GetExtensible(item);
-            var allowsDuplicates = collection.AllowsDuplicates;
-
-            // Act
-            var result = collection.Add(duplicate);
-
-            // Assert
-            Assert.That(result, Is.EqualTo(allowsDuplicates));
+            Assert.That(result, Is.EqualTo(AllowsDuplicates));
         }
 
         [Test]
@@ -343,12 +268,12 @@ namespace C6.Tests.Collections
         [Test]
         public void Add_AddDuplicateItem_RaisesNoEvents()
         {
-            OnlyTestIfCollectionDoesNotAllowDuplicates();
+            Run.If(!AllowsDuplicates);
 
             // Arrange
             var items = GetUppercaseStrings(Random).ToArray();
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
-            var duplicateItem = items.SelectRandom(Random).ToLower();
+            var duplicateItem = items.Choose(Random).ToLower();
 
             // Act & Assert
             Assert.That(() => collection.Add(duplicateItem), Is.Not.RaisingEventsFor(collection));
