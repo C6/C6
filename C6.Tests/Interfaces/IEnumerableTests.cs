@@ -2,8 +2,11 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System.Collections.Generic;
+using System.Linq;
 
 using NUnit.Framework;
+
+using static C6.Tests.Helpers.TestHelper;
 
 
 namespace C6.Tests.Collections
@@ -49,7 +52,8 @@ namespace C6.Tests.Collections
         public void GetEnumerator_NonEmptyCollection_NotEmpty()
         {
             // Arrange
-            var collection = GetEnumerable(new[] { 1, 2, 3 });
+            var items = GetStrings(Random);
+            var collection = GetEnumerable(items);
 
             // Assert
             Assert.That(collection, Is.Not.Empty);
@@ -59,11 +63,11 @@ namespace C6.Tests.Collections
         public void GetEnumerator_NonEmptyCollection_ContainsInitialItems()
         {
             // Arrange
-            var array = new[] { 1, 2, 3 };
-            var collection = GetEnumerable(array);
+            var items = GetStrings(Random);
+            var collection = GetEnumerable(items);
 
             // Act & Assert
-            Assert.That(collection, Is.EqualTo(array));
+            Assert.That(collection, Is.EqualTo(items));
         }
 
         #endregion

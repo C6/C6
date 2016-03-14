@@ -39,13 +39,13 @@ namespace C6.Tests.Collections
         private IExtensible<T> GetExtensible<T>(params T[] array) => GetExtensible((SCG.IEnumerable<T>) array);
 
         private IExtensible<int> GetRandomIntExtensible(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
-            => GetExtensible(GetIntegers(random, GetRandomCount(random)), equalityComparer, allowsNull);
+            => GetExtensible(GetIntegers(random, GetCount(random)), equalityComparer, allowsNull);
 
         private IExtensible<int> GetRandomIntExtensible(Random random, int count, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetIntegers(random, count), equalityComparer, allowsNull);
 
         private IExtensible<string> GetRandomStringExtensible(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
-            => GetExtensible(GetStrings(random, GetRandomCount(random)), equalityComparer, allowsNull);
+            => GetExtensible(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
         private IExtensible<string> GetRandomStringExtensible(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetStrings(random, count), equalityComparer, allowsNull);
