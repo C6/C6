@@ -38,16 +38,16 @@ namespace C6.Tests.Collections
 
         private IExtensible<T> GetExtensible<T>(params T[] array) => GetExtensible((SCG.IEnumerable<T>) array);
 
-        private IExtensible<int> GetRandomIntExtensible(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
+        private IExtensible<int> GetIntExtensible(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetIntegers(random, GetCount(random)), equalityComparer, allowsNull);
 
-        private IExtensible<int> GetRandomIntExtensible(Random random, int count, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
+        private IExtensible<int> GetIntExtensible(Random random, int count, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetIntegers(random, count), equalityComparer, allowsNull);
 
-        private IExtensible<string> GetRandomStringExtensible(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+        private IExtensible<string> GetStringExtensible(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
-        private IExtensible<string> GetRandomStringExtensible(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+        private IExtensible<string> GetStringExtensible(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetStrings(random, count), equalityComparer, allowsNull);
 
         #endregion
@@ -96,7 +96,7 @@ namespace C6.Tests.Collections
         public void AllowsDuplicates_RandomCollection_AllowsDuplicates()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(Random);
+            var collection = GetStringExtensible(Random);
 
             // Act
             var allowsDuplicates = collection.AllowsDuplicates;
@@ -113,7 +113,7 @@ namespace C6.Tests.Collections
         public void DuplicatesByCounting_RandomCollection_DuplicatesByCounting()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(Random);
+            var collection = GetStringExtensible(Random);
 
             // Act
             var duplicatesByCounting = collection.DuplicatesByCounting;
@@ -130,7 +130,7 @@ namespace C6.Tests.Collections
         public void EqualityComparer_DefaultComparer_NotNull()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(Random);
+            var collection = GetStringExtensible(Random);
 
             // Act
             var equalityComparer = collection.EqualityComparer;
@@ -175,7 +175,7 @@ namespace C6.Tests.Collections
         public void IsFixedSize_RandomCollection_IsFixedSize()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(Random);
+            var collection = GetStringExtensible(Random);
 
             // Act
             var isFixedSize = collection.IsFixedSize;
@@ -192,7 +192,7 @@ namespace C6.Tests.Collections
         public void IsReadOnly_RandomCollection_IsReadOnly()
         {
             // Arrange
-            var collection = GetRandomStringExtensible(Random);
+            var collection = GetStringExtensible(Random);
 
             // Act
             var isReadOnly = collection.IsReadOnly;
@@ -245,7 +245,7 @@ namespace C6.Tests.Collections
             OnlyTestIfCollectionDoesNotAllowDuplicates();
 
             // Arrange
-            var items = GetRandomStringExtensible(Random).ToArray();
+            var items = GetStringExtensible(Random).ToArray();
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
             var duplicateItem = items.SelectRandom(Random).ToLower();
 
