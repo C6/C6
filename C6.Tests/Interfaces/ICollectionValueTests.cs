@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 
 using C6.Tests.Contracts;
+using C6.Tests.Helpers;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -134,16 +135,6 @@ namespace C6.Tests.Collections
         protected void OnlyTestIfEventIsNotListenable(EventTypes eventType)
         {
             if (!ListenableEvents.HasFlag(eventType))
-            {
-                return;
-            }
-
-            Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
-        }
-
-        protected void OnlyTestIfEventIsListenable(EventTypes eventType)
-        {
-            if (ListenableEvents.HasFlag(eventType))
             {
                 return;
             }
@@ -563,7 +554,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionChanged_ListenToUnlistenableEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsNotListenable(Changed);
+            Run.If(!ListenableEvents.HasFlag(Changed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -575,7 +566,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionChanged_ListenWithNull_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Changed);
+            Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -587,7 +578,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionChanged_Listen_BecomesActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Changed);
+            Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -603,7 +594,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionChanged_ListenAndUnlisten_BecomesInactiveEvent()
         {
-            OnlyTestIfEventIsListenable(Changed);
+            Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -620,7 +611,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionChanged_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Changed);
+            Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -638,7 +629,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionChanged_RemovesInactiveEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Changed);
+            Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -650,7 +641,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionChanged_RemovesNullEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Changed);
+            Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -667,7 +658,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionCleared_ListenToUnlistenableEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsNotListenable(Cleared);
+            Run.If(!ListenableEvents.HasFlag(Cleared));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -679,7 +670,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionCleared_ListenWithNull_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Cleared);
+            Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -691,7 +682,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionCleared_Listen_BecomesActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Cleared);
+            Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -707,7 +698,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionCleared_ListenAndUnlisten_BecomesInactiveEvent()
         {
-            OnlyTestIfEventIsListenable(Cleared);
+            Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -724,7 +715,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionCleared_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Cleared);
+            Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -742,7 +733,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionCleared_RemovesInactiveEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Cleared);
+            Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -754,7 +745,7 @@ namespace C6.Tests.Collections
         [Test]
         public void CollectionCleared_RemovesNullEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Cleared);
+            Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -771,7 +762,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemInserted_ListenToUnlistenableEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsNotListenable(Inserted);
+            Run.If(!ListenableEvents.HasFlag(Inserted));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -783,7 +774,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemInserted_ListenWithNull_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Inserted);
+            Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -795,7 +786,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemInserted_Listen_BecomesActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Inserted);
+            Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -811,7 +802,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemInserted_ListenAndUnlisten_BecomesInactiveEvent()
         {
-            OnlyTestIfEventIsListenable(Inserted);
+            Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -828,7 +819,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemInserted_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Inserted);
+            Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -846,7 +837,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemInserted_RemovesInactiveEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Inserted);
+            Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -858,7 +849,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemInserted_RemovesNullEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Inserted);
+            Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -875,7 +866,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemRemovedAt_ListenToUnlistenableEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsNotListenable(RemovedAt);
+            Run.If(!ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -887,7 +878,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemRemovedAt_ListenWithNull_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(RemovedAt);
+            Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -899,7 +890,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemRemovedAt_Listen_BecomesActiveEvent()
         {
-            OnlyTestIfEventIsListenable(RemovedAt);
+            Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -915,7 +906,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemRemovedAt_ListenAndUnlisten_BecomesInactiveEvent()
         {
-            OnlyTestIfEventIsListenable(RemovedAt);
+            Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -932,7 +923,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemRemovedAt_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
         {
-            OnlyTestIfEventIsListenable(RemovedAt);
+            Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -950,7 +941,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemRemovedAt_RemovesInactiveEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(RemovedAt);
+            Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -962,7 +953,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemRemovedAt_RemovesNullEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(RemovedAt);
+            Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -979,7 +970,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsAdded_ListenToUnlistenableEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsNotListenable(Added);
+            Run.If(!ListenableEvents.HasFlag(Added));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -991,7 +982,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsAdded_ListenWithNull_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Added);
+            Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1003,7 +994,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsAdded_Listen_BecomesActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Added);
+            Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1019,7 +1010,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsAdded_ListenAndUnlisten_BecomesInactiveEvent()
         {
-            OnlyTestIfEventIsListenable(Added);
+            Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1036,7 +1027,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsAdded_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Added);
+            Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1054,7 +1045,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsAdded_RemovesInactiveEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Added);
+            Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1066,7 +1057,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsAdded_RemovesNullEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Added);
+            Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1083,7 +1074,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsRemoved_ListenToUnlistenableEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsNotListenable(Removed);
+            Run.If(!ListenableEvents.HasFlag(Removed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1095,7 +1086,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsRemoved_ListenWithNull_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Removed);
+            Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1107,7 +1098,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsRemoved_Listen_BecomesActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Removed);
+            Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1123,7 +1114,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsRemoved_ListenAndUnlisten_BecomesInactiveEvent()
         {
-            OnlyTestIfEventIsListenable(Removed);
+            Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1140,7 +1131,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsRemoved_ListenTwiceAndUnlistenOnce_RemainsActiveEvent()
         {
-            OnlyTestIfEventIsListenable(Removed);
+            Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1158,7 +1149,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsRemoved_RemovesInactiveEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Removed);
+            Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
@@ -1170,7 +1161,7 @@ namespace C6.Tests.Collections
         [Test]
         public void ItemsRemoved_RemovesNullEvent_ViolatesPrecondition()
         {
-            OnlyTestIfEventIsListenable(Removed);
+            Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
             var collection = GetEmptyCollectionValue<int>();
