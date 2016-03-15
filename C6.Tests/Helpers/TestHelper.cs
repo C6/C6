@@ -12,29 +12,28 @@ using SCG = System.Collections.Generic;
 
 namespace C6.Tests.Helpers
 {
-    // TODO: Return arrays instead of enumerables
     public static class TestHelper
     {
         public static int GetCount(Random random)
             => random.Next(5, 20);
 
-        public static SCG.IEnumerable<int> GetIntegers(Random random)
+        public static int[] GetIntegers(Random random)
             => GetIntegers(random, GetCount(random));
 
-        public static SCG.IEnumerable<int> GetIntegers(Random random, int count)
-            => Enumerable.Range(0, count).Select(i => random.Next());
+        public static int[] GetIntegers(Random random, int count)
+            => Enumerable.Range(0, count).Select(i => random.Next()).ToArray();
 
-        public static SCG.IEnumerable<string> GetStrings(Randomizer random)
+        public static string[] GetStrings(Randomizer random)
             => GetStrings(random, GetCount(random));
 
-        public static SCG.IEnumerable<string> GetStrings(Randomizer random, int count)
-            => Enumerable.Range(0, count).Select(i => random.GetString());
+        public static string[] GetStrings(Randomizer random, int count)
+            => Enumerable.Range(0, count).Select(i => random.GetString()).ToArray();
 
-        public static SCG.IEnumerable<string> GetUppercaseStrings(Randomizer random)
+        public static string[] GetUppercaseStrings(Randomizer random)
             => GetUppercaseStrings(random, GetCount(random));
 
-        public static SCG.IEnumerable<string> GetUppercaseStrings(Randomizer random, int count)
-            => Enumerable.Range(0, count).Select(i => GetUppercaseString(random));
+        public static string[] GetUppercaseStrings(Randomizer random, int count)
+            => Enumerable.Range(0, count).Select(i => GetUppercaseString(random)).ToArray();
 
         public static string GetUppercaseString(Randomizer random) => random.GetString(25, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
         public static string GetLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");

@@ -220,7 +220,7 @@ namespace C6.Tests.Collections
         public void Add_AddDuplicateItem_AllowsDuplicates()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random).ToArray();
+            var items = GetUppercaseStrings(Random);
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
             var duplicateItem = items.Choose(Random).ToLower();
 
@@ -253,7 +253,7 @@ namespace C6.Tests.Collections
         public void Add_AddItem_RaisesExpectedEvents()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random).ToArray();
+            var items = GetUppercaseStrings(Random);
             var collection = GetExtensible(items);
             var item = GetLowercaseString(Random);
             var expectedEvents = new[] {
@@ -271,7 +271,7 @@ namespace C6.Tests.Collections
             Run.If(!AllowsDuplicates);
 
             // Arrange
-            var items = GetUppercaseStrings(Random).ToArray();
+            var items = GetUppercaseStrings(Random);
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
             var duplicateItem = items.Choose(Random).ToLower();
 

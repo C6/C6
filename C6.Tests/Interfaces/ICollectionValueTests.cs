@@ -134,8 +134,7 @@ namespace C6.Tests.Collections
 
         protected void OnlyTestIfEventIsNotListenable(EventTypes eventType)
         {
-            if (!ListenableEvents.HasFlag(eventType))
-            {
+            if (!ListenableEvents.HasFlag(eventType)) {
                 return;
             }
 
@@ -473,7 +472,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var collection = GetIntCollectionValue(Random);
-            var array = GetIntegers(Random, (int) (collection.Count * 1.7)).ToArray();
+            var array = GetIntegers(Random, (int) (collection.Count * 1.7));
             var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act
@@ -533,7 +532,7 @@ namespace C6.Tests.Collections
         public void ToArray_RandomNonValueTypeCollection_Equal()
         {
             // Arrange
-            var items = GetStrings(Random).ToArray();
+            var items = GetStrings(Random);
             var collection = GetCollectionValue(items);
 
             // Act

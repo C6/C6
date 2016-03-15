@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System.Collections.Generic;
-using System.Linq;
 
 using NUnit.Framework;
 
