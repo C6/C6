@@ -130,19 +130,6 @@ namespace C6.Tests.Collections
 
         #endregion
 
-        #region Test Condition Methods
-
-        protected void OnlyTestIfEventIsNotListenable(EventTypes eventType)
-        {
-            if (!ListenableEvents.HasFlag(eventType)) {
-                return;
-            }
-
-            Assert.Pass("Collection allows listening to this event."); // TODO: Ignore instead?
-        }
-
-        #endregion
-
         #region Inherited
 
         protected override SCG.IEnumerable<T> GetEmptyEnumerable<T>() => GetEmptyCollectionValue<T>();
