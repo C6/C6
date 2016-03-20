@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
@@ -11,13 +10,14 @@ using static System.Diagnostics.Contracts.Contract;
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 
+using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
 namespace C6
 {
     [Serializable]
-    public class ArrayList<T> : IExtensible<T>
+    public class ArrayList<T> : ICollection<T>
     {
         #region Fields
 
@@ -126,6 +126,11 @@ namespace C6
 
         public bool AllowsNull { get; }
 
+        public Speed ContainsSpeed
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public int Count { get; private set; }
 
         public Speed CountSpeed => Speed.Constant;
@@ -185,8 +190,38 @@ namespace C6
 
         public T Choose() => _items[Count - 1];
 
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ContainsAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ContainsCount(T item)
+        {
+            throw new NotImplementedException();
+        }
+
         public void CopyTo(T[] array, int arrayIndex)
             => Array.Copy(_items, 0, array, arrayIndex, Count);
+
+        public bool Find(ref T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FindOrAdd(ref T item)
+        {
+            throw new NotImplementedException();
+        }
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
@@ -197,11 +232,76 @@ namespace C6
             }
         }
 
+        public int GetUnsequencedHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(T item, out T removedItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveAll(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RetainAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
         public T[] ToArray()
         {
             var array = new T[Count];
             Array.Copy(_items, array, Count);
             return array;
+        }
+
+        public ICollectionValue<T> UniqueItems()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UnsequencedEquals(ICollection<T> otherCollection)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(T item, out T oldItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateOrAdd(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateOrAdd(T item, out T oldItem)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -308,7 +408,12 @@ namespace C6
 
         #region Explicit Implementations
 
-        IEnumerator IEnumerable.GetEnumerator()
+        void SCG.ICollection<T>.Add(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        SC.IEnumerator SC.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
