@@ -158,6 +158,7 @@ namespace C6
             return true;
         }
 
+        // TODO: Use InsertAll?
         public void AddAll(SCG.IEnumerable<T> items)
         {
             UpdateVersion();
@@ -169,10 +170,8 @@ namespace C6
             if (length == 0) {
                 return;
             }
-
-            if (Count + length > Capacity) {
-                EnsureCapacity(Count + length);
-            }
+            
+            EnsureCapacity(Count + length);
 
             Array.Copy(array, 0, _items, Count, length);
             Count += length;
@@ -395,7 +394,7 @@ namespace C6
             }
 
             _items[index] = item;
-            Count += 1;
+            Count++;
         }
 
         private void UpdateVersion() => _version++;
