@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ArrayListTests.cs" />
+    <Compile Include="Helpers\BadEnumerable.cs" />
     <Compile Include="Helpers\Run.cs" />
     <Compile Include="Interfaces\ICollectionValueTests.cs" />
     <Compile Include="Interfaces\IEnumerableTests.cs" />

@@ -325,6 +325,180 @@ namespace C6.Tests.Collections
 
         #endregion
 
+        #region AddAll(IEnumerable<T>)
+
+        // TODO: Add test with unique items?
+
+        [Test]
+        public void AddAll_AddNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringExtensible(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.AddAll(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void AddAll_DisallowNullAddNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringExtensible(Random, allowsNull: false);
+            var items = GetStrings(Random).WithNull(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.AddAll(items), Violates.PreconditionSaying(ItemsMustBeNonNull));
+        }
+
+        [Test]
+        public void AddAll_AllowNullAddNull_ItemsAdded()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetExtensible(items, ReferenceEqualityComparer, allowsNull: true);
+            var newItems = GetStrings(Random).WithNull(Random);
+            var allItems = items.Union(newItems);
+
+            // Act
+            collection.AddAll(newItems);
+
+            // Assert
+            Assert.That(collection, Is.EquivalentTo(allItems));
+        }
+
+        [Test]
+        public void AddAll_AddEmptyEnumerable_Nothing()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetExtensible(items, ReferenceEqualityComparer);
+            var empty = Enumerable.Empty<string>();
+
+            // Act
+            collection.AddAll(empty);
+
+            // Assert
+            Assert.That(collection, Is.EquivalentTo(items));
+        }
+
+        [Test]
+        public void AddAll_AddEmptyEnumerable_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetExtensible(items, ReferenceEqualityComparer);
+            var empty = Enumerable.Empty<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.AddAll(empty), Is.Not.RaisingEventsFor(collection));
+        }
+
+        [Test]
+        public void AddAll_AddDuplicates_RaisesNoEvents()
+        {
+            Run.If(!AllowsDuplicates);
+
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetExtensible(items, ReferenceEqualityComparer);
+            items.Shuffle(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.AddAll(items), Is.Not.RaisingEventsFor(collection));
+        }
+
+        [Test]
+        public void AddAll_AddDuplicates_ExpectedItems()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetExtensible(items, ReferenceEqualityComparer);
+            var expectedItems = AllowsDuplicates ? items.Concat(items) : items;
+
+            // Act
+            collection.AddAll(items);
+
+            // Assert
+            Assert.That(collection, Is.EquivalentTo(expectedItems));
+        }
+
+        [Test]
+        public void AddAll_AddItemsWithDuplicates_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
+            var item1 = Random.GetString();
+            var item2 = Random.GetString();
+            var item3 = Random.GetString();
+            var items = new[] { item1, item2, item1, item3 };
+            var expectedEvents = AllowsDuplicates
+                ? new[] {
+                    Added(item1, 1, collection),
+                    Added(item2, 1, collection),
+                    Added(item1, 1, collection),
+                    Added(item3, 1, collection),
+                    Changed(collection)
+                }
+                : new[] {
+                    Added(item1, 1, collection),
+                    Added(item2, 1, collection),
+                    Added(item3, 1, collection),
+                    Changed(collection)
+                };
+
+            // Act & Assert
+            Assert.That(() => collection.AddAll(items), _Is.Raising(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void AddAll_BadEnumerable_ThrowsExceptionButCollectionDoesntChange()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetExtensible(items);
+            var badEnumerable = GetStrings(Random).AsBadEnumerable();
+
+            // Act & Assert
+            Assert.That(() => collection.AddAll(badEnumerable), Throws.InstanceOf<BadEnumerableException>());
+            Assert.That(collection, Is.EqualTo(items));
+        }
+
+        [Test]
+        public void AddAll_AddItemsDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringExtensible(Random);
+            var items = GetStrings(Random);
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+
+            // Act
+            collection.AddAll(items);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void AddAll_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void AddAll_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #endregion
 
         #endregion

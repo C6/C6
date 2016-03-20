@@ -16,18 +16,24 @@ using SCG = System.Collections.Generic;
 
 namespace C6
 {
+    [Serializable]
     public class ArrayList<T> : IExtensible<T>
     {
-        private const int MinimumCapacity = 8;
-
         #region Fields
+
+        private static readonly T[] EmptyArray = new T[0];
+
+        private const int MinArrayLength = 0x00000004;
+        private const int MaxArrayLength = 0x7FEFFFFF;
 
         private T[] _items;
 
+        private int _version;
+
         private event EventHandler _collectionChanged;
         private event EventHandler<ClearedEventArgs> _collectionCleared;
-        private event EventHandler<ItemAtEventArgs<T>> _itemInserted, _itemRemovedAt;
-        private event EventHandler<ItemCountEventArgs<T>> _itemsAdded, _itemsRemoved;
+        private event EventHandler<ItemAtEventArgs<T>> _itemInserted , _itemRemovedAt;
+        private event EventHandler<ItemCountEventArgs<T>> _itemsAdded , _itemsRemoved;
 
         #endregion
 
@@ -45,7 +51,7 @@ namespace C6
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
             // The unused part of the array contains default values
-            Invariant(ForAll(Count, _items.Length, i => Equals(_items[i], default(T))));
+            Invariant(ForAll(Count, Capacity, i => Equals(_items[i], default(T))));
 
             // Equality comparer is non-null
             Invariant(EqualityComparer != null);
@@ -70,18 +76,20 @@ namespace C6
             // Value types cannot be null
             Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
 
+            // The specified enumerable is not equal to the array saved
+            Ensures(!ReferenceEquals(items, _items));
+
             #endregion
 
-            // TODO: Check for null items when copying?
             _items = items.ToArray();
-            Count = _items.Length;
+            Count = Capacity;
 
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
 
             AllowsNull = allowsNull;
         }
 
-        public ArrayList(int capacity = MinimumCapacity, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        public ArrayList(int capacity = MinArrayLength, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             #region Code Contracts
 
@@ -93,7 +101,7 @@ namespace C6
 
             #endregion
 
-            _items = new T[capacity];
+            _items = new T[capacity]; // TODO: Default to 0 or MinArrayLength?
 
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
 
@@ -135,15 +143,15 @@ namespace C6
             #region Code Contracts
 
             // Item is added to the end
-            Ensures(this.Last().Equals(item));
+            // TODO: Fails when item is null: Ensures(this.Last().Equals(item));
 
             #endregion
 
-            // TODO: Increment stamp
+            UpdateVersion();
 
             InsertPrivate(Count, item);
 
-            // TODO: Raise events
+            // TODO: Use method to raise events
             _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, 1));
             _collectionChanged?.Invoke(this, EventArgs.Empty);
 
@@ -152,7 +160,30 @@ namespace C6
 
         public void AddAll(SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+
+            // A bad enumerator will throw an exception here
+            var array = items.ToArray();
+            var length = array.Length;
+
+            if (length == 0) {
+                return;
+            }
+
+            if (Count + length > Capacity) {
+                EnsureCapacity(Count + length);
+            }
+
+            Array.Copy(array, 0, _items, Count, length);
+            Count += length;
+
+            // TODO: Use method to raise events
+            if (ActiveEvents.HasFlag(Added)) {
+                foreach (var item in array) {
+                    _itemsAdded(this, new ItemCountEventArgs<T>(item, 1));
+                }
+            }
+            _collectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public T Choose() => _items[Count - 1];
@@ -162,7 +193,9 @@ namespace C6
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
+            var version = _version;
             for (var i = 0; i < Count; i++) {
+                CheckVersion(version);
                 yield return _items[i];
             }
         }
@@ -287,6 +320,52 @@ namespace C6
 
         #region Private Members
 
+        private int Capacity
+        {
+            get { return _items.Length; }
+            set
+            {
+                #region Code Contracts
+
+                // Capacity must be at least as big as the number of items
+                Requires(value >= Count);
+
+                // Capacity is at least as big as the number of items
+                Ensures(value >= Count);
+
+                #endregion
+
+                if (value == _items.Length) {
+                    return;
+                }
+                if (value > 0) {
+                    Array.Resize(ref _items, value);
+                }
+                else {
+                    _items = EmptyArray;
+                }
+            }
+        }
+
+        private void EnsureCapacity(int requiredCapacity)
+        {
+            if (Capacity >= requiredCapacity) {
+                return;
+            }
+
+            var num = IsEmpty ? MinArrayLength : Capacity * 2;
+
+            // TODO: Ensure this comparison works
+            if ((uint) num > MaxArrayLength) {
+                num = MaxArrayLength;
+            }
+            else if (num < requiredCapacity) {
+                num = requiredCapacity;
+            }
+
+            Capacity = num;
+        }
+
         // TODO: Rename?
         private void InsertPrivate(int index, T item)
         {
@@ -301,11 +380,11 @@ namespace C6
 
             #endregion
 
-            if (_items.Length == Count) {
-                Resize();
+            if (Capacity == Count) {
+                EnsureCapacity(Count + 1);
             }
 
-            // Move items one index to the right
+            // Move items one to the right
             if (index < Count) {
                 Array.Copy(_items, index, _items, index + 1, Count - index);
             }
@@ -314,27 +393,13 @@ namespace C6
             Count += 1;
         }
 
-        private void Resize()
+        private void UpdateVersion() => _version++;
+
+        private void CheckVersion(int version)
         {
-            var size = Math.Max(Count * 2, MinimumCapacity);
-            Resize(size);
-        }
-
-        private void Resize(int size)
-        {
-            #region Code Contracts
-
-            // Array must fit the items in the collection
-            Requires(size >= Count);
-
-            #endregion
-
-            // TODO: Ensure size is a power of two
-            // TODO: Use empty array
-
-            var array = new T[size];
-            Array.Copy(_items, array, Count);
-            _items = array;
+            if (version != _version) {
+                throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
+            }
         }
 
         #endregion

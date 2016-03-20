@@ -49,5 +49,7 @@ namespace C6.Tests.Helpers
         public static SCG.IEqualityComparer<string> ReferenceEqualityComparer => ComparerFactory.CreateReferenceEqualityComparer<string>();
 
         public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
+
+        public static BadEnumerable<T> AsBadEnumerable<T>(this SCG.IEnumerable<T> enumerable) => new BadEnumerable<T>(enumerable);
     }
 }
