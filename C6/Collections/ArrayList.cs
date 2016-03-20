@@ -148,13 +148,8 @@ namespace C6
             #endregion
 
             UpdateVersion();
-
             InsertPrivate(Count, item);
-
-            // TODO: Use method to raise events
-            _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, 1));
-            _collectionChanged?.Invoke(this, EventArgs.Empty);
-
+            RaiseForAdd(item);
             return true;
         }
 
@@ -165,24 +160,19 @@ namespace C6
 
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
+
             var length = array.Length;
 
             if (length == 0) {
                 return;
             }
-            
+
             EnsureCapacity(Count + length);
 
             Array.Copy(array, 0, _items, Count, length);
             Count += length;
 
-            // TODO: Use method to raise events
-            if (ActiveEvents.HasFlag(Added)) {
-                foreach (var item in array) {
-                    _itemsAdded(this, new ItemCountEventArgs<T>(item, 1));
-                }
-            }
-            _collectionChanged?.Invoke(this, EventArgs.Empty);
+            RaiseForAddAll(array);
         }
 
         public T Choose() => _items[Count - 1];
@@ -405,6 +395,64 @@ namespace C6
                 throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
             }
         }
+
+        #region Event Helpers
+
+        #region Invoking Methods
+
+        private void RaiseCollectionChanged()
+        {
+            _collectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void RaiseCollectionCleared(bool full, int count, int? start = null)
+        {
+            _collectionCleared?.Invoke(this, new ClearedEventArgs(full, count, start));
+        }
+
+        private void RaiseItemsAdded(T item, int count)
+        {
+            _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, count));
+        }
+
+        private void RaiseItemsRemoved(T item, int count)
+        {
+            _itemsRemoved?.Invoke(this, new ItemCountEventArgs<T>(item, count));
+        }
+
+        private void RaiseItemInserted(T item, int index)
+        {
+            _itemInserted?.Invoke(this, new ItemAtEventArgs<T>(item, index));
+        }
+
+        private void RaiseItemRemovedAt(T item, int index)
+        {
+            _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
+        }
+
+        #endregion
+
+        #region Method-Specific Helpers
+
+        private void RaiseForAdd(T item)
+        {
+            RaiseItemsAdded(item, 1);
+            RaiseCollectionChanged();
+        }
+
+        private void RaiseForAddAll(SCG.IEnumerable<T> items)
+        {
+            if (ActiveEvents.HasFlag(Added)) {
+                foreach (var item in items) {
+                    RaiseItemsAdded(item, 1);
+                }
+            }
+            RaiseCollectionChanged();
+        }
+
+        #endregion
+
+        #endregion
 
         #endregion
     }
