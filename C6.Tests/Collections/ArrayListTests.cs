@@ -153,8 +153,7 @@ namespace C6.Tests
         public void Constructor_EnumerableWithNull_ViolatesPrecondition()
         {
             // Arrange
-            var array = GetStrings(Random);
-            array[Random.Next(0, array.Length)] = null;
+            var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
             Assert.That(() => new ArrayList<string>(array), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
@@ -180,8 +179,7 @@ namespace C6.Tests
         public void Constructor_EnumerableWithNullDisallowNull_ViolatesPrecondition()
         {
             // Arrange
-            var array = GetStrings(Random);
-            array[Random.Next(0, array.Length)] = null;
+            var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
             Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition

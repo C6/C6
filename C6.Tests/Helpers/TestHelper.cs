@@ -40,6 +40,12 @@ namespace C6.Tests.Helpers
 
         public static T Choose<T>(this T[] array, Random random) => array[random.Next(array.Length)];
 
+        public static T[] WithNull<T>(this T[] array, Random random) where T : class
+        {
+            array[random.Next(0, array.Length)] = null;
+            return array;
+        }
+
         public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
     }
 }
