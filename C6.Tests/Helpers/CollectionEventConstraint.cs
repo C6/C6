@@ -31,12 +31,24 @@ namespace C6.Tests.Helpers
 
         private void RegisterEventHandlers()
         {
-            _collection.CollectionChanged += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Changed, EventArgs.Empty, sender));
-            _collection.CollectionCleared += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Cleared, eventArgs, sender));
-            _collection.ItemsRemoved += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Removed, eventArgs, sender));
-            _collection.ItemsAdded += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Added, eventArgs, sender));
-            _collection.ItemInserted += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Inserted, eventArgs, sender));
-            _collection.ItemRemovedAt += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(RemovedAt, eventArgs, sender));
+            if (_collection.ListenableEvents.HasFlag(Changed)) {
+                _collection.CollectionChanged += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Changed, EventArgs.Empty, sender));
+            }
+            if (_collection.ListenableEvents.HasFlag(Cleared)) {
+                _collection.CollectionCleared += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Cleared, eventArgs, sender));
+            }
+            if (_collection.ListenableEvents.HasFlag(Removed)) {
+                _collection.ItemsRemoved += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Removed, eventArgs, sender));
+            }
+            if (_collection.ListenableEvents.HasFlag(Added)) {
+                _collection.ItemsAdded += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Added, eventArgs, sender));
+            }
+            if (_collection.ListenableEvents.HasFlag(Inserted)) {
+                _collection.ItemInserted += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(Inserted, eventArgs, sender));
+            }
+            if (_collection.ListenableEvents.HasFlag(RemovedAt)) {
+                _collection.ItemRemovedAt += (sender, eventArgs) => _actualEvents.Add(new CollectionEvent<T>(RemovedAt, eventArgs, sender));
+            }
         }
 
         public override ConstraintResult ApplyTo<TActual>(TActual actual)
