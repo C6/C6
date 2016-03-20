@@ -89,7 +89,7 @@ namespace C6
             AllowsNull = allowsNull;
         }
 
-        public ArrayList(int capacity = MinArrayLength, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        public ArrayList(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             #region Code Contracts
 
@@ -101,7 +101,7 @@ namespace C6
 
             #endregion
 
-            _items = new T[capacity]; // TODO: Default to 0 or MinArrayLength?
+            _items = capacity > 0 ? new T[capacity] : EmptyArray;
 
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
 
@@ -349,21 +349,26 @@ namespace C6
 
         private void EnsureCapacity(int requiredCapacity)
         {
+            #region Code Contracts
+
+            Ensures(Capacity >= requiredCapacity);
+
+            #endregion
+
             if (Capacity >= requiredCapacity) {
                 return;
             }
 
-            var num = IsEmpty ? MinArrayLength : Capacity * 2;
+            var capacity = IsEmpty ? MinArrayLength : Capacity * 2;
 
-            // TODO: Ensure this comparison works
-            if ((uint) num > MaxArrayLength) {
-                num = MaxArrayLength;
+            if ((uint) capacity > MaxArrayLength) {
+                capacity = MaxArrayLength;
             }
-            else if (num < requiredCapacity) {
-                num = requiredCapacity;
+            if (capacity < requiredCapacity) {
+                capacity = requiredCapacity;
             }
 
-            Capacity = num;
+            Capacity = capacity;
         }
 
         // TODO: Rename?
