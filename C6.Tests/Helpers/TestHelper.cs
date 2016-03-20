@@ -46,6 +46,8 @@ namespace C6.Tests.Helpers
             return array;
         }
 
+        public static SCG.IEqualityComparer<string> ReferenceEqualityComparer => ComparerFactory.CreateReferenceEqualityComparer<string>();
+
         public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
     }
 }
