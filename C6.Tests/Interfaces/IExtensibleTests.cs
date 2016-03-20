@@ -186,9 +186,6 @@ namespace C6.Tests.Collections
 
         #region Add(T)
 
-        // TODO: Test read-only collections
-        // TODO: Test fixed-size collections
-
         [Test]
         public void Add_DisallowsNullAddNull_ViolatesPrecondition()
         {
@@ -306,6 +303,24 @@ namespace C6.Tests.Collections
 
             // Assert
             Assert.That(() => enumerator.MoveNext(), Throws.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Add_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Add_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
         }
 
         #endregion
