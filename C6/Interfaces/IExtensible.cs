@@ -206,7 +206,6 @@ namespace C6
             }
         }
 
-        // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsFixedSize
         {
             get
@@ -222,13 +221,20 @@ namespace C6
             }
         }
 
-        // Contracts are copied to ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get
+            {
+                // No preconditions
+
+
+                // No postconditions
+
+
+                return default(bool);
+            }
         }
 
-        // Contracts are copied to ICollection<T>.Add. Keep both updated!
         public bool Add(T item)
         {
             // Collection must be non-read-only

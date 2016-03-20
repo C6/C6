@@ -796,60 +796,37 @@ namespace C6
             }
         }
 
-        // Contracts are copied from ICollectionValue<T>.Count. Keep both updated!
-        // Contracts are copied to IIndexed<T>.Count. Keep both updated!
         public int Count
         {
             get
             {
-                // No preconditions
+                // No additional preconditions allowed
 
 
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
+                // No postconditions
 
 
                 return default(int);
             }
         }
 
-        // Contracts are copied from IExtensible<T>.IsReadOnly. Keep both updated!
-        // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get
+            {
+                // No additional preconditions allowed
+
+
+                // No postconditions
+
+
+                return default(bool);
+            }
         }
 
-        // Contracts are copied from IExtensible<T>.Add. Keep both updated!
         public bool Add(T item)
         {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
-
-
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
-
-            // The collection becomes non-empty
-            Ensures(!IsEmpty);
-
-            // The collection will contain the item added
-            Ensures(this.Contains(item, EqualityComparer));
-
-            // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
-
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Result<bool>() ? 1 : 0));
+            // No additional preconditions allowed
 
 
             // The collection will contain the item added
@@ -862,20 +839,12 @@ namespace C6
             return default(bool);
         }
 
-        // Contracts are copied to IList<T>.Clear. Keep both updated!
         public void Clear()
         {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+            // No additional preconditions allowed
 
 
-            // The collection becomes empty
-            Ensures(IsEmpty);
-            Ensures(Count == 0);
-            Ensures(!this.Any());
+            // No postconditions
 
 
             return;
@@ -899,7 +868,7 @@ namespace C6
         {
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
-            
+
             // All items must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
@@ -927,19 +896,12 @@ namespace C6
             return default(int);
         }
 
-        // Contracts are copied from ICollectionValue<T>.CopyTo. Keep both updated!
         public void CopyTo(T[] array, int arrayIndex)
         {
-            // Argument must be non-null
-            Requires(array != null, ArgumentMustBeNonNull);
-
-            // Argument must be within bounds
-            Requires(0 <= arrayIndex, ArgumentMustBeWithinBounds);
-            Requires(arrayIndex + Count <= array.Length, ArgumentMustBeWithinBounds);
+            // No additional preconditions allowed
 
 
-            // Array contains the collection's items in enumeration order from arrayIndex
-            Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
+            // No postconditions
 
 
             return;

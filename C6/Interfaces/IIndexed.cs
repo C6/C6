@@ -147,20 +147,14 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        // Contracts are copied from ICollection<T>.Count. Keep both updated!
-        // Contracts are copied to IList<T>.Count. Keep both updated!
         public int Count
         {
             get
             {
-                // No preconditions
+                // No additional preconditions allowed
 
 
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
+                // No postconditions
 
 
                 return default(int);
@@ -202,7 +196,6 @@ namespace C6
             return default(IDirectedCollectionValue<T>);
         }
 
-        // Contracts are copied to IList<T>.IndexOf. Keep both updated!
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
@@ -245,7 +238,6 @@ namespace C6
             return default(int);
         }
 
-        // Contracts are copied to IList<T>.RemoveAt. Keep both updated!
         public T RemoveAt(int index)
         {
             // Collection must be non-read-only

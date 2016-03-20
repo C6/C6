@@ -75,7 +75,7 @@ namespace C6
         /// <value>The number of items contained in the collection.</value>
         [Pure]
         int Count { get; }
-        
+
         /// <summary>
         /// Gets a value characterizing the asymptotic complexity of
         /// <see cref="Count"/> proportional to collection size (worst-case or
@@ -93,7 +93,7 @@ namespace C6
         /// otherwise, <c>false</c>.</value>
         [Pure]
         bool IsEmpty { get; }
-        
+
         /// <summary>
         /// Gets a bit flag indicating the collection's subscribable events.
         /// </summary>
@@ -358,7 +358,6 @@ namespace C6
             }
         }
 
-        // Contracts are copied to ICollection<T>.Count. Keep both updated!
         public int Count
         {
             get
@@ -441,7 +440,6 @@ namespace C6
             return default(T);
         }
 
-        // Contracts are copied to ICollection.CopyTo. Keep both updated!
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null

@@ -636,19 +636,14 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        // Contracts are copied from IIndexed<T>.Count. Keep both updated!
         public int Count
         {
             get
             {
-                // No preconditions
+                // No additional preconditions allowed
 
 
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
+                // No postconditions
 
 
                 return default(int);
@@ -689,26 +684,32 @@ namespace C6
             }
         }
 
-        // Contracts are copied from IExtensible<T>.IsReadOnly. Keep both updated!
         public bool IsFixedSize
         {
             get
             {
-                // No preconditions
+                // No additional preconditions allowed
 
 
-                // Read-only list has fixed size
-                Ensures(!IsReadOnly || Result<bool>());
+                // No postconditions
 
 
                 return default(bool);
             }
         }
 
-        // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get
+            {
+                // No additional preconditions allowed
+
+
+                // No postconditions
+
+
+                return default(bool);
+            }
         }
 
         public T Last
@@ -767,20 +768,12 @@ namespace C6
             }
         }
 
-        // Contracts are copied from ICollection<T>.Clear. Keep both updated!
         public void Clear()
         {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+            // No additional preconditions allowed
 
 
-            // The collection becomes empty
-            Ensures(IsEmpty);
-            Ensures(Count == 0);
-            Ensures(!this.Any());
+            // No postconditions
 
 
             return;
@@ -799,23 +792,12 @@ namespace C6
             return default(IList<T>);
         }
 
-        // Contracts are copied from IIndexed<T>.IndexOf. Keep both updated!
         public int IndexOf(T item)
         {
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+            // No additional preconditions allowed
 
 
-            // Result is a valid index
-            Ensures(Contains(item)
-                ? 0 <= Result<int>() && Result<int>() < Count
-                : 0 <= ~Result<int>() && ~Result<int>() <= Count);
-
-            // Item at index equals item
-            Ensures(Result<int>() < 0 || EqualityComparer.Equals(item, this[Result<int>()]));
-
-            // No item before index equals item
-            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer));
+            // No postconditions
 
 
             return default(int);
@@ -1041,31 +1023,12 @@ namespace C6
         }
 
 
-        // Contracts are copied from IIndexed<T>.RemoveAt. Keep both updated!
         public T RemoveAt(int index)
         {
-            // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
-
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+            // No additional preconditions allowed
 
 
-            // Result is the item previously at the specified index
-            Ensures(Result<T>().Equals(OldValue(this[index])));
-
-            // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
-
-            // Result is non-null
-            Ensures(AllowsNull || Result<T>() != null);
-
-            // Removing an item decreases the count by one
-            Ensures(Count == OldValue(Count) - 1);
+            // No postconditions
 
 
             return default(T);
