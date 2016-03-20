@@ -8,6 +8,8 @@ using C6.Tests.Contracts;
 
 using NUnit.Framework;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -57,7 +59,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.That(() => enumerable.IsSorted(), Violates.Precondition);
+            Assert.That(() => enumerable.IsSorted(), Violates.PreconditionSaying(ArgumentMustBeNonNull));
         }
 
         [Test]
@@ -95,7 +97,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.That(() => enumerable.IsSorted(comparer), Violates.Precondition);
+            Assert.That(() => enumerable.IsSorted(comparer), Violates.PreconditionSaying(ArgumentMustBeNonNull));
         }
 
         [Test]
@@ -183,7 +185,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.That(() => enumerable.IsSorted(comparison), Violates.Precondition);
+            Assert.That(() => enumerable.IsSorted(comparison), Violates.PreconditionSaying(ArgumentMustBeNonNull));
         }
 
         [Test]

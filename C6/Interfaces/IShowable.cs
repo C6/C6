@@ -7,6 +7,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 
 namespace C6
 {
@@ -54,12 +56,12 @@ namespace C6
         public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
         {
             // Argument must be non-null
-            Requires(stringBuilder != null);
+            Requires(stringBuilder != null, ArgumentMustBeNonNull);
 
 
             // Returns true if rest >= 0 on return; otherwise, false.
             Ensures(Result<bool>() == (ValueAtReturn(out rest) >= 0));
-            
+
             // The length of the formatted string is subtracted from rest
             Ensures(stringBuilder.Length - OldValue(stringBuilder.Length) == OldValue(rest) - ValueAtReturn(out rest));
 

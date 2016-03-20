@@ -8,16 +8,32 @@ using System.Linq;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+using static C6.EventTypes;
+
 using SCG = System.Collections.Generic;
 
 
 namespace C6
 {
-    public class ArrayList<T> : ICollectionValue<T>
+    [Serializable]
+    public class ArrayList<T> : IExtensible<T>
     {
         #region Fields
 
-        private readonly T[] _array;
+        private static readonly T[] EmptyArray = new T[0];
+
+        private const int MinArrayLength = 0x00000004;
+        private const int MaxArrayLength = 0x7FEFFFFF;
+
+        private T[] _items;
+
+        private int _version;
+
+        private event EventHandler _collectionChanged;
+        private event EventHandler<ClearedEventArgs> _collectionCleared;
+        private event EventHandler<ItemAtEventArgs<T>> _itemInserted , _itemRemovedAt;
+        private event EventHandler<ItemCountEventArgs<T>> _itemsAdded , _itemsRemoved;
 
         #endregion
 
@@ -28,9 +44,17 @@ namespace C6
         {
             // ReSharper disable InvocationIsSkipped
 
-            Invariant(_array != null);
+            // Array is non-null
+            Invariant(_items != null);
 
+            // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
+
+            // The unused part of the array contains default values
+            Invariant(ForAll(Count, Capacity, i => Equals(_items[i], default(T))));
+
+            // Equality comparer is non-null
+            Invariant(EqualityComparer != null);
 
             // ReSharper restore InvocationIsSkipped
         }
@@ -39,41 +63,55 @@ namespace C6
 
         #region Constructors
 
-        // TODO: Document
-        public ArrayList() : this(false) {}
-
-        // TODO: Document
-        public ArrayList(bool allowsNull) : this(Enumerable.Empty<T>(), allowsNull)
-        {
-            // Value types cannot be null
-            Requires(!typeof(T).IsValueType || !allowsNull);
-        }
-
-        // TODO: Document
-        public ArrayList(SCG.IEnumerable<T> items) : this(items, false)
-        {
-            // Argument must be non-null
-            Requires(items != null); // TODO: Use <ArgumentNullException>?
-        }
-
-        // TODO: Document
-        public ArrayList(SCG.IEnumerable<T> items, bool allowsNull)
+        public ArrayList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             #region Code Contracts
 
+            // ReSharper disable InvocationIsSkipped
+
             // Argument must be non-null
-            Requires(items != null); // TODO: Use <ArgumentNullException>?
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // All items must be non-null if collection disallows null values
-            Requires(allowsNull || ForAll(items, item => item != null)); // TODO: Use <ArgumentNullException>?
+            Requires(allowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
             // Value types cannot be null
-            Requires(!typeof(T).IsValueType || !allowsNull);
+            Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
+
+            // The specified enumerable is not equal to the array saved
+            Ensures(!ReferenceEquals(items, _items));
+
+            // ReSharper restore InvocationIsSkipped
 
             #endregion
 
-            _array = items.ToArray();
-            Count = _array.Length;
+            _items = items.ToArray();
+            Count = Capacity;
+
+            EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            AllowsNull = allowsNull;
+        }
+
+        public ArrayList(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        {
+            #region Code Contracts
+
+            // ReSharper disable InvocationIsSkipped
+
+            // Argument must be non-negative
+            Requires(0 <= capacity, ArgumentMustBeNonNegative);
+
+            // Value types cannot be null
+            Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
+
+            // ReSharper restore InvocationIsSkipped
+
+            #endregion
+
+            _items = capacity > 0 ? new T[capacity] : EmptyArray;
+
+            EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
 
             AllowsNull = allowsNull;
         }
@@ -82,57 +120,189 @@ namespace C6
 
         #region Properties
 
-        public EventTypes ActiveEvents
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public EventTypes ActiveEvents { get; private set; }
+
+        public bool AllowsDuplicates => true;
 
         public bool AllowsNull { get; }
 
-        public int Count { get; }
+        public int Count { get; private set; }
 
         public Speed CountSpeed => Speed.Constant;
 
+        public bool DuplicatesByCounting => false;
+
+        public SCG.IEqualityComparer<T> EqualityComparer { get; }
+
         public bool IsEmpty => Count == 0;
 
-        public EventTypes ListenableEvents
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsFixedSize => false;
+
+        public bool IsReadOnly => false;
+
+        public EventTypes ListenableEvents => All;
 
         #endregion
 
         #region Public Methods
 
-        public T Choose() => _array[Count - 1];
+        public bool Add(T item)
+        {
+            #region Code Contracts
+
+            // Item is added to the end
+            // TODO: Fails when item is null: Ensures(this.Last().Equals(item));
+
+            #endregion
+
+            UpdateVersion();
+            InsertPrivate(Count, item);
+            RaiseForAdd(item);
+            return true;
+        }
+
+        // TODO: Use InsertAll?
+        public void AddAll(SCG.IEnumerable<T> items)
+        {
+            UpdateVersion();
+
+            // A bad enumerator will throw an exception here
+            var array = items.ToArray();
+
+            var length = array.Length;
+
+            if (length == 0) {
+                return;
+            }
+
+            EnsureCapacity(Count + length);
+
+            Array.Copy(array, 0, _items, Count, length);
+            Count += length;
+
+            RaiseForAddAll(array);
+        }
+
+        public T Choose() => _items[Count - 1];
 
         public void CopyTo(T[] array, int arrayIndex)
-            => Array.Copy(_array, 0, array, arrayIndex, Count);
+            => Array.Copy(_items, 0, array, arrayIndex, Count);
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
+            var version = _version;
             for (var i = 0; i < Count; i++) {
-                yield return _array[i];
+                CheckVersion(version);
+                yield return _items[i];
             }
         }
 
         public T[] ToArray()
         {
-            var result = new T[Count];
-            Array.Copy(_array, result, Count);
-            return result;
+            var array = new T[Count];
+            Array.Copy(_items, array, Count);
+            return array;
         }
 
         #endregion
 
         #region Events
 
-        public event EventHandler CollectionChanged;
-        public event EventHandler<ClearedEventArgs> CollectionCleared;
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted;
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved;
+        public event EventHandler CollectionChanged
+        {
+            add
+            {
+                _collectionChanged += value;
+                ActiveEvents |= Changed;
+            }
+            remove
+            {
+                _collectionChanged -= value;
+                if (_collectionChanged == null) {
+                    ActiveEvents &= ~Changed;
+                }
+            }
+        }
+
+        public event EventHandler<ClearedEventArgs> CollectionCleared
+        {
+            add
+            {
+                _collectionCleared += value;
+                ActiveEvents |= Cleared;
+            }
+            remove
+            {
+                _collectionCleared -= value;
+                if (_collectionCleared == null) {
+                    ActiveEvents &= ~Cleared;
+                }
+            }
+        }
+
+        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
+        {
+            add
+            {
+                _itemInserted += value;
+                ActiveEvents |= Inserted;
+            }
+            remove
+            {
+                _itemInserted -= value;
+                if (_itemInserted == null) {
+                    ActiveEvents &= ~Inserted;
+                }
+            }
+        }
+
+        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
+        {
+            add
+            {
+                _itemRemovedAt += value;
+                ActiveEvents |= RemovedAt;
+            }
+            remove
+            {
+                _itemRemovedAt -= value;
+                if (_itemRemovedAt == null) {
+                    ActiveEvents &= ~RemovedAt;
+                }
+            }
+        }
+
+        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
+        {
+            add
+            {
+                _itemsAdded += value;
+                ActiveEvents |= Added;
+            }
+            remove
+            {
+                _itemsAdded -= value;
+                if (_itemsAdded == null) {
+                    ActiveEvents &= ~Added;
+                }
+            }
+        }
+
+        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
+        {
+            add
+            {
+                _itemsRemoved += value;
+                ActiveEvents |= Removed;
+            }
+            remove
+            {
+                _itemsRemoved -= value;
+                if (_itemsRemoved == null) {
+                    ActiveEvents &= ~Removed;
+                }
+            }
+        }
 
         #endregion
 
@@ -142,6 +312,155 @@ namespace C6
         {
             return GetEnumerator();
         }
+
+        #endregion
+
+        #region Private Members
+
+        private int Capacity
+        {
+            get { return _items.Length; }
+            set
+            {
+                #region Code Contracts
+
+                // Capacity must be at least as big as the number of items
+                Requires(value >= Count);
+
+                // Capacity is at least as big as the number of items
+                Ensures(value >= Count);
+
+                #endregion
+
+                if (value == _items.Length) {
+                    return;
+                }
+                if (value > 0) {
+                    Array.Resize(ref _items, value);
+                }
+                else {
+                    _items = EmptyArray;
+                }
+            }
+        }
+
+        private void EnsureCapacity(int requiredCapacity)
+        {
+            #region Code Contracts
+
+            Ensures(Capacity >= requiredCapacity);
+
+            #endregion
+
+            if (Capacity >= requiredCapacity) {
+                return;
+            }
+
+            var capacity = IsEmpty ? MinArrayLength : Capacity * 2;
+
+            if ((uint) capacity > MaxArrayLength) {
+                capacity = MaxArrayLength;
+            }
+            if (capacity < requiredCapacity) {
+                capacity = requiredCapacity;
+            }
+
+            Capacity = capacity;
+        }
+
+        // TODO: Rename?
+        private void InsertPrivate(int index, T item)
+        {
+            #region Code Contracts
+
+            // Argument must be within bounds
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+            #endregion
+
+            if (Capacity == Count) {
+                EnsureCapacity(Count + 1);
+            }
+
+            // Move items one to the right
+            if (index < Count) {
+                Array.Copy(_items, index, _items, index + 1, Count - index);
+            }
+
+            _items[index] = item;
+            Count++;
+        }
+
+        private void UpdateVersion() => _version++;
+
+        private void CheckVersion(int version)
+        {
+            if (version != _version) {
+                throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
+            }
+        }
+
+        #region Event Helpers
+
+        #region Invoking Methods
+
+        private void RaiseCollectionChanged()
+        {
+            _collectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void RaiseCollectionCleared(bool full, int count, int? start = null)
+        {
+            _collectionCleared?.Invoke(this, new ClearedEventArgs(full, count, start));
+        }
+
+        private void RaiseItemsAdded(T item, int count)
+        {
+            _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, count));
+        }
+
+        private void RaiseItemsRemoved(T item, int count)
+        {
+            _itemsRemoved?.Invoke(this, new ItemCountEventArgs<T>(item, count));
+        }
+
+        private void RaiseItemInserted(T item, int index)
+        {
+            _itemInserted?.Invoke(this, new ItemAtEventArgs<T>(item, index));
+        }
+
+        private void RaiseItemRemovedAt(T item, int index)
+        {
+            _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
+        }
+
+        #endregion
+
+        #region Method-Specific Helpers
+
+        private void RaiseForAdd(T item)
+        {
+            RaiseItemsAdded(item, 1);
+            RaiseCollectionChanged();
+        }
+
+        private void RaiseForAddAll(SCG.IEnumerable<T> items)
+        {
+            if (ActiveEvents.HasFlag(Added)) {
+                foreach (var item in items) {
+                    RaiseItemsAdded(item, 1);
+                }
+            }
+            RaiseCollectionChanged();
+        }
+
+        #endregion
+
+        #endregion
 
         #endregion
     }

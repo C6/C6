@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 using static C6.EventTypes;
@@ -73,7 +75,7 @@ namespace C6
         /// <value>The number of items contained in the collection.</value>
         [Pure]
         int Count { get; }
-
+        
         /// <summary>
         /// Gets a value characterizing the asymptotic complexity of
         /// <see cref="Count"/> proportional to collection size (worst-case or
@@ -91,7 +93,7 @@ namespace C6
         /// otherwise, <c>false</c>.</value>
         [Pure]
         bool IsEmpty { get; }
-
+        
         /// <summary>
         /// Gets a bit flag indicating the collection's subscribable events.
         /// </summary>
@@ -426,7 +428,7 @@ namespace C6
         public T Choose()
         {
             // Collection must be non-empty
-            Requires(!IsEmpty);
+            Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
             // Result is non-null
@@ -443,11 +445,11 @@ namespace C6
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null
-            Requires(array != null);
+            Requires(array != null, ArgumentMustBeNonNull);
 
             // Argument must be within bounds
-            Requires(0 <= arrayIndex);
-            Requires(arrayIndex + Count <= array.Length);
+            Requires(0 <= arrayIndex, ArgumentMustBeWithinBounds);
+            Requires(arrayIndex + Count <= array.Length, ArgumentMustBeWithinBounds);
 
 
             // Array contains the collection's items in enumeration order from arrayIndex
@@ -480,29 +482,29 @@ namespace C6
         {
             add
             {
-                // Value must be non-null
-                Requires(value != null);
-
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Changed));
+                Requires(ListenableEvents.HasFlag(Changed), EventMustBeListenable);
+
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
                 Ensures(ActiveEvents.HasFlag(Changed));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Changed));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Changed));
 
 
                 return;
             }
             remove
             {
-                // Value must be non-null
-                Requires(value != null);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Changed), EventMustBeActive);
 
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Changed));
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // No postconditions
@@ -516,29 +518,29 @@ namespace C6
         {
             add
             {
-                // Value must be non-null
-                Requires(value != null);
-
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Cleared));
+                Requires(ListenableEvents.HasFlag(Cleared), EventMustBeListenable);
+
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
                 Ensures(ActiveEvents.HasFlag(Cleared));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Cleared));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Cleared));
 
 
                 return;
             }
             remove
             {
-                // Value must be non-null
-                Requires(value != null);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Cleared), EventMustBeActive);
 
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Cleared));
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // No postconditions
@@ -552,29 +554,29 @@ namespace C6
         {
             add
             {
-                // Value must be non-null
-                Requires(value != null);
-
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Inserted));
+                Requires(ListenableEvents.HasFlag(Inserted), EventMustBeListenable);
+
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
                 Ensures(ActiveEvents.HasFlag(Inserted));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Inserted));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Inserted));
 
 
                 return;
             }
             remove
             {
-                // Value must be non-null
-                Requires(value != null);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Inserted), EventMustBeActive);
 
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Inserted));
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // No postconditions
@@ -588,29 +590,29 @@ namespace C6
         {
             add
             {
-                // Value must be non-null
-                Requires(value != null);
-
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(RemovedAt));
+                Requires(ListenableEvents.HasFlag(RemovedAt), EventMustBeListenable);
+
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
                 Ensures(ActiveEvents.HasFlag(RemovedAt));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | RemovedAt));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | RemovedAt));
 
 
                 return;
             }
             remove
             {
-                // Value must be non-null
-                Requires(value != null);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(RemovedAt), EventMustBeActive);
 
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(RemovedAt));
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // No postconditions
@@ -624,29 +626,29 @@ namespace C6
         {
             add
             {
-                // Value must be non-null
-                Requires(value != null);
-
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Added));
+                Requires(ListenableEvents.HasFlag(Added), EventMustBeListenable);
+
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
                 Ensures(ActiveEvents.HasFlag(Added));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Added));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Added));
 
 
                 return;
             }
             remove
             {
-                // Value must be non-null
-                Requires(value != null);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Added), EventMustBeActive);
 
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Added));
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // No postconditions
@@ -660,29 +662,29 @@ namespace C6
         {
             add
             {
-                // Value must be non-null
-                Requires(value != null);
-
                 // Event is listenable
-                Requires(ListenableEvents.HasFlag(Removed));
+                Requires(ListenableEvents.HasFlag(Removed), EventMustBeListenable);
+
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
                 Ensures(ActiveEvents.HasFlag(Removed));
 
                 // No other events became active
-                Ensures(ActiveEvents == (OldValue(ActiveEvents) | Removed));
+                Ensures(ActiveEvents == OldValue(ActiveEvents | Removed));
 
 
                 return;
             }
             remove
             {
-                // Value must be non-null
-                Requires(value != null);
+                // Event is active
+                Requires(ActiveEvents.HasFlag(Removed), EventMustBeActive);
 
-                // Event is listenable
-                Requires(ListenableEvents.HasFlag(Removed));
+                // Value must be non-null
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // No postconditions
@@ -698,6 +700,7 @@ namespace C6
 
         #region SCG.IEnumerable<T>
 
+        // TODO: Ensure that no item is null if AllowsNull is false?
         public abstract SCG.IEnumerator<T> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

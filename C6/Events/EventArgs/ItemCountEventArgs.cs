@@ -5,7 +5,11 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
+using SCG = System.Collections.Generic;
+
 using static System.Diagnostics.Contracts.Contract;
+
+using static C6.Contracts.ContractMessage;
 
 
 namespace C6
@@ -44,10 +48,10 @@ namespace C6
         public ItemCountEventArgs(T item, int count)
         {
             // Argument must be non-null
-            // Requires(item != null);
+            // Requires(item != null, ItemMustBeNonNull);
 
             // Argument must be positive
-            Requires(count > 0);
+            Requires(count > 0, ArgumentMustBePositive);
 
 
             Item = item;
@@ -75,5 +79,42 @@ namespace C6
         /// </summary>
         /// <value>The item added or removed from the collection.</value>
         public T Item { get; }
+
+        public bool Equals(ItemCountEventArgs<T> other, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            if (ReferenceEquals(null, other)) {
+                return false;
+            }
+            if (ReferenceEquals(this, other)) {
+                return true;
+            }
+
+            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            return Count == other.Count && equalityComparer.Equals(Item, other.Item);
+        }
+
+        public bool Equals(object obj, SCG.IEqualityComparer<T> equalityComparer)
+        {
+            if (ReferenceEquals(null, obj)) {
+                return false;
+            }
+            if (ReferenceEquals(this, obj)) {
+                return true;
+            }
+            if (obj.GetType() != GetType()) {
+                return false;
+            }
+            return Equals((ItemCountEventArgs<T>) obj, equalityComparer);
+        }
+
+        public int GetHashCode(SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            unchecked {
+                return (Count * 397) ^ equalityComparer.GetHashCode(Item);
+            }
+        }
     }
 }

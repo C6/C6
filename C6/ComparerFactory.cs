@@ -6,6 +6,8 @@ using System.Diagnostics.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -31,7 +33,7 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(compare != null);
+            Requires(compare != null, ArgumentMustBeNonNull);
 
             // Result is non-null
             Ensures(Result<SCG.IComparer<T>>() != null);
@@ -54,9 +56,9 @@ namespace C6
             #region Code Contracts
 
             // Argument must be non-null
-            Requires(equals != null);
+            Requires(equals != null, ArgumentMustBeNonNull);
             // Argument must be non-null
-            Requires(getHashCode != null);
+            Requires(getHashCode != null, ArgumentMustBeNonNull);
 
             // Result is non-null
             Ensures(Result<SCG.IEqualityComparer<T>>() != null);
@@ -109,7 +111,7 @@ namespace C6
                 #region Code Contracts
 
                 // Argument must be non-null
-                Requires(compare != null);
+                Requires(compare != null, ArgumentMustBeNonNull);
 
                 #endregion
 
@@ -142,10 +144,10 @@ namespace C6
                 #region Code Contracts
 
                 // Argument must be non-null
-                Requires(equals != null);
+                Requires(equals != null, ArgumentMustBeNonNull);
 
                 // Argument must be non-null
-                Requires(getHashCode != null);
+                Requires(getHashCode != null, ArgumentMustBeNonNull);
 
                 #endregion
 

@@ -7,6 +7,7 @@ using System.Diagnostics.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 
 
@@ -52,7 +53,7 @@ namespace C6
         public event EventHandler CollectionChanged {
             add {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
@@ -67,7 +68,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // The event is inactive, if the event handler is null
@@ -88,7 +89,7 @@ namespace C6
         public event EventHandler<ClearedEventArgs> CollectionCleared {
             add {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
@@ -103,7 +104,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // The event is inactive, if the event handler is null
@@ -124,7 +125,7 @@ namespace C6
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded {
             add {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
@@ -139,7 +140,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // The event is inactive, if the event handler is null
@@ -160,7 +161,7 @@ namespace C6
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved {
             add {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
@@ -175,7 +176,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // The event is inactive, if the event handler is null
@@ -196,7 +197,7 @@ namespace C6
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted {
             add {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
@@ -211,7 +212,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // The event is inactive, if the event handler is null
@@ -232,7 +233,7 @@ namespace C6
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt {
             add {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // Event is active
@@ -247,7 +248,7 @@ namespace C6
             }
             remove {
                 // Value must be non-null
-                Requires(value != null);
+                Requires(value != null, ArgumentMustBeNonNull);
 
 
                 // The event is inactive, if the event handler is null
@@ -268,7 +269,7 @@ namespace C6
         public void OnCollectionChanged(object sender)
         {
             // Argument must be non-null
-            Requires(sender != null);
+            Requires(sender != null, ArgumentMustBeNonNull);
 
 
             _collectionChanged?.Invoke(sender, EventArgs.Empty);
@@ -279,13 +280,13 @@ namespace C6
         public void OnCollectionCleared(object sender, bool full, int count, int? start = null)
         {
             // Argument must be non-null
-            Requires(sender != null);
+            Requires(sender != null, ArgumentMustBeNonNull);
 
             // Argument must be positive
-            Requires(count > 0);
+            Requires(count > 0, ArgumentMustBePositive);
 
             // Start is only set, if a list view or index range was cleared
-            Requires(!start.HasValue || !full);
+            Requires(!start.HasValue || !full); // TODO: Add user message
 
 
             _collectionCleared?.Invoke(sender, new ClearedEventArgs(full, count, start));
@@ -295,13 +296,13 @@ namespace C6
         public void OnItemsAdded(object sender, T item, int count)
         {
             // Argument must be non-null
-            Requires(sender != null);
+            Requires(sender != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null
-            // Requires(item != null);
+            // Requires(item != null, ItemMustBeNonNull);
 
             // Argument must be positive
-            Requires(count > 0);
+            Requires(count > 0, ArgumentMustBePositive);
 
 
             _itemsAdded?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
@@ -311,13 +312,13 @@ namespace C6
         public void OnItemsRemoved(object sender, T item, int count)
         {
             // Argument must be non-null
-            Requires(sender != null);
+            Requires(sender != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null
-            // Requires(item != null);
+            // Requires(item != null, ItemMustBeNonNull);
 
             // Argument must be positive
-            Requires(count > 0);
+            Requires(count > 0, ArgumentMustBePositive);
 
 
             _itemsRemoved?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
@@ -327,13 +328,13 @@ namespace C6
         public void OnItemInserted(object sender, T item, int index)
         {
             // Argument must be non-null
-            Requires(sender != null);
+            Requires(sender != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null
-            // Requires(item != null);
+            // Requires(item != null, ItemMustBeNonNull);
 
             // Argument must be non-negative
-            Requires(index >= 0);
+            Requires(index >= 0, ArgumentMustBeNonNegative);
 
 
             _itemInserted?.Invoke(sender, new ItemAtEventArgs<T>(item, index));
@@ -343,13 +344,13 @@ namespace C6
         public void OnItemRemovedAt(object sender, T item, int index)
         {
             // Argument must be non-null
-            Requires(sender != null);
+            Requires(sender != null, ArgumentMustBeNonNull);
 
             // Argument must be non-null
-            // Requires(item != null);
+            // Requires(item != null, ItemMustBeNonNull);
 
             // Argument must be non-negative
-            Requires(index >= 0);
+            Requires(index >= 0, ArgumentMustBeNonNegative);
 
 
             _itemRemovedAt?.Invoke(sender, new ItemAtEventArgs<T>(item, index));

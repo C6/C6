@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 
 namespace C6
 {
@@ -16,7 +18,7 @@ namespace C6
     /// </summary>
     [Serializable]
     [DebuggerDisplay("(ClearedEventArgs {Count} {Full})")] // TODO: format appropriately
-    public class ClearedEventArgs : EventArgs
+    public class ClearedEventArgs : EventArgs, IEquatable<ClearedEventArgs>
     {
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -49,10 +51,10 @@ namespace C6
         public ClearedEventArgs(bool full, int count, int? start = null)
         {
             // Argument must be positive
-            Requires(count > 0);
+            Requires(0 < count, ArgumentMustBePositive);
 
             // Start is only set, if a list view or index range was cleared
-            Requires(!start.HasValue || !full);
+            Requires(!start.HasValue || !full); // TODO: Add user message
 
 
             Full = full;
@@ -90,5 +92,40 @@ namespace C6
         /// otherwise, <c>null</c>.</value>
         [Pure]
         public int? Start { get; }
+
+        public bool Equals(ClearedEventArgs other)
+        {
+            if (ReferenceEquals(null, other)) {
+                return false;
+            }
+            if (ReferenceEquals(this, other)) {
+                return true;
+            }
+            return Count == other.Count && Full == other.Full && Start == other.Start;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) {
+                return false;
+            }
+            if (ReferenceEquals(this, obj)) {
+                return true;
+            }
+            if (obj.GetType() != GetType()) {
+                return false;
+            }
+            return Equals((ClearedEventArgs) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked {
+                var hashCode = Count;
+                hashCode = (hashCode * 397) ^ Full.GetHashCode();
+                hashCode = (hashCode * 397) ^ Start.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 }

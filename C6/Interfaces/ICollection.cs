@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -55,8 +57,9 @@ namespace C6
         /// <summary>
         /// Adds an item to the collection if possible.
         /// </summary>
-        /// <param name="item">The item to add to the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <param name="item">The item to add to the collection. <c>null</c> 
+        /// is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <returns><c>true</c> if item was added;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -101,7 +104,10 @@ namespace C6
         /// <summary>
         /// Determines whether the collection contains a specific item.
         /// </summary>
-        /// <param name="item">The item to locate in the collection.</param>
+        /// <param name="item">The item to locate in the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item is found in the collection;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>The collection's
@@ -116,14 +122,20 @@ namespace C6
         /// bag semantics, multiplicities is taken into account.
         /// </summary>
         /// <param name="items">The specified <see cref="SCG.IEnumerable{T}"/>.
-        /// <c>null</c> is allowed for nullable items, but not for the
-        /// enumerable itself.
+        /// The enumerable itself cannot be <c>null</c>, but its items can, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <returns><c>true</c> if all items in <paramref name="items"/> are
         /// in the collection; otherwise, <c>false</c>.</returns>
         /// <remarks>
+        /// <para>
         /// The collection's <see cref="IExtensible{T}.EqualityComparer"/>
         /// is used to determine item equality.
+        /// </para>
+        /// <para>
+        /// If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.
+        /// </para>
         /// </remarks>
         /// <seealso cref="Contains(T)"/>
         [Pure]
@@ -133,7 +145,9 @@ namespace C6
         /// Returns the item's multiplicity in the collection: the number of
         /// items in the collection equal to the specified item.
         /// </summary>
-        /// <param name="item">The item to count in the collection.</param>
+        /// <param name="item">The item to count in the collection. <c>null</c>
+        /// is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        /// <c>true</c>.</param>
         /// <returns>The number of items equal to the specified item found.
         /// Returns 0 if and only if the value is not in the collection.
         /// </returns>
@@ -160,7 +174,8 @@ namespace C6
         /// assigns it to <paramref name="item"/> if so.
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items. If the
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>. If the
         /// collection contains the item, the item is assigned to the reference
         /// parameter on return.</param>
         /// <returns><c>true</c> if item is found in the collection;
@@ -178,9 +193,11 @@ namespace C6
         /// item to the collection.
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items. If the collection 
-        /// already contains the item, the item is assigned to the parameter on
-        /// return; otherwise, the item is added to the collection.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>. If the
+        /// collection already contains the item, the item is assigned to the
+        /// parameter on return; otherwise, the item is added to the
+        /// collection.</param>
         /// <returns><c>true</c> if item was found and therefore not added;
         /// otherwise, <c>false</c> in which case the item is added.</returns>
         /// <remarks>
@@ -248,7 +265,10 @@ namespace C6
         /// Removes an occurrence of a specific item from the collection, if
         /// any.
         /// </summary>
-        /// <param name="item">The item to remove from the collection.</param>
+        /// <param name="item">The item to remove from the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item was successfully removed from the
         /// collection; otherwise, <c>false</c> if item is not found in
         /// the original collection.</returns>
@@ -280,7 +300,10 @@ namespace C6
         /// any, and assigns the removed item to
         /// <paramref name="removedItem"/>.
         /// </summary>
-        /// <param name="item">The item to remove from the collection.</param>
+        /// <param name="item">The item to remove from the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <param name="removedItem">The removed item if any.</param>
         /// <returns><c>true</c> if item was successfully removed from the
         /// collection; otherwise, <c>false</c> if item is not found in
@@ -314,7 +337,10 @@ namespace C6
         /// Removes all occurrences of a specific item from the collection, if
         /// any.
         /// </summary>
-        /// <param name="item">The item to remove from the collection.</param>
+        /// <param name="item">The item to remove from the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if item was successfully removed from the
         /// collection; otherwise, <c>false</c> if item is not found in
         /// the original collection.</returns>
@@ -365,8 +391,9 @@ namespace C6
         /// if possible, in enumeration order.
         /// </summary>
         /// <param name="items">The enumerable whose items should be removed
-        /// from the collection. <c>null</c> is allowed for nullable items, but
-        /// not for the enumerable itself.</param>
+        /// from the collection. The enumerable itself cannot be <c>null</c>,
+        /// but its items can, if <see cref="ICollectionValue{T}.AllowsNull"/>
+        /// is <c>true</c>.</param>
         /// <remarks>
         /// <para>
         /// If the collection has bag semantics, this means reducing the item
@@ -374,6 +401,10 @@ namespace C6
         /// multiplicity of the item in <paramref name="items"/>. The
         /// collection's <see cref="IExtensible{T}.EqualityComparer"/> is used
         /// to determine item equality.
+        /// </para>
+        /// <para>
+        /// If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.
         /// </para>
         /// <para>
         /// If any items are removed, it raises the following events (in that 
@@ -397,12 +428,19 @@ namespace C6
         /// has bag semantics, multiplicities is taken into account.
         /// </summary>
         /// <param name="items">The specified <see cref="SCG.IEnumerable{T}"/>
-        /// whose items should be retained in the collection.</param>
+        /// whose items should be retained in the collection. The enumerable 
+        /// itself cannot be <c>null</c>, but its items can, if 
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <remarks>
         /// <para>The items remaining in the collection is the intersection
         /// between the original collection and the specified collection.</para>
         /// <para>The collection's <see cref="IExtensible{T}.EqualityComparer"/>
         /// is used to determine item equality.</para>
+        /// <para>
+        /// If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.
+        /// </para>
         /// <para>
         /// If any items are removed, it raises the following events (in that 
         /// order) with the collection as sender:
@@ -469,7 +507,10 @@ namespace C6
         /// <paramref name="item"/>, in which case that item is replaced with
         /// <paramref name="item"/>.
         /// </summary>
-        /// <param name="item">The item to update in the collection.</param>
+        /// <param name="item">The item to update in the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns><c>true</c> if the item was found and hence updated;
         /// otherwise, <c>false</c>.</returns>
         /// <remarks>
@@ -527,7 +568,10 @@ namespace C6
         /// <paramref name="item"/>, in which case that item is replaced with
         /// <paramref name="item"/>.
         /// </summary>
-        /// <param name="item">The item to update in the collection.</param>
+        /// <param name="item">The item to update in the collection. 
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <param name="oldItem">The removed item if any.</param>
         /// <returns><c>true</c> if the item was found and hence updated;
         /// otherwise, <c>false</c>.</returns>
@@ -587,6 +631,8 @@ namespace C6
         /// <paramref name="item"/>; otherwise, the item is added.
         /// </summary>
         /// <param name="item">The item to update or add to the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <returns><c>true</c> if the item was found and hence updated;
         /// otherwise, <c>false</c> in which case the item is added.</returns>
@@ -659,6 +705,8 @@ namespace C6
         /// <paramref name="item"/>; otherwise, the item is added.
         /// </summary>
         /// <param name="item">The item to update or add to the collection.
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <param name="oldItem">The removed item if any.</param>
         /// <returns><c>true</c> if the item was found and hence updated;
@@ -772,23 +820,20 @@ namespace C6
         // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get
-            {
-                return default(bool);
-            }
+            get { return default(bool); }
         }
 
         // Contracts are copied from IExtensible<T>.Add. Keep both updated!
         public bool Add(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
@@ -821,10 +866,10 @@ namespace C6
         public void Clear()
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
             // The collection becomes empty
@@ -838,9 +883,8 @@ namespace C6
 
         public bool Contains(T item)
         {
-            // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contains the item
@@ -854,15 +898,17 @@ namespace C6
         public bool ContainsAll(SCG.IEnumerable<T> items)
         {
             // Argument must be non-null
-            Requires(items != null);
-
-            // TODO: Should this be required?
+            Requires(items != null, ArgumentMustBeNonNull);
+            
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // The collection contains the same items as items, with a multiplicity equal or greater
             Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) >= group.Count()));
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
 
 
             return default(bool);
@@ -870,9 +916,8 @@ namespace C6
 
         public int ContainsCount(T item)
         {
-            // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result equals the number of items equal to item using the collection's equality comparer
@@ -886,11 +931,11 @@ namespace C6
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null
-            Requires(array != null);
+            Requires(array != null, ArgumentMustBeNonNull);
 
             // Argument must be within bounds
-            Requires(0 <= arrayIndex);
-            Requires(arrayIndex + Count <= array.Length);
+            Requires(0 <= arrayIndex, ArgumentMustBeWithinBounds);
+            Requires(arrayIndex + Count <= array.Length, ArgumentMustBeWithinBounds);
 
 
             // Array contains the collection's items in enumeration order from arrayIndex
@@ -902,9 +947,8 @@ namespace C6
 
         public bool Find(ref T item)
         {
-            // TODO: Should this be required?
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is equal to Contains
@@ -923,13 +967,13 @@ namespace C6
         public bool FindOrAdd(ref T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // The collection contains the item
@@ -969,13 +1013,13 @@ namespace C6
         public bool Remove(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contained the item
@@ -994,13 +1038,13 @@ namespace C6
         public bool Remove(T item, out T removedItem)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contained the item
@@ -1023,13 +1067,13 @@ namespace C6
         public bool RemoveAll(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Returns true if the collection contained the item
@@ -1048,19 +1092,22 @@ namespace C6
         public void RemoveAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // TODO: Write ensures
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
 
 
             return;
@@ -1069,16 +1116,16 @@ namespace C6
         public void RetainAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
 
             // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null));
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
             // The collection is at most as big as the enumerable
@@ -1086,6 +1133,9 @@ namespace C6
 
             // The collection contains the same items as items, with a multiplicity equal or less
             Ensures(items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) <= group.Count()));
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
 
             // TODO: Ensure that the collection contains the right items
 
@@ -1126,7 +1176,7 @@ namespace C6
 
             // Result reflects whether they are unsequenced equal
             Ensures(Result<bool>() == this.UnsequenceEqual(otherCollection, EqualityComparer));
-            
+
             // If the collections have different unsequenced hash codes, then they must be non-equal
             Ensures((GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode()) || !Result<bool>());
 
@@ -1137,10 +1187,10 @@ namespace C6
         public bool Update(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is equal to whether the collection already contained the item
@@ -1162,10 +1212,10 @@ namespace C6
         public bool Update(T item, out T oldItem)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is equal to whether the collection already contained the item
@@ -1193,13 +1243,13 @@ namespace C6
         public bool UpdateOrAdd(T item)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // The collection contains the item
@@ -1220,13 +1270,13 @@ namespace C6
         public bool UpdateOrAdd(T item, out T oldItem)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // The collection contains the item

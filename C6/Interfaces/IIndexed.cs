@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractMessage;
+
 using SCG = System.Collections.Generic;
 
 
@@ -27,7 +29,7 @@ namespace C6
         /// <value>The number of items contained in the collection.</value>
         [Pure]
         new int Count { get; }
-        
+
         /// <summary>
         /// Gets a value characterizing the asymptotic complexity of
         /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
@@ -60,35 +62,39 @@ namespace C6
         /// <seealso cref="IList{T}.View"/>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
-        
+
         /// <summary>
         /// Searches from the beginning of the collection for the specified
         /// item and returns the zero-based index of the first occurrence
         /// within the collection. 
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns>The zero-based index of the first occurrence of item
         /// within the entire collection, if found; otherwise, the one's
         /// complement of the index at which <see cref="ICollection{T}.Add"/>
         /// would put the item.</returns>
         [Pure]
         int IndexOf(T item);
-        
+
         /// <summary>
         /// Searches from the end of the collection for the specified
         /// item and returns the zero-based index of the first occurrence
         /// within the collection.
         /// </summary>
         /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed for nullable items.</param>
+        /// <c>null</c> is allowed, if
+        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
         /// <returns>The zero-based index of the last occurrence of item within
         /// the entire collection, if found; otherwise, the one's complement of
         /// the index at which <see cref="ICollection{T}.Add"/> would put the
         /// item.</returns>
         [Pure]
         int LastIndexOf(T item);
-        
+
         /// <summary>
         /// Removes the item at the specified index of the collection.
         /// </summary>
@@ -112,7 +118,7 @@ namespace C6
         /// </list>
         /// </remarks>
         T RemoveAt(int index);
-        
+
         /// <summary>
         /// Remove all items in the specified index range.
         /// </summary>
@@ -179,11 +185,11 @@ namespace C6
         public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
         {
             // Argument must be within bounds
-            Requires(0 <= startIndex);
-            Requires(startIndex + count <= Count);
+            Requires(0 <= startIndex, ArgumentMustBeWithinBounds);
+            Requires(startIndex + count <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-negative
-            Requires(0 <= count);
+            Requires(0 <= count, ArgumentMustBeNonNegative);
 
 
             // Result has the same count
@@ -200,7 +206,7 @@ namespace C6
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is a valid index
@@ -217,11 +223,11 @@ namespace C6
 
             return default(int);
         }
-        
+
         public int LastIndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is a valid index
@@ -243,14 +249,14 @@ namespace C6
         public T RemoveAt(int index)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
-            
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= index);
-            Requires(index < Count);
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index < Count, ArgumentMustBeWithinBounds);
 
 
             // Result is the item previously at the specified index
@@ -268,21 +274,21 @@ namespace C6
 
             return default(T);
         }
-        
+
         public void RemoveIndexRange(int startIndex, int count)
         {
             // Collection must be non-read-only
-            Requires(!IsReadOnly);
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
             // Collection must be non-fixed-sized
-            Requires(!IsFixedSize);
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= startIndex);
-            Requires(startIndex + count < Count);
+            Requires(0 <= startIndex, ArgumentMustBeWithinBounds);
+            Requires(startIndex + count < Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-negative
-            Requires(0 <= count);
+            Requires(0 <= count, ArgumentMustBeNonNegative);
 
 
             // Only the items in the index range are removed

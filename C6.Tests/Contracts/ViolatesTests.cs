@@ -12,12 +12,21 @@ namespace C6.Tests.Contracts
     [TestFixture]
     public class ViolatesTests
     {
+        private static string UserMessage => "DhH4GjZT7z";
+
         [Test]
         public void Precondition_HasViolatedPrecondition_ViolatesPrecondition() =>
             Assert.That(HasViolatedPrecondition, Violates.Precondition);
 
         private static void HasViolatedPrecondition() =>
             Requires(false);
+
+        [Test]
+        public void Precondition_HasViolatedPreconditionWithUserMessage_ViolatesPrecondition() =>
+            Assert.That(HasViolatedPreconditionWithUserMessage, Violates.PreconditionSaying(UserMessage));
+
+        private static void HasViolatedPreconditionWithUserMessage() =>
+            Requires(false, UserMessage);
 
 
         [Test]
