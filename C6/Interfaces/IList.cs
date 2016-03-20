@@ -234,6 +234,11 @@ namespace C6
         /// items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is
         /// <c>true</c>.</param>
         /// <remarks>
+        /// <para>
+        /// If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.
+        /// </para>
+        /// <para>
         /// If any items are added, it raises the following events (in 
         /// that order) with the collection as sender:
         /// <list type="bullet">
@@ -250,6 +255,7 @@ namespace C6
         /// end.
         /// </description></item>
         /// </list>
+        /// </para>
         /// </remarks>
         void InsertAll(int index, SCG.IEnumerable<T> items);
 
@@ -864,6 +870,9 @@ namespace C6
 
 
             // TODO: Ensures
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
 
 
             return;

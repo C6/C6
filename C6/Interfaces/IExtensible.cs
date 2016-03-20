@@ -140,12 +140,14 @@ namespace C6
         /// <c>foreach (var item in coll) { coll.Add(item); }</c>, but might be
         /// more efficient and it only raises the event 
         /// <see cref="ICollectionValue{T}.CollectionChanged"/> once.</para>
+        /// <para>If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.</para>
         /// <para>If any items are added, it raises the following events (in 
         /// that order) with the collection as sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsAdded"/> once for each item 
-        /// added (using a count of one).
+        /// added (using a count of one) in enumeration order.
         /// </description></item>
         /// <item><description>
         /// <see cref="ICollectionValue{T}.CollectionChanged"/> once at the end.
@@ -280,7 +282,10 @@ namespace C6
             Ensures(ForAll(items, item => this.Contains(item, EqualityComparer)));
 
             // Count can never decrement
-            Ensures(items.Any() ? Count <= OldValue(Count) : Count == OldValue(Count));
+            Ensures(items.Any() ? Count >= OldValue(Count) : Count == OldValue(Count));
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
 
             // TODO: Make more exact check of added items
 

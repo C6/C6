@@ -128,8 +128,14 @@ namespace C6
         /// <returns><c>true</c> if all items in <paramref name="items"/> are
         /// in the collection; otherwise, <c>false</c>.</returns>
         /// <remarks>
+        /// <para>
         /// The collection's <see cref="IExtensible{T}.EqualityComparer"/>
         /// is used to determine item equality.
+        /// </para>
+        /// <para>
+        /// If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.
+        /// </para>
         /// </remarks>
         /// <seealso cref="Contains(T)"/>
         [Pure]
@@ -397,6 +403,10 @@ namespace C6
         /// to determine item equality.
         /// </para>
         /// <para>
+        /// If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.
+        /// </para>
+        /// <para>
         /// If any items are removed, it raises the following events (in that 
         /// order) with the collection as sender:
         /// <list type="bullet">
@@ -427,6 +437,10 @@ namespace C6
         /// between the original collection and the specified collection.</para>
         /// <para>The collection's <see cref="IExtensible{T}.EqualityComparer"/>
         /// is used to determine item equality.</para>
+        /// <para>
+        /// If the enumerable throws an exception during enumeration, the
+        /// collection remains unchanged.
+        /// </para>
         /// <para>
         /// If any items are removed, it raises the following events (in that 
         /// order) with the collection as sender:
@@ -893,6 +907,9 @@ namespace C6
             // The collection contains the same items as items, with a multiplicity equal or greater
             Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) >= group.Count()));
 
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+
 
             return default(bool);
         }
@@ -1089,6 +1106,9 @@ namespace C6
 
             // TODO: Write ensures
 
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+
 
             return;
         }
@@ -1113,6 +1133,9 @@ namespace C6
 
             // The collection contains the same items as items, with a multiplicity equal or less
             Ensures(items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) <= group.Count()));
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
 
             // TODO: Ensure that the collection contains the right items
 
