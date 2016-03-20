@@ -67,6 +67,8 @@ namespace C6
         {
             #region Code Contracts
 
+            // ReSharper disable InvocationIsSkipped
+
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
 
@@ -78,6 +80,8 @@ namespace C6
 
             // The specified enumerable is not equal to the array saved
             Ensures(!ReferenceEquals(items, _items));
+
+            // ReSharper restore InvocationIsSkipped
 
             #endregion
 
@@ -93,11 +97,15 @@ namespace C6
         {
             #region Code Contracts
 
+            // ReSharper disable InvocationIsSkipped
+
             // Argument must be non-negative
             Requires(0 <= capacity, ArgumentMustBeNonNegative);
 
             // Value types cannot be null
             Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
+
+            // ReSharper restore InvocationIsSkipped
 
             #endregion
 
