@@ -170,7 +170,7 @@ namespace C6.Tests
 
         #endregion
 
-        #region Contains
+        #region Contains(T)
 
         [Test]
         public void Contains_DisallowNullContainsNull_ViolatesPrecondition()
