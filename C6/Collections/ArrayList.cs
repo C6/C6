@@ -204,10 +204,7 @@ namespace C6
             RaiseForClear(oldCount);
         }
 
-        public bool Contains(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public bool Contains(T item) => IndexOfPrivate(item) >= 0;
 
         public bool ContainsAll(SCG.IEnumerable<T> items)
         {
@@ -480,6 +477,36 @@ namespace C6
             }
 
             Capacity = capacity;
+        }
+        private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
+
+        // TODO: Inline in IndexOf
+        private int IndexOfPrivate(T item)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null);
+
+
+            // TODO: Add contract to IList<T>.IndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.Skip(Result<int>()).First()));
+
+            #endregion
+
+            for (var i = 0; i < Count; i++) {
+                if (Equals(item, _items[i])) {
+                    return i;
+                }
+            }
+
+            return ~Count;
         }
 
         // TODO: Rename?

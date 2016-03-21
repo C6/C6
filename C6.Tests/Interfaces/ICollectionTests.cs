@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Linq;
 
 using C6.Tests.Collections;
 using C6.Tests.Contracts;
@@ -16,6 +15,7 @@ using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
+
 
 namespace C6.Tests
 {
@@ -141,7 +141,7 @@ namespace C6.Tests
             var count = GetCount(Random);
             var items = GetStrings(Random, count);
             var collection = GetCollection(items);
-            var expectedEvents = new []{
+            var expectedEvents = new[] {
                 Cleared(true, count, null, collection),
                 Changed(collection),
             };
@@ -166,6 +166,140 @@ namespace C6.Tests
             Run.If(IsFixedSize);
 
             Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region Contains
+
+        [Test]
+        public void Contains_DisallowNullContainsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.Contains(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void Contains_AllowNullContainsNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+
+            // Act
+            var contains = collection.Contains(null);
+
+            // Assert
+            Assert.That(contains, Is.True);
+        }
+
+        [Test]
+        public void Contains_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+
+            // Act
+            var contains = collection.Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void Contains_SingleItemCollectionNonDuplicateItem_False()
+        {
+            // Arrange
+            var item = GetUppercaseString(Random);
+            var itemArray = new[] { item };
+            var collection = GetCollection(itemArray);
+            var nonDuplicateItem = item.ToLower();
+
+            // Act
+            var contains = collection.Contains(nonDuplicateItem);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void Contains_SingleItemCollectionDuplicateItem_True()
+        {
+            // Arrange
+            var item = GetUppercaseString(Random);
+            var itemArray = new[] { item };
+            var collection = GetCollection(itemArray, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = item.ToLower();
+
+            // Act
+            var contains = collection.Contains(duplicateItem);
+
+            // Assert
+            Assert.That(contains, Is.True);
+        }
+
+        [Test]
+        public void Contains_SingleItemCollectionReferenceInequalItem_False()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var collection = GetCollection(itemArray, ReferenceEqualityComparer);
+            var nonDuplicateItem = string.Copy(item);
+
+            // Act
+            var contains = collection.Contains(nonDuplicateItem);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void Contains_RandomCollectionNonContainedItem_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, ReferenceEqualityComparer);
+            var item = Random.GetString();
+
+            // Act
+            var contains = collection.Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void Contains_RandomCollectionContainedItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random).ToLower();
+
+            // Act
+            var contains = collection.Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.True);
+        }
+
+        [Test]
+        public void Contains_RandomCollectionNonContainedItem_True()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var item = string.Copy(items.Choose(Random));
+
+            // Act
+            var contains = collection.Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.False);
         }
 
         #endregion
