@@ -214,8 +214,7 @@ namespace C6
         // TODO: Test performance?
         public int ContainsCount(T item) => _items.Take(Count).Count(x => Equals(x, item));
 
-        public void CopyTo(T[] array, int arrayIndex)
-            => Array.Copy(_items, 0, array, arrayIndex, Count);
+        public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
         public bool Find(ref T item)
         {
@@ -417,15 +416,9 @@ namespace C6
 
         #region Explicit Implementations
 
-        void SCG.ICollection<T>.Add(T item)
-        {
-            throw new NotImplementedException();
-        }
+        void SCG.ICollection<T>.Add(T item) => Add(item);
 
-        SC.IEnumerator SC.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 
@@ -481,6 +474,7 @@ namespace C6
 
             Capacity = capacity;
         }
+
         private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
 
         // TODO: Inline in IndexOf
@@ -553,34 +547,22 @@ namespace C6
         #region Invoking Methods
 
         private void RaiseCollectionChanged()
-        {
-            _collectionChanged?.Invoke(this, EventArgs.Empty);
-        }
+            => _collectionChanged?.Invoke(this, EventArgs.Empty);
 
         private void RaiseCollectionCleared(bool full, int count, int? start = null)
-        {
-            _collectionCleared?.Invoke(this, new ClearedEventArgs(full, count, start));
-        }
+            => _collectionCleared?.Invoke(this, new ClearedEventArgs(full, count, start));
 
         private void RaiseItemsAdded(T item, int count)
-        {
-            _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, count));
-        }
+            => _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, count));
 
         private void RaiseItemsRemoved(T item, int count)
-        {
-            _itemsRemoved?.Invoke(this, new ItemCountEventArgs<T>(item, count));
-        }
+            => _itemsRemoved?.Invoke(this, new ItemCountEventArgs<T>(item, count));
 
         private void RaiseItemInserted(T item, int index)
-        {
-            _itemInserted?.Invoke(this, new ItemAtEventArgs<T>(item, index));
-        }
+            => _itemInserted?.Invoke(this, new ItemAtEventArgs<T>(item, index));
 
         private void RaiseItemRemovedAt(T item, int index)
-        {
-            _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
-        }
+            => _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
 
         #endregion
 
