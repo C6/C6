@@ -211,10 +211,8 @@ namespace C6
             throw new NotImplementedException();
         }
 
-        public int ContainsCount(T item)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Test performance?
+        public int ContainsCount(T item) => _items.Take(Count).Count(x => Equals(x, item));
 
         public void CopyTo(T[] array, int arrayIndex)
             => Array.Copy(_items, 0, array, arrayIndex, Count);

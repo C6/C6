@@ -15,6 +15,7 @@ using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
+using KVP = C6.KeyValuePair<int, int>;
 
 
 namespace C6.Tests
@@ -304,6 +305,83 @@ namespace C6.Tests
 
         #endregion
 
+        #region ContainsCount(T)
+
+        [Test]
+        public void ContainsCount_DisallowsNullContainsCountNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.ContainsCount(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void ContainsCount_EmptyCollection_Zero()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+
+            // Act
+            var containsCount = collection.ContainsCount(item);
+
+            // Assert
+            Assert.That(containsCount, Is.Zero);
+        }
+
+        [Test]
+        public void ContainsCount_RandomCollectionWithCountEqualItems_Count()
+        {
+            // Arrange
+            var item = GetLowercaseString(Random);
+            var count = GetCount(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var containsCount = collection.ContainsCount(item);
+
+            // Assert
+            Assert.That(containsCount, Is.EqualTo(count));
+        }
+
+        [Test]
+        public void ContainsCount_ValueTypeCollectionWithCountEqualItems_Count()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var equalityComparer = KeyEqualityComparer<int, int>();
+            var items = GetKeyValuePairs(Random);
+            var item = items.DifferentItem(() => new KVP(Random.Next()), equalityComparer);
+            items = items.WithRepeatedItem(() => new KVP(item.Key, Random.Next()), count, Random);
+            var collection = GetCollection(items, equalityComparer);
+
+            // Act
+            var containsCount = collection.ContainsCount(item);
+
+            // Assert
+            Assert.That(containsCount, Is.EqualTo(count));
+        }
+
+        [Test]
+        public void ContainsCount_AllowsNull_Two()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            collection.Add(null);
+
+            // Act
+            var containsCount = collection.ContainsCount(null);
+
+            // Assert
+            Assert.That(containsCount, Is.EqualTo(2));
+        }
+
+        #endregion
+
         #region Find(ref T)
 
         [Test]
@@ -398,7 +476,7 @@ namespace C6.Tests
             Assert.That(find, Is.False);
             Assert.That(refItem, Is.SameAs(item));
         }
-        
+
         [Test]
         public void Find_ValueTypeCollectionNonContainedItem_False()
         {
@@ -415,7 +493,7 @@ namespace C6.Tests
             Assert.That(find, Is.False);
             Assert.That(refItem, Is.EqualTo(item));
         }
-        
+
         [Test]
         public void Find_ValueTypeCollectionContainedItem_True()
         {

@@ -70,5 +70,13 @@ namespace C6.Tests.Helpers
             }
             return item;
         }
+
+        public static T[] WithRepeatedItem<T>(this SCG.IEnumerable<T> items, Func<T> item, int count, Random random)
+        {
+            var repeatedItem = Enumerable.Range(0, count).Select(i => item());
+            var array = items.Concat(repeatedItem).ToArray();
+            array.Shuffle(random);
+            return array;
+        }
     }
 }
