@@ -149,6 +149,7 @@
     <Compile Include="Helpers\CollectionEventHolder.cs" />
     <Compile Include="Helpers\Is.cs" />
     <Compile Include="Helpers\TestHelper.cs" />
+    <Compile Include="Interfaces\ICollectionTests.cs" />
     <Compile Include="Structs\KeyValuePairTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Contracts\TestFailureMethods.cs" />
