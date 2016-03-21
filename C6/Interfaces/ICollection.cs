@@ -1000,6 +1000,9 @@ namespace C6
             // Removing the item decreases the number of equal items by one
             Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) - (Result<bool>() ? 1 : 0));
 
+            // If collection doesn't allow duplicates, the collection no more contains the item
+            Ensures(AllowsDuplicates || !Contains(item));
+
 
             return default(bool);
         }
@@ -1027,6 +1030,9 @@ namespace C6
 
             // If an item was removed, the removed item equals the item to remove; otherwise, it equals the default value of T
             Ensures(EqualityComparer.Equals(ValueAtReturn(out removedItem), Result<bool>() ? item : default(T)));
+
+            // If collection doesn't allow duplicates, the collection no more contains the item
+            Ensures(AllowsDuplicates || !Contains(item));
 
 
             removedItem = default(T);
