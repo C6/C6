@@ -126,10 +126,7 @@ namespace C6
 
         public bool AllowsNull { get; }
 
-        public Speed ContainsSpeed
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Speed ContainsSpeed => Speed.Linear;
 
         public int Count { get; private set; }
 

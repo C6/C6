@@ -60,6 +60,23 @@ namespace C6.Tests
 
         #region Properties
 
+        #region ContainsSpeed
+
+        [Test]
+        public void ContainsSpeed_RandomCollection_ContainsSpeed()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act
+            var containsSpeed = collection.ContainsSpeed;
+
+            // Assert
+            Assert.That(containsSpeed, Is.EqualTo(ContainsSpeed));
+        }
+
+        #endregion
+
         #endregion
 
         #region Methods
