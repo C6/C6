@@ -150,6 +150,24 @@ namespace C6.Tests
             Assert.That(() => collection.Clear(), _Is.Raising(expectedEvents).For(collection));
         }
 
+        [Test]
+        [Category("Unfinished")]
+        public void Clear_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Clear_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
         #endregion
 
         #endregion

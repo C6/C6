@@ -841,10 +841,17 @@ namespace C6
 
         public void Clear()
         {
-            // No additional preconditions allowed
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
 
-            // No postconditions
+            // The collection becomes empty
+            Ensures(IsEmpty);
+            Ensures(Count == 0);
+            Ensures(!this.Any());
 
 
             return;
