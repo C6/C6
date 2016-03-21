@@ -35,8 +35,6 @@ namespace C6.Tests.Collections
 
         #region Helpers
 
-        private IExtensible<T> GetExtensible<T>(params T[] array) => GetExtensible((SCG.IEnumerable<T>) array);
-
         private IExtensible<int> GetIntExtensible(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetIntegers(random, GetCount(random)), equalityComparer, allowsNull);
 
