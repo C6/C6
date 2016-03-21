@@ -192,7 +192,19 @@ namespace C6
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+
+            if (IsEmpty) {
+                return;
+            }
+
+            var oldCount = Count;
+
+            _items = EmptyArray;
+            Count = 0;
+
+            _collectionCleared?.Invoke(this, new ClearedEventArgs(true, oldCount));
+            _collectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public bool Contains(T item)

@@ -58,7 +58,84 @@ namespace C6.Tests
 
         #region Test Methods
 
+        #region Properties
 
+        #endregion
+
+        #region Methods
+
+        #region Clear
+
+        [Test]
+        public void Clear_EmptyCollection_IsEmpty()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+
+            // Act
+            collection.Clear();
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Clear_SingleItem_IsEmpty()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var collection = GetCollection(itemArray);
+
+            // Act
+            collection.Clear();
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Clear_RandomCollection_IsEmpty()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act
+            collection.Clear();
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Clear_EmptyCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.Clear(), Is.Not.RaisingEventsFor(collection));
+        }
+
+        [Test]
+        public void Clear_RandomCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var items = GetStrings(Random, count);
+            var collection = GetCollection(items);
+            var expectedEvents = new []{
+                Cleared(true, count, null, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Clear(), _Is.Raising(expectedEvents).For(collection));
+        }
+
+        #endregion
+
+        #endregion
 
         #endregion
     }
