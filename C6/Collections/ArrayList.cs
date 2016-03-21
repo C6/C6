@@ -192,6 +192,7 @@ namespace C6
 
         public void Clear()
         {
+            // TODO: Update version only when we actually do something?
             UpdateVersion();
 
             if (IsEmpty) {
@@ -203,8 +204,7 @@ namespace C6
             _items = EmptyArray;
             Count = 0;
 
-            _collectionCleared?.Invoke(this, new ClearedEventArgs(true, oldCount));
-            _collectionChanged?.Invoke(this, EventArgs.Empty);
+            RaiseForClear(oldCount);
         }
 
         public bool Contains(T item)
@@ -572,6 +572,12 @@ namespace C6
                     RaiseItemsAdded(item, 1);
                 }
             }
+            RaiseCollectionChanged();
+        }
+
+        private void RaiseForClear(int count)
+        {
+            RaiseCollectionCleared(true, count);
             RaiseCollectionChanged();
         }
 
