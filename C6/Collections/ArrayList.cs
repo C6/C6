@@ -221,7 +221,12 @@ namespace C6
 
         public bool Find(ref T item)
         {
-            throw new NotImplementedException();
+            var i = IndexOfPrivate(item);
+            if (i >= 0) {
+                item = _items[i];
+                return true;
+            }
+            return false;
         }
 
         public bool FindOrAdd(ref T item)

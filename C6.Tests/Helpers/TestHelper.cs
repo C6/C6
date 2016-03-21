@@ -23,6 +23,12 @@ namespace C6.Tests.Helpers
         public static int[] GetIntegers(Random random, int count)
             => Enumerable.Range(0, count).Select(i => random.Next()).ToArray();
 
+        public static KeyValuePair<int, int>[] GetKeyValuePairs(Random random)
+            => GetKeyValuePairs(random, GetCount(random));
+
+        public static KeyValuePair<int, int>[] GetKeyValuePairs(Random random, int count)
+            => Enumerable.Range(0, count).Select(i => new KeyValuePair<int, int>(random.Next(), random.Next())).ToArray();
+
         public static string[] GetStrings(Randomizer random)
             => GetStrings(random, GetCount(random));
 
@@ -48,8 +54,21 @@ namespace C6.Tests.Helpers
 
         public static SCG.IEqualityComparer<string> ReferenceEqualityComparer => ComparerFactory.CreateReferenceEqualityComparer<string>();
 
+        public static SCG.IEqualityComparer<KeyValuePair<TKey, TValue>> KeyEqualityComparer<TKey, TValue>() => ComparerFactory.CreateEqualityComparer<KeyValuePair<TKey, TValue>>((x, y) => x.Key.Equals(y.Key), x => x.Key.GetHashCode());
+
         public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
 
         public static BadEnumerable<T> AsBadEnumerable<T>(this SCG.IEnumerable<T> enumerable) => new BadEnumerable<T>(enumerable);
+
+        public static T DifferentItem<T>(this SCG.IEnumerable<T> items, Func<T> newItem, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            var item = newItem();
+            while (items.Contains(item, equalityComparer)) {
+                item = newItem();
+            }
+            return item;
+        }
     }
 }

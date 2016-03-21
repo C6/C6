@@ -304,6 +304,139 @@ namespace C6.Tests
 
         #endregion
 
+        #region Find(ref T)
+
+        [Test]
+        public void Find_DisallowsNullFindNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+            string item = null;
+
+            // Act & Assert
+            Assert.That(() => collection.Find(ref item), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void Find_AllowsNullContainsNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            string item = null;
+
+            // Act
+            var find = collection.Find(ref item);
+
+            // Assert
+            Assert.That(find, Is.True);
+            Assert.That(item, Is.Null);
+        }
+
+        [Test]
+        public void Find_AllowsNullContainsNoNull_False()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            string item = null;
+
+            // Act
+            var find = collection.Find(ref item);
+
+            // Assert
+            Assert.That(find, Is.False);
+            Assert.That(item, Is.Null);
+        }
+
+        [Test]
+        public void Find_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+            var refItem = item;
+
+            // Act
+            var find = collection.Find(ref refItem);
+
+            // Assert
+            Assert.That(find, Is.False);
+            Assert.That(refItem, Is.SameAs(item));
+        }
+
+        [Test]
+        public void Find_RandomCollectionDuplicateItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random);
+            var refItem = item.ToLower();
+
+            // Act
+            var find = collection.Find(ref refItem);
+
+            // Assert
+            Assert.That(find, Is.True);
+            Assert.That(refItem, Is.SameAs(item));
+        }
+
+        [Test]
+        public void Find_RandomCollectionNonDuplicateItem_False()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var item = string.Copy(items.Choose(Random));
+            var refItem = item;
+
+            // Act
+            var find = collection.Find(ref refItem);
+
+            // Assert
+            Assert.That(find, Is.False);
+            Assert.That(refItem, Is.SameAs(item));
+        }
+        
+        [Test]
+        public void Find_ValueTypeCollectionNonContainedItem_False()
+        {
+            // Arrange
+            var items = GetKeyValuePairs(Random);
+            var collection = GetCollection(items, KeyEqualityComparer<int, int>());
+            var item = items.DifferentItem(() => new KeyValuePair<int, int>(Random.Next(), Random.Next()));
+            var refItem = item;
+
+            // Act
+            var find = collection.Find(ref refItem);
+
+            // Assert
+            Assert.That(find, Is.False);
+            Assert.That(refItem, Is.EqualTo(item));
+        }
+        
+        [Test]
+        public void Find_ValueTypeCollectionContainedItem_True()
+        {
+            // Arrange
+            var items = GetKeyValuePairs(Random);
+            var collection = GetCollection(items, KeyEqualityComparer<int, int>());
+            var item = items.Choose(Random);
+            var refItem = new KeyValuePair<int, int>(item.Key, ~item.Value);
+
+            // Act
+            var find = collection.Find(ref refItem);
+
+            // Assert
+            Assert.That(find, Is.True);
+            Assert.That(refItem, Is.EqualTo(item));
+        }
+
+        // TODO
+
+        #endregion
+
         #endregion
 
         #endregion

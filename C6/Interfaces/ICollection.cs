@@ -923,11 +923,14 @@ namespace C6
             // Result is equal to Contains
             Ensures(Result<bool>() == Contains(item));
 
+            // Item doesn't change if item is not found
+            Ensures(Result<bool>() || Equals(item, ValueAtReturn(out item)));
+
             // Ref parameter always equals itself
-            Ensures(EqualityComparer.Equals(item, ValueAtReturn(out item))); // TODO: Test that this actually catches mistakes - try returning default(T)
+            Ensures(EqualityComparer.Equals(item, ValueAtReturn(out item)));
 
             // If a non-value type instance is found and returned, it must come from the collection
-            Ensures(typeof(T).IsValueType || !Result<bool>() || this.Contains(ValueAtReturn(out item), ComparerFactory.CreateReferenceEqualityComparer<T>())); // TODO: Test that this actually catches mistakes - try returning default(T)
+            Ensures(typeof(T).IsValueType || !Result<bool>() || this.Contains(ValueAtReturn(out item), ComparerFactory.CreateReferenceEqualityComparer<T>()));
 
 
             return default(bool);
