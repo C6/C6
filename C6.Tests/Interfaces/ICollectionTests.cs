@@ -303,6 +303,15 @@ namespace C6.Tests
             Assert.That(contains, Is.False);
         }
 
+        [Test]
+        [Category("Unfinished")]
+        public void Contains_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
         #endregion
 
         #region ContainsCount(T)
@@ -378,6 +387,15 @@ namespace C6.Tests
 
             // Assert
             Assert.That(containsCount, Is.EqualTo(2));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void ContainsCount_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
         }
 
         #endregion
@@ -511,9 +529,20 @@ namespace C6.Tests
             Assert.That(refItem, Is.EqualTo(item));
         }
 
+        [Test]
+        [Category("Unfinished")]
+        public void Find_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
         // TODO
 
         #endregion
+
+
 
         #endregion
 

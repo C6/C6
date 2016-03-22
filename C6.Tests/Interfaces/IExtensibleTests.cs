@@ -321,6 +321,15 @@ namespace C6.Tests.Collections
             Assert.Fail("Tests have not been written yet");
         }
 
+        [Test]
+        [Category("Unfinished")]
+        public void Add_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
         #endregion
 
         #region AddAll(IEnumerable<T>)
@@ -491,6 +500,15 @@ namespace C6.Tests.Collections
         public void AddAll_FixedSizeCollection_Fail()
         {
             Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void AddAll_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
 
             Assert.Fail("Tests have not been written yet");
         }
