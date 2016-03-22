@@ -189,7 +189,7 @@ namespace C6
 
         public void Clear()
         {
-            // TODO: Update version only when we actually do something?
+            // TODO: Update version only when we actually do something? Probably not a real issue here, but still worth deciding
             UpdateVersion();
 
             if (IsEmpty) {
@@ -234,8 +234,7 @@ namespace C6
         public SCG.IEnumerator<T> GetEnumerator()
         {
             var version = _version;
-            for (var i = 0; i < Count; i++) {
-                CheckVersion(version);
+            for (var i = 0; CheckVersion(version) & i < Count; i++) {
                 yield return _items[i];
             }
         }
@@ -535,11 +534,13 @@ namespace C6
 
         private void UpdateVersion() => _version++;
 
-        private void CheckVersion(int version)
+        private bool CheckVersion(int version)
         {
             if (version != _version) {
                 throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
             }
+
+            return true;
         }
 
         #region Event Helpers

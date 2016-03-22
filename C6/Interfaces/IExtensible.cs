@@ -53,7 +53,6 @@ namespace C6
         bool DuplicatesByCounting { get; }
 
         // TODO: wonder where the right position of this is. And the semantics. Should at least be in the same class as AllowsDuplicates!
-        // TODO: Could the result be null?
         /// <summary>
         /// Gets the <see cref="SCG.IEqualityComparer{T}"/> used by the collection.
         /// </summary>
@@ -168,6 +167,9 @@ namespace C6
         {
             get
             {
+                // No preconditions
+
+
                 // A set only contains distinct items // TODO: Is this the right place to put it?
                 Ensures(Result<bool>() || Count == this.Distinct(EqualityComparer).Count());
 
@@ -183,8 +185,9 @@ namespace C6
                 // No preconditions
 
 
+                // TODO: Why isn't the default false? It doesn't keep a count in the set.
                 // True by convention for collections with set semantics
-                Ensures(AllowsDuplicates || Result<bool>()); // TODO: Replace with Requires(AllowsDuplicates)? Update documentation accordingly!
+                Ensures(AllowsDuplicates || Result<bool>());
 
 
                 return default(bool);

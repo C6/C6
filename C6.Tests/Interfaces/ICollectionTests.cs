@@ -152,6 +152,21 @@ namespace C6.Tests
         }
 
         [Test]
+        public void Clear_ClearDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Clear();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
         [Category("Unfinished")]
         public void Clear_ReadOnlyCollection_Fail()
         {

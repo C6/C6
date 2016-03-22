@@ -293,10 +293,10 @@ namespace C6.Tests.Collections
             // Arrange
             var collection = GetStringExtensible(Random);
             var item = Random.GetString();
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
 
             // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
             collection.Add(item);
 
             // Assert
