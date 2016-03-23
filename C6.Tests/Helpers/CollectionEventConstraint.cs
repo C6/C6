@@ -69,16 +69,13 @@ namespace C6.Tests.Helpers
 
         private bool IsSuccess()
         {
-            // TODO: Find a better solution for this
-            var equalityComparer = (_collection as IExtensible<T>)?.EqualityComparer ?? SCG.EqualityComparer<T>.Default;
-
             var i = 0;
             foreach (var expectedEvent in _expectedEvents) {
                 if (i >= _actualEvents.Count) {
                     Assert.Fail($"Event number {i} did not happen:\n expected {expectedEvent}");
                 }
 
-                if (!expectedEvent.Equals(_actualEvents[i], equalityComparer)) {
+                if (!expectedEvent.Equals(_actualEvents[i])) {
                     Assert.Fail($"Event number {i}:\n expected {expectedEvent}\n but saw {_actualEvents[i]}");
                 }
 
