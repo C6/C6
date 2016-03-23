@@ -293,7 +293,21 @@ namespace C6
 
         public bool Update(T item)
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+
+            var i = IndexOfPrivate(item);
+            if (i >= 0) {
+                // TODO: Place version update here?
+
+                var oldItem = _items[i];
+                _items[i] = item;
+
+                RaiseForUpdate(item, oldItem);
+
+                return true;
+            }
+
+            return false;
         }
 
         public bool Update(T item, out T oldItem)
@@ -588,6 +602,13 @@ namespace C6
         private void RaiseForClear(int count)
         {
             RaiseCollectionCleared(true, count);
+            RaiseCollectionChanged();
+        }
+
+        private void RaiseForUpdate(T item, T oldItem)
+        {
+            RaiseItemsRemoved(oldItem, 1);
+            RaiseItemsAdded(item, 1);
             RaiseCollectionChanged();
         }
 

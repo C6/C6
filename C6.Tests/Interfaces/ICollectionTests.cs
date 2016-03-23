@@ -2,6 +2,7 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Linq;
 
 using C6.Tests.Collections;
 using C6.Tests.Contracts;
@@ -557,7 +558,197 @@ namespace C6.Tests
 
         #endregion
 
+        #region Update(T)
 
+        // TODO: Test that the proper item is replaced (based on IsFifo) when several exist
+
+        [Test]
+        public void Update_DisallowsNullUpdateNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.Update(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void Update_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+
+            // Act
+            var update = collection.Update(item);
+
+            // Assert
+            Assert.That(update, Is.False);
+        }
+
+        [Test]
+        public void Update_RandomCollectionUpdateNonContainedItem_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var update = collection.Update(item);
+
+            // Assert
+            Assert.That(update, Is.False);
+        }
+
+        [Test]
+        public void Update_RandomCollectionUpdateContainedItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random).ToLower();
+
+            // Act
+            var update = collection.Update(item);
+
+            // Assert
+            Assert.That(update, Is.True);
+        }
+
+        [Test]
+        public void Update_RandomCollectionUpdateContainedItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var oldItem = items.Choose(Random);
+            var item = oldItem.ToLower();
+            var expectedEvents = new[] {
+                Removed(oldItem, 1, collection),
+                Added(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Update(item), _Is.Raising(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void Update_IntegerCollectionUpdateContainedItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = new[] { 4, 54, 56, 8 };
+            var collection = GetCollection(items, TenEqualityComparer.Default);
+            var count = collection.AllowsDuplicates && collection.DuplicatesByCounting ? 2 : 1;
+            var item = 53;
+            var expectedEvents = new[] {
+                Removed(54, count, collection),
+                Added(item, count, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Update(item), _Is.Raising(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void Update_RandomCollectionUpdateNonContainedItem_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.Update(item), Is.Not.RaisingEventsFor(collection));
+        }
+
+        [Test]
+        public void Update_DuplicateItemCollection_ReplacesOneItem()
+        {
+            // TODO
+            // Arrange
+            var count = GetCount(Random);
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var update = collection.Update(item);
+
+            // Assert
+            Assert.That(update, Is.True);
+        }
+
+        [Test]
+        public void Update_RandomCollectionUpdateFirstItem_Updated()
+        {
+            // Arrange
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random);
+            items[0] = item;
+            var collection = GetCollection(items);
+                
+            // Act
+            var update = collection.Update(item);
+
+            // Assert
+            Assert.That(update, Is.True);
+        }
+
+        [Test]
+        public void Update_UpdateItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Update(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.TypeOf<InvalidOperationException>());
+        }
+
+        // TODO: Null
+        // TODO: Simple type, properly replaced
+        // TODO: Events
+
+        // TODO: Proper item replaced based on FIFO
+
+        [Test]
+        [Category("Unfinished")]
+        public void Update_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Update_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Update_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
 
         #endregion
 

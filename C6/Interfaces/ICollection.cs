@@ -869,8 +869,7 @@ namespace C6
 
             return default(bool);
         }
-
-
+        
         public bool ContainsAll(SCG.IEnumerable<T> items)
         {
             // Argument must be non-null
@@ -963,6 +962,8 @@ namespace C6
 
         public int GetUnsequencedHashCode()
         {
+            // TODO
+
             return default(int);
         }
 
@@ -1180,6 +1181,9 @@ namespace C6
             // Count remains unchanged
             Ensures(Count == OldValue(Count));
 
+            // If the item is updated, the item is in the collection
+            Ensures(!Result<bool>() || this.Contains(item, null)); // null: use the items's own Equal() method
+
             // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
 
 
@@ -1212,6 +1216,9 @@ namespace C6
 
             // Old value is non-null
             Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out oldItem) != null);
+
+            // Result came from the collection
+            Ensures(OldValue(this.ToList()).Contains(ValueAtReturn(out item)));
 
 
             oldItem = default(T);

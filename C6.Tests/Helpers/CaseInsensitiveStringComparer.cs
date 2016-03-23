@@ -12,13 +12,13 @@ namespace C6.Tests.Helpers
 
         public static CaseInsensitiveStringComparer Default => new CaseInsensitiveStringComparer();
 
-
         public int GetHashCode(string item) => ToLower(item).GetHashCode();
 
         public bool Equals(string x, string y) => ToLower(x).Equals(ToLower(y));
 
+        // ReSharper disable once StringCompareToIsCultureSpecific
         public int Compare(string x, string y) => ToLower(x).CompareTo(ToLower(y));
 
-        private string ToLower(string item) => (item ?? string.Empty).ToLower();
+        private string ToLower(string item) => item?.ToLower() ?? string.Empty;
     }
 }
