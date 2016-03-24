@@ -171,27 +171,7 @@ namespace C6
 
             return;
         }
-
-        #region Hardened Postconditions
-
-        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public EventTypes ListenableEvents
-        {
-            get
-            {
-                // No additional preconditions allowed
-
-
-                // The events raised by the collection must be listenable
-                Ensures(Result<EventTypes>().HasFlag(Changed | Added | Removed | Inserted | RemovedAt));
-
-
-                return default(EventTypes);
-            }
-        }
-
-        #endregion
-
+        
         // ReSharper restore InvocationIsSkipped
 
         #region Non-Contract Methods
@@ -217,6 +197,7 @@ namespace C6
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();

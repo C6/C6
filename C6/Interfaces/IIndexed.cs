@@ -59,7 +59,6 @@ namespace C6
         /// <c>coll.Skip(startIndex).Take(count)</c>, but potentially much
         /// faster.
         /// </remarks>
-        /// <seealso cref="IList{T}.View"/>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
 

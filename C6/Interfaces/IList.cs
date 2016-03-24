@@ -1285,6 +1285,7 @@ namespace C6
 
         #region SCG.ICollection<T>
 
+        // TODO: Add Ensures(this.Last().Equals(item)) (does it work with null?)
         void SCG.ICollection<T>.Add(T item) {}
         void SCG.IList<T>.Insert(int index, T item) {}
 

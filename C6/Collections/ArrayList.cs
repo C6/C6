@@ -150,15 +150,10 @@ namespace C6
 
         public bool Add(T item)
         {
-            #region Code Contracts
-
-            // Item is added to the end
-            // TODO: Fails when item is null: Ensures(this.Last().Equals(item));
-
-            #endregion
-
             UpdateVersion();
+
             InsertPrivate(Count, item);
+
             RaiseForAdd(item);
             return true;
         }
@@ -488,9 +483,11 @@ namespace C6
             Capacity = capacity;
         }
 
+        [Pure]
         private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
 
         // TODO: Inline in IndexOf
+        [Pure]
         private int IndexOfPrivate(T item)
         {
             #region Code Contracts
