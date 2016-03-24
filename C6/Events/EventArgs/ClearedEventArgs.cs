@@ -17,7 +17,6 @@ namespace C6
     /// <see cref="ICollectionValue{T}.CollectionCleared"/> event.
     /// </summary>
     [Serializable]
-    [DebuggerDisplay("(ClearedEventArgs {Count} {Full})")] // TODO: format appropriately
     public class ClearedEventArgs : EventArgs
     {
         [ContractInvariantMethod]
@@ -92,5 +91,7 @@ namespace C6
         /// otherwise, <c>null</c>.</value>
         [Pure]
         public int? Start { get; }
+
+        public override string ToString() => $"{Count} {(Count == 1 ? "item" : "items")} {(Start.HasValue ? $" starting at index {Start.Value}" : "")} ({(Full ? "full" : "range")})"; // $"(ClearedEventArgs {Count} {Full})"
     }
 }

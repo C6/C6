@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 using SCG = System.Collections.Generic;
@@ -20,7 +19,6 @@ namespace C6
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [Serializable]
-    [DebuggerDisplay("(ItemCountEventArgs {Count} '{Item}')")] // TODO: format appropriately
     public class ItemCountEventArgs<T> : EventArgs
     {
         [ContractInvariantMethod]
@@ -79,5 +77,8 @@ namespace C6
         /// </summary>
         /// <value>The item added or removed from the collection.</value>
         public T Item { get; }
+
+
+        public override string ToString() => $"'{Item}' {Count} {(Count == 1 ? "time" : "times")}"; // $"(ItemCountEventArgs {Count} '{Item}')"
     }
 }

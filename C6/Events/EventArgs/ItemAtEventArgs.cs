@@ -20,7 +20,6 @@ namespace C6
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [Serializable]
-    [DebuggerDisplay("(ItemAtEventArgs {Index} '{Item}')")] // TODO: format appropriately
     public class ItemAtEventArgs<T> : EventArgs
     {
         [ContractInvariantMethod]
@@ -73,5 +72,8 @@ namespace C6
         /// </summary>
         /// <value>The index at which the item was inserted or removed.</value>
         public int Index { get; }
+
+        public override string ToString() => $"'{Item}' at index {Index}"; // $"(ItemAtEventArgs {Index} '{Item}')"
+
     }
 }

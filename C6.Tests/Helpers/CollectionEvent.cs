@@ -85,7 +85,7 @@ namespace C6.Tests.Helpers
             }
         }
 
-        public override string ToString() => $"Event: {_eventType}, Arguments : {_eventArgs}, Sender : {_sender}";
+        public override string ToString() => $"{_eventType} {_eventArgs} from {_sender}";
     }
 
 
