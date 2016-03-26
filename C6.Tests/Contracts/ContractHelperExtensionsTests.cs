@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Linq;
 
+using C6.Contracts;
 using C6.Tests.Collections;
 
 using NUnit.Framework;

@@ -9,11 +9,10 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
-
-using static C6.EventTypes;
 
 
 namespace C6

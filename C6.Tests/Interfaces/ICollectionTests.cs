@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Linq;
 
 using C6.Tests.Collections;
 using C6.Tests.Contracts;
@@ -689,7 +688,7 @@ namespace C6.Tests
             var items = GetUppercaseStrings(Random);
             items[0] = item;
             var collection = GetCollection(items);
-                
+
             // Act
             var update = collection.Update(item);
 

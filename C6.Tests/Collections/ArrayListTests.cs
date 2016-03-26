@@ -3,7 +3,6 @@
 
 using System.Linq;
 
-using C6.Tests.Collections;
 using C6.Tests.Contracts;
 
 using NUnit.Framework;

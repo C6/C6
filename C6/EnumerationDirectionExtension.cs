@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics.Contracts;
 
-using C6.Contracts;
+using static C6.Contracts.ContractMessage;
 
 
 namespace C6
@@ -26,7 +26,7 @@ namespace C6
         public static bool IsForward(this EnumerationDirection direction)
         {
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), ContractMessage.EnumMustBeDefined);
+            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
 
 
             return direction == EnumerationDirection.Forwards;
@@ -46,10 +46,10 @@ namespace C6
         public static bool IsOppositeOf(this EnumerationDirection direction, EnumerationDirection otherDirection)
         {
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), ContractMessage.EnumMustBeDefined);
+            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
 
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), otherDirection), ContractMessage.EnumMustBeDefined);
+            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), otherDirection), EnumMustBeDefined);
 
 
             return direction != otherDirection;

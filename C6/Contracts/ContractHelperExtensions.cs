@@ -12,7 +12,7 @@ using static System.Diagnostics.Contracts.Contract;
 using static C6.Contracts.ContractMessage;
 
 
-namespace C6
+namespace C6.Contracts
 {
     public static class ContractHelperExtensions
     {
