@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
+using System.Reflection;
 
 using static System.Diagnostics.Contracts.Contract;
 
@@ -87,6 +88,62 @@ namespace C6
             #endregion
 
             return new EqualityComparer<T>((x, y) => ReferenceEquals(x, y), SCG.EqualityComparer<T>.Default.GetHashCode);
+        }
+
+        public static SCG.IEqualityComparer<T> CreateStructComparer<T>() => CreateEqualityComparer<T>(StructEquals, type => type.GetHashCode());
+
+        private static bool StructEquals<T>(T x, T y)
+        {
+            var type = typeof(T);
+
+            // Only allow structs
+            if (!type.IsValueType || type.IsPrimitive) {
+                throw new ArgumentException($"{nameof(T)} must be a struct.");
+            }
+
+            // If the structs don't consider themselves equal, just return false
+            if (!x.Equals(y)) {
+                return false;
+            }
+
+            var thisFieldsInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            foreach (var fieldInfo in thisFieldsInfos) {
+                // Get field values
+                var thisObject = fieldInfo.GetValue(x);
+                var thatObject = fieldInfo.GetValue(y);
+
+                var fieldType = fieldInfo.FieldType;
+
+                if (thisObject == null) {
+                    if (thatObject != null) {
+                        return false;
+                    }
+                }
+                else if (fieldType.IsClass) {
+                    // Compare reference equality for objects
+                    if (!ReferenceEquals(thisObject, thatObject)) {
+                        return false;
+                    }
+                }
+                else if (fieldType.IsPrimitive) {
+                    // Compare values for simple types
+                    if (!thisObject.Equals(thatObject)) {
+                        return false;
+                    }
+                }
+                else {
+                    // Call method recursively for structs - we invoke a generic method, as variables are objects, and therefore not typed
+                    var methodInfo = typeof(ComparerFactory).GetMethod(nameof(StructEquals), BindingFlags.Static | BindingFlags.NonPublic);
+                    var genericMethod = methodInfo.MakeGenericMethod(fieldType);
+                    var structEquals = (bool) genericMethod.Invoke(null, new[] { thisObject, thatObject });
+                    if (!structEquals) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         #region Nested Types

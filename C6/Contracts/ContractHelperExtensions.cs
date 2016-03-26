@@ -100,19 +100,19 @@ namespace C6
 
             // Use default comparer if none is supplied
             comparer = comparer ?? SCG.EqualityComparer<T>.Default;
-            
+
             // Sort based on hash code
             Comparison<T> hashCodeComparison = (x, y) => comparer.GetHashCode(x).CompareTo(comparer.GetHashCode(y));
             Array.Sort(firstArray, hashCodeComparison);
             Array.Sort(secondArray, hashCodeComparison);
-            
+
             for (var i = 0; i < firstArray.Length; i++) {
                 var found = false;
                 var firstElement = firstArray[i];
 
                 for (var j = i; j < secondArray.Length; j++) {
                     var secondElement = secondArray[j];
-                    
+
                     if (hashCodeComparison(firstElement, secondElement) != 0) {
                         break;
                     }
@@ -125,13 +125,23 @@ namespace C6
                         break;
                     }
                 }
-                
+
                 if (!found) {
                     return false;
                 }
             }
-            
+
             return true;
         }
+
+        public static bool ContainsExactItem<T>(this SCG.IEnumerable<T> enumerable, T item)
+            => enumerable.Contains(item, GetTypeDependantReferenceEqualityComparer<T>());
+
+        public static SCG.IEqualityComparer<T> GetTypeDependantReferenceEqualityComparer<T>()
+            => typeof(T).IsValueType
+                ? (typeof(T).IsPrimitive
+                    ? SCG.EqualityComparer<T>.Default
+                    : ComparerFactory.CreateStructComparer<T>())
+                : ComparerFactory.CreateReferenceEqualityComparer<T>();
     }
 }
