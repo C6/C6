@@ -47,8 +47,9 @@ namespace C6
         /// <value><c>true</c> if only one representative of a group of equal 
         /// items is kept in the collection together with a counter;
         /// <c>false</c> if each item is stored explicitly.</value>
-        /// <remarks>Is by convention always <c>true</c> for collections with
-        /// set semantics.</remarks>
+        /// <remarks>Is by convention always <c>false</c> for collections with
+        /// set semantics, i.e. when <see cref="AllowsDuplicates"/> is
+        /// <c>false</c>.</remarks>
         [Pure]
         bool DuplicatesByCounting { get; }
 
@@ -184,7 +185,7 @@ namespace C6
 
 
                 // True by convention for collections with set semantics
-                Ensures(AllowsDuplicates || Result<bool>()); // TODO: Replace with Requires(AllowsDuplicates)? Update documentation accordingly!
+                Ensures(AllowsDuplicates || !Result<bool>());
 
 
                 return default(bool);
