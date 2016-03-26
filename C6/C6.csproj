@@ -193,9 +193,9 @@
     <Compile Include="Collections\ArrayList.cs" />
     <Compile Include="ComparerFactory.cs" />
     <Compile Include="Contracts\ContractMessage.cs" />
-    <Compile Include="Contracts\ContractExtensions.cs" />
     <Compile Include="Contracts\ContractHelperExtensions.cs" />
     <Compile Include="Enums\EnumerationDirection.cs" />
+    <Compile Include="EnumerationDirectionExtension.cs" />
     <Compile Include="Enums\EventTypes.cs" />
     <Compile Include="Enums\Speed.cs" />
     <Compile Include="Events\EventArgs\ClearedEventArgs.cs" />
