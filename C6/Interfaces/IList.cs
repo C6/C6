@@ -183,20 +183,18 @@ namespace C6
         new int IndexOf(T item);
 
         /// <summary>
-        /// Inserts an item to the list at the specified index.
+        /// Inserts an item into the list at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which value should be
         /// inserted.</param>
         /// <param name="item">The item to insert into the list. <c>null</c> is
         /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
         /// <c>true</c>.</param>
-        /// <returns><c>true</c> if item was added;
-        /// otherwise, <c>false</c>.</returns>
         /// <remarks>
         /// <para>
         /// If <paramref name="index"/> equals the number of items in the list,
-        /// then value is appended to the end of the list. This has the same
-        /// effect as calling <see cref="ICollection{T}.Add"/>, though the
+        /// then the value is appended to the end of the list. This has the
+        /// same effect as calling <see cref="ICollection{T}.Add"/>, though the
         /// events raised are different.
         /// </para>
         /// <para>
@@ -222,11 +220,10 @@ namespace C6
         /// </list>
         /// </para>
         /// </remarks>
-        new bool Insert(int index, T item);
+        new void Insert(int index, T item);
 
         /// <summary>
-        /// Inserts the items of a collection into the list starting at the
-        /// specified index.
+        /// Inserts the items into the list starting at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which the new items
         /// should be inserted.</param>
@@ -240,8 +237,8 @@ namespace C6
         /// collection remains unchanged.
         /// </para>
         /// <para>
-        /// If any items are added, it raises the following events (in 
-        /// that order) with the collection as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> once for each item
@@ -267,11 +264,9 @@ namespace C6
         /// <c>null</c> is allowed, if
         /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
-        /// <returns><c>true</c> if item was inserted;
-        /// otherwise, <c>false</c>.</returns>
         /// <remarks>
-        /// If the item is inserted, it raises the following events (in that
-        /// order) with the collection as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
@@ -286,7 +281,7 @@ namespace C6
         /// </description></item>
         /// </list>
         /// </remarks>
-        bool InsertFirst(T item);
+        void InsertFirst(T item);
 
         /// <summary>
         /// Inserts an item at the end of the list.
@@ -295,11 +290,9 @@ namespace C6
         /// <c>null</c> is allowed, if
         /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
-        /// <returns><c>true</c> if item was inserted;
-        /// otherwise, <c>false</c>.</returns>
         /// <remarks>
-        /// If the item is inserted, it raises the following events (in that
-        /// order) with the collection as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
@@ -314,7 +307,7 @@ namespace C6
         /// </description></item>
         /// </list>
         /// </remarks>
-        bool InsertLast(T item);
+        void InsertLast(T item);
 
         /// <summary>
         /// Determines whether the list is sorted in non-descending order
@@ -758,7 +751,7 @@ namespace C6
                 Requires(index < Count, ArgumentMustBeWithinBounds);
 
                 // Collection must not already contain item if collection disallows duplicate values
-                Requires(AllowsDuplicates || !Contains(value), CollectionMustAllowDuplicates); // TODO: Behavior mismatch with Insert methods
+                Requires(AllowsDuplicates || !Contains(value), CollectionMustAllowDuplicates);
 
 
                 // Value is the same as skipping the first index items
@@ -810,7 +803,7 @@ namespace C6
             return default(int);
         }
 
-        public bool Insert(int index, T item)
+        public void Insert(int index, T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -825,9 +818,9 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
 
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
 
             // Item is inserted at index
             Ensures(item.IsSameAs(this[index]));
@@ -836,7 +829,7 @@ namespace C6
             Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Append(item).Concat(this.Skip(index)).ToList())));
 
 
-            return default(bool);
+            return;
         }
 
         public void InsertAll(int index, SCG.IEnumerable<T> items)
@@ -856,10 +849,13 @@ namespace C6
 
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
-            
+
+            // Collection must not already contain the items if collection disallows duplicate values
+            Requires(AllowsDuplicates || ForAll(this, item => !Contains(item)), CollectionMustAllowDuplicates);
+
 
             // The items are inserted into the list without replacing other items
-            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Concat(items).Concat(this.Skip(index)).ToList()))); // TODO: revert behavior to precondition checking of duplicates
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Concat(items).Concat(this.Skip(index)).ToList())));
 
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
@@ -868,7 +864,7 @@ namespace C6
             return;
         }
 
-        public bool InsertFirst(T item)
+        public void InsertFirst(T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -876,31 +872,33 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
 
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
-
+            
             // The collection becomes non-empty
             Ensures(!IsEmpty);
 
             // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
+            Ensures(Count == OldValue(Count) + 1);
 
             // The collection will contain the item added
             Ensures(Contains(item));
-
-            // TODO: Same count?
+            
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + (Result<bool>() ? 1 : 0));
+            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            
+            // The number of same items increase by one
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
             // The item is added to the beginning
             Ensures(item.IsSameAs(First));
 
 
-            return default(bool);
+            return;
         }
 
-        public bool InsertLast(T item)
+        public void InsertLast(T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -908,28 +906,30 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
-
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
+            
 
             // The collection becomes non-empty
             Ensures(!IsEmpty);
 
             // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
+            Ensures(Count == OldValue(Count) + 1);
 
             // The collection will contain the item added
             Ensures(Contains(item));
-
-            // TODO: Same count?
+            
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + (Result<bool>() ? 1 : 0));
+            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            
+            // The number of same items increase by one
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
             // The item is added to the end
             Ensures(item.IsSameAs(Last));
 
 
-            return default(bool);
+            return;
         }
 
         public bool IsSorted()
