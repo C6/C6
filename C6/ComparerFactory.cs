@@ -94,12 +94,20 @@ namespace C6
 
         private static bool StructEquals<T>(T x, T y)
         {
-            var type = typeof(T);
+            #region Code Contracts
 
-            // Only allow structs
-            if (!type.IsValueType || type.IsPrimitive) {
-                throw new ArgumentException($"{nameof(T)} must be a struct.");
-            }
+            // Type must be struct
+            Requires(typeof(T).IsValueType && !typeof(T).IsPrimitive, TypeMustBeStruct);
+
+            // Argument must be non-null
+            Requires(x != null, ArgumentMustBeNonNull);
+
+            // Argument must be non-null
+            Requires(y != null, ArgumentMustBeNonNull);
+
+            #endregion
+
+            var type = typeof(T);
 
             // If the structs don't consider themselves equal, just return false
             if (!x.Equals(y)) {
@@ -133,7 +141,7 @@ namespace C6
                     }
                 }
                 else {
-                    // Call method recursively for structs - we invoke a generic method, as variables are objects, and therefore not typed
+                    // Call method recursively for structs - we invoke a generic method, as variables are objects and therefore not typed properly
                     var methodInfo = typeof(ComparerFactory).GetMethod(nameof(StructEquals), BindingFlags.Static | BindingFlags.NonPublic);
                     var genericMethod = methodInfo.MakeGenericMethod(fieldType);
                     var structEquals = (bool) genericMethod.Invoke(null, new[] { thisObject, thatObject });

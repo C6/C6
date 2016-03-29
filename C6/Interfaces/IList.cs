@@ -660,8 +660,8 @@ namespace C6
 
 
                 // Equals first item
-                Ensures(Result<T>().Equals(this[0]));
-                Ensures(Result<T>().Equals(this.First()));
+                Ensures(Result<T>().IsSameAs(this[0]));
+                Ensures(Result<T>().IsSameAs(this.First()));
 
 
                 return default(T);
@@ -722,8 +722,8 @@ namespace C6
 
 
                 // Equals first item
-                Ensures(Result<T>().Equals(this[Count - 1]));
-                Ensures(Result<T>().Equals(this.Last()));
+                Ensures(Result<T>().IsSameAs(this[Count - 1]));
+                Ensures(Result<T>().IsSameAs(this.Last()));
 
 
                 return default(T);
@@ -740,7 +740,7 @@ namespace C6
 
 
                 // Result is the same as skipping the first index items
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
 
 
                 return default(T);
@@ -762,7 +762,7 @@ namespace C6
 
 
                 // Value is the same as skipping the first index items
-                Ensures(value.Equals(this.Skip(index).First()));
+                Ensures(value.IsSameAs(this[index]));
 
 
                 return;
@@ -786,8 +786,11 @@ namespace C6
             Requires(predicate != null, ArgumentMustBeNonNull);
 
 
-            // The result is equal to filtering this list based on the predicate
-            Ensures(Result<IList<T>>().SequenceEqual(this.Where(predicate)));
+            // The result is the same as filtering this list based on the predicate
+            Ensures(Result<IList<T>>().IsSameSequenceAs(this.Where(predicate)));
+
+            // The returned list has the same type as this list
+            Ensures(Result<IList<T>>().GetType() == GetType());
 
 
             return default(IList<T>);
@@ -798,7 +801,10 @@ namespace C6
             // No additional preconditions allowed
 
 
-            // No postconditions
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
 
 
             return default(int);
@@ -824,10 +830,10 @@ namespace C6
             Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
 
             // Item is inserted at index
-            Ensures(item.Equals(this[index]));
+            Ensures(item.IsSameAs(this[index]));
 
             // The item is inserted into the list without replacing other items
-            Ensures(this.SequenceEqual(OldValue(this.Take(index).Append(item).Concat(this.Skip(index)).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Append(item).Concat(this.Skip(index)).ToList())));
 
 
             return default(bool);
@@ -850,12 +856,13 @@ namespace C6
 
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
+            
 
-
-            // TODO: Ensures
+            // The items are inserted into the list without replacing other items
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Concat(items).Concat(this.Skip(index)).ToList()))); // TODO: revert behavior to precondition checking of duplicates
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             return;
@@ -877,19 +884,17 @@ namespace C6
             Ensures(!IsEmpty);
 
             // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + 1);
-
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
+            Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
 
             // The collection will contain the item added
             Ensures(Contains(item));
 
+            // TODO: Same count?
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + (Result<bool>() ? 1 : 0));
 
             // The item is added to the beginning
-            Ensures(item.Equals(First));
+            Ensures(item.IsSameAs(First));
 
 
             return default(bool);
@@ -911,19 +916,17 @@ namespace C6
             Ensures(!IsEmpty);
 
             // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + 1);
-
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
+            Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
 
             // The collection will contain the item added
             Ensures(Contains(item));
 
+            // TODO: Same count?
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + (Result<bool>() ? 1 : 0));
 
             // The item is added to the end
-            Ensures(item.Equals(Last));
+            Ensures(item.IsSameAs(Last));
 
 
             return default(bool);
@@ -973,7 +976,10 @@ namespace C6
 
 
             // Result is equal to mapping each item
-            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper)));
+            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper))); // TODO: Does this always work? What if unique objects are created?
+
+            // The returned list has the same type as this list
+            Ensures(Result<IList<V>>().GetType() == GetType());
 
 
             return default(IList<V>);
@@ -990,6 +996,9 @@ namespace C6
 
             // Result uses equality comparer
             Ensures(Result<IList<V>>().EqualityComparer == (equalityComparer ?? SCG.EqualityComparer<V>.Default));
+
+            // The returned list has the same type as this list
+            Ensures(Result<IList<V>>().GetType() == GetType());
 
 
             return default(IList<V>);
@@ -1008,10 +1017,10 @@ namespace C6
 
 
             // Result is the item previously first/last
-            Ensures(Result<T>().Equals(OldValue(IsFifo ? First : Last)));
+            Ensures(Result<T>().IsSameAs(OldValue(IsFifo ? First : Last)));
 
             // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue((IsFifo ? this.Skip(1) : this.Take(Count - 1)).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue((IsFifo ? this.Skip(1) : this.Take(Count - 1)).ToList())));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -1054,10 +1063,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(First)));
+            Ensures(Result<T>().IsSameAs(OldValue(First)));
 
             // Only the first item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Skip(1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Skip(1).ToList())));
 
 
             return default(T);
@@ -1082,10 +1091,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(Last)));
+            Ensures(Result<T>().IsSameAs(OldValue(Last)));
 
             // Only the last item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Take(Count - 1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(Count - 1).ToList())));
 
 
             return default(T);
@@ -1098,7 +1107,7 @@ namespace C6
 
 
             // The collection is reversed
-            Ensures(this.SequenceEqual(OldValue(Enumerable.Reverse(this).ToList()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.IsSameSequenceAs(OldValue(Enumerable.Reverse(this).ToList())));
 
 
             return;
@@ -1111,7 +1120,7 @@ namespace C6
 
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1127,7 +1136,7 @@ namespace C6
 
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1143,7 +1152,7 @@ namespace C6
             Ensures(IsSorted());
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1159,7 +1168,7 @@ namespace C6
             Ensures(IsSorted(comparer));
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1178,13 +1187,26 @@ namespace C6
             Ensures(IsSorted(comparison));
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
         }
 
         #region Hardened Postconditions
+
+        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
+        public bool Add(T item)
+        {
+            // No additional preconditions allowed
+
+
+            // Item is placed at the end
+            Ensures(Last.IsSameAs(item));
+
+
+            return default(bool);
+        }
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool AllowsDuplicates
@@ -1216,6 +1238,19 @@ namespace C6
 
                 return default(bool);
             }
+        }
+        public int LastIndexOf(T item)
+        {
+            // No additional preconditions allowed
+
+
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+
+            return default(int);
         }
 
         #endregion
@@ -1286,7 +1321,6 @@ namespace C6
 
         #region SCG.ICollection<T>
 
-        // TODO: Add Ensures(this.Last().Equals(item)) (does it work with null?)
         void SCG.ICollection<T>.Add(T item) {}
         void SCG.IList<T>.Insert(int index, T item) {}
 
@@ -1295,7 +1329,6 @@ namespace C6
         #region ICollection<T>
 
         public abstract Speed ContainsSpeed { get; }
-        public abstract bool Add(T item);
         public abstract bool Contains(T item);
         public abstract bool ContainsAll(SCG.IEnumerable<T> items);
         public abstract int ContainsCount(T item);
@@ -1332,16 +1365,15 @@ namespace C6
 
         public abstract Speed IndexingSpeed { get; }
         public abstract IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
-        public abstract int LastIndexOf(T item);
         public abstract void RemoveIndexRange(int startIndex, int count);
 
         #endregion
 
-        /*#region IDisposable
+        #region IDisposable
 
         public abstract void Dispose();
 
-        #endregion*/
+        #endregion
 
         #region SC.IList
 

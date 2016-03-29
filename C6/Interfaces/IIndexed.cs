@@ -190,7 +190,7 @@ namespace C6
             Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
 
             // Result equals subrange
-            Ensures(Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
+            Ensures(Result<IDirectedCollectionValue<T>>().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
 
 
             return default(IDirectedCollectionValue<T>);
@@ -252,10 +252,10 @@ namespace C6
 
 
             // Result is the item previously at the specified index
-            Ensures(Result<T>().Equals(OldValue(this[index])));
+            Ensures(Result<T>().IsSameAs(OldValue(this[index])));
 
             // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.SkipRange(index, 1).ToList())));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -284,7 +284,7 @@ namespace C6
 
 
             // Only the items in the index range are removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(startIndex, count).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.SkipRange(startIndex, count).ToList())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - count);
@@ -304,7 +304,7 @@ namespace C6
 
 
                 // Result is item at index
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
 
 
                 return default(T);

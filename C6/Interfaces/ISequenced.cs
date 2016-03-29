@@ -96,7 +96,7 @@ namespace C6
 
 
             // Enumeration of the collections must yield equal items
-            Ensures(Result<bool>() == this.SequenceEqual(otherCollection ?? Enumerable.Empty<T>(), EqualityComparer));
+            Ensures(Result<bool>() == (otherCollection != null && this.SequenceEqual(otherCollection, EqualityComparer)));
 
 
             return default(bool);

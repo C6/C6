@@ -264,7 +264,10 @@ namespace C6
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Result<bool>() ? 1 : 0));
+            Ensures(this.ContainsCount(item, EqualityComparer) == OldValue(this.ContainsCount(item, EqualityComparer)) + (Result<bool>() ? 1 : 0));
+
+            // If the item is add and its not a counter that is incremented, that item is in the collection
+            Ensures(!Result<bool>() || DuplicatesByCounting || this.ContainsSame(item));
 
 
             return default(bool);
@@ -295,7 +298,7 @@ namespace C6
             Ensures(items.Any() ? Count >= OldValue(Count) : Count == OldValue(Count));
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
             // TODO: Make more exact check of added items
 

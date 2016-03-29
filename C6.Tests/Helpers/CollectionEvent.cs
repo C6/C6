@@ -4,6 +4,8 @@
 using System;
 using System.Diagnostics.Contracts;
 
+using C6.Contracts;
+
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -70,14 +72,14 @@ namespace C6.Tests.Helpers
                 case Removed: {
                     var x = _eventArgs as ItemCountEventArgs<T>;
                     var y = otherEvent._eventArgs as ItemCountEventArgs<T>;
-                    return y != null && x != null && x.Count == y.Count && x.Item.Equals(y.Item);
+                    return y != null && x != null && x.Count == y.Count && x.Item.IsSameAs(y.Item);
                 }
 
                 case Inserted:
                 case RemovedAt: {
                     var x = _eventArgs as ItemAtEventArgs<T>;
                     var y = otherEvent._eventArgs as ItemAtEventArgs<T>;
-                    return y != null && x != null && x.Index == y.Index && x.Item.Equals(y.Item);
+                    return y != null && x != null && x.Index == y.Index && x.Item.IsSameAs(y.Item);
                 }
 
                 default:

@@ -435,7 +435,7 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -452,11 +452,11 @@ namespace C6
 
 
             // Array contains the collection's items in enumeration order from arrayIndex
-            Ensures(array.Skip(arrayIndex).Take(Count).SequenceEqual(this));
+            Ensures(array.Skip(arrayIndex).Take(Count).IsSameSequenceAs(this));
 
             // The rest of the array is unchanged
-            Ensures(OldValue(array.Take(arrayIndex).ToList()).SequenceEqual(array.Take(arrayIndex)));
-            Ensures(OldValue(array.Skip(arrayIndex + Count).ToList()).SequenceEqual(array.Skip(arrayIndex + Count)));
+            Ensures(OldValue(array.Take(arrayIndex).ToList()).IsSameSequenceAs(array.Take(arrayIndex)));
+            Ensures(OldValue(array.Skip(arrayIndex + Count).ToList()).IsSameSequenceAs(array.Skip(arrayIndex + Count)));
 
 
             return;
@@ -471,7 +471,7 @@ namespace C6
             Ensures(Result<T[]>() != null);
 
             // Result contains the collection's items in enumeration order
-            Ensures(Result<T[]>().SequenceEqual(this));
+            Ensures(Result<T[]>().IsSameSequenceAs(this));
 
 
             return default(T[]);

@@ -108,7 +108,7 @@ namespace C6
                 Ensures(AllowsNull || Result<T>() != null);
 
                 // Result is the same as skipping the first index items
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
 
 
                 return default(T);
@@ -131,10 +131,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(this.First())));
+            Ensures(Result<T>().IsSameAs(OldValue(this.First())));
 
             // Only the first item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Skip(1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Skip(1).ToList())));
 
 
             return default(T);
@@ -149,28 +149,28 @@ namespace C6
             Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true, CollectionMustBeNonReadOnly); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
 
 
+            // The added item is at the end of the queue
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray()).Append(item)));
+
             // The collection becomes non-empty
             Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Ensures(this.Contains(item)); // TODO: Use EqualityComparer?
+            Ensures(this.ContainsSame(item));
 
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => x.Equals(item)) == OldValue(this.Count(x => x.Equals(item))) + 1); // TODO: Use EqualityComparer?
-
-            // The added item is at the end of the queue
-            Ensures(this.SequenceEqual(OldValue(this.ToList()).Append(item)));
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
             // The item is added to the end
-            Ensures(item.Equals(this.Last()));
+            Ensures(item.IsSameAs(this.Last()));
 
 
             return;
         }
-        
+
         // ReSharper restore InvocationIsSkipped
 
         #region Non-Contract Methods

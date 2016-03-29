@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
+using C6.Contracts;
+
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
@@ -93,7 +95,7 @@ namespace C6
             Ensures(Result<bool>() == enumerable.Any(predicate));
 
             // Result item equals the first (or default) item satisfying the predicate
-            Ensures(ValueAtReturn(out item).Equals(enumerable.FirstOrDefault(predicate)));
+            Ensures(ValueAtReturn(out item).IsSameAs(enumerable.FirstOrDefault(predicate)));
 
             #endregion
 

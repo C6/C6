@@ -359,7 +359,7 @@ namespace C6
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -378,16 +378,16 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Ensures(Result<T>().Equals(FindMin()));
+            Ensures(Result<T>().IsSameAs(FindMin()));
 
             // The handle is associated with the result
-            Ensures(this[ValueAtReturn(out handle)].Equals(Result<T>()));
+            Ensures(this[ValueAtReturn(out handle)].IsSameAs(Result<T>()));
 
             // The count remains the same
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -410,13 +410,13 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Ensures(Result<T>().Equals(OldValue(FindMin())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMin())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -438,7 +438,7 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Ensures(Result<T>().Equals(OldValue(FindMin())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMin())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
@@ -447,7 +447,7 @@ namespace C6
             Ensures(!Contains(ValueAtReturn(out handle)));
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -470,7 +470,7 @@ namespace C6
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
             return default(T);
         }
@@ -488,16 +488,16 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Ensures(Result<T>().Equals(FindMax()));
+            Ensures(Result<T>().IsSameAs(FindMax()));
 
             // The handle is associated with the result
-            Ensures(this[ValueAtReturn(out handle)].Equals(Result<T>()));
+            Ensures(this[ValueAtReturn(out handle)].IsSameAs(Result<T>()));
 
             // The count remains the same
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -520,13 +520,13 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Ensures(Result<T>().Equals(OldValue(FindMax())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMax())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -548,7 +548,7 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Ensures(Result<T>().Equals(OldValue(FindMax())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMax())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
@@ -557,7 +557,7 @@ namespace C6
             Ensures(!Contains(ValueAtReturn(out handle)));
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -579,7 +579,7 @@ namespace C6
                 Ensures(AllowsNull || Result<T>() != null);
 
                 // Return value is from the collection
-                Ensures(this.Contains(Result<T>()));
+                Ensures(this.ContainsSame(Result<T>()));
 
 
                 return default(T);
@@ -604,13 +604,13 @@ namespace C6
 
 
                 // The handle is associated with the result
-                Ensures(this[handle].Equals(value));
+                Ensures(this[handle].IsSameAs(value));
 
                 // Replacing an item does not change the count
                 Ensures(Count == OldValue(Count));
 
                 // Return value is from the collection
-                Ensures(this.Contains(value));
+                Ensures(this.ContainsSame(value));
 
 
                 return;
@@ -670,16 +670,16 @@ namespace C6
             Ensures(!IsEmpty);
 
             // Handle is associated with new item
-            Ensures(EqualityComparer.Equals(this[handle], item));
+            Ensures(this[handle].IsSameAs(item));
 
             // Result is the old item with which the handle was associated
-            Ensures(EqualityComparer.Equals(OldValue(this[handle]), Result<T>()));
+            Ensures(OldValue(this[handle]).IsSameAs(Result<T>()));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -704,19 +704,19 @@ namespace C6
             Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Ensures(this.Contains(item, EqualityComparer));
+            Ensures(this.ContainsSame(item));
 
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
+            Ensures(this.ContainsCount(item, EqualityComparer) == OldValue(this.ContainsCount(item, EqualityComparer)) + 1);
 
             // Returned handle is non-null
             Ensures(ValueAtReturn(out handle) != null);
 
             // Returned handle is associated with item
-            Ensures(EqualityComparer.Equals(this[ValueAtReturn(out handle)], item));
+            Ensures(this[ValueAtReturn(out handle)].IsSameAs(item));
 
 
             return default(bool);
@@ -746,10 +746,10 @@ namespace C6
             EnsuresOnThrow<InvalidPriorityQueueHandleException>(Count == OldValue(Count));
 
             // Collection does not change on exception
-            EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.IsSameSequenceAs(OldValue(ToArray())));
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);

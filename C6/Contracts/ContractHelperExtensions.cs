@@ -60,10 +60,7 @@ namespace C6.Contracts
         /// <returns><c>true</c> if the enumerables contain equal items;
         /// otherwise, <c>false</c>.</returns>
         [Pure]
-        public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second)
-        {
-            return UnsequenceEqual(first, second, SCG.EqualityComparer<T>.Default);
-        }
+        public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second) => UnsequenceEqual(first, second, SCG.EqualityComparer<T>.Default);
 
         /// <summary>
         /// Determines whether two enumerables contain the same elements in
@@ -134,10 +131,58 @@ namespace C6.Contracts
             return true;
         }
 
-        public static bool ContainsExactItem<T>(this SCG.IEnumerable<T> enumerable, T item)
-            => enumerable.Contains(item, GetTypeDependantReferenceEqualityComparer<T>());
+        public static int ContainsCount<T>(this SCG.IEnumerable<T> enumerable, T item, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            // Argument must be non-null
+            Requires(enumerable != null, ArgumentMustBeNonNull);
 
-        public static SCG.IEqualityComparer<T> GetTypeDependantReferenceEqualityComparer<T>()
+
+            if (equalityComparer == null) {
+                equalityComparer = SCG.EqualityComparer<T>.Default;
+            }
+            return enumerable.Count(x => equalityComparer.Equals(x, item));
+        }
+
+        // TODO: Check that references do check DuplicatesByCounting first!
+        public static bool ContainsSame<T>(this SCG.IEnumerable<T> enumerable, T item)
+        {
+            // Argument must be non-null
+            Requires(enumerable != null, ArgumentMustBeNonNull);
+
+            return enumerable.Contains(item, GetSameEqualityComparer<T>());
+        }
+
+        public static int ContainsSameCount<T>(this SCG.IEnumerable<T> enumerable, T item)
+        {
+            // Argument must be non-null
+            Requires(enumerable != null, ArgumentMustBeNonNull);
+            
+            return enumerable.ContainsCount(item, GetSameEqualityComparer<T>());
+        }
+
+        public static bool IsSameAs<T>(this T item, T otherItem) => GetSameEqualityComparer<T>().Equals(item, otherItem);
+
+        public static bool IsSameSequenceAs<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
+            => enumerable.SequenceEqual(otherEnumerable, GetSameEqualityComparer<T>());
+
+        public static bool HasSameAs<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
+            => enumerable.UnsequenceEqual(otherEnumerable, GetSameEqualityComparer<T>());
+
+        /// <summary>
+        /// Returns an <see cref="SCG.IEqualityComparer{T}"/> that checks if
+        /// the objects are the same, possibly bypassing the type
+        /// <typeparamref name="T"/>'s own <see cref="object.Equals(object)"/>
+        /// method.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>An <see cref="SCG.IEqualityComparer{T}"/> that checks if
+        /// objects are the same.</returns>
+        /// <remarks>
+        /// Primitive types are compared using the default equality comparer 
+        /// for the type. Structs are compared using reflection to compare each
+        /// field. Objects are compared using reference equality.
+        /// </remarks>
+        public static SCG.IEqualityComparer<T> GetSameEqualityComparer<T>()
             => typeof(T).IsValueType
                 ? (typeof(T).IsPrimitive
                     ? SCG.EqualityComparer<T>.Default
