@@ -487,6 +487,7 @@ namespace C6
         private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
 
         // TODO: Inline in IndexOf
+        // TODO: Make version that works with IsFifo
         [Pure]
         private int IndexOfPrivate(T item)
         {
