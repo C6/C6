@@ -558,6 +558,182 @@ namespace C6.Tests
 
         #endregion
 
+        #region FindOrAdd(ref T)
+
+        [Test]
+        public void FindOrAdd_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+            string item = null;
+
+            // Act & Assert
+            Assert.That(() => collection.FindOrAdd(ref item), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void FindOrAdd_AllowsNullFind_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            string item = null;
+
+            // Act
+            var findOrAdd = collection.FindOrAdd(ref item);
+
+            // Assert
+            Assert.That(findOrAdd, Is.True);
+            Assert.That(item, Is.Null);
+        }
+
+        [Test]
+        public void FindOrAdd_AllowsNullAdd_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+            string item = null;
+
+            // Act
+            var findOrAdd = collection.FindOrAdd(ref item);
+
+            // Assert
+            Assert.That(findOrAdd, Is.False);
+            Assert.That(item, Is.Null);
+        }
+
+        [Test]
+        public void FindOrAdd_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+            var refItem = item;
+
+            // Act
+            var findOrAdd = collection.FindOrAdd(ref refItem);
+
+            // Assert
+            Assert.That(findOrAdd, Is.False);
+            Assert.That(refItem, Is.SameAs(item));
+        }
+
+        [Test]
+        public void FindOrAdd_Add_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+            var expectedEvents = new[] {
+                Added(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.FindOrAdd(ref item), _Is.Raising(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void FindOrAdd_RandomCollectionDuplicateItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random);
+            var refItem = item.ToLower();
+
+            // Act
+            var findOrAdd = collection.FindOrAdd(ref refItem);
+
+            // Assert
+            Assert.That(findOrAdd, Is.True);
+            Assert.That(refItem, Is.SameAs(item));
+        }
+
+        [Test]
+        public void FindOrAdd_RandomCollectionNonDuplicateItem_False()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var item = string.Copy(items.Choose(Random));
+            var refItem = item;
+
+            // Act
+            var findOrAdd = collection.FindOrAdd(ref refItem);
+
+            // Assert
+            Assert.That(findOrAdd, Is.False);
+            Assert.That(refItem, Is.SameAs(item));
+        }
+
+        [Test]
+        public void FindOrAdd_Find_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var item =items.Choose(Random);
+            var collection = GetCollection(items);
+
+            // Act & Assert
+            Assert.That(() => collection.FindOrAdd(ref item), Is.Not.RaisingEventsFor(collection));
+        }
+
+        [Test]
+        public void FindOrAdd_AddItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.FindOrAdd(ref item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(CollectionModified));
+        }
+
+        [Test]
+        public void FindOrAdd_FindItemDuringEnumeration_ThrowsNoInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.FindOrAdd(ref item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void FindOrAdd_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void FindOrAdd_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region Update(T)
 
         // TODO: Test that the proper item is replaced (based on IsFifo) when several exist

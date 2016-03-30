@@ -166,12 +166,8 @@ namespace C6
         {
             #region Code Contracts
 
-            // ReSharper disable InvocationIsSkipped
-
             // If collection changes, the version is updated
             Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
-
-            // ReSharper restore InvocationIsSkipped
 
             #endregion
 
@@ -229,16 +225,32 @@ namespace C6
         public bool Find(ref T item)
         {
             var i = IndexOfPrivate(item);
+
             if (i >= 0) {
                 item = _items[i];
                 return true;
             }
+
             return false;
         }
 
         public bool FindOrAdd(ref T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            if (Find(ref item)) {
+                return true;
+            }
+            
+            // Let Add handle version update and events
+            Add(item);
+
+            return false;
         }
 
         public SCG.IEnumerator<T> GetEnumerator()
@@ -309,12 +321,8 @@ namespace C6
         {
             #region Code Contracts
 
-            // ReSharper disable InvocationIsSkipped
-
             // If collection changes, the version is updated
             Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
-
-            // ReSharper restore InvocationIsSkipped
 
             #endregion
 
