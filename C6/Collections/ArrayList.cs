@@ -11,6 +11,7 @@ using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
+using static C6.ExceptionMessages;
 
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
@@ -579,7 +580,7 @@ namespace C6
         {
             if (version != _version) {
                 // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
-                throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
+                throw new InvalidOperationException(CollectionModified);
             }
         }
 
