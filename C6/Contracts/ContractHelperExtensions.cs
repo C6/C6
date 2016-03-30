@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
+using static System.Reflection.BindingFlags;
+
 using SCG = System.Collections.Generic;
 
 using static System.Diagnostics.Contracts.Contract;
@@ -14,6 +16,7 @@ using static C6.Contracts.ContractMessage;
 
 namespace C6.Contracts
 {
+    // TODO: Should this be internal like the contract classes?
     public static class ContractHelperExtensions
     {
         /// <summary>
@@ -156,7 +159,7 @@ namespace C6.Contracts
         {
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);
-            
+
             return enumerable.ContainsCount(item, GetSameEqualityComparer<T>());
         }
 
@@ -182,11 +185,76 @@ namespace C6.Contracts
         /// for the type. Structs are compared using reflection to compare each
         /// field. Objects are compared using reference equality.
         /// </remarks>
-        public static SCG.IEqualityComparer<T> GetSameEqualityComparer<T>()
+        private static SCG.IEqualityComparer<T> GetSameEqualityComparer<T>()
             => typeof(T).IsValueType
                 ? (typeof(T).IsPrimitive
                     ? SCG.EqualityComparer<T>.Default
-                    : ComparerFactory.CreateStructComparer<T>())
+                    : CreateStructComparer<T>())
                 : ComparerFactory.CreateReferenceEqualityComparer<T>();
+
+
+        public static SCG.IEqualityComparer<T> CreateStructComparer<T>() => ComparerFactory.CreateEqualityComparer<T>(StructEquals, type => type.GetHashCode());
+
+        private static bool StructEquals<T>(T x, T y)
+        {
+            #region Code Contracts
+
+            // Type must be struct
+            Requires(typeof(T).IsValueType && !typeof(T).IsPrimitive, TypeMustBeStruct);
+
+            // Argument must be non-null
+            Requires(x != null, ArgumentMustBeNonNull);
+
+            // Argument must be non-null
+            Requires(y != null, ArgumentMustBeNonNull);
+
+            #endregion
+
+            var type = typeof(T);
+
+            // If the structs don't consider themselves equal, just return false
+            if (!x.Equals(y)) {
+                return false;
+            }
+
+            var thisFieldsInfos = type.GetFields(Instance | Public | NonPublic);
+
+            foreach (var fieldInfo in thisFieldsInfos) {
+                // Get field values
+                var thisObject = fieldInfo.GetValue(x);
+                var thatObject = fieldInfo.GetValue(y);
+
+                var fieldType = fieldInfo.FieldType;
+
+                if (thisObject == null) {
+                    if (thatObject != null) {
+                        return false;
+                    }
+                }
+                else if (fieldType.IsClass) {
+                    // Compare reference equality for objects
+                    if (!ReferenceEquals(thisObject, thatObject)) {
+                        return false;
+                    }
+                }
+                else if (fieldType.IsPrimitive) {
+                    // Compare values for simple types
+                    if (!thisObject.Equals(thatObject)) {
+                        return false;
+                    }
+                }
+                else {
+                    // Call method recursively for structs - we invoke a generic method, as variables are objects and therefore not typed properly
+                    var methodInfo = typeof(ContractHelperExtensions).GetMethod(nameof(StructEquals), Static | NonPublic);
+                    var genericMethod = methodInfo.MakeGenericMethod(fieldType);
+                    var structEquals = (bool) genericMethod.Invoke(null, new[] { thisObject, thatObject });
+                    if (!structEquals) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }

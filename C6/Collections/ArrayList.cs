@@ -242,9 +242,11 @@ namespace C6
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
+            // Cache count to ensure that clearing while enumerating throws an exception
+            var count = Count;
             var version = _version;
 
-            for (var i = 0; i < Count; i++) {
+            for (var i = 0; i < count; i++) {
                 CheckVersion(version);
                 yield return _items[i];
             }
@@ -317,8 +319,7 @@ namespace C6
 
             var i = IndexOfPrivate(item);
 
-            if (i >= 0)
-            {
+            if (i >= 0) {
                 // Only update version if item is actually updated
                 UpdateVersion();
 
