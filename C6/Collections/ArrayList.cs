@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
+using C6.Contracts;
+
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
@@ -161,7 +163,16 @@ namespace C6
         // TODO: Use InsertAll?
         public void AddAll(SCG.IEnumerable<T> items)
         {
-            UpdateVersion();
+            #region Code Contracts
+
+            // ReSharper disable InvocationIsSkipped
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            // ReSharper restore InvocationIsSkipped
+
+            #endregion
 
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
@@ -171,6 +182,9 @@ namespace C6
             if (length == 0) {
                 return;
             }
+
+            // Only update version if items are actually added
+            UpdateVersion();
 
             EnsureCapacity(Count + length);
 
@@ -184,12 +198,12 @@ namespace C6
 
         public void Clear()
         {
-            // TODO: Update version only when we actually do something? Probably not a real issue here, but still worth deciding
-            UpdateVersion();
-
             if (IsEmpty) {
                 return;
             }
+
+            // Only update version if the collection is actually cleared
+            UpdateVersion();
 
             var oldCount = Count;
 
@@ -288,11 +302,23 @@ namespace C6
 
         public bool Update(T item)
         {
-            UpdateVersion();
+            #region Code Contracts
+
+            // ReSharper disable InvocationIsSkipped
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            // ReSharper restore InvocationIsSkipped
+
+            #endregion
 
             var i = IndexOfPrivate(item);
-            if (i >= 0) {
-                // TODO: Place version update here?
+
+            if (i >= 0)
+            {
+                // Only update version if item is actually updated
+                UpdateVersion();
 
                 var oldItem = _items[i];
                 _items[i] = item;
@@ -549,6 +575,7 @@ namespace C6
         private bool CheckVersion(int version)
         {
             if (version != _version) {
+                // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
                 throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
             }
 
