@@ -243,7 +243,9 @@ namespace C6
         public SCG.IEnumerator<T> GetEnumerator()
         {
             var version = _version;
-            for (var i = 0; CheckVersion(version) & i < Count; i++) {
+
+            for (var i = 0; i < Count; i++) {
+                CheckVersion(version);
                 yield return _items[i];
             }
         }
@@ -572,14 +574,12 @@ namespace C6
 
         private void UpdateVersion() => _version++;
 
-        private bool CheckVersion(int version)
+        private void CheckVersion(int version)
         {
             if (version != _version) {
                 // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
                 throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
             }
-
-            return true;
         }
 
         #region Event Helpers
