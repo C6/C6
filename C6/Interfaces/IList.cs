@@ -976,7 +976,8 @@ namespace C6
 
 
             // Result is equal to mapping each item
-            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper))); // TODO: Does this always work? What if unique objects are created?
+            // This would only work if the mapper is deterministic!
+            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper)));
 
             // The returned list has the same type as this list
             Ensures(Result<IList<V>>().GetType() == GetType());
@@ -992,7 +993,8 @@ namespace C6
 
 
             // Result is equal to mapping each item
-            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper), equalityComparer)); // TODO: Does this always work? What if unique objects are created?
+            // This would only work if the mapper is deterministic!
+            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper), equalityComparer));
 
             // Result uses equality comparer
             Ensures(Result<IList<V>>().EqualityComparer == (equalityComparer ?? SCG.EqualityComparer<V>.Default));
