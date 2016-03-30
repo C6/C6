@@ -224,10 +224,10 @@ namespace C6
 
         public bool Find(ref T item)
         {
-            var i = IndexOfPrivate(item);
+            var index = IndexOfPrivate(item);
 
-            if (i >= 0) {
-                item = _items[i];
+            if (index >= 0) {
+                item = _items[index];
                 return true;
             }
 
@@ -326,14 +326,14 @@ namespace C6
 
             #endregion
 
-            var i = IndexOfPrivate(item);
+            var index = IndexOfPrivate(item);
 
-            if (i >= 0) {
+            if (index >= 0) {
                 // Only update version if item is actually updated
                 UpdateVersion();
 
-                var oldItem = _items[i];
-                _items[i] = item;
+                var oldItem = _items[index];
+                _items[index] = item;
 
                 RaiseForUpdate(item, oldItem);
 
