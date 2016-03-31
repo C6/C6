@@ -52,7 +52,6 @@ namespace C6
             yield return item;
         }
 
-
         /// <summary>
         /// Gets a value indicating whether the
         /// <see cref="SCG.IEnumerable{T}"/> is empty.
@@ -75,10 +74,48 @@ namespace C6
 
             #endregion
 
-            return (enumerable as ICollectionValue<T>)?.IsEmpty ?? !enumerable.Any();
+            var collectionValue = enumerable as ICollectionValue<T>;
+            if (collectionValue != null) {
+                return collectionValue.IsEmpty;
+            }
+
+            var collection = enumerable as SCG.ICollection<T>;
+            if (collection != null) {
+                return collection.Count == 0;
+            }
+
+            return !enumerable.Any();
         }
 
-
+        /// <summary>
+        /// Determines whether an enumerable contains an element that satisfies
+        /// a specified condition.
+        /// Determines whether any element of a sequence satisfies a condition.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of
+        /// <paramref name="enumerable"/>.</typeparam>
+        /// <param name="enumerable">An <see cref="SCG.IEnumerable{T}"/> to 
+        /// apply the predicate to.</param>
+        /// <param name="predicate">A function to test each element for a
+        /// condition.</param>
+        /// <param name="item">The first element that satisfies the specified
+        /// condition; otherwise, the default value for type
+        /// <typeparamref name="T"/>.</param>
+        /// <returns><c>true</c> if an element in the enumerable satisfies the 
+        /// condition; otherwise, <c>false</c>.</returns>
+        /// <remarks>
+        /// <para>
+        /// This method returns the same as
+        /// <see cref="Enumerable.Any{TSource}(SCG.IEnumerable{TSource}, Func{TSource, bool})"/>,
+        /// while at the same time returning the same value as 
+        /// <see cref="Enumerable.FirstOrDefault{TSource}(SCG.IEnumerable{TSource}, Func{TSource, bool})"/>,
+        /// in <paramref name="item"/>.
+        /// </para>
+        /// <para>
+        /// Both <paramref name="enumerable"/> and <paramref name="predicate"/>
+        /// must be deterministic.
+        /// </para>
+        /// </remarks>
         [Pure]
         public static bool Find<T>(this SCG.IEnumerable<T> enumerable, Func<T, bool> predicate, out T item)
         {
@@ -101,28 +138,92 @@ namespace C6
 
             bool result;
 
+            // Use Enumerable.Where() to be able to retrieve value for result
             using (var enumerator = enumerable.Where(predicate).GetEnumerator()) {
-                // ReSharper disable once AssignmentInConditionalExpression
                 item = (result = enumerator.MoveNext()) ? enumerator.Current : default(T);
             }
 
             return result;
         }
 
-
-        // TODO: Implement and document
+        /// <summary>
+        /// Returns the position of the first item that satisfies a
+        /// specified condition, if any.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of
+        /// <paramref name="collection"/>.</typeparam>
+        /// <param name="collection">An <see cref="IIndexed{T}"/> to apply the
+        /// predicate to.</param>
+        /// <param name="predicate">A function to test each item for a
+        /// condition.</param>
+        /// <returns>The index of the first item that satisfies the condition;
+        /// otherwise, <c>-1</c>. </returns>
         [Pure]
         public static int FindIndex<T>(this IIndexed<T> collection, Func<T, bool> predicate)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(collection != null, ArgumentMustBeNonNull);
+
+            // Argument must be non-null
+            Requires(predicate != null, ArgumentMustBeNonNull);
+
+            // Result is a valid index
+            Ensures(Result<int>() == (collection.Any(predicate) ? collection.Count(predicate) : -1));
+
+            #endregion
+
+            var index = 0;
+
+            foreach (var item in collection) {
+                if (predicate(item)) {
+                    return index;
+                }
+                index++;
+            }
+
+            return -1;
         }
 
-
-        // TODO: Implement and document
+        /// <summary>
+        /// Returns the position of the last item that satisfies a
+        /// specified condition, if any.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of
+        /// <paramref name="collection"/>.</typeparam>
+        /// <param name="collection">An <see cref="IIndexed{T}"/> to apply the
+        /// predicate to.</param>
+        /// <param name="predicate">A function to test each item for a
+        /// condition.</param>
+        /// <returns>The index of the last item that satisfies the condition;
+        /// otherwise, <c>-1</c>. </returns>
         [Pure]
         public static int FindLastIndex<T>(this IIndexed<T> collection, Func<T, bool> predicate)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(collection != null, ArgumentMustBeNonNull);
+
+            // Argument must be non-null
+            Requires(predicate != null, ArgumentMustBeNonNull);
+
+            // Result is a valid index
+            Ensures(Result<int>() == (collection.Any(predicate) ? collection.Count - collection.Backwards().Count(predicate) - 1 : -1));
+
+            #endregion
+
+            var index = collection.Count - 1;
+
+            foreach (var item in collection.Backwards()) {
+                if (predicate(item)) {
+                    return index;
+                }
+                index--;
+            }
+
+            return -1;
         }
 
         // TODO: Test
@@ -275,7 +376,6 @@ namespace C6
         }
 
         // TODO: Test
-        // TODO: IList extensions?
         /// <summary>
         /// Shuffles the elements in the list.
         /// </summary>
@@ -317,7 +417,6 @@ namespace C6
         }
 
         // TODO: Test
-        // TODO: IList extensions?
         /// <summary>
         /// Shuffles the items in the list according to the specified random
         /// source.
@@ -382,7 +481,6 @@ namespace C6
         }
 
         // TODO: Test?
-        // TODO: IList extensions?
         /// <summary>
         /// Swaps the elements at the specified indices in a list.
         /// </summary>
