@@ -596,22 +596,22 @@ namespace C6
 
         #region Invoking Methods
 
-        private void RaiseCollectionChanged()
+        private void OnCollectionChanged()
             => _collectionChanged?.Invoke(this, EventArgs.Empty);
 
-        private void RaiseCollectionCleared(bool full, int count, int? start = null)
+        private void OnCollectionCleared(bool full, int count, int? start = null)
             => _collectionCleared?.Invoke(this, new ClearedEventArgs(full, count, start));
 
-        private void RaiseItemsAdded(T item, int count)
+        private void OnItemsAdded(T item, int count)
             => _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, count));
 
-        private void RaiseItemsRemoved(T item, int count)
+        private void OnItemsRemoved(T item, int count)
             => _itemsRemoved?.Invoke(this, new ItemCountEventArgs<T>(item, count));
 
-        private void RaiseItemInserted(T item, int index)
+        private void OnItemInserted(T item, int index)
             => _itemInserted?.Invoke(this, new ItemAtEventArgs<T>(item, index));
 
-        private void RaiseItemRemovedAt(T item, int index)
+        private void OnItemRemovedAt(T item, int index)
             => _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
 
         #endregion
@@ -620,31 +620,31 @@ namespace C6
 
         private void RaiseForAdd(T item)
         {
-            RaiseItemsAdded(item, 1);
-            RaiseCollectionChanged();
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
         }
 
         private void RaiseForAddAll(SCG.IEnumerable<T> items)
         {
             if (ActiveEvents.HasFlag(Added)) {
                 foreach (var item in items) {
-                    RaiseItemsAdded(item, 1);
+                    OnItemsAdded(item, 1);
                 }
             }
-            RaiseCollectionChanged();
+            OnCollectionChanged();
         }
 
         private void RaiseForClear(int count)
         {
-            RaiseCollectionCleared(true, count);
-            RaiseCollectionChanged();
+            OnCollectionCleared(true, count);
+            OnCollectionChanged();
         }
 
         private void RaiseForUpdate(T item, T oldItem)
         {
-            RaiseItemsRemoved(oldItem, 1);
-            RaiseItemsAdded(item, 1);
-            RaiseCollectionChanged();
+            OnItemsRemoved(oldItem, 1);
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
         }
 
         #endregion
