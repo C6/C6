@@ -2,6 +2,7 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Linq;
 
 using C6.Tests.Collections;
 using C6.Tests.Contracts;
@@ -732,6 +733,91 @@ namespace C6.Tests
             Assert.Fail("Tests have not been written yet");
         }
 
+        #endregion
+
+        #region GetUnsequencedHashCode()
+
+        [Test]
+        public void GetUnsequencedHashCode_EmptyCollection_GeneratedHashCode()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var expected = HashCodeGenerator.GetUnsequencedHashCode(collection);
+
+            // Act
+            var unsequencedHashCode = collection.GetUnsequencedHashCode();
+
+            // Assert
+            Assert.That(unsequencedHashCode, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetUnsequencedHashCode_RandomCollection_GeneratedHashCode()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var expected = HashCodeGenerator.GetUnsequencedHashCode(collection);
+
+            // Act
+            var unsequencedHashCode = collection.GetUnsequencedHashCode();
+
+            // Assert
+            Assert.That(unsequencedHashCode, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetUnsequencedHashCode_RandomCollectionWithNull_GeneratedHashCode()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull:true);
+            var expected = HashCodeGenerator.GetUnsequencedHashCode(collection);
+
+            // Act
+            var unsequencedHashCode = collection.GetUnsequencedHashCode();
+
+            // Assert
+            Assert.That(unsequencedHashCode, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetUnsequencedHashCode_EqualCollectionDifferentOrder_SameHashCode()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var shuffledItems = items.ToArray();
+            items.Shuffle(Random);
+            var firstCollection = GetCollection(items);
+            var secondCollection = GetCollection(shuffledItems);
+
+            // Act
+            var firstUnsequencedHashCode = firstCollection.GetUnsequencedHashCode();
+            var secondUnsequencedHashCode = secondCollection.GetUnsequencedHashCode();
+
+            // Assert
+            Assert.That(firstUnsequencedHashCode, Is.EqualTo(secondUnsequencedHashCode));
+        }
+
+        [Test]
+        public void GetUnsequencedHashCode_EqualButChangedCollection_SameHashCode()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var newItems = GetLowercaseStrings(Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var firstUnsequencedHashCode = collection.GetUnsequencedHashCode();
+            collection.AddAll(newItems);
+            collection.RemoveAll(newItems);
+            var secondUnsequencedHashCode = collection.GetUnsequencedHashCode();
+
+            // Assert
+            Assert.That(firstUnsequencedHashCode, Is.EqualTo(secondUnsequencedHashCode));
+        }
+
+        // TODO: Test for shuffled list in IListTests
+        
         #endregion
 
         #region Update(T)

@@ -33,6 +33,9 @@ namespace C6
 
         private int _version;
 
+        private int _unsequencedHashCodeVersion = -1;
+        private int _unsequencedHashCode;
+
         private event EventHandler _collectionChanged;
         private event EventHandler<ClearedEventArgs> _collectionCleared;
         private event EventHandler<ItemAtEventArgs<T>> _itemInserted , _itemRemovedAt;
@@ -267,7 +270,12 @@ namespace C6
 
         public int GetUnsequencedHashCode()
         {
-            throw new NotImplementedException();
+            if (_unsequencedHashCodeVersion != _version) {
+                _unsequencedHashCodeVersion = _version;
+                _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
+            }
+
+            return _unsequencedHashCode;
         }
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()

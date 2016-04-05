@@ -966,7 +966,12 @@ namespace C6
 
         public int GetUnsequencedHashCode()
         {
-            // TODO
+            // No preconditions
+
+
+            // Result is equal to that of HashCodeGenerator
+            Ensures(Result<int>() == this.GetUnsequencedHashCode(EqualityComparer));
+
 
             return default(int);
         }
@@ -1163,14 +1168,15 @@ namespace C6
 
 
             // If the collections must contain a different number of (distinct) items, then they must be non-equal
-            Ensures((Count == otherCollection.Count) || !Result<bool>());
-            Ensures((this.Distinct(EqualityComparer).Count() == otherCollection.Distinct(EqualityComparer).Count()) || !Result<bool>());
+            Ensures(Count == otherCollection.Count || !Result<bool>());
+            Ensures(this.Distinct(EqualityComparer).Count() == otherCollection.Distinct(EqualityComparer).Count() || !Result<bool>());
 
             // Result reflects whether they are unsequenced equal
             Ensures(Result<bool>() == this.UnsequenceEqual(otherCollection, EqualityComparer));
 
             // If the collections have different unsequenced hash codes, then they must be non-equal
-            Ensures((GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode()) || !Result<bool>());
+            Ensures(GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode(EqualityComparer) || !Result<bool>());
+            Ensures(!Result<bool>() || GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode(EqualityComparer));
 
 
             return default(bool);
