@@ -246,7 +246,7 @@ namespace C6
             if (Find(ref item)) {
                 return true;
             }
-            
+
             // Let Add handle version update and events
             Add(item);
 
@@ -364,13 +364,11 @@ namespace C6
 
         public event EventHandler CollectionChanged
         {
-            add
-            {
+            add {
                 _collectionChanged += value;
                 ActiveEvents |= Changed;
             }
-            remove
-            {
+            remove {
                 _collectionChanged -= value;
                 if (_collectionChanged == null) {
                     ActiveEvents &= ~Changed;
@@ -380,13 +378,11 @@ namespace C6
 
         public event EventHandler<ClearedEventArgs> CollectionCleared
         {
-            add
-            {
+            add {
                 _collectionCleared += value;
                 ActiveEvents |= Cleared;
             }
-            remove
-            {
+            remove {
                 _collectionCleared -= value;
                 if (_collectionCleared == null) {
                     ActiveEvents &= ~Cleared;
@@ -396,13 +392,11 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted
         {
-            add
-            {
+            add {
                 _itemInserted += value;
                 ActiveEvents |= Inserted;
             }
-            remove
-            {
+            remove {
                 _itemInserted -= value;
                 if (_itemInserted == null) {
                     ActiveEvents &= ~Inserted;
@@ -412,13 +406,11 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
         {
-            add
-            {
+            add {
                 _itemRemovedAt += value;
                 ActiveEvents |= RemovedAt;
             }
-            remove
-            {
+            remove {
                 _itemRemovedAt -= value;
                 if (_itemRemovedAt == null) {
                     ActiveEvents &= ~RemovedAt;
@@ -428,13 +420,11 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
         {
-            add
-            {
+            add {
                 _itemsAdded += value;
                 ActiveEvents |= Added;
             }
-            remove
-            {
+            remove {
                 _itemsAdded -= value;
                 if (_itemsAdded == null) {
                     ActiveEvents &= ~Added;
@@ -444,13 +434,11 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
         {
-            add
-            {
+            add {
                 _itemsRemoved += value;
                 ActiveEvents |= Removed;
             }
-            remove
-            {
+            remove {
                 _itemsRemoved -= value;
                 if (_itemsRemoved == null) {
                     ActiveEvents &= ~Removed;
@@ -473,8 +461,7 @@ namespace C6
         private int Capacity
         {
             get { return _items.Length; }
-            set
-            {
+            set {
                 #region Code Contracts
 
                 // Capacity must be at least as big as the number of items
@@ -509,7 +496,7 @@ namespace C6
                 return;
             }
 
-            var capacity = IsEmpty ? MinArrayLength : Capacity * 2;
+            var capacity = IsEmpty ? MinArrayLength : Capacity*2;
 
             if ((uint) capacity > MaxArrayLength) {
                 capacity = MaxArrayLength;

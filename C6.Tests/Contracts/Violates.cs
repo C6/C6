@@ -27,8 +27,7 @@ namespace C6.Tests.Contracts
         /// <code>Assert.That(code, Violates.Precondition);</code></remarks>
         public static TypeConstraint Precondition
         {
-            get
-            {
+            get {
 #if (!DEBUG)
                 Assert.Ignore("Ignore preconditions in release.");
 #endif
@@ -36,7 +35,7 @@ namespace C6.Tests.Contracts
                 return Throws.TypeOf<PreconditionException>();
             }
         }
-        
+
         /// <summary>
         /// Gets <see cref="Throws.TypeOf"/> with a
         /// <see cref="PreconditionException"/> and a user message.

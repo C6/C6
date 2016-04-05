@@ -149,8 +149,7 @@ namespace C6
 
         public int Count
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
@@ -163,8 +162,7 @@ namespace C6
 
         public Speed IndexingSpeed
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -298,8 +296,7 @@ namespace C6
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public T this[int index]
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 

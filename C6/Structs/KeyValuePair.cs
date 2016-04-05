@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Diagnostics.Contracts;
 using System.Text;
@@ -39,7 +38,6 @@ namespace C6
 
         #endregion
 
-
         #region Constructors
 
         /// <summary>
@@ -69,7 +67,6 @@ namespace C6
         }
 
         #endregion
-
 
         #region Object Methods
 
@@ -106,10 +103,9 @@ namespace C6
         [Pure]
         public override int GetHashCode()
             // Uses SCG.EqualityComparer as Key and Value could be null
-            => SCG.EqualityComparer<TKey>.Default.GetHashCode(Key) + 13984681 * SCG.EqualityComparer<TValue>.Default.GetHashCode(Value);
+            => SCG.EqualityComparer<TKey>.Default.GetHashCode(Key) + 13984681*SCG.EqualityComparer<TValue>.Default.GetHashCode(Value);
 
         #endregion
-
 
         #region IEquatable Members
 
@@ -149,7 +145,6 @@ namespace C6
 
         #endregion
 
-
         #region IShowable Members
 
         [Pure] // TODO: Is [Pure] necessary?
@@ -169,7 +164,6 @@ namespace C6
         }
 
         #endregion
-
 
         #region IFormattable Members
 

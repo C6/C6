@@ -167,8 +167,7 @@ namespace C6
 
         public bool AllowsDuplicates
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -182,8 +181,7 @@ namespace C6
 
         public bool DuplicatesByCounting
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -197,8 +195,7 @@ namespace C6
 
         public SCG.IEqualityComparer<T> EqualityComparer
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -212,8 +209,7 @@ namespace C6
 
         public bool IsFixedSize
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -227,8 +223,7 @@ namespace C6
 
         public bool IsReadOnly
         {
-            get
-            {
+            get {
                 // No preconditions
 
 

@@ -673,7 +673,7 @@ namespace C6.Tests
         {
             // Arrange
             var items = GetStrings(Random);
-            var item =items.Choose(Random);
+            var item = items.Choose(Random);
             var collection = GetCollection(items);
 
             // Act & Assert

@@ -54,8 +54,7 @@ namespace C6
 
         public EnumerationDirection Direction
         {
-            get
-            {
+            get {
                 // No preconditions
 
 

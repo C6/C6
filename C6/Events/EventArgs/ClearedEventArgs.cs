@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;

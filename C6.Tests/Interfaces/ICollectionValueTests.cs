@@ -459,7 +459,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var collection = GetIntCollectionValue(Random);
-            var array = GetIntegers(Random, (int) (collection.Count * 1.7));
+            var array = GetIntegers(Random, (int) (collection.Count*1.7));
             var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act

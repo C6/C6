@@ -4,7 +4,6 @@
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
@@ -330,8 +329,7 @@ namespace C6
 
         public SCG.IComparer<T> Comparer
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -566,8 +564,7 @@ namespace C6
 
         public T this[IPriorityQueueHandle<T> handle]
         {
-            get
-            {
+            get {
                 // Handle must be non-null
                 Requires(handle != null, ArgumentMustBeNonNull);
 
@@ -585,8 +582,7 @@ namespace C6
                 return default(T);
             }
 
-            set
-            {
+            set {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 

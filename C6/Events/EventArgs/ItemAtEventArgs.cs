@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 using SCG = System.Collections.Generic;
@@ -74,6 +73,5 @@ namespace C6
         public int Index { get; }
 
         public override string ToString() => $"'{Item}' at index {Index}"; // $"(ItemAtEventArgs {Index} '{Item}')"
-
     }
 }

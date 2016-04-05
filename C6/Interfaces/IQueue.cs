@@ -97,8 +97,7 @@ namespace C6
 
         public T this[int index]
         {
-            get
-            {
+            get {
                 // Argument must be within bounds (collection must be non-empty)
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);

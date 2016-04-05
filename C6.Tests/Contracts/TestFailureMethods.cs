@@ -1,6 +1,12 @@
-﻿using System;
+﻿// This file is part of the C6 Generic Collection Library for C# and CLI
+// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+
+using System;
+
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedParameter.Global
+
 
 namespace C6.Tests.Contracts
 {
@@ -15,8 +21,7 @@ namespace C6.Tests.Contracts
     {
         public static void Requires(bool condition, string userMessage, string conditionText)
         {
-            if (!condition)
-            {
+            if (!condition) {
                 throw new PreconditionException(userMessage, conditionText);
             }
         }
@@ -24,8 +29,7 @@ namespace C6.Tests.Contracts
 
         public static void Requires<TException>(bool condition, string userMessage, string conditionText) where TException : Exception
         {
-            if (!condition)
-            {
+            if (!condition) {
                 throw new PreconditionException(userMessage, conditionText, typeof(TException));
             }
         }

@@ -632,8 +632,7 @@ namespace C6
 
         public int Count
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
@@ -646,8 +645,7 @@ namespace C6
 
         public T First
         {
-            get
-            {
+            get {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
@@ -664,8 +662,7 @@ namespace C6
         public bool IsFifo
         {
             get { return default(bool); }
-            set
-            {
+            set {
                 // Collection must be non-read-only
                 Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
@@ -680,8 +677,7 @@ namespace C6
 
         public bool IsFixedSize
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
@@ -694,8 +690,7 @@ namespace C6
 
         public bool IsReadOnly
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
@@ -708,8 +703,7 @@ namespace C6
 
         public T Last
         {
-            get
-            {
+            get {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
@@ -725,8 +719,7 @@ namespace C6
 
         public T this[int index]
         {
-            get
-            {
+            get {
                 // Argument must be within bounds
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);
@@ -738,8 +731,7 @@ namespace C6
 
                 return default(T);
             }
-            set
-            {
+            set {
                 // Collection must be non-read-only
                 Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
@@ -875,7 +867,7 @@ namespace C6
             // Collection must not already contain item if collection disallows duplicate values
             Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
 
-            
+
             // The collection becomes non-empty
             Ensures(!IsEmpty);
 
@@ -884,10 +876,10 @@ namespace C6
 
             // The collection will contain the item added
             Ensures(Contains(item));
-            
+
             // The number of equal items increase by one
             Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
-            
+
             // The number of same items increase by one
             Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
@@ -908,7 +900,7 @@ namespace C6
 
             // Collection must not already contain item if collection disallows duplicate values
             Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
-            
+
 
             // The collection becomes non-empty
             Ensures(!IsEmpty);
@@ -918,10 +910,10 @@ namespace C6
 
             // The collection will contain the item added
             Ensures(Contains(item));
-            
+
             // The number of equal items increase by one
             Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
-            
+
             // The number of same items increase by one
             Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
@@ -1213,8 +1205,7 @@ namespace C6
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool AllowsDuplicates
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
@@ -1229,8 +1220,7 @@ namespace C6
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool IsSynchronized
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -1241,6 +1231,7 @@ namespace C6
                 return default(bool);
             }
         }
+
         public int LastIndexOf(T item)
         {
             // No additional preconditions allowed

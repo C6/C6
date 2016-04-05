@@ -8,7 +8,7 @@ namespace C6.Tests.Helpers
 {
     public class CaseInsensitiveStringComparer : SCG.IEqualityComparer<string>, SCG.IComparer<string>
     {
-        private CaseInsensitiveStringComparer() { }
+        private CaseInsensitiveStringComparer() {}
 
         public static CaseInsensitiveStringComparer Default => new CaseInsensitiveStringComparer();
 

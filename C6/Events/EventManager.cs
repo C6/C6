@@ -1,7 +1,6 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-
 using System;
 using System.Diagnostics.Contracts;
 
@@ -50,7 +49,8 @@ namespace C6
         public EventTypes ActiveEvents { get; private set; }
 
 
-        public event EventHandler CollectionChanged {
+        public event EventHandler CollectionChanged
+        {
             add {
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -86,7 +86,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ClearedEventArgs> CollectionCleared {
+        public event EventHandler<ClearedEventArgs> CollectionCleared
+        {
             add {
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -122,7 +123,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded {
+        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
+        {
             add {
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -158,7 +160,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved {
+        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
+        {
             add {
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -194,7 +197,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted {
+        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
+        {
             add {
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);
@@ -230,7 +234,8 @@ namespace C6
         }
 
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt {
+        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
+        {
             add {
                 // Value must be non-null
                 Requires(value != null, ArgumentMustBeNonNull);

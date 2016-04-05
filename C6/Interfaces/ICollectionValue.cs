@@ -326,8 +326,7 @@ namespace C6
 
         public EventTypes ActiveEvents
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -346,8 +345,7 @@ namespace C6
 
         public bool AllowsNull
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -361,8 +359,7 @@ namespace C6
 
         public int Count
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -379,8 +376,7 @@ namespace C6
 
         public Speed CountSpeed
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -394,8 +390,7 @@ namespace C6
 
         public bool IsEmpty
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -412,8 +407,7 @@ namespace C6
 
         public EventTypes ListenableEvents
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -479,8 +473,7 @@ namespace C6
 
         public event EventHandler CollectionChanged
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Changed), EventMustBeListenable);
 
@@ -497,8 +490,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Changed), EventMustBeActive);
 
@@ -515,8 +507,7 @@ namespace C6
 
         public event EventHandler<ClearedEventArgs> CollectionCleared
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Cleared), EventMustBeListenable);
 
@@ -533,8 +524,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Cleared), EventMustBeActive);
 
@@ -551,8 +541,7 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Inserted), EventMustBeListenable);
 
@@ -569,8 +558,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Inserted), EventMustBeActive);
 
@@ -587,8 +575,7 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(RemovedAt), EventMustBeListenable);
 
@@ -605,8 +592,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(RemovedAt), EventMustBeActive);
 
@@ -623,8 +609,7 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Added), EventMustBeListenable);
 
@@ -641,8 +626,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Added), EventMustBeActive);
 
@@ -659,8 +643,7 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Removed), EventMustBeListenable);
 
@@ -677,8 +660,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Removed), EventMustBeActive);
 

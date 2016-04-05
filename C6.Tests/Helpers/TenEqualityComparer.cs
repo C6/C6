@@ -12,10 +12,10 @@ namespace C6.Tests
 
         public static TenEqualityComparer Default => new TenEqualityComparer();
 
-        public int GetHashCode(int item) => (item / 10).GetHashCode();
+        public int GetHashCode(int item) => (item/10).GetHashCode();
 
-        public bool Equals(int x, int y) => x / 10 == y / 10;
+        public bool Equals(int x, int y) => x/10 == y/10;
 
-        public int Compare(int x, int y) => (x / 10).CompareTo(y / 10);
+        public int Compare(int x, int y) => (x/10).CompareTo(y/10);
     }
 }

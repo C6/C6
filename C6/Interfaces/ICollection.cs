@@ -784,8 +784,7 @@ namespace C6
 
         public Speed ContainsSpeed
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -799,8 +798,7 @@ namespace C6
 
         public int Count
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
@@ -813,8 +811,7 @@ namespace C6
 
         public bool IsReadOnly
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
