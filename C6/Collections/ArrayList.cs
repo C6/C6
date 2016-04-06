@@ -334,13 +334,26 @@ namespace C6
 
             #endregion
 
+            T oldItem;
+            return Update(item, out oldItem);
+        }
+
+        public bool Update(T item, out T oldItem)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             var index = IndexOfPrivate(item);
 
             if (index >= 0) {
                 // Only update version if item is actually updated
                 UpdateVersion();
 
-                var oldItem = _items[index];
+                oldItem = _items[index];
                 _items[index] = item;
 
                 RaiseForUpdate(item, oldItem);
@@ -348,12 +361,8 @@ namespace C6
                 return true;
             }
 
+            oldItem = default(T);
             return false;
-        }
-
-        public bool Update(T item, out T oldItem)
-        {
-            throw new NotImplementedException();
         }
 
         public bool UpdateOrAdd(T item)

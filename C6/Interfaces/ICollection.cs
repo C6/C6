@@ -1177,7 +1177,7 @@ namespace C6
             // If the collections have different unsequenced hash codes, then they must be non-equal
             Ensures(GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode(EqualityComparer) || !Result<bool>());
             Ensures(!Result<bool>() || GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode(EqualityComparer));
-
+            
 
             return default(bool);
         }
@@ -1225,7 +1225,7 @@ namespace C6
             Ensures(OldValue(Contains(item)) == Contains(item));
 
             // The item returned is either equal to the given item, if it was updated, or the default value of T if it was added
-            Ensures(ValueAtReturn(out oldItem).IsSameAs(Result<bool>() ? item : default(T)));
+            Ensures(EqualityComparer.Equals(ValueAtReturn(out oldItem), Result<bool>() ? item : default(T)));
 
             // Count remains unchanged
             Ensures(Count == OldValue(Count));
@@ -1236,7 +1236,7 @@ namespace C6
             Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out oldItem) != null);
 
             // Result came from the collection
-            Ensures(OldValue(ToArray()).ContainsSame(ValueAtReturn(out item)));
+            Ensures(!Result<bool>() || OldValue(ToArray()).ContainsSame(ValueAtReturn(out oldItem)));
 
             // If the item is updated, that item is in the collection
             Ensures(!Result<bool>() || this.ContainsSame(item));

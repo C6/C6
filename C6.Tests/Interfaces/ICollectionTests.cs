@@ -1012,6 +1012,188 @@ namespace C6.Tests
 
         #endregion
 
+        #region Update(T, out T)
+
+        [Test]
+        public void UpdateOut_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull:false);
+            string oldItem;
+
+            // Act & Assert
+            Assert.That(() => collection.Update(null, out oldItem), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void UpdateOut_AllowsNull_UpdatesNull()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            string oldItem;
+
+            // Act
+            var update = collection.Update(null, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.True);
+            Assert.That(oldItem, Is.Null);
+        }
+
+        [Test]
+        public void UpdateOut_UpdateExistingItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            string oldItem;
+
+            // Act
+            var update = collection.Update(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.True);
+            Assert.That(oldItem, Is.SameAs(existingItem));
+        }
+
+        [Test]
+        public void UpdateOut_UpdateNewItem_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+            string oldItem;
+
+            // Act
+            var update = collection.Update(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.False);
+            Assert.That(oldItem, Is.Null);
+        }
+
+        [Test]
+        public void UpdateOut_UpdateExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+            var duplicateItem = string.Copy(item);
+            string oldItem;
+            var eventCount = DuplicatesByCounting ? count : 1;
+            var expectedEvents = new[] {
+                Removed(item, eventCount, collection),
+                Added(duplicateItem, eventCount, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Update(duplicateItem, out oldItem), _Is.Raising(expectedEvents).For(collection));
+        }
+
+        // TODO: test that the right item is removed for IList<T>
+
+        [Test]
+        public void UpdateOut_UpdateNewItem_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+            string oldItem;
+
+            // Act & Assert
+            Assert.That(() => collection.Update(item, out oldItem), Is.Not.RaisingEventsFor(collection));
+        }
+
+        [Test]
+        public void UpdateOut_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+            string oldItem;
+
+            // Act
+            var update = collection.Update(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.False);
+            Assert.That(oldItem, Is.Null);
+        }
+
+        [Test]
+        public void UpdateOut_UpdateDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            string oldItem;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Update(item, out oldItem);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.With.Message.EqualTo(CollectionModified)); // TODO: introduce BecauseCollectionWasModified()
+        }
+
+        [Test]
+        public void UpdateOut_UpdateDuringEnumeration_ThrowsNoInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+            string oldItem;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Update(item, out oldItem);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOut_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOut_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOut_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #endregion
 
         #endregion
