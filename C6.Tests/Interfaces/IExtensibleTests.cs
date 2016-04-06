@@ -458,7 +458,7 @@ namespace C6.Tests.Collections
         }
 
         [Test]
-        public void AddAll_BadEnumerable_ThrowsExceptionButCollectionDoesntChange()
+        public void AddAll_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
         {
             // Arrange
             var items = GetStrings(Random);

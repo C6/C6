@@ -191,7 +191,7 @@ namespace C6.Tests
         #region Contains(T)
 
         [Test]
-        public void Contains_DisallowNullContainsNull_ViolatesPrecondition()
+        public void Contains_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -344,7 +344,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ContainsAll_DisallowsNullEnumerableWithNull_ViolatesPrecondition()
+        public void ContainsAll_DisallowsNullsInEnumerable_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -446,7 +446,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ContainsAll_BadEnumerable_ThrowsExceptionButCollectionDoesntChange()
+        public void ContainsAll_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
         {
             // Arrange
             var items = GetStrings(Random);
