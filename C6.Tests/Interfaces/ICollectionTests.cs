@@ -1018,7 +1018,7 @@ namespace C6.Tests
             // Arrange
             var items = new[] { 4, 54, 56, 8 };
             var collection = GetCollection(items, TenEqualityComparer.Default);
-            var count = collection.AllowsDuplicates && collection.DuplicatesByCounting ? 2 : 1;
+            var count = DuplicatesByCounting ? 2 : 1;
             var item = 53;
             var expectedEvents = new[] {
                 Removed(54, count, collection),
@@ -1094,7 +1094,6 @@ namespace C6.Tests
 
         // TODO: Null
         // TODO: Simple type, properly replaced
-        // TODO: Events
 
         // TODO: Proper item replaced based on FIFO
 
