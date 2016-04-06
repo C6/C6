@@ -644,7 +644,7 @@ namespace C6
         {
             if (version != _version) {
                 // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
-                throw new InvalidOperationException(CollectionModified);
+                throw new InvalidOperationException(CollectionWasModified);
             }
         }
 

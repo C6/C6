@@ -301,7 +301,7 @@ namespace C6.Tests.Collections
             collection.Add(item);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(CollectionModified));
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
@@ -393,8 +393,7 @@ namespace C6.Tests.Collections
         public void AddAll_AddEmptyEnumerable_RaisesNoEvents()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetExtensible(items, ReferenceEqualityComparer);
+            var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
             var empty = Enumerable.Empty<string>();
 
             // Act & Assert
@@ -484,7 +483,7 @@ namespace C6.Tests.Collections
             collection.AddAll(items);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(CollectionModified));
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]

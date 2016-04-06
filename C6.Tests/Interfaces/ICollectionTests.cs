@@ -165,7 +165,7 @@ namespace C6.Tests
             collection.Clear();
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(CollectionModified));
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
@@ -347,7 +347,7 @@ namespace C6.Tests
         public void ContainsAll_DisallowsNullEnumerableWithNull_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetStringCollection(Random, allowsNull:false);
+            var collection = GetStringCollection(Random, allowsNull: false);
             var items = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
@@ -415,7 +415,7 @@ namespace C6.Tests
         public void ContainsAll_Subset_True()
         {
             // Arrange
-            var count = GetCount(Random) / 2;
+            var count = GetCount(Random)/2;
             var items = GetStrings(Random);
             var containedItems = items.Take(count).ToArray();
             items.Shuffle();
@@ -432,7 +432,7 @@ namespace C6.Tests
         public void ContainsAll_SubsetWithDuplicates_False()
         {
             // Arrange
-            var count = GetCount(Random) / 2;
+            var count = GetCount(Random)/2;
             var items = GetStrings(Random);
             var nonContainedItems = items.Take(count).Append(items.First()).ToArray();
             items.Shuffle();
@@ -824,11 +824,11 @@ namespace C6.Tests
             collection.FindOrAdd(ref item);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(CollectionModified));
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
-        public void FindOrAdd_FindItemDuringEnumeration_ThrowsNoInvalidOperationException()
+        public void FindOrAdd_FindItemDuringEnumeration_ThrowsNothing()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -899,7 +899,7 @@ namespace C6.Tests
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
-            var collection = GetCollection(items, allowsNull:true);
+            var collection = GetCollection(items, allowsNull: true);
             var expected = HashCodeGenerator.GetUnsequencedHashCode(collection);
 
             // Act
@@ -1062,7 +1062,7 @@ namespace C6.Tests
             collection.Remove(item);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.With.Message.EqualTo(CollectionModified));
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
@@ -1238,7 +1238,7 @@ namespace C6.Tests
             collection.Remove(item, out removedItem);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.With.Message.EqualTo(CollectionModified));
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
@@ -1442,7 +1442,7 @@ namespace C6.Tests
             collection.Update(item);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(CollectionModified));
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         // TODO: Null
@@ -1486,7 +1486,7 @@ namespace C6.Tests
         public void UpdateOut_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetStringCollection(Random, allowsNull:false);
+            var collection = GetStringCollection(Random, allowsNull: false);
             string oldItem;
 
             // Act & Assert
@@ -1611,11 +1611,11 @@ namespace C6.Tests
             collection.Update(item, out oldItem);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.With.Message.EqualTo(CollectionModified)); // TODO: introduce BecauseCollectionWasModified()
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
-        public void UpdateOut_UpdateDuringEnumeration_ThrowsNoInvalidOperationException()
+        public void UpdateOut_UpdateDuringEnumeration_ThrowsNothing()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);

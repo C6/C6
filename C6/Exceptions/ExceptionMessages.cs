@@ -5,6 +5,6 @@ namespace C6
 {
     public static class ExceptionMessages
     {
-        public static string CollectionModified => "Collection was modified; enumeration operation may not execute.";
+        public static string CollectionWasModified => "Collection was modified; enumeration operation may not execute.";
     }
 }
