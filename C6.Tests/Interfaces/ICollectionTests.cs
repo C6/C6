@@ -331,6 +331,122 @@ namespace C6.Tests
 
         #endregion
 
+        #region ContainsAll(IEnumerable<T>)
+
+        [Test]
+        public void ContainsAll_NullEnumerable_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.ContainsAll(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void ContainsAll_DisallowsNullEnumerableWithNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull:false);
+            var items = GetStrings(Random).WithNull(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.ContainsAll(items), Violates.PreconditionSaying(ItemsMustBeNonNull));
+        }
+
+        [Test]
+        public void ContainsAll_AllowNullEnumerableContainingNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            var arrayWithNull = new string[] { null };
+
+            // Act
+            var containsAll = collection.ContainsAll(arrayWithNull);
+
+            // Assert
+            Assert.That(containsAll, Is.True);
+        }
+
+        [Test]
+        public void ContainsAll_EmptyCollectionEmptyEnumerable_True()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = Enumerable.Empty<string>();
+
+            // Act
+            var containsAll = collection.ContainsAll(items);
+
+            // Assert
+            Assert.That(containsAll, Is.True);
+        }
+
+        [Test]
+        public void ContainsAll_EmptyCollectionNonEmptyEnumerable_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = GetStrings(Random);
+
+            // Act
+            var containsAll = collection.ContainsAll(items);
+
+            // Assert
+            Assert.That(containsAll, Is.False);
+        }
+
+        [Test]
+        public void ContainsAll_RandomCollectionEmptyEnumerable_True()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var items = Enumerable.Empty<string>();
+
+            // Act
+            var containsAll = collection.ContainsAll(items);
+
+            // Assert
+            Assert.That(containsAll, Is.True);
+        }
+
+        [Test]
+        public void ContainsAll_Subset_True()
+        {
+            // Arrange
+            var count = GetCount(Random) / 2;
+            var items = GetStrings(Random);
+            var containedItems = items.Take(count).ToArray();
+            items.Shuffle();
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+
+            // Act
+            var containsAll = collection.ContainsAll(containedItems);
+
+            // Assert
+            Assert.That(containsAll, Is.True);
+        }
+
+        [Test]
+        public void ContainsAll_SubsetWithDuplicates_False()
+        {
+            // Arrange
+            var count = GetCount(Random) / 2;
+            var items = GetStrings(Random);
+            var nonContainedItems = items.Take(count).Append(items.First()).ToArray();
+            items.Shuffle();
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+
+            // Act
+            var containsAll = collection.ContainsAll(nonContainedItems);
+
+            // Assert
+            Assert.That(containsAll, Is.False);
+        }
+
+        #endregion
+
         #region ContainsCount(T)
 
         [Test]

@@ -217,7 +217,20 @@ namespace C6
 
         public bool ContainsAll(SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
+            // TODO: use aux hash bag to obtain linear time procedure (old comment)
+            var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
+
+            if (itemsToContain.IsEmpty) {
+                return true;
+            }
+
+            foreach (var item in this) {
+                if (itemsToContain.Remove(item) && itemsToContain.IsEmpty) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         // TODO: Test performance?

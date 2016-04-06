@@ -7,6 +7,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using C6.Contracts;
+
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractHelperExtensions;
@@ -876,12 +878,12 @@ namespace C6
             // All items must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
-
+            
             // The collection contains the same items as items, with a multiplicity equal or greater
             Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) >= group.Count()));
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray()))); // TODO: Method is already pure...
 
 
             return default(bool);
