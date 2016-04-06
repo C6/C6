@@ -949,6 +949,346 @@ namespace C6.Tests
 
         #endregion
 
+        #region Remove(T)
+
+        [Test]
+        public void RemoveT_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.Remove(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void RemoveT_AllowsNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+
+            // Act
+            var remove = collection.Remove(null);
+
+            // Assert
+            Assert.That(remove, Is.True);
+        }
+
+        [Test]
+        public void RemoveT_RemoveExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            var expectedEvents = new[] {
+                Removed(existingItem, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Remove(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void RemoveT_RemoveNewItem_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Remove(item), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveT_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+
+            // Act
+            var remove = collection.Remove(item);
+
+            // Assert
+            Assert.That(remove, Is.False);
+        }
+
+        [Test]
+        public void RemoveT_RemoveExistingItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+
+            // Act
+            var remove = collection.Remove(item);
+
+            // Assert
+            Assert.That(remove, Is.True);
+        }
+
+        [Test]
+        public void RemoveT_RemoveNewItem_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var remove = collection.Remove(item);
+
+            // Assert
+            Assert.That(remove, Is.False);
+        }
+
+        [Test]
+        public void RemoveT_RemoveItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Remove(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.With.Message.EqualTo(CollectionModified));
+        }
+
+        [Test]
+        public void RemoveT_RemoveItemDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Remove(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveT_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveT_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveT_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region Remove(T, out T)
+
+        [Test]
+        public void RemoveTOut_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+            string removedItem;
+
+            // Act & Assert
+            Assert.That(() => collection.Remove(null, out removedItem), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void RemoveTOut_AllowsNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            string removedItem;
+
+            // Act
+            var remove = collection.Remove(null, out removedItem);
+
+            // Assert
+            Assert.That(remove, Is.True);
+            Assert.That(removedItem, Is.Null);
+        }
+
+        [Test]
+        public void RemoveTOut_RemoveExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            string removedItem;
+            var expectedEvents = new[] {
+                Removed(existingItem, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Remove(item, out removedItem), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void RemoveTOut_RemoveNewItem_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+            string removedItem;
+
+            // Act & Assert
+            Assert.That(() => collection.Remove(item, out removedItem), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveTOut_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+            string removedItem;
+
+            // Act
+            var remove = collection.Remove(item, out removedItem);
+
+            // Assert
+            Assert.That(remove, Is.False);
+            Assert.That(removedItem, Is.Null);
+        }
+
+        [Test]
+        public void RemoveTOut_RemoveExistingItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            string removedItem;
+
+            // Act
+            var remove = collection.Remove(item, out removedItem);
+
+            // Assert
+            Assert.That(remove, Is.True);
+            Assert.That(removedItem, Is.SameAs(existingItem));
+        }
+
+        [Test]
+        public void RemoveTOut_RemoveNewItem_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetCollection(items);
+            string removedItem;
+
+            // Act
+            var remove = collection.Remove(item, out removedItem);
+
+            // Assert
+            Assert.That(remove, Is.False);
+            Assert.That(removedItem, Is.Null);
+        }
+
+        [Test]
+        public void RemoveTOut_RemoveItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            string removedItem;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Remove(item, out removedItem);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.With.Message.EqualTo(CollectionModified));
+        }
+
+        [Test]
+        public void RemoveTOut_RemoveItemDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+            string removedItem;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Remove(item, out removedItem);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveTOut_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveTOut_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveTOut_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region Update(T)
 
         // TODO: Test that the proper item is replaced (based on IsFifo) when several exist

@@ -1331,6 +1331,7 @@ namespace C6
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         // TODO: override to change documentation
+        // TODO: Test the right item is removed (contract/unit test)
         public abstract bool Remove(T item);
         // TODO: override to change documentation
         public abstract bool Remove(T item, out T removedItem);

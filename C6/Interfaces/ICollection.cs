@@ -1044,7 +1044,7 @@ namespace C6
             Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) - (Result<bool>() ? 1 : 0));
 
             // If an item was removed, the removed item equals the item to remove; otherwise, it equals the default value of T
-            Ensures(ValueAtReturn(out removedItem).IsSameAs(Result<bool>() ? item : default(T)));
+            Ensures(EqualityComparer.Equals(ValueAtReturn(out removedItem), Result<bool>() ? item : default(T)));
 
             // If collection doesn't allow duplicates, the collection no more contains the item
             Ensures(AllowsDuplicates || !Contains(item));
@@ -1052,8 +1052,8 @@ namespace C6
             // Returned value is from collection
             Ensures(!Result<bool>() || OldValue(ToArray()).ContainsSame(ValueAtReturn(out removedItem)));
 
-            // Removing the item decreases the number of equal items by one
-            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) - (Result<bool>() ? 1 : 0));
+            // Old value is non-null
+            Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out removedItem) != null);
 
 
             removedItem = default(T);

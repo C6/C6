@@ -298,12 +298,38 @@ namespace C6
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            T removedItem;
+            return Remove(item, out removedItem);
         }
 
         public bool Remove(T item, out T removedItem)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            // TODO: Work based on IsFifo
+            var index = IndexOfPrivate(item);
+
+            if (index >= 0) {
+                UpdateVersion();
+                removedItem = RemoveAt(index);
+                RaiseForRemove(removedItem);
+                return true;
+            }
+
+            removedItem = default(T);
+            return false;
         }
 
         public bool RemoveAll(T item)
@@ -599,6 +625,19 @@ namespace C6
             Count++;
         }
 
+        private T RemoveAt(int index)
+        {
+            var item = _items[index];
+
+            if (--Count > index) {
+                Array.Copy(_items, index + 1, _items, index, Count - index);
+            }
+
+            _items[Count] = default(T);
+
+            return item;
+        }
+
         private void UpdateVersion() => _version++;
 
         private void CheckVersion(int version)
@@ -654,6 +693,12 @@ namespace C6
         private void RaiseForClear(int count)
         {
             OnCollectionCleared(true, count);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForRemove(T item)
+        {
+            OnItemsRemoved(item, 1);
             OnCollectionChanged();
         }
 
