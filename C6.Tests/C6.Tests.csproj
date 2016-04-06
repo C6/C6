@@ -165,7 +165,6 @@
     <Compile Include="Helpers\CollectionEvent.cs" />
     <Compile Include="Helpers\CollectionEventConstraint.cs" />
     <Compile Include="Helpers\CollectionEventHolder.cs" />
-    <Compile Include="Helpers\Is.cs" />
     <Compile Include="Helpers\TestHelper.cs" />
     <Compile Include="Interfaces\ICollectionTests.cs" />
     <Compile Include="Structs\KeyValuePairTests.cs" />

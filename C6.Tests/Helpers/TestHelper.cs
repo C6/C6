@@ -62,7 +62,9 @@ namespace C6.Tests.Helpers
 
         public static SCG.IEqualityComparer<KeyValuePair<TKey, TValue>> KeyEqualityComparer<TKey, TValue>() => ComparerFactory.CreateEqualityComparer<KeyValuePair<TKey, TValue>>((x, y) => x.Key.Equals(y.Key), x => x.Key.GetHashCode());
 
-        public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
+        public static CollectionEventHolder<T> Raises<T>(CollectionEvent<T>[] expectedEvents) => new CollectionEventHolder<T>(expectedEvents);
+
+        public static CollectionEventConstraint<T> RaisesNoEventsFor<T>(ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
 
         public static BadEnumerable<T> AsBadEnumerable<T>(this SCG.IEnumerable<T> enumerable) => new BadEnumerable<T>(enumerable);
 

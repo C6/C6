@@ -134,7 +134,7 @@ namespace C6.Tests
             var collection = GetEmptyCollection<string>();
 
             // Act & Assert
-            Assert.That(() => collection.Clear(), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.Clear(), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -150,7 +150,7 @@ namespace C6.Tests
             };
 
             // Act & Assert
-            Assert.That(() => collection.Clear(), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.Clear(), Raises(expectedEvents).For(collection));
         }
 
         [Test]
@@ -761,7 +761,7 @@ namespace C6.Tests
             };
 
             // Act & Assert
-            Assert.That(() => collection.FindOrAdd(ref item), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.FindOrAdd(ref item), Raises(expectedEvents).For(collection));
         }
 
         [Test]
@@ -807,7 +807,7 @@ namespace C6.Tests
             var collection = GetCollection(items);
 
             // Act & Assert
-            Assert.That(() => collection.FindOrAdd(ref item), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.FindOrAdd(ref item), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -946,7 +946,7 @@ namespace C6.Tests
         }
 
         // TODO: Test for shuffled list in IListTests
-        
+
         #endregion
 
         #region Update(T)
@@ -1022,7 +1022,7 @@ namespace C6.Tests
             };
 
             // Act & Assert
-            Assert.That(() => collection.Update(item), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.Update(item), Raises(expectedEvents).For(collection));
         }
 
         [Test]
@@ -1040,7 +1040,7 @@ namespace C6.Tests
             };
 
             // Act & Assert
-            Assert.That(() => collection.Update(item), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.Update(item), Raises(expectedEvents).For(collection));
         }
 
         [Test]
@@ -1052,7 +1052,7 @@ namespace C6.Tests
             var item = GetLowercaseString(Random);
 
             // Act & Assert
-            Assert.That(() => collection.Update(item), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.Update(item), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -1222,7 +1222,7 @@ namespace C6.Tests
             };
 
             // Act & Assert
-            Assert.That(() => collection.Update(duplicateItem, out oldItem), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.Update(duplicateItem, out oldItem), Raises(expectedEvents).For(collection));
         }
 
         // TODO: test that the right item is removed for IList<T>
@@ -1237,7 +1237,7 @@ namespace C6.Tests
             string oldItem;
 
             // Act & Assert
-            Assert.That(() => collection.Update(item, out oldItem), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.Update(item, out oldItem), RaisesNoEventsFor(collection));
         }
 
         [Test]

@@ -271,7 +271,7 @@ namespace C6.Tests.Collections
             };
 
             // Act & Assert
-            Assert.That(() => collection.Add(item), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.Add(item), Raises(expectedEvents).For(collection));
         }
 
         [Test]
@@ -285,7 +285,7 @@ namespace C6.Tests.Collections
             var duplicateItem = items.Choose(Random).ToLower();
 
             // Act & Assert
-            Assert.That(() => collection.Add(duplicateItem), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.Add(duplicateItem), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -398,7 +398,7 @@ namespace C6.Tests.Collections
             var empty = Enumerable.Empty<string>();
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(empty), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.AddAll(empty), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -412,7 +412,7 @@ namespace C6.Tests.Collections
             items.Shuffle(Random);
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(items), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.AddAll(items), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -455,7 +455,7 @@ namespace C6.Tests.Collections
                 };
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(items), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.AddAll(items), Raises(expectedEvents).For(collection));
         }
 
         [Test]
