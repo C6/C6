@@ -445,6 +445,19 @@ namespace C6.Tests
             Assert.That(containsAll, Is.False);
         }
 
+        [Test]
+        public void ContainsAll_BadEnumerable_ThrowsExceptionButCollectionDoesntChange()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var badEnumerable = GetStrings(Random).AsBadEnumerable();
+
+            // Act & Assert
+            Assert.That(() => collection.ContainsAll(badEnumerable), Throws.InstanceOf<BadEnumerableException>());
+            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
+        }
+
         #endregion
 
         #region ContainsCount(T)

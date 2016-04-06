@@ -463,12 +463,12 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = GetExtensible(items);
+            var collection = GetExtensible(items, ReferenceEqualityComparer);
             var badEnumerable = GetStrings(Random).AsBadEnumerable();
 
             // Act & Assert
             Assert.That(() => collection.AddAll(badEnumerable), Throws.InstanceOf<BadEnumerableException>());
-            Assert.That(collection, Is.EqualTo(items));
+            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
         }
 
         [Test]
