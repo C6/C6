@@ -332,7 +332,7 @@ namespace C6
             return false;
         }
 
-        public bool RemoveAll(T item)
+        public bool RemoveDuplicates(T item)
         {
             throw new NotImplementedException();
         }

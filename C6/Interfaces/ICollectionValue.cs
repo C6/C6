@@ -155,7 +155,7 @@ namespace C6
         /// <seealso cref="ICollection{T}.FindOrAdd"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>
         /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveAll(T)"/>
+        /// <seealso cref="ICollection{T}.RemoveDuplicates"/>
         /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
         /// <seealso cref="ICollection{T}.RetainAll"/>
         /// <seealso cref="ICollection{T}.Update(T)"/>
@@ -292,7 +292,7 @@ namespace C6
         /// <seealso cref="EventTypes.Removed"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>
         /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveAll(T)"/>
+        /// <seealso cref="ICollection{T}.RemoveDuplicates"/>
         /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
         /// <seealso cref="ICollection{T}.RetainAll"/>
         /// <seealso cref="ICollection{T}.Update(T)"/>

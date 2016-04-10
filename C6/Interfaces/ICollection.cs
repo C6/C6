@@ -387,7 +387,7 @@ namespace C6
         /// </list>
         /// </para>
         /// </remarks>
-        bool RemoveAll(T item);
+        bool RemoveDuplicates(T item);
 
         /// <summary>
         /// Removes each item of the specified enumerable from the collection, 
@@ -1060,7 +1060,7 @@ namespace C6
             return default(bool);
         }
 
-        public bool RemoveAll(T item)
+        public bool RemoveDuplicates(T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);

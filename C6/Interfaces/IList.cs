@@ -1335,7 +1335,7 @@ namespace C6
         public abstract bool Remove(T item);
         // TODO: override to change documentation
         public abstract bool Remove(T item, out T removedItem);
-        public abstract bool RemoveAll(T item);
+        public abstract bool RemoveDuplicates(T item);
         // TODO: override to change documentation
         public abstract void RemoveAll(SCG.IEnumerable<T> items);
         public abstract void RetainAll(SCG.IEnumerable<T> items);
