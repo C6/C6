@@ -49,7 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conventions\AllClassesAreSerializable.cs" />
-    <Compile Include="ConventionTests.cs" />
+    <Compile Include="C6ConventionTests.cs" />
+    <Compile Include="Conventions\TestsThatNullItemViolatesPreconditionIfCollectionDisallowsNull.cs" />
+    <Compile Include="ConventionTestBase.cs" />
+    <Compile Include="ConventionTestExtensions.cs" />
+    <Compile Include="InterfaceConventionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

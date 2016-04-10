@@ -12,8 +12,6 @@ namespace C6.Tests.ConventionTests
 {
     public class AllClassesAreSerializable : IConvention<Types>
     {
-        public static AllClassesAreSerializable In => new AllClassesAreSerializable();
-
         public void Execute(Types data, IConventionResultContext result)
         {
             var nonSerializableTypes = data.Where(type => !type.IsSerializable &&
