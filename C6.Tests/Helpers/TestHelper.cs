@@ -81,10 +81,13 @@ namespace C6.Tests.Helpers
             return item;
         }
 
+        public static T[] Repeat<T>(this T item, int count) => Repeat(() => item, count);
+
+        public static T[] Repeat<T>(this Func<T> item, int count) => Enumerable.Range(0, count).Select(i => item()).ToArray();
+
         public static T[] WithRepeatedItem<T>(this SCG.IEnumerable<T> items, Func<T> item, int count, Random random)
         {
-            var repeatedItem = Enumerable.Range(0, count).Select(i => item());
-            var array = items.Concat(repeatedItem).ToArray();
+            var array = items.Concat(item.Repeat(count)).ToArray();
             array.Shuffle(random);
             return array;
         }

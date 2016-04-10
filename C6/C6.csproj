@@ -204,7 +204,7 @@
     <Compile Include="Exceptions\ExceptionMessages.cs" />
     <Compile Include="Exceptions\InvalidPriorityQueueHandleException.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="HashCodeGenerator.cs" />
+    <Compile Include="UnsequencedEqualityComparer.cs" />
     <Compile Include="Interfaces\ICollection.cs" />
     <Compile Include="Interfaces\ICollectionValue.cs" />
     <Compile Include="Interfaces\IIndexed.cs" />

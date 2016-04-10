@@ -870,7 +870,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var expected = HashCodeGenerator.GetUnsequencedHashCode(collection);
+            var expected = UnsequencedEqualityComparer.GetUnsequencedHashCode(collection);
 
             // Act
             var unsequencedHashCode = collection.GetUnsequencedHashCode();
@@ -884,7 +884,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringCollection(Random);
-            var expected = HashCodeGenerator.GetUnsequencedHashCode(collection);
+            var expected = UnsequencedEqualityComparer.GetUnsequencedHashCode(collection);
 
             // Act
             var unsequencedHashCode = collection.GetUnsequencedHashCode();
@@ -899,7 +899,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
-            var expected = HashCodeGenerator.GetUnsequencedHashCode(collection);
+            var expected = UnsequencedEqualityComparer.GetUnsequencedHashCode(collection);
 
             // Act
             var unsequencedHashCode = collection.GetUnsequencedHashCode();
@@ -1280,6 +1280,154 @@ namespace C6.Tests
         [Test]
         [Category("Unfinished")]
         public void RemoveTOut_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region UnsequencedEquals(ICollection<T>)
+
+        [Test]
+        public void UnsequencedEquals_EmptyCollections_True()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var otherCollection = GetEmptyCollection<string>();
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.True);
+        }
+
+        [Test]
+        public void UnsequencedEquals_EmptyAndNullCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(null);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.False);
+        }
+
+        [Test]
+        public void UnsequencedEquals_EmptyAndRandomCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var otherCollection = GetStringCollection(Random);
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.False);
+        }
+
+        [Test]
+        public void UnsequencedEquals_RandomCollections_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var otherItems = GetLowercaseStrings(Random);
+            var otherCollection = GetCollection(otherItems);
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.False);
+        }
+
+        [Test]
+        public void UnsequencedEquals_RandomCollectionAndItSelf_True()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(collection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.True);
+        }
+
+        [Test]
+        public void UnsequencedEquals_EqualCollections_True()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+            var otherCollection = GetCollection(items);
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.True);
+        }
+
+        [Test]
+        public void UnsequencedEquals_UnsequencedEqualCollections_True()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+            items.Shuffle(Random);
+            var otherCollection = GetCollection(items);
+            
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.True);
+        }
+
+        [Test]
+        public void UnsequencedEquals_DifferentEqualityComparers_TrueInOneDirection()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var otherItems = items.Select(item => item.ToLower());
+            var otherCollection = GetCollection(otherItems);
+            
+            // Act
+            var collectionUnsequencedEqualsOtherCollection = collection.UnsequencedEquals(otherCollection);
+            var otherCollectionUnsequencedEqualsCollection = otherCollection.UnsequencedEquals(collection);
+
+            // Assert
+            Assert.That(collectionUnsequencedEqualsOtherCollection, Is.True);
+            Assert.That(otherCollectionUnsequencedEqualsCollection, Is.False);
+        }
+
+        [Test]
+        public void UnsequencedEquals_EqualItemsButDifferentMultiplicity_False()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+            var otherItems = items.SelectMany(item => item.Repeat(Random.Next(1, 4)));
+            var otherCollection = GetCollection(otherItems);
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.False);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UnsequencedEquals_Set_Fail()
         {
             Run.If(!AllowsDuplicates);
 

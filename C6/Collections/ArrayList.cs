@@ -359,10 +359,7 @@ namespace C6
             throw new NotImplementedException();
         }
 
-        public bool UnsequencedEquals(ICollection<T> otherCollection)
-        {
-            throw new NotImplementedException();
-        }
+        public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
 
         public bool Update(T item)
         {
