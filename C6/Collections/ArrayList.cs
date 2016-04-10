@@ -233,10 +233,10 @@ namespace C6
             return false;
         }
 
-        // TODO: Test performance?
-        public int ContainsCount(T item) => _items.Take(Count).Count(x => Equals(x, item));
-
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
+
+        // TODO: Test performance?
+        public int CountDuplicates(T item) => _items.Take(Count).Count(x => Equals(x, item));
 
         public bool Find(ref T item)
         {

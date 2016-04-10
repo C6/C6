@@ -145,6 +145,18 @@ namespace C6
         bool ContainsAll(SCG.IEnumerable<T> items);
 
         /// <summary>
+        /// Copies the items of the collection to an <see cref="Array"/>,
+        /// starting at a particular <see cref="Array"/> index.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="Array"/> that is
+        /// the destination of the items copied from the collection. The
+        /// <see cref="Array"/> must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based arrayIndex in array at 
+        /// which copying begins.</param>
+        [Pure]
+        new void CopyTo(T[] array, int arrayIndex);
+
+        /// <summary>
         /// Returns the item's multiplicity in the collection: the number of
         /// items in the collection equal to the specified item.
         /// </summary>
@@ -158,19 +170,7 @@ namespace C6
         /// <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
         /// item equality.</remarks>
         [Pure]
-        int ContainsCount(T item);
-
-        /// <summary>
-        /// Copies the items of the collection to an <see cref="Array"/>,
-        /// starting at a particular <see cref="Array"/> index.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="Array"/> that is
-        /// the destination of the items copied from the collection. The
-        /// <see cref="Array"/> must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based arrayIndex in array at 
-        /// which copying begins.</param>
-        [Pure]
-        new void CopyTo(T[] array, int arrayIndex);
+        int CountDuplicates(T item);
 
         /// <summary>
         /// Determines whether the collection contains a specific item and 
@@ -833,7 +833,7 @@ namespace C6
             Ensures(Contains(item));
 
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + (Result<bool>() ? 1 : 0));
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + (Result<bool>() ? 1 : 0));
 
 
             return default(bool);
@@ -880,26 +880,13 @@ namespace C6
 
             
             // The collection contains the same items as items, with a multiplicity equal or greater
-            Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) >= group.Count()));
+            Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => CountDuplicates(group.Key) >= group.Count()));
 
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray()))); // TODO: Method is already pure...
 
 
             return default(bool);
-        }
-
-        public int ContainsCount(T item)
-        {
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
-
-
-            // Result equals the number of items equal to item using the collection's equality comparer
-            Ensures(Result<int>() == this.ContainsCount(item, EqualityComparer));
-
-
-            return default(int);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -911,6 +898,19 @@ namespace C6
 
 
             return;
+        }
+
+        public int CountDuplicates(T item)
+        {
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+
+            // Result equals the number of items equal to item using the collection's equality comparer
+            Ensures(Result<int>() == this.CountDuplicates(item, EqualityComparer));
+
+
+            return default(int);
         }
 
         public bool Find(ref T item)
@@ -954,7 +954,7 @@ namespace C6
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 0 : 1));
 
             // Adding an item increases its count by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + (Result<bool>() ? 0 : 1));
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + (Result<bool>() ? 0 : 1));
 
             // If item is found, returned value is from collection
             Ensures(!Result<bool>() || this.ContainsSame(ValueAtReturn(out item)));
@@ -1013,7 +1013,7 @@ namespace C6
             Ensures(Count == OldValue(Count) - (Result<bool>() ? 1 : 0));
 
             // Removing the item decreases the number of equal items by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) - (Result<bool>() ? 1 : 0));
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) - (Result<bool>() ? 1 : 0));
 
             // If collection doesn't allow duplicates, the collection no more contains the item
             Ensures(AllowsDuplicates || !Contains(item));
@@ -1041,7 +1041,7 @@ namespace C6
             Ensures(Count == OldValue(Count) - (Result<bool>() ? 1 : 0));
 
             // Removing the item decreases the number of equal items by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) - (Result<bool>() ? 1 : 0));
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) - (Result<bool>() ? 1 : 0));
 
             // If an item was removed, the removed item equals the item to remove; otherwise, it equals the default value of T
             Ensures(EqualityComparer.Equals(ValueAtReturn(out removedItem), Result<bool>() ? item : default(T)));
@@ -1076,10 +1076,10 @@ namespace C6
             Ensures(Result<bool>() == OldValue(Contains(item)));
 
             // Removing all instances of an item decreases the count by its multiplicity
-            Ensures(Count == OldValue(Count - ContainsCount(item)));
+            Ensures(Count == OldValue(Count - CountDuplicates(item)));
 
             // Removing the item decreases the number of equal items to zero
-            Ensures(ContainsCount(item) == 0);
+            Ensures(CountDuplicates(item) == 0);
 
             // The collection no longer contains the item
             Ensures(!Contains(item));
@@ -1131,7 +1131,7 @@ namespace C6
             Ensures(Count <= (AllowsDuplicates ? items.Count() : items.Distinct(EqualityComparer).Count()));
 
             // The collection contains the same items as items, with a multiplicity equal or less
-            Ensures(items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) <= group.Count()));
+            Ensures(items.GroupBy(key => key, element => element, EqualityComparer).All(group => CountDuplicates(group.Key) <= group.Count()));
 
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));

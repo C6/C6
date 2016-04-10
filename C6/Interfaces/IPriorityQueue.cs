@@ -706,7 +706,7 @@ namespace C6
             Ensures(Count == OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.ContainsCount(item, EqualityComparer) == OldValue(this.ContainsCount(item, EqualityComparer)) + 1);
+            Ensures(this.CountDuplicates(item, EqualityComparer) == OldValue(this.CountDuplicates(item, EqualityComparer)) + 1);
 
             // Returned handle is non-null
             Ensures(ValueAtReturn(out handle) != null);

@@ -134,7 +134,7 @@ namespace C6.Contracts
             return true;
         }
 
-        public static int ContainsCount<T>(this SCG.IEnumerable<T> enumerable, T item, SCG.IEqualityComparer<T> equalityComparer = null)
+        public static int CountDuplicates<T>(this SCG.IEnumerable<T> enumerable, T item, SCG.IEqualityComparer<T> equalityComparer = null)
         {
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);
@@ -160,7 +160,7 @@ namespace C6.Contracts
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);
 
-            return enumerable.ContainsCount(item, GetSameEqualityComparer<T>());
+            return enumerable.CountDuplicates(item, GetSameEqualityComparer<T>());
         }
 
         public static bool IsSameAs<T>(this T item, T otherItem) => GetSameEqualityComparer<T>().Equals(item, otherItem);

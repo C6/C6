@@ -459,34 +459,34 @@ namespace C6.Tests
 
         #endregion
 
-        #region ContainsCount(T)
+        #region CountDuplicates(T)
 
         [Test]
-        public void ContainsCount_DisallowsNullContainsCountNull_ViolatesPrecondition()
+        public void CountDuplicates_DisallowsNullCountDuplicatesNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
 
             // Act & Assert
-            Assert.That(() => collection.ContainsCount(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+            Assert.That(() => collection.CountDuplicates(null), Violates.PreconditionSaying(ItemMustBeNonNull));
         }
 
         [Test]
-        public void ContainsCount_EmptyCollection_Zero()
+        public void CountDuplicates_EmptyCollection_Zero()
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
             var item = Random.GetString();
 
             // Act
-            var containsCount = collection.ContainsCount(item);
+            var countDuplicates = collection.CountDuplicates(item);
 
             // Assert
-            Assert.That(containsCount, Is.Zero);
+            Assert.That(countDuplicates, Is.Zero);
         }
 
         [Test]
-        public void ContainsCount_RandomCollectionWithCountEqualItems_Count()
+        public void CountDuplicates_RandomCollectionWithCountEqualItems_Count()
         {
             // Arrange
             var item = GetLowercaseString(Random);
@@ -495,14 +495,14 @@ namespace C6.Tests
             var collection = GetCollection(items);
 
             // Act
-            var containsCount = collection.ContainsCount(item);
+            var countDuplicates = collection.CountDuplicates(item);
 
             // Assert
-            Assert.That(containsCount, Is.EqualTo(count));
+            Assert.That(countDuplicates, Is.EqualTo(count));
         }
 
         [Test]
-        public void ContainsCount_ValueTypeCollectionWithCountEqualItems_Count()
+        public void CountDuplicates_ValueTypeCollectionWithCountEqualItems_Count()
         {
             // Arrange
             var count = GetCount(Random);
@@ -513,14 +513,14 @@ namespace C6.Tests
             var collection = GetCollection(items, equalityComparer);
 
             // Act
-            var containsCount = collection.ContainsCount(item);
+            var countDuplicates = collection.CountDuplicates(item);
 
             // Assert
-            Assert.That(containsCount, Is.EqualTo(count));
+            Assert.That(countDuplicates, Is.EqualTo(count));
         }
 
         [Test]
-        public void ContainsCount_AllowsNull_Two()
+        public void CountDuplicates_AllowsNull_Two()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -528,15 +528,15 @@ namespace C6.Tests
             collection.Add(null);
 
             // Act
-            var containsCount = collection.ContainsCount(null);
+            var countDuplicates = collection.CountDuplicates(null);
 
             // Assert
-            Assert.That(containsCount, Is.EqualTo(2));
+            Assert.That(countDuplicates, Is.EqualTo(2));
         }
 
         [Test]
         [Category("Unfinished")]
-        public void ContainsCount_Set_Fail()
+        public void CountDuplicates_Set_Fail()
         {
             Run.If(!AllowsDuplicates);
 

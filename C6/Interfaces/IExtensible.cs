@@ -259,7 +259,7 @@ namespace C6
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.ContainsCount(item, EqualityComparer) == OldValue(this.ContainsCount(item, EqualityComparer)) + (Result<bool>() ? 1 : 0));
+            Ensures(this.CountDuplicates(item, EqualityComparer) == OldValue(this.CountDuplicates(item, EqualityComparer)) + (Result<bool>() ? 1 : 0));
 
             // If the item is add and its not a counter that is incremented, that item is in the collection
             Ensures(!Result<bool>() || DuplicatesByCounting || this.ContainsSame(item));

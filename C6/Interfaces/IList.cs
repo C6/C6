@@ -878,7 +878,7 @@ namespace C6
             Ensures(Contains(item));
 
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
 
             // The number of same items increase by one
             Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
@@ -912,7 +912,7 @@ namespace C6
             Ensures(Contains(item));
 
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
 
             // The number of same items increase by one
             Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
@@ -1324,8 +1324,8 @@ namespace C6
         public abstract Speed ContainsSpeed { get; }
         public abstract bool Contains(T item);
         public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();

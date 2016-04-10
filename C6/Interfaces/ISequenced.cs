@@ -176,8 +176,8 @@ namespace C6
         public abstract void Clear();
         public abstract bool Contains(T item);
         public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
