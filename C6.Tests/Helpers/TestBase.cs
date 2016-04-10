@@ -5,7 +5,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 
-namespace C6.Tests.Collections
+namespace C6.Tests
 {
     public abstract class TestBase
     {

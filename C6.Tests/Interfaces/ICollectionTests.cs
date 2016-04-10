@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 
-using C6.Tests.Collections;
 using C6.Tests.Contracts;
 using C6.Tests.Helpers;
 

@@ -4,8 +4,6 @@
 using System;
 using System.Linq;
 
-using C6.Tests.Collections;
-
 using NUnit.Framework;
 
 using SC = System.Collections;

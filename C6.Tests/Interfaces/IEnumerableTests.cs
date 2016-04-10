@@ -8,7 +8,7 @@ using NUnit.Framework;
 using static C6.Tests.Helpers.TestHelper;
 
 
-namespace C6.Tests.Collections
+namespace C6.Tests
 {
     [TestFixture]
     public abstract class IEnumerableTests : TestBase

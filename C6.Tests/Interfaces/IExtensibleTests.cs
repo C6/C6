@@ -18,7 +18,7 @@ using static C6.Tests.Helpers.TestHelper;
 using SCG = System.Collections.Generic;
 
 
-namespace C6.Tests.Collections
+namespace C6.Tests
 {
     [TestFixture]
     public abstract class IExtensibleTests : ICollectionValueTests

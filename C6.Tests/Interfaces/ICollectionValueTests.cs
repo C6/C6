@@ -17,7 +17,7 @@ using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
 
 
-namespace C6.Tests.Collections
+namespace C6.Tests
 {
     [TestFixture]
     public abstract class ICollectionValueTests : IEnumerableTests
