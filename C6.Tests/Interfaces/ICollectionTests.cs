@@ -1288,6 +1288,68 @@ namespace C6.Tests
 
         #endregion
 
+        #region UniqueItems
+
+        [Test]
+        public void UniqueItems_EmptyCollection_Empty()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+
+            // Act
+            var uniqueItems = collection.UniqueItems();
+
+            // Assert
+            Assert.That(uniqueItems, Is.Empty);
+        }
+
+        [Test]
+        public void UniqueItems_AllUniqueItems_EqualToItself()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, ReferenceEqualityComparer);
+
+            // Act
+            var uniqueItems = collection.UniqueItems();
+
+            // Assert
+            Assert.That(uniqueItems, Is.EquivalentTo(collection).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void UniqueItems_EqualItems_OneItem()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var items = item.Repeat(count);
+            var collection = GetCollection(items);
+            
+            // Act
+            var uniqueItems = collection.UniqueItems();
+
+            // Assert
+            Assert.That(uniqueItems, Is.EquivalentTo(itemArray));
+        }
+
+        [Test]
+        public void UniqueItems_RepeatedItems_OnlyUniqueItems()
+        {
+            // Arrange
+            var originalItems = GetStrings(Random);
+            var items = originalItems.SelectMany(item => item.Repeat(Random.Next(1, 4)));
+            var collection = GetCollection(items);
+
+            // Act
+            var uniqueItems = collection.UniqueItems();
+
+            // Assert
+            Assert.That(uniqueItems, Is.EquivalentTo(originalItems));
+        }
+
+        #endregion
+
         #region UnsequencedEquals(ICollection<T>)
 
         [Test]

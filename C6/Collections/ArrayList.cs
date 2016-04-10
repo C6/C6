@@ -353,11 +353,8 @@ namespace C6
             Array.Copy(_items, array, Count);
             return array;
         }
-
-        public ICollectionValue<T> UniqueItems()
-        {
-            throw new NotImplementedException();
-        }
+        
+        public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
 
         public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
 
