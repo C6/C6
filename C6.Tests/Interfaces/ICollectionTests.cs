@@ -414,7 +414,7 @@ namespace C6.Tests
         public void ContainsAll_Subset_True()
         {
             // Arrange
-            var count = GetCount(Random)/2;
+            var count = GetCount(Random) / 2;
             var items = GetStrings(Random);
             var containedItems = items.Take(count).ToArray();
             items.Shuffle();
@@ -431,7 +431,7 @@ namespace C6.Tests
         public void ContainsAll_SubsetWithDuplicates_False()
         {
             // Arrange
-            var count = GetCount(Random)/2;
+            var count = GetCount(Random) / 2;
             var items = GetStrings(Random);
             var nonContainedItems = items.Take(count).Append(items.First()).ToArray();
             items.Shuffle();
@@ -1383,7 +1383,7 @@ namespace C6.Tests
             var collection = GetCollection(items);
             items.Shuffle(Random);
             var otherCollection = GetCollection(items);
-            
+
             // Act
             var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
 
@@ -1399,7 +1399,7 @@ namespace C6.Tests
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
             var otherItems = items.Select(item => item.ToLower());
             var otherCollection = GetCollection(otherItems);
-            
+
             // Act
             var collectionUnsequencedEqualsOtherCollection = collection.UnsequencedEquals(otherCollection);
             var otherCollectionUnsequencedEqualsCollection = otherCollection.UnsequencedEquals(collection);
@@ -1422,6 +1422,25 @@ namespace C6.Tests
             var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
 
             // Assert
+            Assert.That(unsequencedEquals, Is.False);
+        }
+
+        [Test]
+        public void UnsequencedEquals_EqualHashButDifferentItems_False()
+        {
+            // Arrange
+            var items = new[] { -1657792980, -1570288808 };
+            var collection = GetCollection(items);
+            var otherItems = new[] { 1862883298, -272461342 };
+            var otherCollection = GetCollection(otherItems);
+
+            // Act
+            var unsequencedHashCode = collection.GetUnsequencedHashCode();
+            var otherUnsequencedHashCode = otherCollection.GetUnsequencedHashCode();
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedHashCode, Is.EqualTo(otherUnsequencedHashCode));
             Assert.That(unsequencedEquals, Is.False);
         }
 
