@@ -1534,7 +1534,7 @@ namespace C6.Tests
 
         #region Update(T)
 
-        // TODO: Test that the proper item is replaced (based on IsFifo) when several exist
+        // TODO: Test that the proper item is replaced (based on RemovesFromBeginning) when several exist
 
         [Test]
         public void Update_DisallowsNullUpdateNull_ViolatesPrecondition()
@@ -1691,7 +1691,7 @@ namespace C6.Tests
         // TODO: Null
         // TODO: Simple type, properly replaced
 
-        // TODO: Proper item replaced based on FIFO
+        // TODO: Proper item replaced based on RemovesFromBeginning
 
         [Test]
         [Category("Unfinished")]

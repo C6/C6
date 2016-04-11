@@ -361,7 +361,7 @@ namespace C6
 
             #endregion
 
-            // TODO: Work based on IsFifo
+            // TODO: Work based on RemovesFromBeginning
             var index = IndexOfPrivate(item);
 
             if (index >= 0) {
@@ -615,7 +615,7 @@ namespace C6
         private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
 
         // TODO: Inline in IndexOf
-        // TODO: Make version that works with IsFifo
+        // TODO: Make version that works with RemovesFromBeginning
         [Pure]
         private int IndexOfPrivate(T item)
         {
