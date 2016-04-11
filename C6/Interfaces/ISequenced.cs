@@ -14,7 +14,6 @@ using SCG = System.Collections.Generic;
 
 namespace C6
 {
-    // TODO: Rewrite documentation based on hash code solution.
     /// <summary>
     /// Represents an editable generic collection that maintains a particular
     /// item sequence order.
@@ -32,7 +31,6 @@ namespace C6
     [ContractClass(typeof(ISequencedContract<>))]
     public interface ISequenced<T> : ICollection<T>, IDirectedCollectionValue<T>
     {
-        // TODO: Consider how this should be implemented/documented. Maybe use a static helper class.
         /// <summary>
         /// Returns the sequenced (order-sensitive) hash code of the collection.
         /// </summary>
@@ -114,7 +112,7 @@ namespace C6
 
             // Enumeration of the collections must yield equal items
             Ensures(Result<bool>() == (otherCollection != null && this.SequenceEqual(otherCollection, EqualityComparer)));
-            Ensures(Result<bool>() == this.SequenceEqual(otherCollection, EqualityComparer));
+            Ensures(Result<bool>() == this.SequencedEquals(otherCollection, EqualityComparer));
 
 
             return default(bool);

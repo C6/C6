@@ -941,6 +941,24 @@ namespace C6.Tests
             Assert.That(firstUnsequencedHashCode, Is.EqualTo(secondUnsequencedHashCode));
         }
 
+        [Test]
+        public void GetUnsequencedHashCode_CachedValueIsUpdated_ExpectedHashCode()
+        {
+            // Arrange
+            var sequence = GetStringCollection(Random, ReferenceEqualityComparer);
+            var items = GetStrings(Random);
+            var expected = GetCollection(items).GetUnsequencedHashCode();
+
+            // Act
+            var hashCode = sequence.GetUnsequencedHashCode();
+            sequence.Clear();
+            sequence.AddAll(items);
+            hashCode = sequence.GetUnsequencedHashCode();
+
+            // Assert
+            Assert.That(hashCode, Is.EqualTo(expected));
+        }
+
         // TODO: Test for shuffled list in IListTests
 
         #endregion

@@ -33,8 +33,8 @@ namespace C6
 
         private int _version;
 
-        private int _unsequencedHashCodeVersion = -1;
-        private int _unsequencedHashCode;
+        private int _sequencedHashCode, _sequencedHashCodeVersion = -1;
+        private int _unsequencedHashCode, _unsequencedHashCodeVersion = -1;
 
         private event EventHandler _collectionChanged;
         private event EventHandler<ClearedEventArgs> _collectionCleared;
@@ -291,9 +291,15 @@ namespace C6
             }
         }
 
+        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public int GetSequencedHashCode()
         {
-            throw new NotImplementedException();
+            if (_sequencedHashCodeVersion != _version) {
+                _sequencedHashCodeVersion = _version;
+                _sequencedHashCode = this.GetSequencedHashCode(EqualityComparer);
+            }
+
+            return _sequencedHashCode;
         }
 
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
@@ -363,10 +369,7 @@ namespace C6
             throw new NotImplementedException();
         }
 
-        public bool SequencedEquals(ISequenced<T> otherCollection)
-        {
-            throw new NotImplementedException();
-        }
+        public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
 
         public T[] ToArray()
         {

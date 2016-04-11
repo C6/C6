@@ -16,7 +16,7 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests
 {
     [TestFixture]
-    public class ArrayListTests : ICollectionTests
+    public class ArrayListTests : ISequencedTests
     {
         #region Helper Methods
 
@@ -266,9 +266,9 @@ namespace C6.Tests
         protected override bool IsReadOnly => false;
         protected override Speed ContainsSpeed => Speed.Linear;
 
-        protected override ICollection<T> GetEmptyCollection<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
+        protected override ISequenced<T> GetEmptySequence<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
 
-        protected override ICollection<T> GetCollection<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        protected override ISequenced<T> GetSequence<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
             => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
     }
 }
