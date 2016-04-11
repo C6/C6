@@ -20,47 +20,47 @@ namespace C6
         private const uint H3 = 1118771817;
 
         /// <summary>
-        /// Returns the unsequenced (order-insensitive) hash code of the
-        /// enumerable.
+        /// Returns the unsequenced (order-insensitive) hash code of the collection.
         /// </summary>
-        /// <typeparam name="T">The type of the items in the enumerable.</typeparam>
-        /// <param name="items">The enumerable whose hash code should be computed.</param>
+        /// <typeparam name="T">The type of the items in the collection.</typeparam>
+        /// <param name="collection">The collection whose hash code should be computed.</param>
         /// <param name="equalityComparer">The <see cref="SCG.IEqualityComparer{T}"/>
         /// used to compute the hash code for each item, or <c>null</c> to use
-        /// the default equality comparer <see cref="SCG.EqualityComparer{T}.Default"/>.</param>
-        /// <returns>The unsequenced hash code of the enumerable.</returns>
+        /// the default equality comparer <see cref="SCG.EqualityComparer{T}.Default"/>.
+        /// The collection's own equality comparer is completely disregarded.</param>
+        /// <returns>The unsequenced hash code of the collection.</returns>
         [Pure]
-        public static int GetUnsequencedHashCode<T>(this SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null)
+        public static int GetUnsequencedHashCode<T>(this SCG.ICollection<T> collection, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            if (items == null) {
-                return 0; // TODO: Better default value? H1/2/3?
+            if (collection == null) {
+                return 0; // TODO: Better default value? H1/H2/H3?
             }
 
             if (equalityComparer == null) {
                 equalityComparer = SCG.EqualityComparer<T>.Default;
             }
 
-            var h = 0;
+            var hashCode = 0; // TODO: Better intial value?
 
             // Does not use Linq.Sum() as it throws an exception if it overflows
-            foreach (var item in items) {
-                var hashCode = (uint) equalityComparer.GetHashCode(item);
+            foreach (var item in collection) {
+                var h = (uint) equalityComparer.GetHashCode(item);
 
                 // We need at least three products, as two is too few
-                h += (int) ((hashCode * H1 + 1) ^ (hashCode * H2) ^ (hashCode * H3 + 2));
+                hashCode += (int) ((h * H1 + 1) ^ (h * H2) ^ (h * H3 + 2));
             }
 
-            return h;
+            return hashCode;
         }
 
         /// <summary>
         /// Compares the items in the two collections with each other 
         /// with regards to multiplicities, but without regards to sequence order.
         /// </summary>
-        /// <typeparam name="T">The type of the items in the collection.</typeparam>
-        /// <param name="first">The collection to compare this
+        /// <typeparam name="T">The type of the items in the collections.</typeparam>
+        /// <param name="first">The collection to compare the second
         /// collection to.</param>
-        /// <param name="second">The collection to compare this
+        /// <param name="second">The collection to compare the first
         /// collection to.</param>
         /// <param name="equalityComparer">The <see cref="SCG.IEqualityComparer{T}"/>
         /// used to comparer the items in the collections, or <c>null</c> to use

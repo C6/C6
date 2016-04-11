@@ -223,8 +223,7 @@ namespace C6
         /// </remarks>
         /// <seealso cref="Add"/>
         bool FindOrAdd(ref T item);
-
-        // TODO: Maybe refer to static method, that can be used in contracts as well
+        
         /// <summary>
         /// Returns the unsequenced (order-insensitive) hash code of the
         /// collection.
@@ -234,13 +233,15 @@ namespace C6
         /// <para>
         /// The collection's unsequenced hash code is defined as the sum of a
         /// transformation of the hash codes of its items, each computed using
-        /// the collection’s <see cref="IExtensible{T}.EqualityComparer"/>.
+        /// the collection's <see cref="IExtensible{T}.EqualityComparer"/>.
         /// </para>
         /// <para>
         /// The implementations must use a fixed transformation that allows
         /// serialization and the hash code must be cached and thus not
         /// recomputed unless the collection has changed since the last call to
-        /// this method.
+        /// this method. The hash code must be equal to that of
+        /// <c>UnsequencedEqualityComparer.GetUnsequencedHashCode(collection,
+        /// collection.EqualityComparer)</c>.
         /// </para>
         /// </remarks>
         /// <seealso cref="UnsequencedEquals"/>
