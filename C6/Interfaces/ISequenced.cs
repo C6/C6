@@ -38,9 +38,22 @@ namespace C6
         /// </summary>
         /// <returns>The sequenced hash code of the collection.</returns>
         /// <remarks>
+        /// <para>
+        /// The collection's sequenced hash code is defined as the sum of a
+        /// transformation of the hash codes of its items, each computed using
+        /// the collection's <see cref="IExtensible{T}.EqualityComparer"/>.
         /// The hash code is defined as <c>h(...h(h(h(x1),x2),x3),...,xn)</c>
         /// for <c>h(a,b)=CONSTANT*a+b</c> and the x's the hash codes of the
         /// items of this collection.
+        /// </para>
+        /// <para>
+        /// The implementations must use a fixed transformation that allows
+        /// serialization and the hash code must be cached and thus not
+        /// recomputed unless the collection has changed since the last call to
+        /// this method. The hash code must be equal to that of
+        /// <c>SequencedEqualityComparer.GetSequencedHashCode(collection,
+        /// collection.EqualityComparer)</c>.
+        /// </para>
         /// </remarks>
         [Pure]
         int GetSequencedHashCode();
@@ -84,7 +97,11 @@ namespace C6
 
         public int GetSequencedHashCode()
         {
-            // TODO: Use static helper class to define result?
+            // No preconditions
+
+
+            // Result is equal to that of SequencedEqualityComparer
+            Ensures(Result<int>() == this.GetSequencedHashCode(EqualityComparer));
 
 
             return default(int);
@@ -97,6 +114,7 @@ namespace C6
 
             // Enumeration of the collections must yield equal items
             Ensures(Result<bool>() == (otherCollection != null && this.SequenceEqual(otherCollection, EqualityComparer)));
+            Ensures(Result<bool>() == this.SequenceEqual(otherCollection, EqualityComparer));
 
 
             return default(bool);
