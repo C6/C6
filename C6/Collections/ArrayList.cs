@@ -20,7 +20,7 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     [Serializable]
-    public class ArrayList<T> : ICollection<T>
+    public class ArrayList<T> : ISequenced<T>
     {
         #region Fields
 
@@ -138,6 +138,11 @@ namespace C6
 
         public Speed CountSpeed => Speed.Constant;
 
+        public EnumerationDirection Direction
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public bool DuplicatesByCounting => false;
 
         public SCG.IEqualityComparer<T> EqualityComparer { get; }
@@ -192,6 +197,11 @@ namespace C6
             Count += length;
 
             RaiseForAddAll(array);
+        }
+
+        public IDirectedCollectionValue<T> Backwards()
+        {
+            throw new NotImplementedException();
         }
 
         public T Choose() => _items[Count - 1];
@@ -281,6 +291,12 @@ namespace C6
             }
         }
 
+        public int GetSequencedHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public int GetUnsequencedHashCode()
         {
             if (_unsequencedHashCodeVersion != _version) {
@@ -347,13 +363,18 @@ namespace C6
             throw new NotImplementedException();
         }
 
+        public bool SequencedEquals(ISequenced<T> otherCollection)
+        {
+            throw new NotImplementedException();
+        }
+
         public T[] ToArray()
         {
             var array = new T[Count];
             Array.Copy(_items, array, Count);
             return array;
         }
-        
+
         public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
 
         public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
@@ -502,6 +523,11 @@ namespace C6
 
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
+        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards()
+        {
+            throw new NotImplementedException();
+        }
+
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
@@ -546,7 +572,7 @@ namespace C6
                 return;
             }
 
-            var capacity = IsEmpty ? MinArrayLength : Capacity*2;
+            var capacity = IsEmpty ? MinArrayLength : Capacity * 2;
 
             if ((uint) capacity > MaxArrayLength) {
                 capacity = MaxArrayLength;
