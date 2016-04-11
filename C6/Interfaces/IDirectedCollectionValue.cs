@@ -9,6 +9,8 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
+
 using SCG = System.Collections.Generic;
 
 
@@ -52,10 +54,10 @@ namespace C6
             Ensures(Result<IDirectedEnumerable<T>>() != null);
 
             // Result enumeration is backwards
-            Ensures(this.Reverse().SequenceEqual(Result<IDirectedEnumerable<T>>())); // TODO: Use specific comparer?
+            Ensures(this.Reverse().IsSameSequenceAs(Result<IDirectedEnumerable<T>>()));
 
             // Result direction is opposite
-            Ensures(Result<IDirectedEnumerable<T>>().Direction != Direction);
+            Ensures(Result<IDirectedEnumerable<T>>().Direction.IsOppositeOf(Direction));
 
 
             return default(IDirectedCollectionValue<T>);

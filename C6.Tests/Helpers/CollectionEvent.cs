@@ -4,6 +4,8 @@
 using System;
 using System.Diagnostics.Contracts;
 
+using C6.Contracts;
+
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -13,7 +15,7 @@ using static C6.EventTypes;
 
 namespace C6.Tests.Helpers
 {
-    public sealed class CollectionEvent<T>
+    public sealed class CollectionEvent<T> : IEquatable<CollectionEvent<T>>
     {
         private readonly EventTypes _eventType;
         private readonly EventArgs _eventArgs;
@@ -50,7 +52,7 @@ namespace C6.Tests.Helpers
             _sender = sender;
         }
 
-        public bool Equals(CollectionEvent<T> otherEvent, SCG.IEqualityComparer<T> equalityComparer)
+        public bool Equals(CollectionEvent<T> otherEvent)
         {
             if (otherEvent == null || _eventType != otherEvent._eventType || !ReferenceEquals(_sender, otherEvent._sender)) {
                 return false;
@@ -60,23 +62,32 @@ namespace C6.Tests.Helpers
                 case Changed:
                     return true;
 
-                case Cleared:
-                    return ((ClearedEventArgs) _eventArgs).Equals((ClearedEventArgs) otherEvent._eventArgs);
+                case Cleared: {
+                    var x = _eventArgs as ClearedEventArgs;
+                    var y = otherEvent._eventArgs as ClearedEventArgs;
+                    return x != null && y != null && x.Count == y.Count && x.Full == y.Full && x.Start == y.Start;
+                }
 
                 case Added:
-                case Removed:
-                    return ((ItemCountEventArgs<T>) _eventArgs).Equals((ItemCountEventArgs<T>) otherEvent._eventArgs, equalityComparer);
+                case Removed: {
+                    var x = _eventArgs as ItemCountEventArgs<T>;
+                    var y = otherEvent._eventArgs as ItemCountEventArgs<T>;
+                    return y != null && x != null && x.Count == y.Count && x.Item.IsSameAs(y.Item);
+                }
 
                 case Inserted:
-                case RemovedAt:
-                    return ((ItemAtEventArgs<T>) _eventArgs).Equals((ItemAtEventArgs<T>) otherEvent._eventArgs, equalityComparer);
+                case RemovedAt: {
+                    var x = _eventArgs as ItemAtEventArgs<T>;
+                    var y = otherEvent._eventArgs as ItemAtEventArgs<T>;
+                    return y != null && x != null && x.Index == y.Index && x.Item.IsSameAs(y.Item);
+                }
 
                 default:
                     throw new ApplicationException($"Illegal Action: {_eventType}");
             }
         }
 
-        public override string ToString() => $"Event: {_eventType}, Arguments : {_eventArgs}, Sender : {_sender}";
+        public override string ToString() => $"{_eventType} {_eventArgs} from {_sender}";
     }
 
 

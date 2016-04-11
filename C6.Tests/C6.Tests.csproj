@@ -147,8 +147,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ArrayListTests.cs" />
+    <Compile Include="ComparerFactoryTests.cs" />
     <Compile Include="Helpers\BadEnumerable.cs" />
     <Compile Include="Helpers\Run.cs" />
+    <Compile Include="Helpers\TenEqualityComparer.cs" />
+    <Compile Include="Interfaces\ISequencedTests.cs" />
     <Compile Include="Interfaces\ICollectionValueTests.cs" />
     <Compile Include="Interfaces\IEnumerableTests.cs" />
     <Compile Include="Interfaces\IExtensibleTests.cs" />
@@ -163,8 +166,8 @@
     <Compile Include="Helpers\CollectionEvent.cs" />
     <Compile Include="Helpers\CollectionEventConstraint.cs" />
     <Compile Include="Helpers\CollectionEventHolder.cs" />
-    <Compile Include="Helpers\Is.cs" />
     <Compile Include="Helpers\TestHelper.cs" />
+    <Compile Include="Interfaces\ICollectionTests.cs" />
     <Compile Include="Structs\KeyValuePairTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Contracts\TestFailureMethods.cs" />

@@ -9,6 +9,7 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -59,7 +60,6 @@ namespace C6
         /// <c>coll.Skip(startIndex).Take(count)</c>, but potentially much
         /// faster.
         /// </remarks>
-        /// <seealso cref="IList{T}.View"/>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
 
@@ -147,20 +147,13 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        // Contracts are copied from ICollection<T>.Count. Keep both updated!
-        // Contracts are copied to IList<T>.Count. Keep both updated!
         public int Count
         {
-            get
-            {
-                // No preconditions
+            get {
+                // No additional preconditions allowed
 
 
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
+                // No postconditions
 
 
                 return default(int);
@@ -169,8 +162,7 @@ namespace C6
 
         public Speed IndexingSpeed
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -196,13 +188,12 @@ namespace C6
             Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
 
             // Result equals subrange
-            Ensures(Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
+            Ensures(Result<IDirectedCollectionValue<T>>().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
 
 
             return default(IDirectedCollectionValue<T>);
         }
 
-        // Contracts are copied to IList<T>.IndexOf. Keep both updated!
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
@@ -245,7 +236,6 @@ namespace C6
             return default(int);
         }
 
-        // Contracts are copied to IList<T>.RemoveAt. Keep both updated!
         public T RemoveAt(int index)
         {
             // Collection must be non-read-only
@@ -260,10 +250,10 @@ namespace C6
 
 
             // Result is the item previously at the specified index
-            Ensures(Result<T>().Equals(OldValue(this[index])));
+            Ensures(Result<T>().IsSameAs(OldValue(this[index])));
 
             // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.SkipRange(index, 1).ToList())));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -292,7 +282,7 @@ namespace C6
 
 
             // Only the items in the index range are removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(startIndex, count).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.SkipRange(startIndex, count).ToList())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - count);
@@ -306,13 +296,12 @@ namespace C6
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public T this[int index]
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
                 // Result is item at index
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
 
 
                 return default(T);
@@ -394,15 +383,15 @@ namespace C6
         public abstract void Clear();
         public abstract bool Contains(T item);
         public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         public abstract bool Remove(T item);
         public abstract bool Remove(T item, out T removedItem);
-        public abstract bool RemoveAll(T item);
+        public abstract bool RemoveDuplicates(T item);
         public abstract void RemoveAll(SCG.IEnumerable<T> items);
         public abstract void RetainAll(SCG.IEnumerable<T> items);
         public abstract ICollectionValue<T> UniqueItems();

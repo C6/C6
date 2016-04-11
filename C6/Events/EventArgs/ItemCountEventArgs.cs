@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 using SCG = System.Collections.Generic;
@@ -20,7 +19,6 @@ namespace C6
     /// </summary>
     /// <typeparam name="T">The type of the items in the collection.</typeparam>
     [Serializable]
-    [DebuggerDisplay("(ItemCountEventArgs {Count} '{Item}')")] // TODO: format appropriately
     public class ItemCountEventArgs<T> : EventArgs
     {
         [ContractInvariantMethod]
@@ -80,41 +78,7 @@ namespace C6
         /// <value>The item added or removed from the collection.</value>
         public T Item { get; }
 
-        public bool Equals(ItemCountEventArgs<T> other, SCG.IEqualityComparer<T> equalityComparer = null)
-        {
-            if (ReferenceEquals(null, other)) {
-                return false;
-            }
-            if (ReferenceEquals(this, other)) {
-                return true;
-            }
 
-            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
-
-            return Count == other.Count && equalityComparer.Equals(Item, other.Item);
-        }
-
-        public bool Equals(object obj, SCG.IEqualityComparer<T> equalityComparer)
-        {
-            if (ReferenceEquals(null, obj)) {
-                return false;
-            }
-            if (ReferenceEquals(this, obj)) {
-                return true;
-            }
-            if (obj.GetType() != GetType()) {
-                return false;
-            }
-            return Equals((ItemCountEventArgs<T>) obj, equalityComparer);
-        }
-
-        public int GetHashCode(SCG.IEqualityComparer<T> equalityComparer = null)
-        {
-            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
-
-            unchecked {
-                return (Count * 397) ^ equalityComparer.GetHashCode(Item);
-            }
-        }
+        public override string ToString() => $"'{Item}' {Count} {(Count == 1 ? "time" : "times")}"; // $"(ItemCountEventArgs {Count} '{Item}')"
     }
 }

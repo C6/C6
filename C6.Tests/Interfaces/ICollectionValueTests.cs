@@ -17,7 +17,7 @@ using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
 
 
-namespace C6.Tests.Collections
+namespace C6.Tests
 {
     [TestFixture]
     public abstract class ICollectionValueTests : IEnumerableTests
@@ -459,7 +459,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var collection = GetIntCollectionValue(Random);
-            var array = GetIntegers(Random, (int) (collection.Count * 1.7));
+            var array = GetIntegers(Random, (int) (collection.Count*1.7));
             var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act

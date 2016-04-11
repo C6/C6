@@ -1,8 +1,9 @@
-// This file is part of the C6 Generic Collection Library for C# and CLI
+﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+
 
 [assembly: AssemblyTitle("C6.Tests.dll")]
 [assembly: AssemblyDescription("Unit testing suite for C6.")]

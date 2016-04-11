@@ -201,8 +201,11 @@
     <Compile Include="Events\EventArgs\ClearedEventArgs.cs" />
     <Compile Include="Events\EventArgs\ItemCountEventArgs.cs" />
     <Compile Include="Events\EventManager.cs" />
+    <Compile Include="Exceptions\ExceptionMessages.cs" />
     <Compile Include="Exceptions\InvalidPriorityQueueHandleException.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="SequencedEqualityComparer.cs" />
+    <Compile Include="UnsequencedEqualityComparer.cs" />
     <Compile Include="Interfaces\ICollection.cs" />
     <Compile Include="Interfaces\ICollectionValue.cs" />
     <Compile Include="Interfaces\IIndexed.cs" />

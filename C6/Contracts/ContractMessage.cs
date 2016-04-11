@@ -14,6 +14,7 @@ namespace C6.Contracts
         public static string CollectionMustContainItem => "Collection must contain item";
         public static string CollectionMustContainArgument => "Collection must contain argument";
         public static string AllowsNullMustBeFalseForValueTypes => "Value types cannot be null";
+        public static string TypeMustBeStruct => "Generic type must be a struct.";
 
         // Events
         public static string EventMustBeListenable => "Event must be listenable";

@@ -10,6 +10,7 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -39,22 +40,6 @@ namespace C6
         /// <value>The first item in this list.</value>
         [Pure]
         T First { get; }
-
-        // TODO: Better name?
-        /// <summary>
-        /// Gets or sets a value indicating whether <see cref="Remove"/>
-        /// removes an item from the beginning or from the end of the list.
-        /// </summary>
-        /// <value><c>true</c> if <see cref="Remove"/> removes an item from the
-        /// beginning of the list; <c>false</c> if it removes an item from the
-        /// end.</value>
-        /// <remarks>
-        /// <see cref="ICollection{T}.Add"/> always adds items to the end of
-        /// the list.
-        /// </remarks>
-        /// <seealso cref="Remove"/>
-        [Pure]
-        bool IsFifo { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the list has a fixed size.
@@ -92,6 +77,30 @@ namespace C6
         /// <value>The last item in the list.</value>
         [Pure]
         T Last { get; }
+
+        // TODO: override methods to change documentation
+        /// <summary>
+        /// Gets or sets a value indicating whether methods remove items from
+        /// the beginning of the list.
+        /// </summary>
+        /// <value><c>true</c> if methods remove items from the beginning of the list;
+        /// <c>false</c> if they remove the items from the end of the list.</value>
+        /// <remarks>
+        /// Notice that <see cref="IExtensible{T}.Add"/> and <see cref="IExtensible{T}.AddAll"/>
+        /// always adds items to the end of the list.
+        /// </remarks>
+        /// <seealso cref="Remove"/>
+        /// <seealso cref="System.Collections.IList.Remove"/>
+        /// <seealso cref="ICollection{T}.Remove(T)"/>
+        /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
+        /// <seealso cref="ICollection{T}.RemoveAll"/>
+        /// <seealso cref="ICollection{T}.RetainAll"/>
+        /// <seealso cref="ICollection{T}.Update(T)"/>
+        /// <seealso cref="ICollection{T}.Update(T, out T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
+        /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
+        [Pure]
+        bool RemovesFromBeginning { get; set; }
 
         /// <summary>
         /// Gets or sets the item at the specified index.
@@ -182,20 +191,18 @@ namespace C6
         new int IndexOf(T item);
 
         /// <summary>
-        /// Inserts an item to the list at the specified index.
+        /// Inserts an item into the list at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which value should be
         /// inserted.</param>
         /// <param name="item">The item to insert into the list. <c>null</c> is
         /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
         /// <c>true</c>.</param>
-        /// <returns><c>true</c> if item was added;
-        /// otherwise, <c>false</c>.</returns>
         /// <remarks>
         /// <para>
         /// If <paramref name="index"/> equals the number of items in the list,
-        /// then value is appended to the end of the list. This has the same
-        /// effect as calling <see cref="ICollection{T}.Add"/>, though the
+        /// then the value is appended to the end of the list. This has the
+        /// same effect as calling <see cref="ICollection{T}.Add"/>, though the
         /// events raised are different.
         /// </para>
         /// <para>
@@ -221,11 +228,10 @@ namespace C6
         /// </list>
         /// </para>
         /// </remarks>
-        new bool Insert(int index, T item);
+        new void Insert(int index, T item);
 
         /// <summary>
-        /// Inserts the items of a collection into the list starting at the
-        /// specified index.
+        /// Inserts the items into the list starting at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which the new items
         /// should be inserted.</param>
@@ -239,8 +245,8 @@ namespace C6
         /// collection remains unchanged.
         /// </para>
         /// <para>
-        /// If any items are added, it raises the following events (in 
-        /// that order) with the collection as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> once for each item
@@ -266,11 +272,9 @@ namespace C6
         /// <c>null</c> is allowed, if
         /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
-        /// <returns><c>true</c> if item was inserted;
-        /// otherwise, <c>false</c>.</returns>
         /// <remarks>
-        /// If the item is inserted, it raises the following events (in that
-        /// order) with the collection as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
@@ -285,7 +289,7 @@ namespace C6
         /// </description></item>
         /// </list>
         /// </remarks>
-        bool InsertFirst(T item);
+        void InsertFirst(T item);
 
         /// <summary>
         /// Inserts an item at the end of the list.
@@ -294,11 +298,9 @@ namespace C6
         /// <c>null</c> is allowed, if
         /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
-        /// <returns><c>true</c> if item was inserted;
-        /// otherwise, <c>false</c>.</returns>
         /// <remarks>
-        /// If the item is inserted, it raises the following events (in that
-        /// order) with the collection as sender:
+        /// Raises the following events (in that order) with the collection as
+        /// sender:
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
@@ -313,7 +315,7 @@ namespace C6
         /// </description></item>
         /// </list>
         /// </remarks>
-        bool InsertLast(T item);
+        void InsertLast(T item);
 
         /// <summary>
         /// Determines whether the list is sorted in non-descending order
@@ -403,13 +405,13 @@ namespace C6
 
         /// <summary>
         /// Removes and returns an item from either the beginning or the end of
-        /// the list, depending on the value of <see cref="IsFifo"/>.
+        /// the list, depending on the value of <see cref="RemovesFromBeginning"/>.
         /// </summary>
         /// <returns>The item removed from the list.</returns>
         /// <remarks>
         /// <para>
-        /// If <see cref="IsFifo"/> is <c>true</c>, this methods removes an 
-        /// item from the beginning of the list; if <see cref="IsFifo"/> is
+        /// If <see cref="RemovesFromBeginning"/> is <c>true</c>, this methods removes an 
+        /// item from the beginning of the list; if <see cref="RemovesFromBeginning"/> is
         /// <c>false</c>, it removes an item from the end of the list.
         /// </para>
         /// <para>
@@ -418,8 +420,8 @@ namespace C6
         /// <list type="bullet">
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and
-        /// an index of either <c>0</c> if <see cref="IsFifo"/> is <c>true</c>,
-        /// or <c>Count - 1</c> if <see cref="IsFifo"/> is <c>false</c>.
+        /// an index of either <c>0</c> if <see cref="RemovesFromBeginning"/> is <c>true</c>,
+        /// or <c>Count - 1</c> if <see cref="RemovesFromBeginning"/> is <c>false</c>.
         /// </description></item>
         /// <item><description>
         /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 
@@ -431,7 +433,7 @@ namespace C6
         /// </list>
         /// </para>
         /// </remarks>
-        /// <seealso cref="IsFifo"/>
+        /// <seealso cref="RemovesFromBeginning"/>
         T Remove();
 
         /// <summary>
@@ -636,19 +638,13 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        // Contracts are copied from IIndexed<T>.Count. Keep both updated!
         public int Count
         {
-            get
-            {
-                // No preconditions
+            get {
+                // No additional preconditions allowed
 
 
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
+                // No postconditions
 
 
                 return default(int);
@@ -657,71 +653,72 @@ namespace C6
 
         public T First
         {
-            get
-            {
+            get {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
                 // Equals first item
-                Ensures(Result<T>().Equals(this[0]));
-                Ensures(Result<T>().Equals(this.First()));
+                Ensures(Result<T>().IsSameAs(this[0]));
+                Ensures(Result<T>().IsSameAs(this.First()));
 
 
                 return default(T);
             }
         }
 
-        public bool IsFifo
+        public bool RemovesFromBeginning
         {
             get { return default(bool); }
-            set
-            {
+            set {
                 // Collection must be non-read-only
                 Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
 
                 // Value is updated
-                Ensures(IsFifo == value);
+                Ensures(RemovesFromBeginning == value);
 
 
                 return;
             }
         }
 
-        // Contracts are copied from IExtensible<T>.IsReadOnly. Keep both updated!
         public bool IsFixedSize
         {
-            get
-            {
-                // No preconditions
+            get {
+                // No additional preconditions allowed
 
 
-                // Read-only list has fixed size
-                Ensures(!IsReadOnly || Result<bool>());
+                // No postconditions
 
 
                 return default(bool);
             }
         }
 
-        // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get {
+                // No additional preconditions allowed
+
+
+                // No postconditions
+
+
+                return default(bool);
+            }
         }
 
         public T Last
         {
-            get
-            {
+            get {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
                 // Equals first item
-                Ensures(Result<T>().Equals(this[Count - 1]));
-                Ensures(Result<T>().Equals(this.Last()));
+                Ensures(Result<T>().IsSameAs(this[Count - 1]));
+                Ensures(Result<T>().IsSameAs(this.Last()));
 
 
                 return default(T);
@@ -730,21 +727,19 @@ namespace C6
 
         public T this[int index]
         {
-            get
-            {
+            get {
                 // Argument must be within bounds
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);
 
 
                 // Result is the same as skipping the first index items
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
 
 
                 return default(T);
             }
-            set
-            {
+            set {
                 // Collection must be non-read-only
                 Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
@@ -756,31 +751,23 @@ namespace C6
                 Requires(index < Count, ArgumentMustBeWithinBounds);
 
                 // Collection must not already contain item if collection disallows duplicate values
-                Requires(AllowsDuplicates || !Contains(value), CollectionMustAllowDuplicates); // TODO: Behavior mismatch with Insert methods
+                Requires(AllowsDuplicates || !Contains(value), CollectionMustAllowDuplicates);
 
 
                 // Value is the same as skipping the first index items
-                Ensures(value.Equals(this.Skip(index).First()));
+                Ensures(value.IsSameAs(this[index]));
 
 
                 return;
             }
         }
 
-        // Contracts are copied from ICollection<T>.Clear. Keep both updated!
         public void Clear()
         {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+            // No additional preconditions allowed
 
 
-            // The collection becomes empty
-            Ensures(IsEmpty);
-            Ensures(Count == 0);
-            Ensures(!this.Any());
+            // No postconditions
 
 
             return;
@@ -792,36 +779,31 @@ namespace C6
             Requires(predicate != null, ArgumentMustBeNonNull);
 
 
-            // The result is equal to filtering this list based on the predicate
-            Ensures(Result<IList<T>>().SequenceEqual(this.Where(predicate)));
+            // The result is the same as filtering this list based on the predicate
+            Ensures(Result<IList<T>>().IsSameSequenceAs(this.Where(predicate)));
+
+            // The returned list has the same type as this list
+            Ensures(Result<IList<T>>().GetType() == GetType());
 
 
             return default(IList<T>);
         }
 
-        // Contracts are copied from IIndexed<T>.IndexOf. Keep both updated!
         public int IndexOf(T item)
         {
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+            // No additional preconditions allowed
 
 
             // Result is a valid index
             Ensures(Contains(item)
                 ? 0 <= Result<int>() && Result<int>() < Count
-                : 0 <= ~Result<int>() && ~Result<int>() <= Count);
-
-            // Item at index equals item
-            Ensures(Result<int>() < 0 || EqualityComparer.Equals(item, this[Result<int>()]));
-
-            // No item before index equals item
-            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer));
+                : ~Result<int>() == Count);
 
 
             return default(int);
         }
 
-        public bool Insert(int index, T item)
+        public void Insert(int index, T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -836,18 +818,18 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
 
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
 
             // Item is inserted at index
-            Ensures(item.Equals(this[index]));
+            Ensures(item.IsSameAs(this[index]));
 
             // The item is inserted into the list without replacing other items
-            Ensures(this.SequenceEqual(OldValue(this.Take(index).Append(item).Concat(this.Skip(index)).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Append(item).Concat(this.Skip(index)).ToList())));
 
 
-            return default(bool);
+            return;
         }
 
         public void InsertAll(int index, SCG.IEnumerable<T> items)
@@ -868,17 +850,21 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
+            // Collection must not already contain the items if collection disallows duplicate values
+            Requires(AllowsDuplicates || ForAll(this, item => !Contains(item)), CollectionMustAllowDuplicates);
 
-            // TODO: Ensures
+
+            // The items are inserted into the list without replacing other items
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Concat(items).Concat(this.Skip(index)).ToList())));
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             return;
         }
 
-        public bool InsertFirst(T item)
+        public void InsertFirst(T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -886,9 +872,9 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
 
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
 
             // The collection becomes non-empty
             Ensures(!IsEmpty);
@@ -896,23 +882,23 @@ namespace C6
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + 1);
 
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
-
             // The collection will contain the item added
             Ensures(Contains(item));
 
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
+
+            // The number of same items increase by one
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
             // The item is added to the beginning
-            Ensures(item.Equals(First));
+            Ensures(item.IsSameAs(First));
 
 
-            return default(bool);
+            return;
         }
 
-        public bool InsertLast(T item)
+        public void InsertLast(T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -920,9 +906,9 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
 
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
 
             // The collection becomes non-empty
             Ensures(!IsEmpty);
@@ -930,20 +916,20 @@ namespace C6
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + 1);
 
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
-
             // The collection will contain the item added
             Ensures(Contains(item));
 
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
+
+            // The number of same items increase by one
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
             // The item is added to the end
-            Ensures(item.Equals(Last));
+            Ensures(item.IsSameAs(Last));
 
 
-            return default(bool);
+            return;
         }
 
         public bool IsSorted()
@@ -990,7 +976,11 @@ namespace C6
 
 
             // Result is equal to mapping each item
-            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper)));
+            // This would only work if the mapper is deterministic!
+            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper)));
+
+            // The returned list has the same type as this list
+            Ensures(Result<IList<V>>().GetType() == GetType());
 
 
             return default(IList<V>);
@@ -1003,10 +993,14 @@ namespace C6
 
 
             // Result is equal to mapping each item
-            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper), equalityComparer)); // TODO: Does this always work? What if unique objects are created?
+            // This would only work if the mapper is deterministic!
+            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper), equalityComparer));
 
             // Result uses equality comparer
             Ensures(Result<IList<V>>().EqualityComparer == (equalityComparer ?? SCG.EqualityComparer<V>.Default));
+
+            // The returned list has the same type as this list
+            Ensures(Result<IList<V>>().GetType() == GetType());
 
 
             return default(IList<V>);
@@ -1025,10 +1019,10 @@ namespace C6
 
 
             // Result is the item previously first/last
-            Ensures(Result<T>().Equals(OldValue(IsFifo ? First : Last)));
+            Ensures(Result<T>().IsSameAs(OldValue(RemovesFromBeginning ? First : Last)));
 
             // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue((IsFifo ? this.Skip(1) : this.Take(Count - 1)).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue((RemovesFromBeginning ? this.Skip(1) : this.Take(Count - 1)).ToList())));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -1041,31 +1035,12 @@ namespace C6
         }
 
 
-        // Contracts are copied from IIndexed<T>.RemoveAt. Keep both updated!
         public T RemoveAt(int index)
         {
-            // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
-
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+            // No additional preconditions allowed
 
 
-            // Result is the item previously at the specified index
-            Ensures(Result<T>().Equals(OldValue(this[index])));
-
-            // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
-
-            // Result is non-null
-            Ensures(AllowsNull || Result<T>() != null);
-
-            // Removing an item decreases the count by one
-            Ensures(Count == OldValue(Count) - 1);
+            // No postconditions
 
 
             return default(T);
@@ -1090,10 +1065,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(First)));
+            Ensures(Result<T>().IsSameAs(OldValue(First)));
 
             // Only the first item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Skip(1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Skip(1).ToList())));
 
 
             return default(T);
@@ -1118,10 +1093,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(Last)));
+            Ensures(Result<T>().IsSameAs(OldValue(Last)));
 
             // Only the last item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Take(Count - 1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(Count - 1).ToList())));
 
 
             return default(T);
@@ -1134,7 +1109,7 @@ namespace C6
 
 
             // The collection is reversed
-            Ensures(this.SequenceEqual(OldValue(Enumerable.Reverse(this).ToList()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.IsSameSequenceAs(OldValue(Enumerable.Reverse(this).ToList())));
 
 
             return;
@@ -1147,7 +1122,7 @@ namespace C6
 
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1163,7 +1138,7 @@ namespace C6
 
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1179,7 +1154,7 @@ namespace C6
             Ensures(IsSorted());
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1195,7 +1170,7 @@ namespace C6
             Ensures(IsSorted(comparer));
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1214,7 +1189,7 @@ namespace C6
             Ensures(IsSorted(comparison));
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1223,10 +1198,22 @@ namespace C6
         #region Hardened Postconditions
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
+        public bool Add(T item)
+        {
+            // No additional preconditions allowed
+
+
+            // Item is placed at the end
+            Ensures(Last.IsSameAs(item));
+
+
+            return default(bool);
+        }
+
+        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool AllowsDuplicates
         {
-            get
-            {
+            get {
                 // No additional preconditions allowed
 
 
@@ -1241,8 +1228,7 @@ namespace C6
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool IsSynchronized
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -1252,6 +1238,141 @@ namespace C6
 
                 return default(bool);
             }
+        }
+
+        public int LastIndexOf(T item)
+        {
+            // No additional preconditions allowed
+
+
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+
+            return default(int);
+        }
+
+        public void Remove(object value)
+        {
+            // No extra preconditions allowed
+
+
+            // TODO: How do this fail when value is not of type T?
+            // If an item is removed, it is removed according to RemovesFromBeginning
+            Ensures(!OldValue(Contains(value)) || this.IsSameSequenceAs(OldValue(this.SkipRange(RemovesFromBeginning ? IndexOf(value) : LastIndexOf((T) value), 1).ToList()))); // TODO: Is ToList needed?
+
+
+            return;
+        }
+
+        public bool Remove(T item)
+        {
+            // No extra preconditions allowed
+
+            
+            // If an item is removed, it is removed according to RemovesFromBeginning
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+
+
+            return default(bool);
+        }
+        
+        public bool Remove(T item, out T removedItem)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is removed, it is removed according to RemovesFromBeginning
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+
+            // The item removed is the first/last equal to item depending on the value of RemovesFromBeginning
+            Ensures(!Result<bool>() || ValueAtReturn(out removedItem).IsSameAs(OldValue(this[RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)])));
+            
+
+
+            removedItem = default(T);
+            return default(bool);
+        }
+        
+        public void RemoveAll(SCG.IEnumerable<T> items)
+        {
+            // No extra preconditions allowed
+
+
+            //  
+            Ensures(false); // TODO: Write contract that uses RemovesFromBeginning
+
+
+            return;
+        }
+
+        public void RetainAll(SCG.IEnumerable<T> items)
+        {
+            // No extra preconditions allowed
+
+
+            //  
+            Ensures(false); // TODO: Write contract that uses RemovesFromBeginning
+
+
+            return;
+        }
+        public bool Update(T item)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is updated, it is updated according to RemovesFromBeginning
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)).ToList()))); // TODO: Is ToList needed?
+
+
+            return default(bool);
+        }
+
+        public bool Update(T item, out T oldItem)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is updated, it is updated according to RemovesFromBeginning
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)).ToList()))); // TODO: Is ToList needed?
+
+            // The item removed is the first/last equal to item depending on the value of RemovesFromBeginning
+            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)])));
+
+
+            oldItem = default(T);
+            return default(bool);
+        }
+
+        public bool UpdateOrAdd(T item)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is updated, it is updated according to RemovesFromBeginning
+            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
+
+
+            return default(bool);
+        }
+
+        public bool UpdateOrAdd(T item, out T oldItem)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is updated, it is updated according to RemovesFromBeginning
+            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
+
+            // The item removed is the first/last equal to item depending on the value of RemovesFromBeginning
+            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)])));
+
+
+            oldItem = default(T);
+            return default(bool);
         }
 
         #endregion
@@ -1330,29 +1451,17 @@ namespace C6
         #region ICollection<T>
 
         public abstract Speed ContainsSpeed { get; }
-        public abstract bool Add(T item);
         public abstract bool Contains(T item);
         public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
-        // TODO: override to change documentation
-        public abstract bool Remove(T item);
-        // TODO: override to change documentation
-        public abstract bool Remove(T item, out T removedItem);
-        public abstract bool RemoveAll(T item);
-        // TODO: override to change documentation
-        public abstract void RemoveAll(SCG.IEnumerable<T> items);
-        public abstract void RetainAll(SCG.IEnumerable<T> items);
+        public abstract bool RemoveDuplicates(T item);
         public abstract ICollectionValue<T> UniqueItems();
         public abstract bool UnsequencedEquals(ICollection<T> otherCollection);
-        public abstract bool Update(T item);
-        public abstract bool Update(T item, out T oldItem);
-        public abstract bool UpdateOrAdd(T item);
-        public abstract bool UpdateOrAdd(T item, out T oldItem);
 
         #endregion
 
@@ -1367,16 +1476,15 @@ namespace C6
 
         public abstract Speed IndexingSpeed { get; }
         public abstract IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
-        public abstract int LastIndexOf(T item);
         public abstract void RemoveIndexRange(int startIndex, int count);
 
         #endregion
 
-        /*#region IDisposable
+        #region IDisposable
 
         public abstract void Dispose();
 
-        #endregion*/
+        #endregion
 
         #region SC.IList
 
@@ -1390,7 +1498,6 @@ namespace C6
         public abstract bool Contains(object value);
         public abstract int IndexOf(object value);
         public abstract void Insert(int index, object value);
-        public abstract void Remove(object value);
         void IList.RemoveAt(int index) {}
 
         #endregion

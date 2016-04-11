@@ -27,8 +27,7 @@ namespace C6.Tests.Contracts
         /// <code>Assert.That(code, Violates.Precondition);</code></remarks>
         public static TypeConstraint Precondition
         {
-            get
-            {
+            get {
 #if (!DEBUG)
                 Assert.Ignore("Ignore preconditions in release.");
 #endif
@@ -36,7 +35,7 @@ namespace C6.Tests.Contracts
                 return Throws.TypeOf<PreconditionException>();
             }
         }
-        
+
         /// <summary>
         /// Gets <see cref="Throws.TypeOf"/> with a
         /// <see cref="PreconditionException"/> and a user message.
@@ -56,7 +55,7 @@ namespace C6.Tests.Contracts
 
         // TODO: Remove this once the issue is solved: https://github.com/Microsoft/CodeContracts/issues/392
         // TODO: Add one assessing the user message
-        public static StartsWithConstraint ConstructorPrecondition => Throws.InstanceOf<Exception>().With.Property("Message").StartsWith("Precondition failed");
+        public static StartsWithConstraint ConstructorPrecondition => Throws.InstanceOf<Exception>().With.Message.StartsWith("Precondition failed");
 
         /// <summary>
         /// Returns an <see cref="EqualConstraint"/> that checks if a typed

@@ -2,7 +2,6 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
@@ -17,8 +16,7 @@ namespace C6
     /// <see cref="ICollectionValue{T}.CollectionCleared"/> event.
     /// </summary>
     [Serializable]
-    [DebuggerDisplay("(ClearedEventArgs {Count} {Full})")] // TODO: format appropriately
-    public class ClearedEventArgs : EventArgs, IEquatable<ClearedEventArgs>
+    public class ClearedEventArgs : EventArgs
     {
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -93,39 +91,6 @@ namespace C6
         [Pure]
         public int? Start { get; }
 
-        public bool Equals(ClearedEventArgs other)
-        {
-            if (ReferenceEquals(null, other)) {
-                return false;
-            }
-            if (ReferenceEquals(this, other)) {
-                return true;
-            }
-            return Count == other.Count && Full == other.Full && Start == other.Start;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) {
-                return false;
-            }
-            if (ReferenceEquals(this, obj)) {
-                return true;
-            }
-            if (obj.GetType() != GetType()) {
-                return false;
-            }
-            return Equals((ClearedEventArgs) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked {
-                var hashCode = Count;
-                hashCode = (hashCode * 397) ^ Full.GetHashCode();
-                hashCode = (hashCode * 397) ^ Start.GetHashCode();
-                return hashCode;
-            }
-        }
+        public override string ToString() => $"{Count} {(Count == 1 ? "item" : "items")} {(Start.HasValue ? $" starting at index {Start.Value}" : "")} ({(Full ? "full" : "range")})"; // $"(ClearedEventArgs {Count} {Full})"
     }
 }

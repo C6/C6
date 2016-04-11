@@ -11,13 +11,14 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
+using static C6.ExceptionMessages;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
 
 
-namespace C6.Tests.Collections
+namespace C6.Tests
 {
     [TestFixture]
     public abstract class IExtensibleTests : ICollectionValueTests
@@ -34,8 +35,6 @@ namespace C6.Tests.Collections
         protected abstract IExtensible<T> GetExtensible<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
 
         #region Helpers
-
-        private IExtensible<T> GetExtensible<T>(params T[] array) => GetExtensible((SCG.IEnumerable<T>) array);
 
         private IExtensible<int> GetIntExtensible(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetIntegers(random, GetCount(random)), equalityComparer, allowsNull);
@@ -272,7 +271,7 @@ namespace C6.Tests.Collections
             };
 
             // Act & Assert
-            Assert.That(() => collection.Add(item), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.Add(item), Raises(expectedEvents).For(collection));
         }
 
         [Test]
@@ -286,7 +285,7 @@ namespace C6.Tests.Collections
             var duplicateItem = items.Choose(Random).ToLower();
 
             // Act & Assert
-            Assert.That(() => collection.Add(duplicateItem), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.Add(duplicateItem), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -295,14 +294,14 @@ namespace C6.Tests.Collections
             // Arrange
             var collection = GetStringExtensible(Random);
             var item = Random.GetString();
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
 
             // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
             collection.Add(item);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.TypeOf<InvalidOperationException>());
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
@@ -319,6 +318,15 @@ namespace C6.Tests.Collections
         public void Add_FixedSizeCollection_Fail()
         {
             Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Add_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
 
             Assert.Fail("Tests have not been written yet");
         }
@@ -385,12 +393,11 @@ namespace C6.Tests.Collections
         public void AddAll_AddEmptyEnumerable_RaisesNoEvents()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetExtensible(items, ReferenceEqualityComparer);
+            var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
             var empty = Enumerable.Empty<string>();
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(empty), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.AddAll(empty), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -401,10 +408,10 @@ namespace C6.Tests.Collections
             // Arrange
             var items = GetStrings(Random);
             var collection = GetExtensible(items, ReferenceEqualityComparer);
-            items.Shuffle(Random);
+            var shuffledItems = items.ShuffledCopy(Random);
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(items), Is.Not.RaisingEventsFor(collection));
+            Assert.That(() => collection.AddAll(shuffledItems), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -447,20 +454,20 @@ namespace C6.Tests.Collections
                 };
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(items), _Is.Raising(expectedEvents).For(collection));
+            Assert.That(() => collection.AddAll(items), Raises(expectedEvents).For(collection));
         }
 
         [Test]
-        public void AddAll_BadEnumerable_ThrowsExceptionButCollectionDoesntChange()
+        public void AddAll_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = GetExtensible(items);
+            var collection = GetExtensible(items, ReferenceEqualityComparer);
             var badEnumerable = GetStrings(Random).AsBadEnumerable();
 
             // Act & Assert
             Assert.That(() => collection.AddAll(badEnumerable), Throws.InstanceOf<BadEnumerableException>());
-            Assert.That(collection, Is.EqualTo(items));
+            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -469,14 +476,14 @@ namespace C6.Tests.Collections
             // Arrange
             var collection = GetStringExtensible(Random);
             var items = GetStrings(Random);
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
 
             // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
             collection.AddAll(items);
 
             // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.TypeOf<InvalidOperationException>());
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
@@ -493,6 +500,15 @@ namespace C6.Tests.Collections
         public void AddAll_FixedSizeCollection_Fail()
         {
             Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void AddAll_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
 
             Assert.Fail("Tests have not been written yet");
         }

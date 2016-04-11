@@ -14,7 +14,6 @@ using SCG = System.Collections.Generic;
 
 namespace C6
 {
-    // TODO: Rewrite documentation based on hash code solution.
     /// <summary>
     /// Represents an editable generic collection that maintains a particular
     /// item sequence order.
@@ -32,15 +31,27 @@ namespace C6
     [ContractClass(typeof(ISequencedContract<>))]
     public interface ISequenced<T> : ICollection<T>, IDirectedCollectionValue<T>
     {
-        // TODO: Consider how this should be implemented/documented. Maybe use a static helper class.
         /// <summary>
         /// Returns the sequenced (order-sensitive) hash code of the collection.
         /// </summary>
         /// <returns>The sequenced hash code of the collection.</returns>
         /// <remarks>
+        /// <para>
+        /// The collection's sequenced hash code is defined as the sum of a
+        /// transformation of the hash codes of its items, each computed using
+        /// the collection's <see cref="IExtensible{T}.EqualityComparer"/>.
         /// The hash code is defined as <c>h(...h(h(h(x1),x2),x3),...,xn)</c>
         /// for <c>h(a,b)=CONSTANT*a+b</c> and the x's the hash codes of the
         /// items of this collection.
+        /// </para>
+        /// <para>
+        /// The implementations must use a fixed transformation that allows
+        /// serialization and the hash code must be cached and thus not
+        /// recomputed unless the collection has changed since the last call to
+        /// this method. The hash code must be equal to that of
+        /// <c>SequencedEqualityComparer.GetSequencedHashCode(collection,
+        /// collection.EqualityComparer)</c>.
+        /// </para>
         /// </remarks>
         [Pure]
         int GetSequencedHashCode();
@@ -84,7 +95,11 @@ namespace C6
 
         public int GetSequencedHashCode()
         {
-            // TODO: Use static helper class to define result?
+            // No preconditions
+
+
+            // Result is equal to that of SequencedEqualityComparer
+            Ensures(Result<int>() == this.GetSequencedHashCode(EqualityComparer));
 
 
             return default(int);
@@ -96,7 +111,8 @@ namespace C6
 
 
             // Enumeration of the collections must yield equal items
-            Ensures(Result<bool>() == this.SequenceEqual(otherCollection ?? Enumerable.Empty<T>(), EqualityComparer));
+            Ensures(Result<bool>() == (otherCollection != null && this.SequenceEqual(otherCollection, EqualityComparer)));
+            Ensures(Result<bool>() == this.SequencedEquals(otherCollection, EqualityComparer));
 
 
             return default(bool);
@@ -176,15 +192,15 @@ namespace C6
         public abstract void Clear();
         public abstract bool Contains(T item);
         public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         public abstract bool Remove(T item);
         public abstract bool Remove(T item, out T removedItem);
-        public abstract bool RemoveAll(T item);
+        public abstract bool RemoveDuplicates(T item);
         public abstract void RemoveAll(SCG.IEnumerable<T> items);
         public abstract void RetainAll(SCG.IEnumerable<T> items);
         public abstract ICollectionValue<T> UniqueItems();

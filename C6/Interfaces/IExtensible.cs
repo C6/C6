@@ -9,6 +9,7 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -54,7 +55,6 @@ namespace C6
         bool DuplicatesByCounting { get; }
 
         // TODO: wonder where the right position of this is. And the semantics. Should at least be in the same class as AllowsDuplicates!
-        // TODO: Could the result be null?
         /// <summary>
         /// Gets the <see cref="SCG.IEqualityComparer{T}"/> used by the collection.
         /// </summary>
@@ -167,8 +167,10 @@ namespace C6
 
         public bool AllowsDuplicates
         {
-            get
-            {
+            get {
+                // No preconditions
+
+
                 // A set only contains distinct items // TODO: Is this the right place to put it?
                 Ensures(Result<bool>() || Count == this.Distinct(EqualityComparer).Count());
 
@@ -179,12 +181,11 @@ namespace C6
 
         public bool DuplicatesByCounting
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
-                // True by convention for collections with set semantics
+                // False by convention for collections with set semantics
                 Ensures(AllowsDuplicates || !Result<bool>());
 
 
@@ -194,8 +195,7 @@ namespace C6
 
         public SCG.IEqualityComparer<T> EqualityComparer
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -207,11 +207,9 @@ namespace C6
             }
         }
 
-        // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsFixedSize
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -223,13 +221,19 @@ namespace C6
             }
         }
 
-        // Contracts are copied to ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get {
+                // No preconditions
+
+
+                // No postconditions
+
+
+                return default(bool);
+            }
         }
 
-        // Contracts are copied to ICollection<T>.Add. Keep both updated!
         public bool Add(T item)
         {
             // Collection must be non-read-only
@@ -255,7 +259,10 @@ namespace C6
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Result<bool>() ? 1 : 0));
+            Ensures(this.CountDuplicates(item, EqualityComparer) == OldValue(this.CountDuplicates(item, EqualityComparer)) + (Result<bool>() ? 1 : 0));
+
+            // If the item is add and its not a counter that is incremented, that item is in the collection
+            Ensures(!Result<bool>() || DuplicatesByCounting || this.ContainsSame(item));
 
 
             return default(bool);
@@ -286,7 +293,7 @@ namespace C6
             Ensures(items.Any() ? Count >= OldValue(Count) : Count == OldValue(Count));
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
             // TODO: Make more exact check of added items
 

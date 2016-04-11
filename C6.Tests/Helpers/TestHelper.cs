@@ -23,6 +23,12 @@ namespace C6.Tests.Helpers
         public static int[] GetIntegers(Random random, int count)
             => Enumerable.Range(0, count).Select(i => random.Next()).ToArray();
 
+        public static KeyValuePair<int, int>[] GetKeyValuePairs(Random random)
+            => GetKeyValuePairs(random, GetCount(random));
+
+        public static KeyValuePair<int, int>[] GetKeyValuePairs(Random random, int count)
+            => Enumerable.Range(0, count).Select(i => new KeyValuePair<int, int>(random.Next(), random.Next())).ToArray();
+
         public static string[] GetStrings(Randomizer random)
             => GetStrings(random, GetCount(random));
 
@@ -34,6 +40,12 @@ namespace C6.Tests.Helpers
 
         public static string[] GetUppercaseStrings(Randomizer random, int count)
             => Enumerable.Range(0, count).Select(i => GetUppercaseString(random)).ToArray();
+
+        public static string[] GetLowercaseStrings(Randomizer random)
+            => GetLowercaseStrings(random, GetCount(random));
+
+        public static string[] GetLowercaseStrings(Randomizer random, int count)
+            => Enumerable.Range(0, count).Select(i => GetLowercaseString(random)).ToArray();
 
         public static string GetUppercaseString(Randomizer random) => random.GetString(25, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
         public static string GetLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");
@@ -48,8 +60,43 @@ namespace C6.Tests.Helpers
 
         public static SCG.IEqualityComparer<string> ReferenceEqualityComparer => ComparerFactory.CreateReferenceEqualityComparer<string>();
 
-        public static CollectionEventConstraint<T> RaisingEventsFor<T>(this ConstraintExpression not, ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
+        public static SCG.IEqualityComparer<KeyValuePair<TKey, TValue>> KeyEqualityComparer<TKey, TValue>() => ComparerFactory.CreateEqualityComparer<KeyValuePair<TKey, TValue>>((x, y) => x.Key.Equals(y.Key), x => x.Key.GetHashCode());
+
+        public static CollectionEventHolder<T> Raises<T>(CollectionEvent<T>[] expectedEvents) => new CollectionEventHolder<T>(expectedEvents);
+
+        public static CollectionEventConstraint<T> RaisesNoEventsFor<T>(ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
+
+        public static EqualConstraint Because(this ExactTypeConstraint constraint, string exceptionMessage) => constraint.With.Message.EqualTo(exceptionMessage);
 
         public static BadEnumerable<T> AsBadEnumerable<T>(this SCG.IEnumerable<T> enumerable) => new BadEnumerable<T>(enumerable);
+
+        public static T DifferentItem<T>(this SCG.IEnumerable<T> items, Func<T> newItem, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+
+            var item = newItem();
+            while (items.Contains(item, equalityComparer)) {
+                item = newItem();
+            }
+            return item;
+        }
+
+        public static T[] Repeat<T>(this T item, int count) => Repeat(() => item, count);
+
+        public static T[] Repeat<T>(this Func<T> item, int count) => Enumerable.Range(0, count).Select(i => item()).ToArray();
+
+        public static T[] WithRepeatedItem<T>(this SCG.IEnumerable<T> items, Func<T> item, int count, Random random)
+        {
+            var array = items.Concat(item.Repeat(count)).ToArray();
+            array.Shuffle(random);
+            return array;
+        }
+
+        public static T[] ShuffledCopy<T>(this SCG.IEnumerable<T> enumerable, Random random)
+        {
+            var copy = enumerable.ToArray();
+            copy.Shuffle(random);
+            return copy;
+        }
     }
 }

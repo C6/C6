@@ -9,6 +9,7 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -75,7 +76,7 @@ namespace C6
         /// <value>The number of items contained in the collection.</value>
         [Pure]
         int Count { get; }
-        
+
         /// <summary>
         /// Gets a value characterizing the asymptotic complexity of
         /// <see cref="Count"/> proportional to collection size (worst-case or
@@ -93,7 +94,7 @@ namespace C6
         /// otherwise, <c>false</c>.</value>
         [Pure]
         bool IsEmpty { get; }
-        
+
         /// <summary>
         /// Gets a bit flag indicating the collection's subscribable events.
         /// </summary>
@@ -154,7 +155,7 @@ namespace C6
         /// <seealso cref="ICollection{T}.FindOrAdd"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>
         /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveAll(T)"/>
+        /// <seealso cref="ICollection{T}.RemoveDuplicates"/>
         /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
         /// <seealso cref="ICollection{T}.RetainAll"/>
         /// <seealso cref="ICollection{T}.Update(T)"/>
@@ -291,7 +292,7 @@ namespace C6
         /// <seealso cref="EventTypes.Removed"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>
         /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveAll(T)"/>
+        /// <seealso cref="ICollection{T}.RemoveDuplicates"/>
         /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
         /// <seealso cref="ICollection{T}.RetainAll"/>
         /// <seealso cref="ICollection{T}.Update(T)"/>
@@ -325,8 +326,7 @@ namespace C6
 
         public EventTypes ActiveEvents
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -345,8 +345,7 @@ namespace C6
 
         public bool AllowsNull
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -358,11 +357,9 @@ namespace C6
             }
         }
 
-        // Contracts are copied to ICollection<T>.Count. Keep both updated!
         public int Count
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -379,8 +376,7 @@ namespace C6
 
         public Speed CountSpeed
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -394,8 +390,7 @@ namespace C6
 
         public bool IsEmpty
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -412,8 +407,7 @@ namespace C6
 
         public EventTypes ListenableEvents
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -435,13 +429,12 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             return default(T);
         }
 
-        // Contracts are copied to ICollection.CopyTo. Keep both updated!
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Argument must be non-null
@@ -453,11 +446,11 @@ namespace C6
 
 
             // Array contains the collection's items in enumeration order from arrayIndex
-            Ensures(array.Skip(arrayIndex).Take(Count).SequenceEqual(this));
+            Ensures(array.Skip(arrayIndex).Take(Count).IsSameSequenceAs(this));
 
             // The rest of the array is unchanged
-            Ensures(OldValue(array.Take(arrayIndex).ToList()).SequenceEqual(array.Take(arrayIndex)));
-            Ensures(OldValue(array.Skip(arrayIndex + Count).ToList()).SequenceEqual(array.Skip(arrayIndex + Count)));
+            Ensures(OldValue(array.Take(arrayIndex).ToList()).IsSameSequenceAs(array.Take(arrayIndex)));
+            Ensures(OldValue(array.Skip(arrayIndex + Count).ToList()).IsSameSequenceAs(array.Skip(arrayIndex + Count)));
 
 
             return;
@@ -472,7 +465,7 @@ namespace C6
             Ensures(Result<T[]>() != null);
 
             // Result contains the collection's items in enumeration order
-            Ensures(Result<T[]>().SequenceEqual(this));
+            Ensures(Result<T[]>().IsSameSequenceAs(this));
 
 
             return default(T[]);
@@ -480,8 +473,7 @@ namespace C6
 
         public event EventHandler CollectionChanged
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Changed), EventMustBeListenable);
 
@@ -498,8 +490,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Changed), EventMustBeActive);
 
@@ -516,8 +507,7 @@ namespace C6
 
         public event EventHandler<ClearedEventArgs> CollectionCleared
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Cleared), EventMustBeListenable);
 
@@ -534,8 +524,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Cleared), EventMustBeActive);
 
@@ -552,8 +541,7 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Inserted), EventMustBeListenable);
 
@@ -570,8 +558,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Inserted), EventMustBeActive);
 
@@ -588,8 +575,7 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(RemovedAt), EventMustBeListenable);
 
@@ -606,8 +592,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(RemovedAt), EventMustBeActive);
 
@@ -624,8 +609,7 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Added), EventMustBeListenable);
 
@@ -642,8 +626,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Added), EventMustBeActive);
 
@@ -660,8 +643,7 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
         {
-            add
-            {
+            add {
                 // Event is listenable
                 Requires(ListenableEvents.HasFlag(Removed), EventMustBeListenable);
 
@@ -678,8 +660,7 @@ namespace C6
 
                 return;
             }
-            remove
-            {
+            remove {
                 // Event is active
                 Requires(ActiveEvents.HasFlag(Removed), EventMustBeActive);
 

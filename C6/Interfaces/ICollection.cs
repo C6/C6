@@ -7,8 +7,11 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
+using C6.Contracts;
+
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -142,6 +145,18 @@ namespace C6
         bool ContainsAll(SCG.IEnumerable<T> items);
 
         /// <summary>
+        /// Copies the items of the collection to an <see cref="Array"/>,
+        /// starting at a particular <see cref="Array"/> index.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="Array"/> that is
+        /// the destination of the items copied from the collection. The
+        /// <see cref="Array"/> must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based arrayIndex in array at 
+        /// which copying begins.</param>
+        [Pure]
+        new void CopyTo(T[] array, int arrayIndex);
+
+        /// <summary>
         /// Returns the item's multiplicity in the collection: the number of
         /// items in the collection equal to the specified item.
         /// </summary>
@@ -155,19 +170,7 @@ namespace C6
         /// <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
         /// item equality.</remarks>
         [Pure]
-        int ContainsCount(T item);
-
-        /// <summary>
-        /// Copies the items of the collection to an <see cref="Array"/>,
-        /// starting at a particular <see cref="Array"/> index.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="Array"/> that is
-        /// the destination of the items copied from the collection. The
-        /// <see cref="Array"/> must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based arrayIndex in array at 
-        /// which copying begins.</param>
-        [Pure]
-        new void CopyTo(T[] array, int arrayIndex);
+        int CountDuplicates(T item);
 
         /// <summary>
         /// Determines whether the collection contains a specific item and 
@@ -220,8 +223,7 @@ namespace C6
         /// </remarks>
         /// <seealso cref="Add"/>
         bool FindOrAdd(ref T item);
-
-        // TODO: Maybe refer to static method, that can be used in contracts as well
+        
         /// <summary>
         /// Returns the unsequenced (order-insensitive) hash code of the
         /// collection.
@@ -231,13 +233,15 @@ namespace C6
         /// <para>
         /// The collection's unsequenced hash code is defined as the sum of a
         /// transformation of the hash codes of its items, each computed using
-        /// the collection’s <see cref="IExtensible{T}.EqualityComparer"/>.
+        /// the collection's <see cref="IExtensible{T}.EqualityComparer"/>.
         /// </para>
         /// <para>
         /// The implementations must use a fixed transformation that allows
         /// serialization and the hash code must be cached and thus not
         /// recomputed unless the collection has changed since the last call to
-        /// this method.
+        /// this method. The hash code must be equal to that of
+        /// <c>UnsequencedEqualityComparer.GetUnsequencedHashCode(collection,
+        /// collection.EqualityComparer)</c>.
         /// </para>
         /// </remarks>
         /// <seealso cref="UnsequencedEquals"/>
@@ -384,7 +388,7 @@ namespace C6
         /// </list>
         /// </para>
         /// </remarks>
-        bool RemoveAll(T item);
+        bool RemoveDuplicates(T item);
 
         /// <summary>
         /// Removes each item of the specified enumerable from the collection, 
@@ -783,8 +787,7 @@ namespace C6
 
         public Speed ContainsSpeed
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -796,73 +799,47 @@ namespace C6
             }
         }
 
-        // Contracts are copied from ICollectionValue<T>.Count. Keep both updated!
-        // Contracts are copied to IIndexed<T>.Count. Keep both updated!
         public int Count
         {
-            get
-            {
-                // No preconditions
+            get {
+                // No additional preconditions allowed
 
 
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
+                // No postconditions
 
 
                 return default(int);
             }
         }
 
-        // Contracts are copied from IExtensible<T>.IsReadOnly. Keep both updated!
-        // Contracts are copied to IList<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get {
+                // No additional preconditions allowed
+
+
+                // No postconditions
+
+
+                return default(bool);
+            }
         }
 
-        // Contracts are copied from IExtensible<T>.Add. Keep both updated!
         public bool Add(T item)
         {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
-
-
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
-
-            // The collection becomes non-empty
-            Ensures(!IsEmpty);
-
-            // The collection will contain the item added
-            Ensures(this.Contains(item, EqualityComparer));
-
-            // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + (Result<bool>() ? 1 : 0));
-
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + (Result<bool>() ? 1 : 0));
+            // No additional preconditions allowed
 
 
             // The collection will contain the item added
             Ensures(Contains(item));
 
             // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + (Result<bool>() ? 1 : 0));
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + (Result<bool>() ? 1 : 0));
 
 
             return default(bool);
         }
 
-        // Contracts are copied to IList<T>.Clear. Keep both updated!
         public void Clear()
         {
             // Collection must be non-read-only
@@ -894,55 +871,47 @@ namespace C6
             return default(bool);
         }
 
-
         public bool ContainsAll(SCG.IEnumerable<T> items)
         {
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
-            
+
             // All items must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
-
+            
             // The collection contains the same items as items, with a multiplicity equal or greater
-            Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) >= group.Count()));
+            Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => CountDuplicates(group.Key) >= group.Count()));
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray()))); // TODO: Method is already pure...
 
 
             return default(bool);
         }
 
-        public int ContainsCount(T item)
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            // No additional preconditions allowed
+
+
+            // No postconditions
+
+
+            return;
+        }
+
+        public int CountDuplicates(T item)
         {
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result equals the number of items equal to item using the collection's equality comparer
-            Ensures(Result<int>() == this.Count(x => EqualityComparer.Equals(x, item)));
+            Ensures(Result<int>() == this.CountDuplicates(item, EqualityComparer));
 
 
             return default(int);
-        }
-
-        // Contracts are copied from ICollectionValue<T>.CopyTo. Keep both updated!
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            // Argument must be non-null
-            Requires(array != null, ArgumentMustBeNonNull);
-
-            // Argument must be within bounds
-            Requires(0 <= arrayIndex, ArgumentMustBeWithinBounds);
-            Requires(arrayIndex + Count <= array.Length, ArgumentMustBeWithinBounds);
-
-
-            // Array contains the collection's items in enumeration order from arrayIndex
-            Ensures(Enumerable.SequenceEqual(Enumerable.Skip(array, arrayIndex), this));
-
-
-            return;
         }
 
         public bool Find(ref T item)
@@ -954,11 +923,11 @@ namespace C6
             // Result is equal to Contains
             Ensures(Result<bool>() == Contains(item));
 
-            // Ref parameter always equals itself
-            Ensures(EqualityComparer.Equals(item, ValueAtReturn(out item))); // TODO: Test that this actually catches mistakes - try returning default(T)
+            // Original ref parameter always equals itself at return
+            Ensures(EqualityComparer.Equals(item, ValueAtReturn(out item)));
 
-            // If a non-value type instance is found and returned, it must come from the collection
-            Ensures(typeof(T).IsValueType || !Result<bool>() || this.Contains(ValueAtReturn(out item), ComparerFactory.CreateReferenceEqualityComparer<T>())); // TODO: Test that this actually catches mistakes - try returning default(T)
+            // If found, item is from collection; otherwise, it is unchanged.
+            Ensures(Result<bool>() ? this.ContainsSame(ValueAtReturn(out item)) : item.IsSameAs(ValueAtReturn(out item)));
 
 
             return default(bool);
@@ -985,12 +954,28 @@ namespace C6
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 0 : 1));
 
+            // Adding an item increases its count by one
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + (Result<bool>() ? 0 : 1));
+
+            // If item is found, returned value is from collection
+            Ensures(!Result<bool>() || this.ContainsSame(ValueAtReturn(out item)));
+
+            // The item is either found, or that item is added to the collection
+            Ensures(Result<bool>() || (item.IsSameAs(ValueAtReturn(out item)) && this.ContainsSame(item)));
+
 
             return default(bool);
         }
 
         public int GetUnsequencedHashCode()
         {
+            // No preconditions
+
+
+            // Result is equal to that of UnsequencedEqualityComparer
+            Ensures(Result<int>() == this.GetUnsequencedHashCode(EqualityComparer));
+
+
             return default(int);
         }
 
@@ -1029,7 +1014,10 @@ namespace C6
             Ensures(Count == OldValue(Count) - (Result<bool>() ? 1 : 0));
 
             // Removing the item decreases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) - (Result<bool>() ? 1 : 0));
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) - (Result<bool>() ? 1 : 0));
+
+            // If collection doesn't allow duplicates, the collection no more contains the item
+            Ensures(AllowsDuplicates || !Contains(item));
 
 
             return default(bool);
@@ -1054,17 +1042,26 @@ namespace C6
             Ensures(Count == OldValue(Count) - (Result<bool>() ? 1 : 0));
 
             // Removing the item decreases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) - (Result<bool>() ? 1 : 0));
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) - (Result<bool>() ? 1 : 0));
 
             // If an item was removed, the removed item equals the item to remove; otherwise, it equals the default value of T
             Ensures(EqualityComparer.Equals(ValueAtReturn(out removedItem), Result<bool>() ? item : default(T)));
+
+            // If collection doesn't allow duplicates, the collection no more contains the item
+            Ensures(AllowsDuplicates || !Contains(item));
+
+            // Returned value is from collection
+            Ensures(!Result<bool>() || OldValue(ToArray()).ContainsSame(ValueAtReturn(out removedItem)));
+
+            // Old value is non-null
+            Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out removedItem) != null);
 
 
             removedItem = default(T);
             return default(bool);
         }
 
-        public bool RemoveAll(T item)
+        public bool RemoveDuplicates(T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -1080,10 +1077,13 @@ namespace C6
             Ensures(Result<bool>() == OldValue(Contains(item)));
 
             // Removing all instances of an item decreases the count by its multiplicity
-            Ensures(Count == OldValue(Count - ContainsCount(item)));
+            Ensures(Count == OldValue(Count - CountDuplicates(item)));
 
             // Removing the item decreases the number of equal items to zero
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == 0);
+            Ensures(CountDuplicates(item) == 0);
+
+            // The collection no longer contains the item
+            Ensures(!Contains(item));
 
 
             return default(bool);
@@ -1107,7 +1107,7 @@ namespace C6
             // TODO: Write ensures
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             return;
@@ -1132,10 +1132,10 @@ namespace C6
             Ensures(Count <= (AllowsDuplicates ? items.Count() : items.Distinct(EqualityComparer).Count()));
 
             // The collection contains the same items as items, with a multiplicity equal or less
-            Ensures(items.GroupBy(key => key, element => element, EqualityComparer).All(group => ContainsCount(group.Key) <= group.Count()));
+            Ensures(items.GroupBy(key => key, element => element, EqualityComparer).All(group => CountDuplicates(group.Key) <= group.Count()));
 
             // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
             // TODO: Ensure that the collection contains the right items
 
@@ -1171,15 +1171,16 @@ namespace C6
 
 
             // If the collections must contain a different number of (distinct) items, then they must be non-equal
-            Ensures((Count == otherCollection.Count) || !Result<bool>());
-            Ensures((this.Distinct(EqualityComparer).Count() == otherCollection.Distinct(EqualityComparer).Count()) || !Result<bool>());
+            Ensures(Count == (otherCollection?.Count ?? 0) || !Result<bool>());
+            Ensures(this.Distinct(EqualityComparer).Count() == (otherCollection?.Distinct(EqualityComparer).Count() ?? 0) || !Result<bool>());
 
             // Result reflects whether they are unsequenced equal
             Ensures(Result<bool>() == this.UnsequenceEqual(otherCollection, EqualityComparer));
 
             // If the collections have different unsequenced hash codes, then they must be non-equal
-            Ensures((GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode()) || !Result<bool>());
-
+            Ensures(GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode(EqualityComparer) || !Result<bool>());
+            Ensures(!Result<bool>() || GetUnsequencedHashCode() == otherCollection.GetUnsequencedHashCode(EqualityComparer));
+            
 
             return default(bool);
         }
@@ -1202,8 +1203,10 @@ namespace C6
             // Count remains unchanged
             Ensures(Count == OldValue(Count));
 
-            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+            // If the item is updated, that item is in the collection
+            Ensures(!Result<bool>() || this.ContainsSame(item));
 
+            // TODO: Make contract that ensures that the right number of items are updated based on DuplicatesByCounting
 
 
             return default(bool);
@@ -1230,10 +1233,16 @@ namespace C6
             // Count remains unchanged
             Ensures(Count == OldValue(Count));
 
-            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+            // TODO: Make contract that ensures that the right number of items are updated based on DuplicatesByCounting
 
             // Old value is non-null
             Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out oldItem) != null);
+
+            // Result came from the collection
+            Ensures(!Result<bool>() || OldValue(ToArray()).ContainsSame(ValueAtReturn(out oldItem)));
+
+            // If the item is updated, that item is in the collection
+            Ensures(!Result<bool>() || this.ContainsSame(item));
 
 
             oldItem = default(T);
@@ -1261,6 +1270,9 @@ namespace C6
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 0 : 1));
 
+            // That item is in the collection
+            Ensures(this.ContainsSame(item));
+
             // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
 
 
@@ -1286,7 +1298,7 @@ namespace C6
             Ensures(Result<bool>() == OldValue(Contains(item)));
 
             // The item returned is either equal to the given item, if it was updated, or the default value of T if it was added
-            Ensures(EqualityComparer.Equals(ValueAtReturn(out oldItem), Result<bool>() ? item : default(T)));
+            Ensures(ValueAtReturn(out oldItem).IsSameAs(Result<bool>() ? item : default(T)));
 
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 0 : 1));
@@ -1295,6 +1307,15 @@ namespace C6
 
             // Old value is non-null
             Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out oldItem) != null);
+
+            // That item is in the collection
+            Ensures(this.ContainsSame(item));
+
+            // If item is updated, returned value is from collection
+            Ensures(!Result<bool>() || OldValue(ToArray()).ContainsSame(ValueAtReturn(out item)));
+
+            // If item is added, that item is added to the collection
+            Ensures(Result<bool>() || ValueAtReturn(out item).IsSameAs(default(T)));
 
 
             oldItem = default(T);

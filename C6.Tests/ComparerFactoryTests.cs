@@ -2,13 +2,12 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using NUnit.Framework;
-using NUnit.Framework.Internal;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests
 {
-    public abstract class TestBase
-    {
-        protected static Randomizer Random => TestContext.CurrentContext.Random;
-    }
+    [TestFixture]
+    public class ComparerFactoryTests {}
 }

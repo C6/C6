@@ -41,16 +41,14 @@ namespace System.Collections.Generic
 
         public T this[int index]
         {
-            get
-            {
+            get {
                 // Argument must be within bounds (collection must be non-empty)
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);
 
                 return default(T);
             }
-            set
-            {
+            set {
                 // Argument must be within bounds (collection must be non-empty)
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);

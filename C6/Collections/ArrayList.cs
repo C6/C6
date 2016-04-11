@@ -2,22 +2,25 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
+
+using C6.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
+using static C6.ExceptionMessages;
 
+using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
 namespace C6
 {
     [Serializable]
-    public class ArrayList<T> : IExtensible<T>
+    public class ArrayList<T> : ISequenced<T>
     {
         #region Fields
 
@@ -29,6 +32,9 @@ namespace C6
         private T[] _items;
 
         private int _version;
+
+        private int _sequencedHashCode, _sequencedHashCodeVersion = -1;
+        private int _unsequencedHashCode, _unsequencedHashCodeVersion = -1;
 
         private event EventHandler _collectionChanged;
         private event EventHandler<ClearedEventArgs> _collectionCleared;
@@ -126,9 +132,16 @@ namespace C6
 
         public bool AllowsNull { get; }
 
+        public Speed ContainsSpeed => Speed.Linear;
+
         public int Count { get; private set; }
 
         public Speed CountSpeed => Speed.Constant;
+
+        public EnumerationDirection Direction
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         public bool DuplicatesByCounting => false;
 
@@ -148,15 +161,10 @@ namespace C6
 
         public bool Add(T item)
         {
-            #region Code Contracts
-
-            // Item is added to the end
-            // TODO: Fails when item is null: Ensures(this.Last().Equals(item));
-
-            #endregion
-
             UpdateVersion();
+
             InsertPrivate(Count, item);
+
             RaiseForAdd(item);
             return true;
         }
@@ -164,7 +172,12 @@ namespace C6
         // TODO: Use InsertAll?
         public void AddAll(SCG.IEnumerable<T> items)
         {
-            UpdateVersion();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
 
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
@@ -175,6 +188,9 @@ namespace C6
                 return;
             }
 
+            // Only update version if items are actually added
+            UpdateVersion();
+
             EnsureCapacity(Count + length);
 
             Array.Copy(array, 0, _items, Count, length);
@@ -183,19 +199,198 @@ namespace C6
             RaiseForAddAll(array);
         }
 
+        public IDirectedCollectionValue<T> Backwards()
+        {
+            throw new NotImplementedException();
+        }
+
         public T Choose() => _items[Count - 1];
 
-        public void CopyTo(T[] array, int arrayIndex)
-            => Array.Copy(_items, 0, array, arrayIndex, Count);
+        public void Clear()
+        {
+            if (IsEmpty) {
+                return;
+            }
+
+            // Only update version if the collection is actually cleared
+            UpdateVersion();
+
+            var oldCount = Count;
+
+            _items = EmptyArray;
+            Count = 0;
+
+            RaiseForClear(oldCount);
+        }
+
+        public bool Contains(T item) => IndexOfPrivate(item) >= 0;
+
+        public bool ContainsAll(SCG.IEnumerable<T> items)
+        {
+            // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
+            // TODO: use aux hash bag to obtain linear time procedure (old comment)
+            var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
+
+            if (itemsToContain.IsEmpty) {
+                return true;
+            }
+
+            foreach (var item in this) {
+                if (itemsToContain.Remove(item) && itemsToContain.IsEmpty) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
+
+        // TODO: Test performance?
+        public int CountDuplicates(T item) => _items.Take(Count).Count(x => Equals(x, item));
+
+        public bool Find(ref T item)
+        {
+            var index = IndexOfPrivate(item);
+
+            if (index >= 0) {
+                item = _items[index];
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool FindOrAdd(ref T item)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            if (Find(ref item)) {
+                return true;
+            }
+
+            // Let Add handle version update and events
+            Add(item);
+
+            return false;
+        }
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
+            // Cache count to ensure that clearing while enumerating throws an exception
+            var count = Count;
             var version = _version;
-            for (var i = 0; i < Count; i++) {
+
+            for (var i = 0; i < count; i++) {
                 CheckVersion(version);
                 yield return _items[i];
             }
         }
+
+        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
+        public int GetSequencedHashCode()
+        {
+            if (_sequencedHashCodeVersion != _version) {
+                _sequencedHashCodeVersion = _version;
+                _sequencedHashCode = this.GetSequencedHashCode(EqualityComparer);
+            }
+
+            return _sequencedHashCode;
+        }
+
+        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
+        public int GetUnsequencedHashCode()
+        {
+            if (_unsequencedHashCodeVersion != _version) {
+                _unsequencedHashCodeVersion = _version;
+                _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
+            }
+
+            return _unsequencedHashCode;
+        }
+
+        public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
+        {
+            throw new NotImplementedException();
+
+            var dictionary = new SCG.Dictionary<T, int>(EqualityComparer); // TODO: Use C6 version (HashBag<T>)
+
+            foreach (var item in this) {
+                int count;
+                if (dictionary.TryGetValue(item, out count)) {
+                    // Dictionary already contained item, so we increment count with one
+                    dictionary[item] = count + 1;
+                }
+                else {
+                    dictionary.Add(item, 1);
+                }
+            }
+
+            // TODO: save in a field
+            var equalityComparer = ComparerFactory.CreateEqualityComparer<KeyValuePair<T, int>>(
+                (p1, p2) => Equals(p1.Key, p2.Key) & p1.Value == p2.Value,
+                p => GetHashCode(p.Key) * 37 + p.Value.GetHashCode()
+                );
+            // TODO: Return a more sensible data structure
+            return new ArrayList<KeyValuePair<T, int>>(dictionary.Select(kvp => new KeyValuePair<T, int>(kvp.Key, kvp.Value)), equalityComparer);
+        }
+
+        public bool Remove(T item)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            T removedItem;
+            return Remove(item, out removedItem);
+        }
+
+        public bool Remove(T item, out T removedItem)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            // TODO: Work based on RemovesFromBeginning
+            var index = IndexOfPrivate(item);
+
+            if (index >= 0) {
+                UpdateVersion();
+                removedItem = RemoveAt(index);
+                RaiseForRemove(removedItem);
+                return true;
+            }
+
+            removedItem = default(T);
+            return false;
+        }
+
+        public bool RemoveDuplicates(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RetainAll(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
 
         public T[] ToArray()
         {
@@ -204,19 +399,71 @@ namespace C6
             return array;
         }
 
+        public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
+
+        public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
+
+        public bool Update(T item)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            T oldItem;
+            return Update(item, out oldItem);
+        }
+
+        public bool Update(T item, out T oldItem)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            var index = IndexOfPrivate(item);
+
+            if (index >= 0) {
+                // Only update version if item is actually updated
+                UpdateVersion();
+
+                oldItem = _items[index];
+                _items[index] = item;
+
+                RaiseForUpdate(item, oldItem);
+
+                return true;
+            }
+
+            oldItem = default(T);
+            return false;
+        }
+
+        public bool UpdateOrAdd(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateOrAdd(T item, out T oldItem)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Events
 
         public event EventHandler CollectionChanged
         {
-            add
-            {
+            add {
                 _collectionChanged += value;
                 ActiveEvents |= Changed;
             }
-            remove
-            {
+            remove {
                 _collectionChanged -= value;
                 if (_collectionChanged == null) {
                     ActiveEvents &= ~Changed;
@@ -226,13 +473,11 @@ namespace C6
 
         public event EventHandler<ClearedEventArgs> CollectionCleared
         {
-            add
-            {
+            add {
                 _collectionCleared += value;
                 ActiveEvents |= Cleared;
             }
-            remove
-            {
+            remove {
                 _collectionCleared -= value;
                 if (_collectionCleared == null) {
                     ActiveEvents &= ~Cleared;
@@ -242,13 +487,11 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted
         {
-            add
-            {
+            add {
                 _itemInserted += value;
                 ActiveEvents |= Inserted;
             }
-            remove
-            {
+            remove {
                 _itemInserted -= value;
                 if (_itemInserted == null) {
                     ActiveEvents &= ~Inserted;
@@ -258,13 +501,11 @@ namespace C6
 
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
         {
-            add
-            {
+            add {
                 _itemRemovedAt += value;
                 ActiveEvents |= RemovedAt;
             }
-            remove
-            {
+            remove {
                 _itemRemovedAt -= value;
                 if (_itemRemovedAt == null) {
                     ActiveEvents &= ~RemovedAt;
@@ -274,13 +515,11 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
         {
-            add
-            {
+            add {
                 _itemsAdded += value;
                 ActiveEvents |= Added;
             }
-            remove
-            {
+            remove {
                 _itemsAdded -= value;
                 if (_itemsAdded == null) {
                     ActiveEvents &= ~Added;
@@ -290,13 +529,11 @@ namespace C6
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
         {
-            add
-            {
+            add {
                 _itemsRemoved += value;
                 ActiveEvents |= Removed;
             }
-            remove
-            {
+            remove {
                 _itemsRemoved -= value;
                 if (_itemsRemoved == null) {
                     ActiveEvents &= ~Removed;
@@ -308,10 +545,14 @@ namespace C6
 
         #region Explicit Implementations
 
-        IEnumerator IEnumerable.GetEnumerator()
+        void SCG.ICollection<T>.Add(T item) => Add(item);
+
+        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards()
         {
-            return GetEnumerator();
+            throw new NotImplementedException();
         }
+
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 
@@ -320,8 +561,7 @@ namespace C6
         private int Capacity
         {
             get { return _items.Length; }
-            set
-            {
+            set {
                 #region Code Contracts
 
                 // Capacity must be at least as big as the number of items
@@ -368,6 +608,43 @@ namespace C6
             Capacity = capacity;
         }
 
+        [Pure]
+        private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
+
+        [Pure]
+        private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
+
+        // TODO: Inline in IndexOf
+        // TODO: Make version that works with RemovesFromBeginning
+        [Pure]
+        private int IndexOfPrivate(T item)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null);
+
+
+            // TODO: Add contract to IList<T>.IndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.Skip(Result<int>()).First()));
+
+            #endregion
+
+            for (var i = 0; i < Count; i++) {
+                if (Equals(item, _items[i])) {
+                    return i;
+                }
+            }
+
+            return ~Count;
+        }
+
         // TODO: Rename?
         private void InsertPrivate(int index, T item)
         {
@@ -395,12 +672,26 @@ namespace C6
             Count++;
         }
 
+        private T RemoveAt(int index)
+        {
+            var item = _items[index];
+
+            if (--Count > index) {
+                Array.Copy(_items, index + 1, _items, index, Count - index);
+            }
+
+            _items[Count] = default(T);
+
+            return item;
+        }
+
         private void UpdateVersion() => _version++;
 
         private void CheckVersion(int version)
         {
             if (version != _version) {
-                throw new InvalidOperationException("Collection was modified; enumeration operation may not execute.");
+                // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
+                throw new InvalidOperationException(CollectionWasModified);
             }
         }
 
@@ -408,35 +699,23 @@ namespace C6
 
         #region Invoking Methods
 
-        private void RaiseCollectionChanged()
-        {
-            _collectionChanged?.Invoke(this, EventArgs.Empty);
-        }
+        private void OnCollectionChanged()
+            => _collectionChanged?.Invoke(this, EventArgs.Empty);
 
-        private void RaiseCollectionCleared(bool full, int count, int? start = null)
-        {
-            _collectionCleared?.Invoke(this, new ClearedEventArgs(full, count, start));
-        }
+        private void OnCollectionCleared(bool full, int count, int? start = null)
+            => _collectionCleared?.Invoke(this, new ClearedEventArgs(full, count, start));
 
-        private void RaiseItemsAdded(T item, int count)
-        {
-            _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, count));
-        }
+        private void OnItemsAdded(T item, int count)
+            => _itemsAdded?.Invoke(this, new ItemCountEventArgs<T>(item, count));
 
-        private void RaiseItemsRemoved(T item, int count)
-        {
-            _itemsRemoved?.Invoke(this, new ItemCountEventArgs<T>(item, count));
-        }
+        private void OnItemsRemoved(T item, int count)
+            => _itemsRemoved?.Invoke(this, new ItemCountEventArgs<T>(item, count));
 
-        private void RaiseItemInserted(T item, int index)
-        {
-            _itemInserted?.Invoke(this, new ItemAtEventArgs<T>(item, index));
-        }
+        private void OnItemInserted(T item, int index)
+            => _itemInserted?.Invoke(this, new ItemAtEventArgs<T>(item, index));
 
-        private void RaiseItemRemovedAt(T item, int index)
-        {
-            _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
-        }
+        private void OnItemRemovedAt(T item, int index)
+            => _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
 
         #endregion
 
@@ -444,18 +723,37 @@ namespace C6
 
         private void RaiseForAdd(T item)
         {
-            RaiseItemsAdded(item, 1);
-            RaiseCollectionChanged();
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
         }
 
         private void RaiseForAddAll(SCG.IEnumerable<T> items)
         {
             if (ActiveEvents.HasFlag(Added)) {
                 foreach (var item in items) {
-                    RaiseItemsAdded(item, 1);
+                    OnItemsAdded(item, 1);
                 }
             }
-            RaiseCollectionChanged();
+            OnCollectionChanged();
+        }
+
+        private void RaiseForClear(int count)
+        {
+            OnCollectionCleared(true, count);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForRemove(T item)
+        {
+            OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForUpdate(T item, T oldItem)
+        {
+            OnItemsRemoved(oldItem, 1);
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
         }
 
         #endregion

@@ -1,6 +1,7 @@
-﻿using System;
+﻿// This file is part of the C6 Generic Collection Library for C# and CLI
+// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
-using C6.Tests.Collections;
+using System;
 
 using NUnit.Framework;
 
@@ -54,7 +55,6 @@ namespace C6.Tests
 
         #endregion
 
-
         #region ToString
 
         [Test]
@@ -75,7 +75,6 @@ namespace C6.Tests
         }
 
         #endregion
-
 
         #region Equals
 
@@ -166,7 +165,6 @@ namespace C6.Tests
 
         #endregion
 
-
         #region GetHashCode
 
         [Test]
@@ -203,7 +201,6 @@ namespace C6.Tests
         }
 
         #endregion
-
 
         #region Operator Equality
 
@@ -260,7 +257,6 @@ namespace C6.Tests
 
         #endregion
 
-
         #region Operator Inequality
 
         [Test]
@@ -315,7 +311,6 @@ namespace C6.Tests
         }
 
         #endregion
-
 
         // TODO: Test IShowable members
         // TODO: Test IFormattable members

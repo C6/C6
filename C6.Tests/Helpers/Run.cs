@@ -11,7 +11,8 @@ namespace C6.Tests.Helpers
         public static void If(bool condition, string message = null)
         {
             if (!condition) {
-                Assert.Pass(string.IsNullOrEmpty(message) ? "Test skipped" : $"Test skipped: {message}");
+                // If we simply pass the test case, errors in the condition might not get caught
+                Assert.Ignore(string.IsNullOrEmpty(message) ? "Test skipped" : $"Test skipped: {message}");
             }
         }
     }
