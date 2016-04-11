@@ -316,6 +316,27 @@ namespace C6
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
             throw new NotImplementedException();
+
+            var dictionary = new SCG.Dictionary<T, int>(EqualityComparer); // TODO: Use C6 version (HashBag<T>)
+
+            foreach (var item in this) {
+                int count;
+                if (dictionary.TryGetValue(item, out count)) {
+                    // Dictionary already contained item, so we increment count with one
+                    dictionary[item] = count + 1;
+                }
+                else {
+                    dictionary.Add(item, 1);
+                }
+            }
+
+            // TODO: save in a field
+            var equalityComparer = ComparerFactory.CreateEqualityComparer<KeyValuePair<T, int>>(
+                (p1, p2) => Equals(p1.Key, p2.Key) & p1.Value == p2.Value,
+                p => GetHashCode(p.Key) * 37 + p.Value.GetHashCode()
+                );
+            // TODO: Return a more sensible data structure
+            return new ArrayList<KeyValuePair<T, int>>(dictionary.Select(kvp => new KeyValuePair<T, int>(kvp.Key, kvp.Value)), equalityComparer);
         }
 
         public bool Remove(T item)
@@ -589,6 +610,9 @@ namespace C6
 
         [Pure]
         private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
+
+        [Pure]
+        private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
 
         // TODO: Inline in IndexOf
         // TODO: Make version that works with IsFifo
