@@ -2,7 +2,8 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Linq;
+
+using C6.Tests.Helpers;
 
 using NUnit.Framework;
 
@@ -367,13 +368,12 @@ namespace C6.Tests.Contracts
         {
             // Arrange
             const int count = 10000;
-            var randomStrings = Enumerable.Range(0, count).Select(i => Random.GetString()).ToList();
-            var first = randomStrings.ToList();
-            var second = randomStrings.ToList();
-            second.Shuffle(Random);
+            Func<string> getString = () => Random.GetString();
+            var items = getString.Repeat(count);
+            var shuffledItems = items.ShuffledCopy(Random);
 
             // Act
-            var result = first.UnsequenceEqual(second);
+            var result = items.UnsequenceEqual(shuffledItems);
 
             // Assert
             Assert.That(result, Is.True);

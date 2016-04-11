@@ -416,8 +416,7 @@ namespace C6.Tests
             // Arrange
             var count = GetCount(Random) / 2;
             var items = GetStrings(Random);
-            var containedItems = items.Take(count).ToArray();
-            items.Shuffle();
+            var containedItems = items.ShuffledCopy(Random).Take(count);
             var collection = GetCollection(items, ReferenceEqualityComparer);
 
             // Act
@@ -433,8 +432,7 @@ namespace C6.Tests
             // Arrange
             var count = GetCount(Random) / 2;
             var items = GetStrings(Random);
-            var nonContainedItems = items.Take(count).Append(items.First()).ToArray();
-            items.Shuffle();
+            var nonContainedItems = items.Take(count).Append(items.First()).ShuffledCopy(Random);
             var collection = GetCollection(items, ReferenceEqualityComparer);
 
             // Act
@@ -913,9 +911,8 @@ namespace C6.Tests
         {
             // Arrange
             var items = GetStrings(Random);
-            var shuffledItems = items.ToArray();
-            items.Shuffle(Random);
             var firstCollection = GetCollection(items);
+            var shuffledItems = items.ShuffledCopy(Random);
             var secondCollection = GetCollection(shuffledItems);
 
             // Act
@@ -1443,8 +1440,8 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetCollection(items);
-            items.Shuffle(Random);
-            var otherCollection = GetCollection(items);
+            var shuffledItems = items.ShuffledCopy(Random);
+            var otherCollection = GetCollection(shuffledItems);
 
             // Act
             var unsequencedEquals = collection.UnsequencedEquals(otherCollection);

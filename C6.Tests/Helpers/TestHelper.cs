@@ -91,5 +91,12 @@ namespace C6.Tests.Helpers
             array.Shuffle(random);
             return array;
         }
+
+        public static T[] ShuffledCopy<T>(this SCG.IEnumerable<T> enumerable, Random random)
+        {
+            var copy = enumerable.ToArray();
+            copy.Shuffle(random);
+            return copy;
+        }
     }
 }

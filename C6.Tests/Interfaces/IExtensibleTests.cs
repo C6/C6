@@ -408,10 +408,10 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetExtensible(items, ReferenceEqualityComparer);
-            items.Shuffle(Random);
+            var shuffledItems = items.ShuffledCopy(Random);
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(items), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.AddAll(shuffledItems), RaisesNoEventsFor(collection));
         }
 
         [Test]
