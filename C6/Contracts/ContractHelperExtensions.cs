@@ -134,6 +134,7 @@ namespace C6.Contracts
             return true;
         }
 
+        [Pure]
         public static int CountDuplicates<T>(this SCG.IEnumerable<T> enumerable, T item, SCG.IEqualityComparer<T> equalityComparer = null)
         {
             // Argument must be non-null
@@ -147,6 +148,7 @@ namespace C6.Contracts
         }
 
         // TODO: Check that references do check DuplicatesByCounting first!
+        [Pure]
         public static bool ContainsSame<T>(this SCG.IEnumerable<T> enumerable, T item)
         {
             // Argument must be non-null
@@ -155,6 +157,7 @@ namespace C6.Contracts
             return enumerable.Contains(item, GetSameEqualityComparer<T>());
         }
 
+        [Pure]
         public static int ContainsSameCount<T>(this SCG.IEnumerable<T> enumerable, T item)
         {
             // Argument must be non-null
@@ -163,11 +166,14 @@ namespace C6.Contracts
             return enumerable.CountDuplicates(item, GetSameEqualityComparer<T>());
         }
 
+        [Pure]
         public static bool IsSameAs<T>(this T item, T otherItem) => GetSameEqualityComparer<T>().Equals(item, otherItem);
 
+        [Pure]
         public static bool IsSameSequenceAs<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
             => enumerable.SequenceEqual(otherEnumerable, GetSameEqualityComparer<T>());
 
+        [Pure]
         public static bool HasSameAs<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
             => enumerable.UnsequenceEqual(otherEnumerable, GetSameEqualityComparer<T>());
 
@@ -185,6 +191,7 @@ namespace C6.Contracts
         /// for the type. Structs are compared using reflection to compare each
         /// field. Objects are compared using reference equality.
         /// </remarks>
+        [Pure]
         private static SCG.IEqualityComparer<T> GetSameEqualityComparer<T>()
             => typeof(T).IsValueType
                 ? (typeof(T).IsPrimitive
@@ -193,8 +200,10 @@ namespace C6.Contracts
                 : ComparerFactory.CreateReferenceEqualityComparer<T>();
 
 
+        [Pure]
         public static SCG.IEqualityComparer<T> CreateStructComparer<T>() => ComparerFactory.CreateEqualityComparer<T>(StructEquals, type => type.GetHashCode());
 
+        [Pure]
         private static bool StructEquals<T>(T x, T y)
         {
             #region Code Contracts
