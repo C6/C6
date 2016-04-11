@@ -15,9 +15,9 @@ namespace C6
     public static class UnsequencedEqualityComparer
     {
         // TODO: the three odd factors should be random, but this causes problems with serialization/deserialization!
-        private const uint H1 = 1529784657;
-        private const uint H2 = 2912831877;
-        private const uint H3 = 1118771817;
+        public const uint H1 = 1529784657;
+        public const uint H2 = 2912831877;
+        public const uint H3 = 1118771817;
 
         /// <summary>
         /// Returns the unsequenced (order-insensitive) hash code of the collection.
