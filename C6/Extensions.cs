@@ -162,7 +162,7 @@ namespace C6
         ///     A function to test each item for a condition.
         /// </param>
         /// <returns>
-        ///     The index of the first item that satisfies the condition; otherwise, <c>-1</c>.
+        ///     The index of the first item that satisfies the condition; otherwise, -1.
         /// </returns>
         [Pure]
         public static int FindIndex<T>(this IIndexed<T> collection, Func<T, bool> predicate)
@@ -205,7 +205,7 @@ namespace C6
         ///     A function to test each item for a condition.
         /// </param>
         /// <returns>
-        ///     The index of the last item that satisfies the condition; otherwise, <c>-1</c>.
+        ///     The index of the last item that satisfies the condition; otherwise, -1.
         /// </returns>
         [Pure]
         public static int FindLastIndex<T>(this IIndexed<T> collection, Func<T, bool> predicate)
@@ -322,7 +322,7 @@ namespace C6
         /// </exception>
         /// <exception cref="ArgumentException">
         ///     The implementation of <paramref name="comparer"/> caused an error during the sort. For example,
-        ///     <paramref name="comparer"/> might not return 0 when comparing an item with itself.
+        ///     <paramref name="comparer"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <returns>
         ///     <c>true</c> if the enumerable is sorted in non-descending order; otherwise, <c>false</c>.
@@ -351,7 +351,7 @@ namespace C6
         /// </param>
         /// <exception cref="ArgumentException">
         ///     The implementation of <paramref name="comparison"/> caused an error during the sort. For example,
-        ///     <paramref name="comparison"/> might notreturn 0 when comparing an item with itself.
+        ///     <paramref name="comparison"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <returns>
         ///     <c>true</c> if the enumerable is sorted in non-descending order; otherwise, <c>false</c>.

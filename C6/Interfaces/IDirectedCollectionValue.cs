@@ -36,7 +36,7 @@ namespace C6
         /// <remarks>
         ///     The <see cref="IDirectedCollectionValue{T}"/> becomes invalid, if the original is modified. The method is typically
         ///     used as in <c>
-        ///         foreach (var item in coll.Backwards()) {...}
+        ///         foreach (var item in Backwards()) {...}
         ///     </c>.
         /// </remarks>
         [Pure]

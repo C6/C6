@@ -176,7 +176,7 @@ namespace C6
         ///     <c>true</c>.
         /// </param>
         /// <returns>
-        ///     The number of items equal to the specified item found. Returns 0 if and only if the value is not in the collection.
+        ///     The number of items equal to the specified item found. Returns zero if and only if the value is not in the collection.
         /// </returns>
         /// <remarks>
         ///     The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
@@ -363,7 +363,7 @@ namespace C6
         /// <remarks>
         ///     <para>
         ///         This changes the multiplicity of <paramref name="item"/> in the collection to zero, regardless of whether the
-        ///         collection has set or bag semantics, i.e. this guarantees that <c>coll.Contains(item)</c> returns <c>false</c>
+        ///         collection has set or bag semantics, i.e. this guarantees that <c>Contains(item)</c> returns <c>false</c>
         ///         at the return of this method. The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to
         ///         determine item equality.
         ///     </para>

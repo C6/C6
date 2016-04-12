@@ -29,7 +29,7 @@ namespace C6
     {
         // Also found in IQueue<T>
         /// <summary>
-        ///     Gets the item at the specified index in the stack. The bottom of the stack has index <c>0</c>.
+        ///     Gets the item at the specified index in the stack. The bottom of the stack has index zero.
         /// </summary>
         /// <param name="index">
         ///     The zero-based index of the item to get.
@@ -51,7 +51,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>coll.Count - 1</c>.
+        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>Count</c> - 1.
         ///             </description>
         ///         </item>
         ///         <item>
@@ -80,7 +80,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>coll.Count - 1</c>.
+        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>Count</c> - 1.
         ///             </description>
         ///         </item>
         ///         <item>

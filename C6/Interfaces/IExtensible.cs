@@ -149,7 +149,7 @@ namespace C6
         ///     </para>
         ///     <para>
         ///         This is equivalent to <c>
-        ///             foreach (var item in coll) { coll.Add(item); }
+        ///             foreach (var item in items) { Add(item); }
         ///         </c>, but might be more efficient and it only raises the event
         ///         <see cref="ICollectionValue{T}.CollectionChanged"/> once.
         ///     </para>

@@ -303,7 +303,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>0</c>.
+        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of zero.
         ///             </description>
         ///         </item>
         ///         <item>
@@ -377,7 +377,7 @@ namespace C6
         /// </exception>
         /// <exception cref="ArgumentException">
         ///     The implementation of <paramref name="comparer"/> caused an error during the sort. For example,
-        ///     <paramref name="comparer"/> might not return 0 when comparing an item with itself.
+        ///     <paramref name="comparer"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <returns>
         ///     <c>true</c> if the list is sorted in non-descending order; otherwise, <c>false</c>.
@@ -394,7 +394,7 @@ namespace C6
         /// </param>
         /// <exception cref="ArgumentException">
         ///     The implementation of <paramref name="comparison"/> caused an error during the sort. For example,
-        ///     <paramref name="comparison"/> might not return 0 when comparing an item with itself.
+        ///     <paramref name="comparison"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <returns>
         ///     <c>true</c> if the list is sorted in non-descending order; otherwise, <c>false</c>.
@@ -457,8 +457,8 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of either <c>0</c> if
-        ///                     <see cref="RemovesFromBeginning"/> is <c>true</c>, or <c>Count - 1</c> if
+        ///                     <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of either zero if
+        ///                     <see cref="RemovesFromBeginning"/> is <c>true</c>, or <c>Count</c> - 1 if
         ///                     <see cref="RemovesFromBeginning"/> is <c>false</c>.
         ///                 </description>
         ///             </item>
@@ -559,7 +559,7 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>Count - 1</c>.
+        ///                     <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>Count</c> - 1.
         ///                 </description>
         ///             </item>
         ///             <item>
@@ -657,7 +657,7 @@ namespace C6
         /// </exception>
         /// <exception cref="ArgumentException">
         ///     The implementation of <paramref name="comparer"/> caused an error during the sort. For example,
-        ///     <paramref name="comparer"/> might not return 0 when comparing an item with itself.
+        ///     <paramref name="comparer"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <remarks>
         ///     Raises the following events (in that order) with the collection as sender:
@@ -679,7 +679,7 @@ namespace C6
         /// </param>
         /// <exception cref="ArgumentException">
         ///     The implementation of <paramref name="comparison"/> caused an error during the sort. For example,
-        ///     <paramref name="comparison"/> might not return 0 when comparing an item with itself.
+        ///     <paramref name="comparison"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <remarks>
         ///     Raises the following events (in that order) with the collection as sender:

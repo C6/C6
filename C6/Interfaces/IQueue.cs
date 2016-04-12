@@ -29,7 +29,7 @@ namespace C6
     {
         // Also found in IStack<T>
         /// <summary>
-        ///     Gets the item at the specified index in the queue. The beginning of the queue has index <c>0</c>.
+        ///     Gets the item at the specified index in the queue. The beginning of the queue has index zero.
         /// </summary>
         /// <param name="index">
         ///     The zero-based index of the item to get.
@@ -51,7 +51,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>0</c>.
+        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of zero.
         ///             </description>
         ///         </item>
         ///         <item>
@@ -80,7 +80,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>Count - 1</c>.
+        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>Count</c> - 1.
         ///             </description>
         ///         </item>
         ///         <item>
