@@ -1303,6 +1303,160 @@ namespace C6.Tests
 
         #endregion
 
+        #region RemoveDuplicates(T)
+
+        [Test]
+        public void RemoveDuplicates_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveDuplicates(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void RemoveDuplicates_RemoveNull_Removed()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var items = GetStrings(Random).WithRepeatedItem(() => null, count, Random);
+            var collection = GetCollection(items, allowsNull: true);
+
+            // Act
+            var removeDuplicates = collection.RemoveDuplicates(null);
+
+            // Assert
+            Assert.That(removeDuplicates, Is.True);
+            Assert.That(collection, Has.No.Null);
+        }
+
+        // TODO: Find a better way to test the differences caused by DuplicatesByCounting
+        [Test]
+        public void RemoveDuplicates_ExistingItems_RaisesExpectedEvents()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+            var eventCount = AllowsDuplicates ? count : 1;
+            var expectedEvents = DuplicatesByCounting
+                ? new[] {
+                    Removed(item, eventCount, collection),
+                    Changed(collection),
+                }
+                : Removed(item, 1, collection).Repeat(eventCount).Append(Changed(collection)).ToArray();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveDuplicates(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void RemoveDuplicates_RandomCollectionRemoveNewItem_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveDuplicates(item), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveDuplicates_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+
+            // Act
+            var removeDuplicates = collection.RemoveDuplicates(item);
+
+            // Assert
+            Assert.That(removeDuplicates, Is.False);
+        }
+
+        [Test]
+        public void RemoveDuplicates_RemoveDuplicatesDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+            var item = items.Choose(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveDuplicates(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void RemoveDuplicates_DuplicateItems_Empty()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = item.Repeat(count);
+            var collection = GetCollection(items);
+
+            // Act
+            var removeDuplicates = collection.RemoveDuplicates(item);
+
+            // Assert
+            Assert.That(removeDuplicates, Is.True);
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveDuplicates_RandomCollectionRemoveNewItem_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var removeDuplicates = collection.RemoveDuplicates(item);
+
+            // Assert
+            Assert.That(removeDuplicates,  Is.False);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveDuplicates_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveDuplicates_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveDuplicates_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region UniqueItems
 
         [Test]
@@ -1340,7 +1494,7 @@ namespace C6.Tests
             var itemArray = new[] { item };
             var items = item.Repeat(count);
             var collection = GetCollection(items);
-            
+
             // Act
             var uniqueItems = collection.UniqueItems();
 

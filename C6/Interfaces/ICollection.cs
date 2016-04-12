@@ -176,7 +176,8 @@ namespace C6
         ///     <c>true</c>.
         /// </param>
         /// <returns>
-        ///     The number of items equal to the specified item found. Returns zero if and only if the value is not in the collection.
+        ///     The number of items equal to the specified item found. Returns zero if and only if the value is not in the
+        ///     collection.
         /// </returns>
         /// <remarks>
         ///     The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
@@ -347,8 +348,42 @@ namespace C6
         /// </remarks>
         bool Remove(T item, out T removedItem);
 
+        /// <summary>
+        ///     Removes each item of the specified enumerable from the collection, if possible, in enumeration order.
+        /// </summary>
+        /// <param name="items">
+        ///     The enumerable whose items should be removed from the collection. The enumerable itself cannot be <c>null</c>, but
+        ///     its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
+        /// <remarks>
+        ///     <para>
+        ///         If the collection has bag semantics, this means reducing the item multiplicity of each item in the collection
+        ///         by at most the multiplicity of the item in <paramref name="items"/>. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///     </para>
+        ///     <para>
+        ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
+        ///     </para>
+        ///     <para>
+        ///         If any items are removed, it raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="ICollectionValue{T}.ItemsRemoved"/> once for each item removed (using a count of one).
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/> once at the end.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
+        void RemoveAll(SCG.IEnumerable<T> items);
+
         // TODO: Reconsider rewriting event behavior documentation
-        // TODO: Rename to RemoveCompletely/RemoveEquals/RemoveDuplicates/RemoveCopies and document change
+        // TODO: Should the order of removing items depend on RemovesFromBeginning?
         /// <summary>
         ///     Removes all occurrences of a specific item from the collection, if any.
         /// </summary>
@@ -357,8 +392,7 @@ namespace C6
         ///     <c>true</c>.
         /// </param>
         /// <returns>
-        ///     <c>true</c> if item was successfully removed from the collection; otherwise, <c>false</c> if item is not found in
-        ///     the original collection.
+        ///     <c>true</c> if item was removed from the collection; <c>false</c> if item is not found in the original collection.
         /// </returns>
         /// <remarks>
         ///     <para>
@@ -404,40 +438,6 @@ namespace C6
         ///     </para>
         /// </remarks>
         bool RemoveDuplicates(T item);
-
-        /// <summary>
-        ///     Removes each item of the specified enumerable from the collection, if possible, in enumeration order.
-        /// </summary>
-        /// <param name="items">
-        ///     The enumerable whose items should be removed from the collection. The enumerable itself cannot be <c>null</c>, but
-        ///     its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
-        /// </param>
-        /// <remarks>
-        ///     <para>
-        ///         If the collection has bag semantics, this means reducing the item multiplicity of each item in the collection
-        ///         by at most the multiplicity of the item in <paramref name="items"/>. The collection's
-        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
-        ///     </para>
-        ///     <para>
-        ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
-        ///     </para>
-        ///     <para>
-        ///         If any items are removed, it raises the following events (in that order) with the collection as sender:
-        ///         <list type="bullet">
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsRemoved"/> once for each item removed (using a count of one).
-        ///                 </description>
-        ///             </item>
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/> once at the end.
-        ///                 </description>
-        ///             </item>
-        ///         </list>
-        ///     </para>
-        /// </remarks>
-        void RemoveAll(SCG.IEnumerable<T> items);
 
         /// <summary>
         ///     Removes the items of the current collection that do not exist in the specified <see cref="SCG.IEnumerable{T}"/>. If
@@ -1098,6 +1098,30 @@ namespace C6
             return default(bool);
         }
 
+        public void RemoveAll(SCG.IEnumerable<T> items)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
+            // Argument must be non-null
+            Requires(items != null, ArgumentMustBeNonNull);
+
+            // All items must be non-null if collection disallows null values
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
+
+
+            // TODO: Write ensures
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
+
+
+            return;
+        }
+
         public bool RemoveDuplicates(T item)
         {
             // Collection must be non-read-only
@@ -1122,32 +1146,11 @@ namespace C6
             // The collection no longer contains the item
             Ensures(!Contains(item));
 
+            // The collection is equal to the old collection without item
+            Ensures(this.HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
+
 
             return default(bool);
-        }
-
-        public void RemoveAll(SCG.IEnumerable<T> items)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
-
-            // Argument must be non-null
-            Requires(items != null, ArgumentMustBeNonNull);
-
-            // All items must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
-
-
-            // TODO: Write ensures
-
-            // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
-
-
-            return;
         }
 
         public void RetainAll(SCG.IEnumerable<T> items)

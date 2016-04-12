@@ -1368,6 +1368,17 @@ namespace C6
 
             return;
         }
+        public bool RemoveDuplicates(T item)
+        {
+            // No extra preconditions allowed
+            
+
+            // The list is the same as the old collection without item
+            Ensures(this.IsSameSequenceAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
+
+
+            return default(bool);
+        }
 
         public void RetainAll(SCG.IEnumerable<T> items)
         {
@@ -1521,7 +1532,6 @@ namespace C6
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
-        public abstract bool RemoveDuplicates(T item);
         public abstract ICollectionValue<T> UniqueItems();
         public abstract bool UnsequencedEquals(ICollection<T> otherCollection);
 
