@@ -14,10 +14,12 @@ using static C6.Contracts.ContractMessage;
 namespace C6
 {
     /// <summary>
-    /// Provides data for the <see cref="ICollectionValue{T}.ItemInserted"/>
-    /// event and the <see cref="ICollectionValue{T}.ItemRemovedAt"/> event.
+    ///     Provides data for the <see cref="ICollectionValue{T}.ItemInserted"/> event and the
+    ///     <see cref="ICollectionValue{T}.ItemRemovedAt"/> event.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
     [Serializable]
     public class ItemAtEventArgs<T> : EventArgs
     {
@@ -37,12 +39,15 @@ namespace C6
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ItemAtEventArgs{T}"/>
-        /// class for an insertion/deletion operation with an item and its
-        /// index.
+        ///     Initializes a new instance of the <see cref="ItemAtEventArgs{T}"/> class for an insertion/deletion operation with
+        ///     an item and its index.
         /// </summary>
-        /// <param name="item">The item inserted or removed from the collection.</param>
-        /// <param name="index">The index at which the item was inserted or removed.</param>
+        /// <param name="item">
+        ///     The item inserted or removed from the collection.
+        /// </param>
+        /// <param name="index">
+        ///     The index at which the item was inserted or removed.
+        /// </param>
         public ItemAtEventArgs(T item, int index)
         {
             // Argument must be non-null
@@ -60,16 +65,19 @@ namespace C6
         }
 
         /// <summary>
-        /// Gets the item inserted or removed from the collection.
+        ///     Gets the item inserted or removed from the collection.
         /// </summary>
-        /// <value>The item inserted or removed from the collection.</value>
+        /// <value>
+        ///     The item inserted or removed from the collection.
+        /// </value>
         public T Item { get; }
 
         /// <summary>
-        /// Gets the index the item was inserted at or removed from in the
-        /// collection.
+        ///     Gets the index the item was inserted at or removed from in the collection.
         /// </summary>
-        /// <value>The index at which the item was inserted or removed.</value>
+        /// <value>
+        ///     The index at which the item was inserted or removed.
+        /// </value>
         public int Index { get; }
 
         public override string ToString() => $"'{Item}' at index {Index}"; // $"(ItemAtEventArgs {Index} '{Item}')"

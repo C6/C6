@@ -20,24 +20,29 @@ namespace C6.Contracts
     public static class ContractHelperExtensions
     {
         /// <summary>
-        /// Returns a specified number of contiguous elements from the start of
-        /// a sequence until index <paramref name="startIndex"/>, then bypasses
-        /// the next <paramref name="count"/> elements in the sequence and then
-        /// returns the remaining elements.
+        ///     Returns a specified number of contiguous elements from the start of a sequence until index
+        ///     <paramref name="startIndex"/>, then bypasses the next <paramref name="count"/> elements in the sequence and then
+        ///     returns the remaining elements.
         /// </summary>
-        /// <typeparam name="T">The type of the elements of
-        /// <paramref name="enumerable"/>.</typeparam>
-        /// <param name="enumerable">An <see cref="SCG.IEnumerable{T}"/> to return
-        /// elements from.</param>
-        /// <param name="startIndex">The number of elements to return before
-        /// skipping the next <paramref name="count"/> elements.</param>
-        /// <param name="count">The number of elements to skip before returning
-        /// the remaining elements.</param>
-        /// <returns>An <see cref="SCG.IEnumerable{T}"/> containing the elements 
-        /// from the specified <see cref="SCG.IEnumerable{T}"/>, but with a range
-        /// of items skipped.</returns>
-        /// <remarks>This is only intended for code contracts, and is not 
-        /// optimal in any sense.</remarks>
+        /// <typeparam name="T">
+        ///     The type of the elements of <paramref name="enumerable"/>.
+        /// </typeparam>
+        /// <param name="enumerable">
+        ///     An <see cref="SCG.IEnumerable{T}"/> to return elements from.
+        /// </param>
+        /// <param name="startIndex">
+        ///     The number of elements to return before skipping the next <paramref name="count"/> elements.
+        /// </param>
+        /// <param name="count">
+        ///     The number of elements to skip before returning the remaining elements.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="SCG.IEnumerable{T}"/> containing the elements from the specified <see cref="SCG.IEnumerable{T}"/>,
+        ///     but with a range of items skipped.
+        /// </returns>
+        /// <remarks>
+        ///     This is only intended for code contracts, and is not optimal in any sense.
+        /// </remarks>
         [Pure]
         public static SCG.IEnumerable<T> SkipRange<T>(this SCG.IEnumerable<T> enumerable, int startIndex, int count)
         {
@@ -50,36 +55,43 @@ namespace C6.Contracts
         }
 
         /// <summary>
-        /// Determines whether two enumerables contain the same elements in
-        /// regards to multiplicity, but not sequence order, using the default
-        /// equality comparer for their type.
+        ///     Determines whether two enumerables contain the same elements in regards to multiplicity, but not sequence order,
+        ///     using the default equality comparer for their type.
         /// </summary>
-        /// <typeparam name="T">The type of the elements of the input
-        /// sequences.</typeparam>
-        /// <param name="first">An <see cref="SCG.IEnumerable{T}"/> to compare
-        /// to <paramref name="second"/>.</param>
-        /// <param name="second">An <see cref="SCG.IEnumerable{T}"/> to compare
-        /// to <paramref name="first"/>.</param>
-        /// <returns><c>true</c> if the enumerables contain equal items;
-        /// otherwise, <c>false</c>.</returns>
+        /// <typeparam name="T">
+        ///     The type of the elements of the input sequences.
+        /// </typeparam>
+        /// <param name="first">
+        ///     An <see cref="SCG.IEnumerable{T}"/> to compare to <paramref name="second"/>.
+        /// </param>
+        /// <param name="second">
+        ///     An <see cref="SCG.IEnumerable{T}"/> to compare to <paramref name="first"/>.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the enumerables contain equal items; otherwise, <c>false</c>.
+        /// </returns>
         [Pure]
         public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second) => UnsequenceEqual(first, second, SCG.EqualityComparer<T>.Default);
 
         /// <summary>
-        /// Determines whether two enumerables contain the same elements in
-        /// regards to multiplicity, but not sequence order, using a specified
-        /// <see cref="SCG.IEqualityComparer{T}"/>.
+        ///     Determines whether two enumerables contain the same elements in regards to multiplicity, but not sequence order,
+        ///     using a specified <see cref="SCG.IEqualityComparer{T}"/>.
         /// </summary>
-        /// <typeparam name="T">The type of the elements of the input
-        /// sequences.</typeparam>
-        /// <param name="first">An <see cref="SCG.IEnumerable{T}"/> to compare
-        /// to <paramref name="second"/>.</param>
-        /// <param name="second">An <see cref="SCG.IEnumerable{T}"/> to compare
-        /// to <paramref name="first"/>.</param>
-        /// <param name="comparer">An <see cref="SCG.IEqualityComparer{T}"/> to
-        /// use to compare elements.</param>
-        /// <returns><c>true</c> if the enumerables contain equal items;
-        /// otherwise, <c>false</c>.</returns>
+        /// <typeparam name="T">
+        ///     The type of the elements of the input sequences.
+        /// </typeparam>
+        /// <param name="first">
+        ///     An <see cref="SCG.IEnumerable{T}"/> to compare to <paramref name="second"/>.
+        /// </param>
+        /// <param name="second">
+        ///     An <see cref="SCG.IEnumerable{T}"/> to compare to <paramref name="first"/>.
+        /// </param>
+        /// <param name="comparer">
+        ///     An <see cref="SCG.IEqualityComparer{T}"/> to use to compare elements.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the enumerables contain equal items; otherwise, <c>false</c>.
+        /// </returns>
         [Pure]
         public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second, SCG.IEqualityComparer<T> comparer)
         {
@@ -178,18 +190,16 @@ namespace C6.Contracts
             => enumerable.UnsequenceEqual(otherEnumerable, GetSameEqualityComparer<T>());
 
         /// <summary>
-        /// Returns an <see cref="SCG.IEqualityComparer{T}"/> that checks if
-        /// the objects are the same, possibly bypassing the type
-        /// <typeparamref name="T"/>'s own <see cref="object.Equals(object)"/>
-        /// method.
+        ///     Returns an <see cref="SCG.IEqualityComparer{T}"/> that checks if the objects are the same, possibly bypassing the
+        ///     type <typeparamref name="T"/>'s own <see cref="object.Equals(object)"/> method.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <returns>An <see cref="SCG.IEqualityComparer{T}"/> that checks if
-        /// objects are the same.</returns>
+        /// <returns>
+        ///     An <see cref="SCG.IEqualityComparer{T}"/> that checks if objects are the same.
+        /// </returns>
         /// <remarks>
-        /// Primitive types are compared using the default equality comparer 
-        /// for the type. Structs are compared using reflection to compare each
-        /// field. Objects are compared using reference equality.
+        ///     Primitive types are compared using the default equality comparer for the type. Structs are compared using
+        ///     reflection to compare each field. Objects are compared using reference equality.
         /// </remarks>
         [Pure]
         private static SCG.IEqualityComparer<T> GetSameEqualityComparer<T>()

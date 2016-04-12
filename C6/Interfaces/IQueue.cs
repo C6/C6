@@ -19,70 +19,81 @@ namespace C6
 {
     // TODO: decide if this should extend ICollection/IExtensible - it at least needs IsReadOnly
     /// <summary>
-    /// Represents a generic first-in-first-out (FIFO) queue that also supports
-    /// indexing.
+    ///     Represents a generic first-in-first-out (FIFO) queue that also supports indexing.
     /// </summary>
-    /// <typeparam name="T">The type of items in the stack.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of items in the stack.
+    /// </typeparam>
     [ContractClass(typeof(IQueueContract<>))]
     public interface IQueue<T> : IDirectedCollectionValue<T>
     {
         // Also found in IStack<T>
         /// <summary>
-        /// Gets the item at the specified index in the queue.
-        /// The beginning of the queue has index <c>0</c>.
+        ///     Gets the item at the specified index in the queue. The beginning of the queue has index <c>0</c>.
         /// </summary>
-        /// <param name="index">The zero-based index of the item to get.</param>
-        /// <returns>The item at the specified index.</returns>
+        /// <param name="index">
+        ///     The zero-based index of the item to get.
+        /// </param>
+        /// <returns>
+        ///     The item at the specified index.
+        /// </returns>
         [Pure]
         T this[int index] { get; }
 
         /// <summary>
-        /// Removes and returns the item at the beginning of the queue.
+        ///     Removes and returns the item at the beginning of the queue.
         /// </summary>
         /// <returns>
-        /// The item that is removed from the beginning of the queue.
+        ///     The item that is removed from the beginning of the queue.
         /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and
-        /// an index of <c>0</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>0</c>.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T Dequeue();
 
         /// <summary>
-        /// Adds an item to the end of the queue.
+        ///     Adds an item to the end of the queue.
         /// </summary>
-        /// <param name="item">The item to add to the queue. <c>null</c> is
-        /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
-        /// <c>true</c>.</param>
+        /// <param name="item">
+        ///     The item to add to the queue. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
+        /// </param>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
-        /// index of <c>Count - 1</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>Count - 1</c>.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         void Enqueue(T item);
 

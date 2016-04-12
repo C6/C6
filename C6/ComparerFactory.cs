@@ -14,19 +14,21 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Factory class to create <see cref="SCG.IComparer{T}"/> and
-    /// <see cref="SCG.IEqualityComparer{T}"/> using delegate functions.
+    ///     Factory class to create <see cref="SCG.IComparer{T}"/> and <see cref="SCG.IEqualityComparer{T}"/> using delegate
+    ///     functions.
     /// </summary>
     public static class ComparerFactory
     {
         /// <summary>
-        /// Create a new <see cref="SCG.IComparer{T}"/> using the specified
-        /// compare function.
+        ///     Create a new <see cref="SCG.IComparer{T}"/> using the specified compare function.
         /// </summary>
         /// <param name="compare">The compare function.</param>
-        /// <typeparam name="T">The type of the objects to compare.</typeparam>
-        /// <returns>An <see cref="SCG.IComparer{T}"/> that uses the specified
-        /// compare function.</returns>
+        /// <typeparam name="T">
+        ///     The type of the objects to compare.
+        /// </typeparam>
+        /// <returns>
+        ///     An <see cref="SCG.IComparer{T}"/> that uses the specified compare function.
+        /// </returns>
         [Pure]
         public static SCG.IComparer<T> CreateComparer<T>(Func<T, T, int> compare)
         {
@@ -44,12 +46,13 @@ namespace C6
         }
 
         /// <summary>
-        /// Creates a new equality comparer using the specified functions.
+        ///     Creates a new equality comparer using the specified functions.
         /// </summary>
         /// <param name="equals">The equals function.</param>
         /// <param name="getHashCode">The hash function.</param>
-        /// <returns>An <see cref="SCG.IEqualityComparer{T}"/> that uses the
-        /// specified equals and hash functions.</returns>
+        /// <returns>
+        ///     An <see cref="SCG.IEqualityComparer{T}"/> that uses the specified equals and hash functions.
+        /// </returns>
         [Pure]
         public static SCG.IEqualityComparer<T> CreateEqualityComparer<T>(Func<T, T, bool> equals, Func<T, int> getHashCode)
         {
@@ -70,12 +73,12 @@ namespace C6
 
         // TODO: Overload with a custom hash function
         /// <summary>
-        /// Creates a new reference equality comparer that compares equality
-        /// based on reference equality and uses the type's default hash
-        /// function.
+        ///     Creates a new reference equality comparer that compares equality based on reference equality and uses the type's
+        ///     default hash function.
         /// </summary>
-        /// <returns>An <see cref="SCG.IEqualityComparer{T}"/> that uses the
-        /// specified equals and hash functions.</returns>
+        /// <returns>
+        ///     An <see cref="SCG.IEqualityComparer{T}"/> that uses the specified equals and hash functions.
+        /// </returns>
         [Pure]
         public static SCG.IEqualityComparer<T> CreateReferenceEqualityComparer<T>()
         {

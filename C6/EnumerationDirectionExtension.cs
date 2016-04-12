@@ -10,18 +10,19 @@ using static C6.Contracts.ContractMessage;
 namespace C6
 {
     /// <summary>
-    /// Provides a set of static methods for <see cref="EnumerationDirection"/>.
+    ///     Provides a set of static methods for <see cref="EnumerationDirection"/>.
     /// </summary>
     public static class EnumerationDirectionExtension
     {
         /// <summary>
-        /// Determines if a <see cref="EnumerationDirection"/> is
-        /// <see cref="EnumerationDirection.Forwards"/>.
+        ///     Determines if a <see cref="EnumerationDirection"/> is <see cref="EnumerationDirection.Forwards"/>.
         /// </summary>
-        /// <param name="direction">The <see cref="EnumerationDirection"/> to
-        /// check.</param>
-        /// <returns><c>true</c> if direction is forwards;
-        /// otherwise, <c>false</c>.</returns>
+        /// <param name="direction">
+        ///     The <see cref="EnumerationDirection"/> to check.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if direction is forwards; otherwise, <c>false</c>.
+        /// </returns>
         [Pure]
         public static bool IsForward(this EnumerationDirection direction)
         {
@@ -33,15 +34,18 @@ namespace C6
         }
 
         /// <summary>
-        /// Determines if a <see cref="EnumerationDirection"/> is the opposite
-        /// direction of another <see cref="EnumerationDirection"/>.
+        ///     Determines if a <see cref="EnumerationDirection"/> is the opposite direction of another
+        ///     <see cref="EnumerationDirection"/>.
         /// </summary>
-        /// <param name="direction">The <see cref="EnumerationDirection"/> to
-        /// check.</param>
-        /// <param name="otherDirection">The <see cref="EnumerationDirection"/>
-        /// to check against.</param>
-        /// <returns><c>true</c> if directions are opposite of each other;
-        /// otherwise, <c>false</c>.</returns>
+        /// <param name="direction">
+        ///     The <see cref="EnumerationDirection"/> to check.
+        /// </param>
+        /// <param name="otherDirection">
+        ///     The <see cref="EnumerationDirection"/> to check against.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if directions are opposite of each other; otherwise, <c>false</c>.
+        /// </returns>
         [Pure]
         public static bool IsOppositeOf(this EnumerationDirection direction, EnumerationDirection otherDirection)
         {

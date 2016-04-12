@@ -16,32 +16,37 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Represents a generic enumerable that can be reversed and enumerated
-    /// backwards.
+    ///     Represents a generic enumerable that can be reversed and enumerated backwards.
     /// </summary>
-    /// <typeparam name="T">The type of items to enumerate.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of items to enumerate.
+    /// </typeparam>
     [ContractClass(typeof(IDirectedEnumerableContract<>))]
     public interface IDirectedEnumerable<out T> : SCG.IEnumerable<T>
     {
         /// <summary>
-        /// Gets a value indicating the enumeration direction relative to the original collection.
+        ///     Gets a value indicating the enumeration direction relative to the original collection.
         /// </summary>
-        /// <value>The enumeration direction relative to the original collection.
-        /// <see cref="EnumerationDirection.Forwards"/> if the same;
-        /// otherwise, <see cref="EnumerationDirection.Backwards"/>.</value>
+        /// <value>
+        ///     The enumeration direction relative to the original collection. <see cref="EnumerationDirection.Forwards"/> if the
+        ///     same; otherwise, <see cref="EnumerationDirection.Backwards"/>.
+        /// </value>
         [Pure]
         EnumerationDirection Direction { get; }
 
         /// <summary>
-        /// Returns an <see cref="IDirectedEnumerable{T}"/> that contains the
-        /// same items as this <see cref="IDirectedEnumerable{T}"/>, but whose
-        /// enumerator will enumerate the items backwards (in opposite order).
+        ///     Returns an <see cref="IDirectedEnumerable{T}"/> that contains the same items as this
+        ///     <see cref="IDirectedEnumerable{T}"/>, but whose enumerator will enumerate the items backwards (in opposite order).
         /// </summary>
-        /// <returns>The <see cref="IDirectedEnumerable{T}"/> whose enumerator
-        /// will enumerate the items backwards.</returns>
-        /// <remarks>The <see cref="IDirectedEnumerable{T}"/> becomes invalid, 
-        /// if the original is modified. The method is typically used as in 
-        /// <c>foreach (var item in coll.Backwards()) {...}</c>.</remarks>
+        /// <returns>
+        ///     The <see cref="IDirectedEnumerable{T}"/> whose enumerator will enumerate the items backwards.
+        /// </returns>
+        /// <remarks>
+        ///     The <see cref="IDirectedEnumerable{T}"/> becomes invalid, if the original is modified. The method is typically used
+        ///     as in <c>
+        ///         foreach (var item in coll.Backwards()) {...}
+        ///     </c>.
+        /// </remarks>
         [Pure]
         IDirectedEnumerable<T> Backwards();
     }

@@ -14,9 +14,11 @@ namespace C6
 {
     // TODO: Merge into CollectionValueBase
     /// <summary>
-    /// Manages events for an <see cref="ICollectionValue{T}"/>.
+    ///     Manages events for an <see cref="ICollectionValue{T}"/>.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
     [Serializable]
     internal sealed class EventManager<T>
     {
@@ -24,7 +26,6 @@ namespace C6
         private event EventHandler<ClearedEventArgs> _collectionCleared;
         private event EventHandler<ItemCountEventArgs<T>> _itemsAdded , _itemsRemoved;
         private event EventHandler<ItemAtEventArgs<T>> _itemInserted , _itemRemovedAt;
-
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -44,10 +45,8 @@ namespace C6
             // ReSharper enable InvocationIsSkipped
         }
 
-
         [Pure]
         public EventTypes ActiveEvents { get; private set; }
-
 
         public event EventHandler CollectionChanged
         {
@@ -85,7 +84,6 @@ namespace C6
             }
         }
 
-
         public event EventHandler<ClearedEventArgs> CollectionCleared
         {
             add {
@@ -121,7 +119,6 @@ namespace C6
                 }
             }
         }
-
 
         public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
         {
@@ -159,7 +156,6 @@ namespace C6
             }
         }
 
-
         public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
         {
             add {
@@ -195,7 +191,6 @@ namespace C6
                 }
             }
         }
-
 
         public event EventHandler<ItemAtEventArgs<T>> ItemInserted
         {
@@ -233,7 +228,6 @@ namespace C6
             }
         }
 
-
         public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
         {
             add {
@@ -270,7 +264,6 @@ namespace C6
             }
         }
 
-
         public void OnCollectionChanged(object sender)
         {
             // Argument must be non-null
@@ -279,7 +272,6 @@ namespace C6
 
             _collectionChanged?.Invoke(sender, EventArgs.Empty);
         }
-
 
         // TODO: Default arguments are not CLS compliant!
         public void OnCollectionCleared(object sender, bool full, int count, int? start = null)
@@ -297,7 +289,6 @@ namespace C6
             _collectionCleared?.Invoke(sender, new ClearedEventArgs(full, count, start));
         }
 
-
         public void OnItemsAdded(object sender, T item, int count)
         {
             // Argument must be non-null
@@ -312,7 +303,6 @@ namespace C6
 
             _itemsAdded?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
         }
-
 
         public void OnItemsRemoved(object sender, T item, int count)
         {
@@ -329,7 +319,6 @@ namespace C6
             _itemsRemoved?.Invoke(sender, new ItemCountEventArgs<T>(item, count));
         }
 
-
         public void OnItemInserted(object sender, T item, int index)
         {
             // Argument must be non-null
@@ -344,7 +333,6 @@ namespace C6
 
             _itemInserted?.Invoke(sender, new ItemAtEventArgs<T>(item, index));
         }
-
 
         public void OnItemRemovedAt(object sender, T item, int index)
         {

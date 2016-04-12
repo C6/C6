@@ -20,134 +20,138 @@ using static C6.EventTypes;
 namespace C6
 {
     /// <summary>
-    /// Represents a generic, observable collection that may be enumerated and
-    /// can answer efficiently how many items it contains.
+    ///     Represents a generic, observable collection that may be enumerated and can answer efficiently how many items it
+    ///     contains.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
     /// <remarks>
-    /// Like <see cref="SCG.IEnumerable{T}"/>, the interface does not prescribe
-    /// any operations to initialize or update the collection. Its main usage
-    /// is to be the return type of query operations on generic collection.
+    ///     Like <see cref="SCG.IEnumerable{T}"/>, the interface does not prescribe any operations to initialize or update the
+    ///     collection. Its main usage is to be the return type of query operations on generic collection.
     /// </remarks>
     [ContractClass(typeof(ICollectionValueContract<>))]
     public interface ICollectionValue<T> : SCG.IEnumerable<T> // TODO: Add IShowable again
     {
         /// <summary>
-        /// Gets a bit flag indicating the collection's currently subscribed
-        /// events.
+        ///     Gets a bit flag indicating the collection's currently subscribed events.
         /// </summary>
         /// <value>
-        /// The bit flag indicating the collection's currently subscribed events.
+        ///     The bit flag indicating the collection's currently subscribed events.
         /// </value>
         /// <seealso cref="ListenableEvents"/>
         [Pure]
         EventTypes ActiveEvents { get; }
 
         /// <summary>
-        /// Gets a value indicating whether the collection allows <c>null</c>
-        /// items.
+        ///     Gets a value indicating whether the collection allows <c>null</c> items.
         /// </summary>
-        /// <value><c>true</c> if the collection allows <c>null</c> items;
-        /// otherwise, <c>false</c>.</value>
+        /// <value>
+        ///     <c>true</c> if the collection allows <c>null</c> items; otherwise, <c>false</c>.
+        /// </value>
         /// <remarks>
-        /// <para>
-        /// If the collection disallows <c>null</c> items, none of the items in
-        /// the collection can be <c>null</c>: adding or inserting a
-        /// <c>null</c> item will result in an error, and any property or
-        /// method returning an item from the collection is guaranteed not to
-        /// return <c>null</c>. If the collection allows <c>null</c> items, the
-        /// collection user must check for <c>null</c>.
-        /// </para>
-        /// <para>
-        /// <see cref="AllowsNull"/> does not reflect whether the collection 
-        /// actually contains any <c>null</c> items.
-        /// </para>
-        /// <para>
-        /// If <typeparamref name="T"/> is a value type, then
-        /// <see cref="AllowsNull"/> is always <c>false</c>.
-        /// </para>
+        ///     <para>
+        ///         If the collection disallows <c>null</c> items, none of the items in the collection can be <c>null</c>: adding
+        ///         or inserting a <c>null</c> item will result in an error, and any property or method returning an item from the
+        ///         collection is guaranteed not to return <c>null</c>. If the collection allows <c>null</c> items, the collection
+        ///         user must check for <c>null</c>.
+        ///     </para>
+        ///     <para>
+        ///         <see cref="AllowsNull"/> does not reflect whether the collection actually contains any <c>null</c> items.
+        ///     </para>
+        ///     <para>
+        ///         If <typeparamref name="T"/> is a value type, then <see cref="AllowsNull"/> is always <c>false</c>.
+        ///     </para>
         /// </remarks>
         [Pure]
         bool AllowsNull { get; }
 
         /// <summary>
-        /// Gets the number of items contained in the collection.
+        ///     Gets the number of items contained in the collection.
         /// </summary>
-        /// <value>The number of items contained in the collection.</value>
+        /// <value>
+        ///     The number of items contained in the collection.
+        /// </value>
         [Pure]
         int Count { get; }
 
         /// <summary>
-        /// Gets a value characterizing the asymptotic complexity of
-        /// <see cref="Count"/> proportional to collection size (worst-case or
-        /// amortized as relevant).
+        ///     Gets a value characterizing the asymptotic complexity of <see cref="Count"/> proportional to collection size
+        ///     (worst-case or amortized as relevant).
         /// </summary>
-        /// <value>A characterization of the asymptotic speed of
-        /// <see cref="Count"/> proportional to collection size.</value>
+        /// <value>
+        ///     A characterization of the asymptotic speed of <see cref="Count"/> proportional to collection size.
+        /// </value>
         [Pure]
         Speed CountSpeed { get; }
 
         /// <summary>
-        /// Gets a value indicating whether the collection is empty.
+        ///     Gets a value indicating whether the collection is empty.
         /// </summary>
-        /// <value><c>true</c> if the collection is empty;
-        /// otherwise, <c>false</c>.</value>
+        /// <value>
+        ///     <c>true</c> if the collection is empty; otherwise, <c>false</c>.
+        /// </value>
         [Pure]
         bool IsEmpty { get; }
 
         /// <summary>
-        /// Gets a bit flag indicating the collection's subscribable events.
+        ///     Gets a bit flag indicating the collection's subscribable events.
         /// </summary>
         /// <value>
-        /// The bit flag indicating the collection's subscribable events.
+        ///     The bit flag indicating the collection's subscribable events.
         /// </value>
         /// <seealso cref="ActiveEvents"/>
         [Pure]
         EventTypes ListenableEvents { get; }
 
         /// <summary>
-        /// Returns some item from the collection.
+        ///     Returns some item from the collection.
         /// </summary>
-        /// <returns>Some item in the collection.</returns>
+        /// <returns>
+        ///     Some item in the collection.
+        /// </returns>
         /// <remarks>
-        /// Implementations must assure that the item returned may be 
-        /// efficiently removed. However, it is not required that repeated 
-        /// calls give the same result.
+        ///     Implementations must assure that the item returned may be efficiently removed. However, it is not required that
+        ///     repeated calls give the same result.
         /// </remarks>
         [Pure]
         T Choose();
 
         /// <summary>
-        /// Copies the items of the collection to an <see cref="Array"/>,
-        /// starting at a particular <see cref="Array"/> index.
+        ///     Copies the items of the collection to an <see cref="Array"/>, starting at a particular <see cref="Array"/> index.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="Array"/> that is
-        /// the destination of the items copied from the collection. The
-        /// <see cref="Array"/> must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based arrayIndex in array at 
-        /// which copying begins.</param>
+        /// <param name="array">
+        ///     The one-dimensional <see cref="Array"/> that is the destination of the items copied from the collection. The
+        ///     <see cref="Array"/> must have zero-based indexing.
+        /// </param>
+        /// <param name="arrayIndex">
+        ///     The zero-based arrayIndex in array at which copying begins.
+        /// </param>
         [Pure]
         void CopyTo(T[] array, int arrayIndex);
 
         /// <summary>
-        /// Creates an array from the collection in the same order as the enumerator would output them.
+        ///     Creates an array from the collection in the same order as the enumerator would output them.
         /// </summary>
-        /// <returns>An array that contains the items from the collection.</returns>
+        /// <returns>
+        ///     An array that contains the items from the collection.
+        /// </returns>
         [Pure]
         T[] ToArray();
 
         /// <summary>
-        /// Occurs when the collection has changed.
+        ///     Occurs when the collection has changed.
         /// </summary>
         /// <remarks>
-        /// <para>The event is raised after an operation on the collection has 
-        /// changed its contents and the collection in an internally consistent
-        /// state. Any operation that changes the collection must raise
-        /// <see cref="CollectionChanged"/> as its last event.</para>
-        /// <para> Normally, a multi-operation like 
-        /// <see cref="IExtensible{T}.AddAll"/> will only raise one
-        /// <see cref="CollectionChanged"/> event.
-        /// </para>
+        ///     <para>
+        ///         The event is raised after an operation on the collection has changed its contents and the collection in an
+        ///         internally consistent state. Any operation that changes the collection must raise
+        ///         <see cref="CollectionChanged"/> as its last event.
+        ///     </para>
+        ///     <para>
+        ///         Normally, a multi-operation like <see cref="IExtensible{T}.AddAll"/> will only raise one
+        ///         <see cref="CollectionChanged"/> event.
+        ///     </para>
         /// </remarks>
         /// <seealso cref="EventTypes.Changed"/>
         /// <seealso cref="ICollection{T}.Add"/>
@@ -198,13 +202,11 @@ namespace C6
         event EventHandler CollectionChanged;
 
         /// <summary>
-        /// Occurs when (part of) the collection has been cleared.
+        ///     Occurs when (part of) the collection has been cleared.
         /// </summary>
         /// <remarks>
-        /// The event is raised after the collection (or a part of it) is 
-        /// cleared and the collection in an internally consistent state, and
-        /// before the corresponding <see cref="CollectionChanged"/> event is
-        /// raised.
+        ///     The event is raised after the collection (or a part of it) is cleared, when the collection in an internally
+        ///     consistent state, but before the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.Cleared"/>
         /// <seealso cref="ICollection{T}.Clear"/>
@@ -213,14 +215,11 @@ namespace C6
         event EventHandler<ClearedEventArgs> CollectionCleared;
 
         /// <summary>
-        /// Occurs when an item was inserted at a specific position in the
-        /// collection.
+        ///     Occurs when an item was inserted at a specific position in the collection.
         /// </summary>
         /// <remarks>
-        /// The event is raised after an item has been inserted into the
-        /// collection and the collection in an internally consistent state,
-        /// and before the corresponding <see cref="CollectionChanged"/> event
-        /// is raised.
+        ///     The event is raised after an item has been inserted into the collection, when the collection in an internally
+        ///     consistent state, but before the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.Inserted"/>
         /// <seealso cref="IList{T}.this"/>
@@ -233,13 +232,11 @@ namespace C6
         event EventHandler<ItemAtEventArgs<T>> ItemInserted;
 
         /// <summary>
-        /// Occurs when an item was removed from a specific position in the
-        /// collection.
+        ///     Occurs when an item was removed from a specific position in the collection.
         /// </summary>
         /// <remarks>
-        /// The event is raised after an item has been removed from the collection 
-        /// and the collection in an internally consistent state, and before
-        /// the corresponding <see cref="CollectionChanged"/> event is raised.
+        ///     The event is raised after an item has been removed from the collection, when the collection in an internally
+        ///     consistent state, but before the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.RemovedAt"/>
         /// <seealso cref="IIndexed{T}.RemoveAt"/>
@@ -253,12 +250,11 @@ namespace C6
         event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt;
 
         /// <summary>
-        /// Occurs when an item was added to the collection.
+        ///     Occurs when an item was added to the collection.
         /// </summary>
         /// <remarks>
-        /// The event is raised after an item has been added to the collection 
-        /// and the collection in an internally consistent state, and before
-        /// the corresponding <see cref="CollectionChanged"/> event is raised.
+        ///     The event is raised after an item has been added to the collection, when the collection in an internally consistent
+        ///     state, but before the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.Added"/>
         /// <seealso cref="ICollection{T}.Add"/>
@@ -281,13 +277,11 @@ namespace C6
         event EventHandler<ItemCountEventArgs<T>> ItemsAdded;
 
         /// <summary>
-        /// Occurs when an item was removed from the collection.
+        ///     Occurs when an item was removed from the collection.
         /// </summary>
         /// <remarks>
-        /// The event is raised after an item has been removed from the
-        /// collection and the collection in an internally consistent state,
-        /// and before the corresponding <see cref="CollectionChanged"/> event
-        /// is raised.
+        ///     The event is raised after an item has been removed from the collection, when the collection in an internally
+        ///     consistent state, but before the corresponding <see cref="CollectionChanged"/> event is raised.
         /// </remarks>
         /// <seealso cref="EventTypes.Removed"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>

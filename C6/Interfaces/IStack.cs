@@ -19,68 +19,81 @@ namespace C6
 {
     // TODO: decide if this should extend ICollection/IExtensible - it at least needs IsReadOnly
     /// <summary>
-    /// Represents a generic last-in-first-out (LIFO) stack that also supports
-    /// indexing.
+    ///     Represents a generic last-in-first-out (LIFO) stack that also supports indexing.
     /// </summary>
-    /// <typeparam name="T">The type of items in the stack.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of items in the stack.
+    /// </typeparam>
     [ContractClass(typeof(IStackContract<>))]
     public interface IStack<T> : IDirectedCollectionValue<T>
     {
         // Also found in IQueue<T>
         /// <summary>
-        /// Gets the item at the specified index in the stack.
-        /// The bottom of the stack has index <c>0</c>.
+        ///     Gets the item at the specified index in the stack. The bottom of the stack has index <c>0</c>.
         /// </summary>
-        /// <param name="index">The zero-based index of the item to get.</param>
-        /// <returns>The item at the specified index.</returns>
+        /// <param name="index">
+        ///     The zero-based index of the item to get.
+        /// </param>
+        /// <returns>
+        ///     The item at the specified index.
+        /// </returns>
         [Pure]
         T this[int index] { get; }
 
         /// <summary>
-        /// Removes and returns the item at the top of the stack.
+        ///     Removes and returns the item at the top of the stack.
         /// </summary>
-        /// <returns>The item removed from the top of the stack.</returns>
+        /// <returns>
+        ///     The item removed from the top of the stack.
+        /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an 
-        /// index of <c>coll.Count - 1</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>coll.Count - 1</c>.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T Pop();
 
         /// <summary>
-        /// Inserts an item at the top of the stack.
+        ///     Inserts an item at the top of the stack.
         /// </summary>
-        /// <param name="item">The item to push onto the stack. <c>null</c> is
-        /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
-        /// <c>true</c>.</param>
+        /// <param name="item">
+        ///     The item to push onto the stack. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
+        /// </param>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
-        /// index of <c>coll.Count - 1</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>coll.Count - 1</c>.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         void Push(T item);
     }

@@ -4,17 +4,17 @@
 namespace C6
 {
     /// <summary>
-    /// Defines the directions of an enumeration order relative to the original collection.
+    ///     Defines the directions of an enumeration order relative to the original collection.
     /// </summary>
     public enum EnumerationDirection
     {
         /// <summary>
-        /// Enumeration order is the same as the original collection.
+        ///     Enumeration order is the same as the original collection.
         /// </summary>
         Forwards,
 
         /// <summary>
-        /// Enumeration order is the opposite of the original collection.
+        ///     Enumeration order is the opposite of the original collection.
         /// </summary>
         Backwards,
     }

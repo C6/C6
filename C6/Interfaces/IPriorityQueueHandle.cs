@@ -5,9 +5,10 @@ namespace C6
 {
     // TODO: Add IsValid property with extension method?
     /// <summary>
-    /// Represents a priority queue handle for <see cref="IPriorityQueue{T}"/>.
+    ///     Represents a priority queue handle for <see cref="IPriorityQueue{T}"/>.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the priority queue with
-    /// which the handle is associated.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of the items in the priority queue with which the handle is associated.
+    /// </typeparam>
     public interface IPriorityQueueHandle<T> {}
 }

@@ -17,24 +17,28 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Represents a generic collection value that can be reversed and
-    /// enumerated backwards.
+    ///     Represents a generic collection value that can be reversed and enumerated backwards.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
     [ContractClass(typeof(IDirectedCollectionValueContract<>))]
     public interface IDirectedCollectionValue<T> : IDirectedEnumerable<T>, ICollectionValue<T>
     {
         /// <summary>
-        /// Returns an <see cref="IDirectedCollectionValue{T}"/> that contains
-        /// the same items as this <see cref="IDirectedCollectionValue{T}"/>,
-        /// but whose enumerator will enumerate the items backwards
-        /// (in opposite order).
+        ///     Returns an <see cref="IDirectedCollectionValue{T}"/> that contains the same items as this
+        ///     <see cref="IDirectedCollectionValue{T}"/>, but whose enumerator will enumerate the items backwards (in opposite
+        ///     order).
         /// </summary>
-        /// <returns>The <see cref="IDirectedCollectionValue{T}"/> whose
-        /// enumerator will enumerate the items backwards.</returns>
-        /// <remarks>The <see cref="IDirectedCollectionValue{T}"/> becomes
-        /// invalid, if the original is modified. The method is typically used
-        /// as in <c>foreach (var item in coll.Backwards()) {...}</c>.</remarks>
+        /// <returns>
+        ///     The <see cref="IDirectedCollectionValue{T}"/> whose enumerator will enumerate the items backwards.
+        /// </returns>
+        /// <remarks>
+        ///     The <see cref="IDirectedCollectionValue{T}"/> becomes invalid, if the original is modified. The method is typically
+        ///     used as in <c>
+        ///         foreach (var item in coll.Backwards()) {...}
+        ///     </c>.
+        /// </remarks>
         [Pure]
         new IDirectedCollectionValue<T> Backwards();
     }

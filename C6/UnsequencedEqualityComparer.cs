@@ -20,15 +20,22 @@ namespace C6
         public const uint H3 = 1118771817;
 
         /// <summary>
-        /// Returns the unsequenced (order-insensitive) hash code of the collection.
+        ///     Returns the unsequenced (order-insensitive) hash code of the collection.
         /// </summary>
-        /// <typeparam name="T">The type of the items in the collection.</typeparam>
-        /// <param name="collection">The collection whose hash code should be computed.</param>
-        /// <param name="equalityComparer">The <see cref="SCG.IEqualityComparer{T}"/>
-        /// used to compute the hash code for each item, or <c>null</c> to use
-        /// the default equality comparer <see cref="SCG.EqualityComparer{T}.Default"/>.
-        /// The collection's own equality comparer is completely disregarded.</param>
-        /// <returns>The unsequenced hash code of the collection.</returns>
+        /// <typeparam name="T">
+        ///     The type of the items in the collection.
+        /// </typeparam>
+        /// <param name="collection">
+        ///     The collection whose hash code should be computed.
+        /// </param>
+        /// <param name="equalityComparer">
+        ///     The <see cref="SCG.IEqualityComparer{T}"/> used to compute the hash code for each item, or <c>null</c> to use the
+        ///     default equality comparer <see cref="SCG.EqualityComparer{T}.Default"/>. The collection's own equality comparer is
+        ///     completely disregarded.
+        /// </param>
+        /// <returns>
+        ///     The unsequenced hash code of the collection.
+        /// </returns>
         [Pure]
         public static int GetUnsequencedHashCode<T>(this SCG.ICollection<T> collection, SCG.IEqualityComparer<T> equalityComparer = null)
         {
@@ -54,25 +61,29 @@ namespace C6
         }
 
         /// <summary>
-        /// Compares the items in the two collections with each other 
-        /// with regards to multiplicities, but without regards to sequence order.
+        ///     Compares the items in the two collections with each other with regards to multiplicities, but without regards to
+        ///     sequence order.
         /// </summary>
-        /// <typeparam name="T">The type of the items in the collections.</typeparam>
-        /// <param name="first">The collection to compare the second
-        /// collection to.</param>
-        /// <param name="second">The collection to compare the first
-        /// collection to.</param>
-        /// <param name="equalityComparer">The <see cref="SCG.IEqualityComparer{T}"/>
-        /// used to comparer the items in the collections, or <c>null</c> to use
-        /// the default equality comparer <see cref="SCG.EqualityComparer{T}.Default"/>.
-        /// The collections' own equality comparers are completely disregarded.
+        /// <typeparam name="T">
+        ///     The type of the items in the collections.
+        /// </typeparam>
+        /// <param name="first">
+        ///     The collection to compare the second collection to.
         /// </param>
-        /// <returns><c>true</c> if the collections contain equal items;
-        /// otherwise, <c>false</c>.</returns>
+        /// <param name="second">
+        ///     The collection to compare the first collection to.
+        /// </param>
+        /// <param name="equalityComparer">
+        ///     The <see cref="SCG.IEqualityComparer{T}"/> used to comparer the items in the collections, or <c>null</c> to use the
+        ///     default equality comparer <see cref="SCG.EqualityComparer{T}.Default"/>. The collections' own equality comparers
+        ///     are completely disregarded.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the collections contain equal items; otherwise, <c>false</c>.
+        /// </returns>
         /// <remarks>
-        /// For each item in this collection there must be one equal
-        /// to it in the other collection with the same multiplicity, and vice
-        /// versa.
+        ///     For each item in this collection there must be one equal to it in the other collection with the same multiplicity,
+        ///     and vice versa.
         /// </remarks>
         [Pure]
         public static bool UnsequencedEquals<T>(this ICollection<T> first, ICollection<T> second, SCG.IEqualityComparer<T> equalityComparer = null)
