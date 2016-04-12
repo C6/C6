@@ -732,6 +732,8 @@ namespace C6
 
         private void RaiseForAddAll(SCG.IEnumerable<T> items)
         {
+            Requires(items != null);
+
             if (ActiveEvents.HasFlag(Added)) {
                 foreach (var item in items) {
                     OnItemsAdded(item, 1);
@@ -742,6 +744,8 @@ namespace C6
 
         private void RaiseForClear(int count)
         {
+            Requires(count >= 1);
+
             OnCollectionCleared(true, count);
             OnCollectionChanged();
         }
@@ -754,6 +758,8 @@ namespace C6
 
         private void RaiseForUpdate(T item, T oldItem)
         {
+            Requires(Equals(item, oldItem));
+
             OnItemsRemoved(oldItem, 1);
             OnItemsAdded(item, 1);
             OnCollectionChanged();
