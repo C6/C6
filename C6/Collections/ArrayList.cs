@@ -53,6 +53,9 @@ namespace C6
             // Array is non-null
             Invariant(_items != null);
 
+            // Count is not bigger than the capacity
+            Invariant(Count <= Capacity);
+
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
