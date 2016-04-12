@@ -378,14 +378,58 @@ namespace C6
             return false;
         }
 
-        public bool RemoveDuplicates(T item)
+        public void RemoveAll(SCG.IEnumerable<T> items)
         {
             throw new NotImplementedException();
         }
 
-        public void RemoveAll(SCG.IEnumerable<T> items)
+        // TODO: Respect RemovesFromBeginning
+        public bool RemoveDuplicates(T item)
         {
-            throw new NotImplementedException();
+            // TODO: Remove when ArrayList<T> implements IList<T>
+            Ensures(this.IsSameSequenceAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
+
+            if (IsEmpty) {
+                return false;
+            }
+
+            var shouldRememberItems = ActiveEvents.HasFlag(Removed);
+            IExtensible<T> itemsRemoved = null;
+
+            // TODO: Use bulk moves
+            var j = 0;
+            for (var i = 0; i < Count; i++) {
+                var currentItem = _items[i];
+
+                if (Equals(item, currentItem)) {
+                    if (shouldRememberItems) {
+                        (itemsRemoved ?? (itemsRemoved = new ArrayList<T>())).Add(currentItem);
+                    }
+                }
+                else {
+                    // Avoid overriding an item with itself
+                    if (j != i) {
+                        _items[j] = currentItem;
+                    }
+                    j++;
+                }
+            }
+
+            // No items were removed
+            if (Count == j) {
+                Assert(itemsRemoved == null);
+
+                return false;
+            }
+
+            // Clean up
+            UpdateVersion();
+            Array.Clear(_items, j, Count - j);
+            Count = j;
+
+            RaiseForRemoveDuplicates(itemsRemoved);
+
+            return true;
         }
 
         public void RetainAll(SCG.IEnumerable<T> items)
@@ -753,6 +797,16 @@ namespace C6
         private void RaiseForRemove(T item)
         {
             OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForRemoveDuplicates(SCG.IEnumerable<T> items)
+        {
+            if (ActiveEvents.HasFlag(Removed)) {
+                foreach (var item in items) {
+                    OnItemsRemoved(item, 1);
+                }
+            }
             OnCollectionChanged();
         }
 
