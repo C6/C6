@@ -447,11 +447,11 @@ namespace C6.Tests
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var collection = GetCollection(items, ReferenceEqualityComparer, allowsNull: true);
             var badEnumerable = GetStrings(Random).AsBadEnumerable();
 
             // Act & Assert
-            Assert.That(() => collection.ContainsAll(badEnumerable), Throws.InstanceOf<BadEnumerableException>());
+            Assert.That(() => collection.ContainsAll(badEnumerable), Throws.TypeOf<BadEnumerableException>());
             Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
         }
 
