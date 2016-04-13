@@ -311,8 +311,8 @@ namespace C6
             // If items were added, the count increases; otherwise it stays the same
             Ensures(Result<bool>() ? Count > OldValue(Count) : Count == OldValue(Count));
 
-            // Empty collection returns false
-            Ensures(items.Any() || !Result<bool>());
+            // Empty enumerable returns false
+            Ensures(!items.IsEmpty() || !Result<bool>());
 
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));

@@ -1129,7 +1129,10 @@ namespace C6
             Ensures(Result<bool>() ? Count < OldValue(Count) : Count == OldValue(Count));
 
             // Empty collection returns false
-            Ensures(!items.Any() || !Result<bool>());
+            Ensures(OldValue(!IsEmpty) || !Result<bool>());
+
+            // Empty enumerable returns false
+            Ensures(!items.IsEmpty() || !Result<bool>());
 
             // If result is false, the collection remains unchanged
             Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
