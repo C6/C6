@@ -1424,7 +1424,25 @@ namespace C6.Tests
             var removeDuplicates = collection.RemoveDuplicates(item);
 
             // Assert
-            Assert.That(removeDuplicates,  Is.False);
+            Assert.That(removeDuplicates, Is.False);
+        }
+
+        [Test]
+        public void RemoveDuplicates_EverySecondIsDuplicate_True([Values(true, false)] bool removeFirst)
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var firstItem = GetUppercaseString(Random);
+            var secondItem = GetLowercaseString(Random);
+            var items = Enumerable.Range(0, count).SelectMany(i => new[] { firstItem, secondItem }).ToArray();
+            var collection = GetCollection(items);
+            var itemToRemove = removeFirst ? firstItem : secondItem;
+
+            // Act
+            var removeDuplicates = collection.RemoveDuplicates(itemToRemove);
+
+            // Assert
+            Assert.That(removeDuplicates, Is.True);
         }
 
         [Test]
