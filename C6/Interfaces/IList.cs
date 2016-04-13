@@ -1357,7 +1357,7 @@ namespace C6
             return default(bool);
         }
 
-        public void RemoveAll(SCG.IEnumerable<T> items)
+        public bool RemoveAll(SCG.IEnumerable<T> items)
         {
             // No extra preconditions allowed
 
@@ -1366,7 +1366,7 @@ namespace C6
             Ensures(false); // TODO: Write contract that uses RemovesFromBeginning
 
 
-            return;
+            return default(bool);
         }
         public bool RemoveDuplicates(T item)
         {
@@ -1380,7 +1380,7 @@ namespace C6
             return default(bool);
         }
 
-        public void RetainAll(SCG.IEnumerable<T> items)
+        public bool RetainAll(SCG.IEnumerable<T> items)
         {
             // No extra preconditions allowed
 
@@ -1389,7 +1389,7 @@ namespace C6
             Ensures(false); // TODO: Write contract that uses RemovesFromBeginning
 
 
-            return;
+            return default(bool);
         }
 
         public bool Update(T item)
@@ -1503,7 +1503,7 @@ namespace C6
 
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddAll(SCG.IEnumerable<T> items);
 
         #endregion
 

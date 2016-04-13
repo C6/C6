@@ -132,8 +132,7 @@ namespace C6
         ///     </para>
         /// </remarks>
         bool Add(T item);
-
-        // TODO: Rename to AddRange?
+        
         /// <summary>
         ///     Adds each item of the specified enumerable to the collection, if possible, in enumeration order.
         /// </summary>
@@ -141,6 +140,9 @@ namespace C6
         ///     The enumerable whose items should be added to the collection. The enumerable itself cannot be <c>null</c>, but its
         ///     items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
+        /// <returns>
+        ///     <c>true</c> if any items were added to the collection; <c>false</c> if collection was unchanged.
+        /// </returns>
         /// <remarks>
         ///     <para>
         ///         If the collection has set semantics, each item will be added if not already in the collection. If bag
@@ -173,7 +175,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
-        void AddAll(SCG.IEnumerable<T> items);
+        bool AddAll(SCG.IEnumerable<T> items);
     }
 
 
@@ -285,7 +287,7 @@ namespace C6
             return default(bool);
         }
 
-        public void AddAll(SCG.IEnumerable<T> items)
+        public bool AddAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -306,16 +308,22 @@ namespace C6
             // The collection will contain the items added
             Ensures(ForAll(items, item => this.Contains(item, EqualityComparer)));
 
-            // Count can never decrement
-            Ensures(items.Any() ? Count >= OldValue(Count) : Count == OldValue(Count));
+            // If items were added, the count increases; otherwise it stays the same
+            Ensures(Result<bool>() ? Count > OldValue(Count) : Count == OldValue(Count));
+
+            // Empty collection returns false
+            Ensures(items.Any() || !Result<bool>());
 
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
-            // TODO: Make more exact check of added items
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
+            // TODO: Make more exact check of added items - especially for sets
 
 
-            return;
+            return default(bool);
         }
 
         // ReSharper restore InvocationIsSkipped

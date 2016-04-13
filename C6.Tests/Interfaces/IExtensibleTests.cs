@@ -359,7 +359,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AddAll_AllowNullAddNull_ItemsAdded()
+        public void AddAll_AllowNullAddNull_True()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -368,9 +368,10 @@ namespace C6.Tests
             var allItems = items.Union(newItems);
 
             // Act
-            collection.AddAll(newItems);
+            var addAll = collection.AddAll(newItems);
 
             // Assert
+            Assert.That(addAll, Is.True);
             Assert.That(collection, Is.EquivalentTo(allItems));
         }
 
@@ -383,9 +384,10 @@ namespace C6.Tests
             var empty = Enumerable.Empty<string>();
 
             // Act
-            collection.AddAll(empty);
+            var addAll = collection.AddAll(empty);
 
             // Assert
+            Assert.That(addAll, Is.False);
             Assert.That(collection, Is.EquivalentTo(items));
         }
 
@@ -423,9 +425,10 @@ namespace C6.Tests
             var expectedItems = AllowsDuplicates ? items.Concat(items) : items;
 
             // Act
-            collection.AddAll(items);
+            var addAll = collection.AddAll(items);
 
             // Assert
+            Assert.That(addAll, Is.EqualTo(AllowsDuplicates));
             Assert.That(collection, Is.EquivalentTo(expectedItems));
         }
 

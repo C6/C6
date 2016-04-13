@@ -355,6 +355,9 @@ namespace C6
         ///     The enumerable whose items should be removed from the collection. The enumerable itself cannot be <c>null</c>, but
         ///     its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
+        /// <returns>
+        ///     <c>true</c> if any items were removed from the collection; <c>false</c> if collection was unchanged.
+        /// </returns>
         /// <remarks>
         ///     <para>
         ///         If the collection has bag semantics, this means reducing the item multiplicity of each item in the collection
@@ -380,7 +383,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
-        void RemoveAll(SCG.IEnumerable<T> items);
+        bool RemoveAll(SCG.IEnumerable<T> items);
 
         // TODO: Reconsider rewriting event behavior documentation
         // TODO: Should the order of removing items depend on RemovesFromBeginning?
@@ -447,6 +450,9 @@ namespace C6
         ///     The specified <see cref="SCG.IEnumerable{T}"/> whose items should be retained in the collection. The enumerable
         ///     itself cannot be <c>null</c>, but its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
+        /// <returns>
+        ///     <c>true</c> if any items were removed from the collection; <c>false</c> if collection was unchanged.
+        /// </returns>
         /// <remarks>
         ///     <para>
         ///         The items remaining in the collection is the intersection between the original collection and the specified
@@ -474,7 +480,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
-        void RetainAll(SCG.IEnumerable<T> items);
+        bool RetainAll(SCG.IEnumerable<T> items);
 
         // TODO: Consider returning a read-only collection instead
         /// <summary>
@@ -919,6 +925,7 @@ namespace C6
 
             // The collection contains the same items as items, with a multiplicity equal or greater
             Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => CountDuplicates(group.Key) >= group.Count()));
+            Ensures(Result<bool>() == this.ContainsAll(items, EqualityComparer));
 
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray()))); // TODO: Method is already pure...
@@ -1098,7 +1105,7 @@ namespace C6
             return default(bool);
         }
 
-        public void RemoveAll(SCG.IEnumerable<T> items)
+        public bool RemoveAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -1114,12 +1121,24 @@ namespace C6
 
 
             // TODO: Write ensures
-
+            
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
+            
+            // If items were removed, the count decreases; otherwise it stays the same
+            Ensures(Result<bool>() ? Count < OldValue(Count) : Count == OldValue(Count));
+
+            // Empty collection returns false
+            Ensures(!items.Any() || !Result<bool>());
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
+            // If the collection contains all items, then the count decreases accordingly
+            Ensures(!ContainsAll(items) || Count == OldValue(Count) - items.Count());
 
 
-            return;
+            return default(bool);
         }
 
         public bool RemoveDuplicates(T item)
@@ -1153,7 +1172,7 @@ namespace C6
             return default(bool);
         }
 
-        public void RetainAll(SCG.IEnumerable<T> items)
+        public bool RetainAll(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -1179,8 +1198,23 @@ namespace C6
 
             // TODO: Ensure that the collection contains the right items
 
+            // If enumerable is empty, the collection is cleared
+            Ensures(!items.IsEmpty() || IsEmpty);
 
-            return;
+            // If items were removed, the count decreases; otherwise it stays the same
+            Ensures(Result<bool>() ? Count < OldValue(Count) : Count == OldValue(Count));
+
+            // Empty enumerable returns true
+            Ensures(!items.Any() || Result<bool>());
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
+            // Items will afterwards contain all items in the collection
+            Ensures(items.ContainsAllSame(this));
+
+
+            return default(bool);
         }
 
         public ICollectionValue<T> UniqueItems()
@@ -1404,7 +1438,7 @@ namespace C6
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool IsFixedSize { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddAll(SCG.IEnumerable<T> items);
 
         #endregion
 

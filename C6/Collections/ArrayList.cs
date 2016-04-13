@@ -173,7 +173,7 @@ namespace C6
         }
 
         // TODO: Use InsertAll?
-        public void AddAll(SCG.IEnumerable<T> items)
+        public bool AddAll(SCG.IEnumerable<T> items)
         {
             #region Code Contracts
 
@@ -188,7 +188,7 @@ namespace C6
             var length = array.Length;
 
             if (length == 0) {
-                return;
+                return false;
             }
 
             // Only update version if items are actually added
@@ -200,6 +200,8 @@ namespace C6
             Count += length;
 
             RaiseForAddAll(array);
+
+            return true;
         }
 
         public IDirectedCollectionValue<T> Backwards()
@@ -378,7 +380,7 @@ namespace C6
             return false;
         }
 
-        public void RemoveAll(SCG.IEnumerable<T> items)
+        public bool RemoveAll(SCG.IEnumerable<T> items)
         {
             throw new NotImplementedException();
         }
@@ -432,7 +434,7 @@ namespace C6
             return true;
         }
 
-        public void RetainAll(SCG.IEnumerable<T> items)
+        public bool RetainAll(SCG.IEnumerable<T> items)
         {
             throw new NotImplementedException();
         }

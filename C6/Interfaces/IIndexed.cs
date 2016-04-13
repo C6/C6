@@ -379,7 +379,7 @@ namespace C6
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool IsFixedSize { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddAll(SCG.IEnumerable<T> items);
 
         #endregion
 
@@ -405,9 +405,9 @@ namespace C6
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         public abstract bool Remove(T item);
         public abstract bool Remove(T item, out T removedItem);
-        public abstract void RemoveAll(SCG.IEnumerable<T> items);
+        public abstract bool RemoveAll(SCG.IEnumerable<T> items);
         public abstract bool RemoveDuplicates(T item);
-        public abstract void RetainAll(SCG.IEnumerable<T> items);
+        public abstract bool RetainAll(SCG.IEnumerable<T> items);
         public abstract ICollectionValue<T> UniqueItems();
         public abstract bool UnsequencedEquals(ICollection<T> otherCollection);
         public abstract bool Update(T item);

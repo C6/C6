@@ -2,6 +2,8 @@
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 
 using C6.Tests.Helpers;
 
@@ -18,6 +20,84 @@ namespace C6.Tests.Contracts
     [TestFixture]
     public sealed class ContractHelperExtensionsTests : TestBase
     {
+        #region ContainsAll<T>(this SCG.IEnumerable<T>, SCG.IEnumerable<T>, SCG.IEqualityComparer<T>)
+
+        [Test]
+        public void ContainsAll_SecondEmptyEnumerable_True()
+        {
+            // Arrange
+            var first = TestHelper.GetStrings(Random);
+            var second = Enumerable.Empty<string>();
+
+            // Act
+            var containsAll = first.ContainsAll(second);
+
+            // Assert
+            Assert.That(containsAll, Is.True);
+        }
+
+        [Test]
+        public void ContainsAll_FirstEmptyEnumerable_False()
+        {
+            // Arrange
+            var first = Enumerable.Empty<string>();
+            var second = TestHelper.GetStrings(Random);
+
+            // Act
+            var containsAll = first.ContainsAll(second);
+
+            // Assert
+            Assert.That(containsAll, Is.False);
+        }
+
+        [Test]
+        public void ContainsAll_Subset_True()
+        {
+            // Arrange
+            var first = new[] {
+                new ContainsStruct('A', 0),
+                new ContainsStruct('F', 1),
+                new ContainsStruct('B', 1),
+                new ContainsStruct('G', 2),
+                new ContainsStruct('C', 3),
+                new ContainsStruct('E', 3),
+                new ContainsStruct('H', 3),
+                new ContainsStruct('D', 3),
+            };
+            var second = new[] {
+                new ContainsStruct('A', 0),
+                new ContainsStruct('B', 1),
+                new ContainsStruct('C', 3),
+                new ContainsStruct('D', 3),
+                new ContainsStruct('E', 3),
+            };
+
+            // Act
+            var containsAll = first.ContainsAll(second);
+
+            // Assert
+            Assert.That(containsAll, Is.True);
+        }
+
+        [DebuggerDisplay("{Letter} ({HashCode})")]
+        private struct ContainsStruct
+        {
+            private char Letter { get; }
+            private int HashCode { get; }
+
+            public ContainsStruct(char letter, int hashCode)
+            {
+                Letter = letter;
+                HashCode = hashCode;
+            }
+
+            public override bool Equals(object obj) => Letter == ((ContainsStruct) obj).Letter;
+
+            public override int GetHashCode() => HashCode;
+        }
+
+        #endregion
+
         #region GetStructComparer<T>
 
         [Test]

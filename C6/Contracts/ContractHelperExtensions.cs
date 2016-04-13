@@ -170,6 +170,71 @@ namespace C6.Contracts
         }
 
         [Pure]
+        public static bool ContainsAllSame<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
+            => enumerable.ContainsAll(otherEnumerable, GetSameEqualityComparer<T>());
+
+        // TODO: Should work, but could still use some attention
+        [Pure]
+        public static bool ContainsAll<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            // Argument must be non-null
+            Requires(enumerable != null, ArgumentMustBeNonNull);
+
+            // Argument must be non-null
+            Requires(otherEnumerable != null, ArgumentMustBeNonNull);
+
+            var firstArray = enumerable as T[] ?? enumerable.ToArray();
+            var secondArray = otherEnumerable as T[] ?? otherEnumerable.ToArray();
+
+            if (firstArray.Length < secondArray.Length) {
+                return false;
+            }
+
+            // Use default comparer if none is supplied
+            if (equalityComparer == null) {
+                equalityComparer = SCG.EqualityComparer<T>.Default;
+            }
+
+            // Sort based on hash code
+            Comparison<T> hashCodeComparison = (x, y) => equalityComparer.GetHashCode(x).CompareTo(equalityComparer.GetHashCode(y));
+            Array.Sort(firstArray, hashCodeComparison);
+            Array.Sort(secondArray, hashCodeComparison);
+
+            for (var j = 0; j < secondArray.Length; j++) {
+                var found = false;
+                var secondElement = secondArray[j];
+                
+                for (var i = j; i < firstArray.Length; i++) {
+                    var firstElement = firstArray[i];
+
+                    var comparison = hashCodeComparison(firstElement, secondElement);
+
+                    // Equal doesn't exist
+                    if (comparison > 0) {
+                        break;
+                    }
+
+                    if (comparison == 0 && equalityComparer.Equals(firstElement, secondElement)) {
+                        firstArray.Swap(i, j);
+                        // TODO: the hash codes are not necessarily ordered after swapping the items
+
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    return false;
+                }
+
+                // Invariant: all items up to and including j are equal pairwise in the two arrays
+                Assume(ForAll(0, j + 1, i => equalityComparer.Equals(firstArray[i], secondArray[i])));
+            }
+
+            return true;
+        }
+
+        [Pure]
         public static int ContainsSameCount<T>(this SCG.IEnumerable<T> enumerable, T item)
         {
             // Argument must be non-null
