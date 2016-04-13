@@ -235,8 +235,7 @@ namespace C6
             if (items.IsEmpty()) {
                 return true;
             }
-
-            // TODO: Test
+            
             if (IsEmpty) {
                 return false;
             }
@@ -387,57 +386,18 @@ namespace C6
 
         public bool RemoveAll(SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
-        }
-
-        // TODO: Respect RemovesFromBeginning
-        public bool RemoveDuplicates(T item)
-        {
-            // TODO: Remove when ArrayList<T> implements IList<T>
-            Ensures(this.IsSameSequenceAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
-
-            if (IsEmpty) {
+            if (IsEmpty || items.IsEmpty()) {
                 return false;
             }
 
-            var shouldRememberItems = ActiveEvents.HasFlag(Removed);
-            IExtensible<T> itemsRemoved = null;
+            // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
+            // TODO: use aux hash bag to obtain linear time procedure (old comment)
+            var itemsToRemove = new ArrayList<T>(items, EqualityComparer, AllowsNull);
 
-            // TODO: Use bulk moves
-            var j = 0;
-            for (var i = 0; i < Count; i++) {
-                var currentItem = _items[i];
-
-                if (Equals(item, currentItem)) {
-                    if (shouldRememberItems) {
-                        (itemsRemoved ?? (itemsRemoved = new ArrayList<T>())).Add(currentItem);
-                    }
-                }
-                else {
-                    // Avoid overriding an item with itself
-                    if (j != i) {
-                        _items[j] = currentItem;
-                    }
-                    j++;
-                }
-            }
-
-            // No items were removed
-            if (Count == j) {
-                Assert(itemsRemoved == null);
-
-                return false;
-            }
-
-            // Clean up
-            UpdateVersion();
-            Array.Clear(_items, j, Count - j);
-            Count = j;
-
-            RaiseForRemoveDuplicates(itemsRemoved);
-
-            return true;
+            return RemoveAllWhere(item => itemsToRemove.Remove(item));
         }
+
+        public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
 
         public bool RetainAll(SCG.IEnumerable<T> items)
         {
@@ -726,6 +686,51 @@ namespace C6
             Count++;
         }
 
+        private bool RemoveAllWhere(Func<T, bool> predicate)
+        {
+            if (IsEmpty) {
+                return false;
+            }
+
+            var shouldRememberItems = ActiveEvents.HasFlag(Removed);
+            IExtensible<T> itemsRemoved = null;
+
+            // TODO: Respect RemovesFromBeginning
+            // TODO: Use bulk moves - consider using predicate(item) ^ something
+            var j = 0;
+            for (var i = 0; i < Count; i++) {
+                var item = _items[i];
+
+                if (predicate(item)) {
+                    if (shouldRememberItems) {
+                        (itemsRemoved ?? (itemsRemoved = new ArrayList<T>())).Add(item);
+                    }
+                }
+                else {
+                    // Avoid overriding an item with itself
+                    if (j != i) {
+                        _items[j] = item;
+                    }
+                    j++;
+                }
+            }
+
+            // No items were removed
+            if (Count == j) {
+                Assert(itemsRemoved == null);
+                return false;
+            }
+
+            // Clean up
+            UpdateVersion();
+            Array.Clear(_items, j, Count - j);
+            Count = j;
+
+            RaiseForRemoveAllWhere(itemsRemoved);
+
+            return true;
+        }
+
         private T RemoveAt(int index)
         {
             var item = _items[index];
@@ -807,7 +812,7 @@ namespace C6
             OnCollectionChanged();
         }
 
-        private void RaiseForRemoveDuplicates(SCG.IEnumerable<T> items)
+        private void RaiseForRemoveAllWhere(SCG.IEnumerable<T> items)
         {
             if (ActiveEvents.HasFlag(Removed)) {
                 foreach (var item in items) {

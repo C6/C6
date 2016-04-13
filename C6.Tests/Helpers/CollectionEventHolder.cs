@@ -1,6 +1,9 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
 
+using System;
+
+
 namespace C6.Tests.Helpers
 {
     public class CollectionEventHolder<T>
@@ -10,6 +13,13 @@ namespace C6.Tests.Helpers
         public CollectionEventHolder(CollectionEvent<T>[] expectedEvents)
         {
             _expectedEvents = expectedEvents;
+        }
+
+        public CollectionEventHolder<T> InNoParticularOrder()
+        {
+            // TODO: remember choice
+            // return this;
+            throw new NotImplementedException();
         }
 
         public CollectionEventConstraint<T> For(ICollectionValue<T> collection) => new CollectionEventConstraint<T>(collection, _expectedEvents);

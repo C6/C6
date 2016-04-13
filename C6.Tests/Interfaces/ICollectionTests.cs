@@ -1303,6 +1303,284 @@ namespace C6.Tests
 
         #endregion
 
+        #region RemoveAll(IEnumerable<T>)
+        
+        [Test]
+        public void RemoveAll_AddNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAll(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void RemoveAll_DisallowNullAddNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+            var items = GetStrings(Random).WithNull(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAll(items), Violates.PreconditionSaying(ItemsMustBeNonNull));
+        }
+
+        [Test]
+        public void RemoveAll_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = GetStrings(Random);
+
+            // Act
+            var removeAll = collection.RemoveAll(items);
+
+            // Assert
+            Assert.That(removeAll, Is.False);
+        }
+
+        [Test]
+        public void RemoveAll_EmptyCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = GetStrings(Random);
+            var result = true;
+
+            // Act & Assert
+            Assert.That(() => result = collection.RemoveAll(items), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveAll_EmptyEnumerable_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var items = Enumerable.Empty<string>();
+
+            // Act
+            var removeAll = collection.RemoveAll(items);
+
+            // Assert
+            Assert.That(removeAll, Is.False);
+        }
+
+        [Test]
+        public void RemoveAll_EmptyEnumerable_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var items = Enumerable.Empty<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAll(items), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveAll_BothEmpty_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = Enumerable.Empty<string>();
+
+            // Act
+            var removeAll = collection.RemoveAll(items);
+
+            // Assert
+            Assert.That(removeAll, Is.False);
+        }
+
+        [Test]
+        public void RemoveAll_BothEmpty_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = Enumerable.Empty<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAll(items), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveAll_NewItems_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var newItems = GetLowercaseStrings(Random);
+
+            // Act
+            var removeAll = collection.RemoveAll(newItems);
+
+            // Assert
+            Assert.That(removeAll, Is.False);
+        }
+
+        [Test]
+        public void RemoveAll_NewItems_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var newItems = GetLowercaseStrings(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAll(newItems), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveAll_RemoveCollectionItself_True()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var removeAll = collection.RemoveAll(items);
+
+            // Assert
+            Assert.That(removeAll, Is.True);
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveAll_RemoveSubsetDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+            var count = GetCount(Random);
+            var existingItems = items.Take(count).ShuffledCopy(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveAll(existingItems);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void RemoveAll_RemoveNewItemsDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var newItems = GetLowercaseStrings(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveAll(newItems);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void RemoveAll_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer, allowsNull: true);
+            var badEnumerable = GetStrings(Random).AsBadEnumerable();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAll(badEnumerable), Throws.TypeOf<BadEnumerableException>());
+            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void RemoveAll_RemoveOneOfEachDuplicate_AllButOneLeft()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var repeatedItems = items.SelectMany(item => item.Repeat(Random.Next(2, 5))).ToArray();
+            var collection = GetCollection(repeatedItems);
+            var itemCounts = repeatedItems.GroupBy(item => item).Select(grouping => new KeyValuePair<string, int>(grouping.Key, grouping.Count() - 1));
+            
+            // Act
+            var removeAll = collection.RemoveAll(items);
+
+            // Assert
+            Assert.That(removeAll, Is.True);
+            Assert.That(collection.GroupBy(item => item).Select(grouping => new KeyValuePair<string, int>(grouping.Key, grouping.Count())), Is.EquivalentTo(itemCounts));
+        }
+
+        [Test]
+        public void RemoveAll_RemoveOverlap_OverlapRemoved()
+        {
+            // Arrange
+            var remainingItems = GetStrings(Random);
+            var overlappingItems = GetStrings(Random);
+            var items = remainingItems.Concat(overlappingItems).ShuffledCopy(Random);
+            var collection = GetCollection(items);
+            var itemsToRemove = GetStrings(Random).Concat(overlappingItems).ShuffledCopy(Random);
+
+            // Act
+            var removeAll = collection.RemoveAll(itemsToRemove);
+
+            // Assert
+            Assert.That(removeAll, Is.True);
+            Assert.That(collection, Is.EquivalentTo(remainingItems));
+        }
+        
+        [Test]
+        [Ignore("Figure out the best way to assess events")]
+        public void RemoveAll_RemoveOverlap_RaisesExpectedEvents()
+        {
+            // Arrange
+            var remainingItems = GetStrings(Random);
+            var overlappingItems = GetStrings(Random);
+            var items = remainingItems.Concat(overlappingItems).ShuffledCopy(Random);
+            var collection = GetCollection(items);
+            var itemsToRemove = GetStrings(Random).Concat(overlappingItems).ShuffledCopy(Random);
+            var expectedEvents = new[] {
+                // TODO: Add missing events
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAll(itemsToRemove), Raises(expectedEvents).InNoParticularOrder().For(collection)); // TODO: Ignore order
+        }
+
+        // TODO: Remove subset
+        // TODO: Raises events
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveAll_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveAll_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveAll_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+
+        // TODO: Look at AddAll for inspiration
+
+        #endregion
+
         #region RemoveDuplicates(T)
 
         [Test]
