@@ -401,7 +401,19 @@ namespace C6
 
         public bool RetainAll(SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            if (IsEmpty) {
+                return false;
+            }
+
+            if (items.IsEmpty()) {
+                // TODO: Optimize
+            }
+
+            // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
+            // TODO: use aux hash bag to obtain linear time procedure (old comment)
+            var itemsToRemove = new ArrayList<T>(items, EqualityComparer, AllowsNull);
+
+            return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
         public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);

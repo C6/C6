@@ -1316,7 +1316,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveAll_DisallowNullAddNull_ViolatesPrecondition()
+        public void RemoveAll_DisallowNullInEnumerable_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -1346,10 +1346,9 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyCollection<string>();
             var items = GetStrings(Random);
-            var result = true;
 
             // Act & Assert
-            Assert.That(() => result = collection.RemoveAll(items), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.RemoveAll(items), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -1516,7 +1515,7 @@ namespace C6.Tests
             var remainingItems = GetStrings(Random);
             var overlappingItems = GetStrings(Random);
             var items = remainingItems.Concat(overlappingItems).ShuffledCopy(Random);
-            var collection = GetCollection(items);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
             var itemsToRemove = GetStrings(Random).Concat(overlappingItems).ShuffledCopy(Random);
 
             // Act
@@ -1574,6 +1573,7 @@ namespace C6.Tests
             Run.If(!AllowsDuplicates);
 
             Assert.Fail("Tests have not been written yet");
+            // TODO: See RemoveAll_RemoveOneOfEachDuplicate_AllButOneLeft()
         }
 
 
@@ -1629,6 +1629,8 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.RemoveDuplicates(item), Raises(expectedEvents).For(collection));
         }
+
+        // TODO: Test events properly
 
         [Test]
         public void RemoveDuplicates_RandomCollectionRemoveNewItem_RaisesNoEvents()
@@ -1750,6 +1752,250 @@ namespace C6.Tests
 
             Assert.Fail("Tests have not been written yet");
         }
+
+        #endregion
+
+        #region RetrieveAll(IEnumerable<T>)
+
+        [Test]
+        public void RetainAll_NullEnumerable_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void RetainAll_DisallowsNullsInEnumerable_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+            var items = GetStrings(Random).WithNull(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(items), Violates.PreconditionSaying(ItemsMustBeNonNull));
+        }
+
+        [Test]
+        public void RetainAll_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = GetStrings(Random);
+
+            // Act
+            var retainAll = collection.RetainAll(items);
+
+            // Assert
+            Assert.That(retainAll, Is.False);
+        }
+
+        [Test]
+        public void RetainAll_EmptyCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var items = GetStrings(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(items), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RetainAll_EmptyEnumerable_Empty()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var items = Enumerable.Empty<string>();
+
+            // Act
+            var retainAll = collection.RetainAll(items);
+
+            // Assert
+            Assert.That(retainAll, Is.True);
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        [Ignore("Figure out the best way to assess events")]
+        public void RetainAll_EmptyEnumerable_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+            var itemsToRemove = Enumerable.Empty<string>();
+            var expectedEvents = new[] {
+                // TODO: Add events
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(itemsToRemove), Raises(expectedEvents).InNoParticularOrder().For(collection));
+        }
+
+        [Test]
+        public void RetainAll_BothEmpty_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Enumerable.Empty<string>();
+
+            // Act
+            var retainAll = collection.RetainAll(item);
+
+            // Assert
+            Assert.That(retainAll, Is.False);
+        }
+
+        [Test]
+        public void RetainAll_BothEmpty_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Enumerable.Empty<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(item), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RetainAll_NewItems_Empty()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var newItems = GetLowercaseStrings(Random);
+
+            // Act
+            var retainAll = collection.RetainAll(newItems);
+
+            // Assert
+            Assert.That(retainAll, Is.True);
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        [Ignore("Figure out the best way to assess events")]
+        public void RetainAll_NewItems_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var newItems = GetLowercaseStrings(Random);
+            var expectedEvents = new[] {
+                // TODO: Add events
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(newItems), Raises(expectedEvents).InNoParticularOrder().For(collection));
+        }
+
+        [Test]
+        public void RetainAll_RetainCollectionItself_Unchanged()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+
+            // Act
+            var retainAll = collection.RetainAll(items);
+
+            // Assert
+            Assert.That(retainAll, Is.False);
+            Assert.That(collection, Is.EquivalentTo(items));
+        }
+
+        // TODO: Event version of above
+
+        [Test]
+        public void RetainAll_RetainSubsetDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var items = GetStrings(Random, count);
+            var collection = GetCollection(items);
+            var existingItems = items.Take(count / 2).ShuffledCopy(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RetainAll(existingItems);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void RetainAll_RetainCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RetainAll(items);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void RetainAll_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer, allowsNull: true);
+            var badEnumerable = GetStrings(Random).AsBadEnumerable();
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(badEnumerable), Throws.TypeOf<BadEnumerableException>());
+            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void RetainAll_RetainOverlap_OverlapRetained()
+        {
+            // Arrange
+            var removedItems = GetStrings(Random);
+            var overlappingItems = GetStrings(Random);
+            var items = removedItems.Concat(overlappingItems).ShuffledCopy(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var itemsToRetain = GetStrings(Random).Concat(overlappingItems).ShuffledCopy(Random);
+
+            // Act
+            var retainAll = collection.RetainAll(itemsToRetain);
+
+            // Assert
+            Assert.That(retainAll, Is.True);
+            Assert.That(collection, Is.EquivalentTo(overlappingItems));
+        }
+
+        [Test]
+        [Ignore("Figure out the best way to assess events")]
+        public void RetainAll_RetainOverlap_RaisesExpectedEvents()
+        {
+            // Arrange
+            var removedItems = GetStrings(Random);
+            var overlappingItems = GetStrings(Random);
+            var items = removedItems.Concat(overlappingItems).ShuffledCopy(Random);
+            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var itemsToRetain = GetStrings(Random).Concat(overlappingItems).ShuffledCopy(Random);
+            var expectedEvents = new[] {
+                // TODO: Add missing events
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RetainAll(itemsToRetain), Raises(expectedEvents).InNoParticularOrder().For(collection)); // TODO: Ignore order
+        }
+
+        // TODO: Retain subset
+        // TODO: Raises events
 
         #endregion
 
