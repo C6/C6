@@ -1375,7 +1375,7 @@ namespace C6
             Ensures(Result<bool>() == OldValue(Contains(item)));
 
             // The item returned is either equal to the given item, if it was updated, or the default value of T if it was added
-            Ensures(ValueAtReturn(out oldItem).IsSameAs(Result<bool>() ? item : default(T)));
+            Ensures(EqualityComparer.Equals(ValueAtReturn(out oldItem), Result<bool>() ? item : default(T)));
 
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 0 : 1));
@@ -1389,10 +1389,10 @@ namespace C6
             Ensures(this.ContainsSame(item));
 
             // If item is updated, returned value is from collection
-            Ensures(!Result<bool>() || OldValue(ToArray()).ContainsSame(ValueAtReturn(out item)));
+            Ensures(!Result<bool>() || OldValue(ToArray()).ContainsSame(ValueAtReturn(out oldItem)));
 
             // If item is added, that item is added to the collection
-            Ensures(Result<bool>() || ValueAtReturn(out item).IsSameAs(default(T)));
+            Ensures(Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(default(T)));
 
 
             oldItem = default(T);

@@ -471,12 +471,18 @@ namespace C6
 
         public bool UpdateOrAdd(T item)
         {
-            throw new NotImplementedException();
+            T oldItem;
+            return UpdateOrAdd(item, out oldItem);
         }
 
         public bool UpdateOrAdd(T item, out T oldItem)
         {
-            throw new NotImplementedException();
+            if (Update(item, out oldItem)) {
+                return true;
+            }
+
+            Add(item);
+            return false;
         }
 
         #endregion
@@ -573,10 +579,7 @@ namespace C6
 
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards()
-        {
-            throw new NotImplementedException();
-        }
+        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => Backwards();
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 

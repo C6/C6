@@ -276,7 +276,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Contains_RandomCollectionNonContainedItem_False()
+        public void Contains_RandomCollectionNewItem_False()
         {
             // Arrange
             var collection = GetStringCollection(Random, ReferenceEqualityComparer);
@@ -290,7 +290,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Contains_RandomCollectionContainedItem_True()
+        public void Contains_RandomCollectionExistingItem_True()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -305,7 +305,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Contains_RandomCollectionNonContainedItem_True()
+        public void Contains_RandomCollectionNewItem_True()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -432,11 +432,11 @@ namespace C6.Tests
             // Arrange
             var count = GetCount(Random) / 2;
             var items = GetStrings(Random);
-            var nonContainedItems = items.Take(count).Append(items.First()).ShuffledCopy(Random);
+            var newItems = items.Take(count).Append(items.First()).ShuffledCopy(Random);
             var collection = GetCollection(items, ReferenceEqualityComparer);
 
             // Act
-            var containsAll = collection.ContainsAll(nonContainedItems);
+            var containsAll = collection.ContainsAll(newItems);
 
             // Assert
             Assert.That(containsAll, Is.False);
@@ -639,7 +639,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Find_ValueTypeCollectionNonContainedItem_False()
+        public void Find_ValueTypeCollectionNewItem_False()
         {
             // Arrange
             var items = GetKeyValuePairs(Random);
@@ -656,7 +656,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Find_ValueTypeCollectionContainedItem_True()
+        public void Find_ValueTypeCollectionExistingItem_True()
         {
             // Arrange
             var items = GetKeyValuePairs(Random);
@@ -2257,7 +2257,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_RandomCollectionUpdateNonContainedItem_False()
+        public void Update_RandomCollectionUpdateNewItem_False()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2272,7 +2272,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_RandomCollectionUpdateContainedItem_True()
+        public void Update_RandomCollectionUpdateExistingItem_True()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2287,7 +2287,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_RandomCollectionUpdateContainedItem_RaisesExpectedEvents()
+        public void Update_RandomCollectionUpdateExistingItem_RaisesExpectedEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2305,7 +2305,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_IntegerCollectionUpdateContainedItem_RaisesExpectedEvents()
+        public void Update_IntegerCollectionUpdateExistingItem_RaisesExpectedEvents()
         {
             // Arrange
             var items = new[] { 4, 54, 56, 8 };
@@ -2323,7 +2323,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_RandomCollectionUpdateNonContainedItem_RaisesNoEvents()
+        public void Update_RandomCollectionUpdateNewItem_RaisesNoEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2368,7 +2368,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_UpdateItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void Update_UpdateExistingItemDuringEnumeration_ThrowsInvalidOperationException()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2382,6 +2382,23 @@ namespace C6.Tests
 
             // Assert
             Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void Update_UpdateNewItemDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Update(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
         }
 
         // TODO: Null
@@ -2593,6 +2610,452 @@ namespace C6.Tests
         [Test]
         [Category("Unfinished")]
         public void UpdateOut_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region UpdateOrAdd(T)
+
+        // TODO: Test that the proper item is replaced (based on RemovesFromBeginning) when several exist
+
+        [Test]
+        public void UpdateOrAdd_DisallowsNullUpdateOrAddNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void UpdateOrAdd_EmptyCollection_Added()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+
+            // Act
+            var update = collection.UpdateOrAdd(item);
+
+            // Assert
+            Assert.That(update, Is.False);
+            Assert.That(collection, Is.EqualTo(itemArray));
+        }
+
+        [Test]
+        public void UpdateOrAdd_RandomCollectionAddNewItem_Added()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var update = collection.UpdateOrAdd(item);
+
+            // Assert
+            Assert.That(update, Is.False);
+        }
+
+        [Test]
+        public void UpdateOrAdd_RandomCollectionUpdateExistingItem_Updated()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random).ToLower();
+
+            // Act
+            var update = collection.UpdateOrAdd(item);
+
+            // Assert
+            Assert.That(update, Is.True);
+        }
+
+        [Test]
+        public void UpdateOrAdd_RandomCollectionUpdateExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var oldItem = items.Choose(Random);
+            var item = oldItem.ToLower();
+            var expectedEvents = new[] {
+                Removed(oldItem, 1, collection),
+                Added(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void UpdateOrAdd_IntegerCollectionUpdateExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = new[] { 4, 54, 56, 8 };
+            var collection = GetCollection(items, TenEqualityComparer.Default);
+            var count = DuplicatesByCounting ? 2 : 1;
+            var item = 53;
+            var expectedEvents = new[] {
+                Removed(54, count, collection),
+                Added(item, count, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void UpdateOrAdd_RandomCollectionAddNewItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+            var expectedEvents = new[] {
+                Added(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void UpdateOrAdd_DuplicateItemCollection_ReplacesOneItem()
+        {
+            // TODO
+            // Arrange
+            var count = GetCount(Random);
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var update = collection.UpdateOrAdd(item);
+
+            // Assert
+            Assert.That(update, Is.True);
+        }
+
+        [Test]
+        public void UpdateOrAdd_RandomCollectionUpdateFirstItem_Update()
+        {
+            // Arrange
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random);
+            items[0] = item;
+            var collection = GetCollection(items);
+
+            // Act
+            var update = collection.UpdateOrAdd(item);
+
+            // Assert
+            Assert.That(update, Is.True);
+        }
+
+        [Test]
+        public void UpdateOrAdd_UpdateOrAddItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.UpdateOrAdd(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void UpdateOrAdd_AddNewItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.UpdateOrAdd(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        // TODO: Null
+        // TODO: Simple type, properly replaced
+
+        // TODO: Proper item replaced based on RemovesFromBeginning
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOrAdd_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOrAdd_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOrAdd_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region UpdateOrAdd(T, out T)
+
+        // TODO: Test that the proper item is replaced (based on RemovesFromBeginning) when several exist
+
+        [Test]
+        public void UpdateOrAddOut_DisallowsNullUpdateOrAddNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+            string oldItem;
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(null, out oldItem), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_EmptyCollection_Added()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            string oldItem;
+
+            // Act
+            var update = collection.UpdateOrAdd(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.False);
+            Assert.That(oldItem, Is.Null);
+            Assert.That(collection, Is.EqualTo(itemArray));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_RandomCollectionAddNewItem_Added()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+            string oldItem;
+
+            // Act
+            var update = collection.UpdateOrAdd(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.False);
+            Assert.That(oldItem, Is.Null);
+        }
+
+        [Test]
+        public void UpdateOrAddOut_RandomCollectionUpdateExistingItem_Updated()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            string oldItem;
+
+            // Act
+            var update = collection.UpdateOrAdd(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.True);
+            Assert.That(oldItem, Is.SameAs(existingItem));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_RandomCollectionUpdateExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            string oldItem;
+            var expectedEvents = new[] {
+                Removed(existingItem, 1, collection),
+                Added(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item, out oldItem), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_IntegerCollectionUpdateExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = new[] { 4, 54, 56, 8 };
+            var collection = GetCollection(items, TenEqualityComparer.Default);
+            var count = DuplicatesByCounting ? 2 : 1;
+            var item = 53;
+            int oldItem;
+            var expectedEvents = new[] {
+                Removed(54, count, collection),
+                Added(item, count, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item, out oldItem), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_RandomCollectionAddNewItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+            string oldItem;
+            var expectedEvents = new[] {
+                Added(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item, out oldItem), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_DuplicateItemCollection_ReplacesOneItem()
+        {
+            // TODO
+            // Arrange
+            var count = GetCount(Random);
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+            string oldItem;
+
+            // Act
+            var update = collection.UpdateOrAdd(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.True);
+            Assert.That(oldItem, Is.SameAs(item));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_RandomCollectionUpdateFirstItem_Update()
+        {
+            // Arrange
+            var existingItem = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random);
+            items[0] = existingItem;
+            var item = string.Copy(existingItem);
+            var collection = GetCollection(items);
+            string oldItem;
+
+            // Act
+            var update = collection.UpdateOrAdd(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.True);
+            Assert.That(oldItem, Is.SameAs(existingItem));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_UpdateOrAddItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            string oldItem;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.UpdateOrAdd(item, out oldItem);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void UpdateOrAddOut_AddNewItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetCollection(items);
+            string oldItem;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.UpdateOrAdd(item, out oldItem);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        // TODO: Null
+        // TODO: Simple type, properly replaced
+
+        // TODO: Proper item replaced based on RemovesFromBeginning
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOrAddOut_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOrAddOut_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void UpdateOrAddOut_Set_Fail()
         {
             Run.If(!AllowsDuplicates);
 
