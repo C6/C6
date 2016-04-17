@@ -31,10 +31,8 @@ namespace C6
 
         private T[] _items;
 
-        private int _version;
-
-        private int _sequencedHashCode, _sequencedHashCodeVersion = -1;
-        private int _unsequencedHashCode, _unsequencedHashCodeVersion = -1;
+        private int _version, _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
+        private int _sequencedHashCode, _unsequencedHashCode;
 
         private event EventHandler _collectionChanged;
         private event EventHandler<ClearedEventArgs> _collectionCleared;
@@ -55,6 +53,9 @@ namespace C6
 
             // Count is not bigger than the capacity
             Invariant(Count <= Capacity);
+
+            // If nulls are not allowed, count is equal to the number of non-null items
+            Invariant(AllowsNull || Count == _items.Count(item => item != null));
 
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
@@ -235,7 +236,7 @@ namespace C6
             if (items.IsEmpty()) {
                 return true;
             }
-            
+
             if (IsEmpty) {
                 return false;
             }
