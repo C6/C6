@@ -11,6 +11,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EnumerationDirection;
 using static C6.ExceptionMessages;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
@@ -57,6 +58,50 @@ namespace C6.Tests
         #endregion
 
         #region Test Methods
+
+        #region IDirectedEnumerable<T>
+
+        #region Properties
+
+        #region Direction
+
+        [Test]
+        public void Direction_EmptyCollection_Forwards()
+        {
+            // Arrange
+            var sequence = GetEmptySequence<string>();
+
+            // Act
+            var direction = sequence.Direction;
+
+            // Assert
+            Assert.That(direction, Is.EqualTo(Forwards));
+        }
+
+        [Test]
+        public void Direction_RandomCollection_Forwards()
+        {
+            // Arrange
+            var sequence = GetStringSequence(Random);
+
+            // Act
+            var direction = sequence.Direction;
+
+            // Assert
+            Assert.That(direction, Is.EqualTo(Forwards));
+        }
+
+        #endregion
+
+        #endregion
+
+        #endregion
+
+        #region IDirectedCollectionValue<T>
+
+        #endregion
+
+        #region ISeqenced<T>
 
         #region Methods
 
@@ -328,6 +373,8 @@ namespace C6.Tests
 
             Assert.Fail("Tests have not been written yet");
         }
+
+        #endregion
 
         #endregion
 

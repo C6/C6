@@ -142,10 +142,7 @@ namespace C6
 
         public Speed CountSpeed => Speed.Constant;
 
-        public EnumerationDirection Direction
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public EnumerationDirection Direction => EnumerationDirection.Forwards;
 
         public bool DuplicatesByCounting => false;
 
