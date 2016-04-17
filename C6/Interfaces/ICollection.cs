@@ -181,7 +181,7 @@ namespace C6
         ///     collection.
         /// </returns>
         /// <remarks>
-        ///     The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         /// </remarks>
         [Pure]
         int CountDuplicates(T item);
@@ -202,6 +202,22 @@ namespace C6
         /// <seealso cref="Contains"/>
         [Pure]
         bool Find(ref T item);
+
+        // TODO: Return an ICollectionValue<T>?
+        /// <summary>
+        ///     Returns all items in the collection that are equal to the specified item.
+        /// </summary>
+        /// <param name="item">
+        ///     The item whose duplicates to locate in the collection. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
+        /// <returns>
+        ///     All items in the collection that are equal to the specified item.
+        /// </returns>
+        /// <remarks>
+        ///     The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        /// </remarks>
+        [Pure]
+        SCG.IEnumerable<T> FindDuplicates(T item);
 
         /// <summary>
         ///     Determines whether the collection contains a specific item and assigns it to <paramref name="item"/> if so;
@@ -957,6 +973,11 @@ namespace C6
             // Result equals the number of items equal to item using the collection's equality comparer
             Ensures(Result<int>() == this.CountDuplicates(item, EqualityComparer));
 
+            // Result is non-negative
+            Ensures(Result<int>() >= 0);
+
+            // If collection doesn't allow duplicates, count is at most one
+            Ensures(AllowsDuplicates || Result<int>() <= 1);
 
             return default(int);
         }
@@ -978,6 +999,31 @@ namespace C6
 
 
             return default(bool);
+        }
+
+        public SCG.IEnumerable<T> FindDuplicates(T item)
+        {
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+
+            // The result is all items in the collection equal to item
+            Ensures(Result<SCG.IEnumerable<T>>().IsSameSequenceAs(this.Where(x => EqualityComparer.Equals(item, x))));
+
+            // If collection is empty, so is the result
+            Ensures(!IsEmpty || Result<SCG.IEnumerable<T>>().IsEmpty());
+
+            // Result size equals CountDuplicates
+            Ensures(Result<SCG.IEnumerable<T>>().Count() == CountDuplicates(item));
+
+            // If collection counts duplicates, all items in result are the same
+            Ensures(!DuplicatesByCounting || Result<SCG.IEnumerable<T>>().IsEmpty() || ForAll(Result<SCG.IEnumerable<T>>(), x => Result<SCG.IEnumerable<T>>().First().IsSameAs(x)));
+
+            // If duplicates are not allowed, the number of items is never greater than 1
+            Ensures(AllowsDuplicates || Result<SCG.IEnumerable<T>>().Count() <= 1);
+
+
+            return default(SCG.IEnumerable<T>);
         }
 
         public bool FindOrAdd(ref T item)

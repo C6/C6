@@ -270,6 +270,11 @@ namespace C6
             return false;
         }
 
+        public SCG.IEnumerable<T> FindDuplicates(T item)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool FindOrAdd(ref T item)
         {
             #region Code Contracts
