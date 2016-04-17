@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
@@ -21,17 +22,8 @@ namespace C6
     ///     Represents a sequenced generic collection whose items are accessible by index.
     /// </summary>
     [ContractClass(typeof(IIndexedContract<>))]
-    public interface IIndexed<T> : ISequenced<T>, SCG.IReadOnlyList<T>
+    public interface IIndexed<T> : ISequenced<T>
     {
-        /// <summary>
-        ///     Gets the number of items contained in the collection.
-        /// </summary>
-        /// <value>
-        ///     The number of items contained in the collection.
-        /// </value>
-        [Pure]
-        new int Count { get; }
-
         /// <summary>
         ///     Gets a value characterizing the asymptotic complexity of <see cref="SCG.IReadOnlyList{T}.this"/> proportional to
         ///     collection size (worst-case or amortized as relevant).
@@ -42,6 +34,20 @@ namespace C6
         /// </value>
         [Pure]
         Speed IndexingSpeed { get; }
+
+        /// <summary>
+        ///     Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">
+        ///     The zero-based index of the item to get.
+        /// </param>
+        /// <value>
+        ///     The item at the specified index. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
+        /// </value>
+        [IndexerName("Item")]
+        [Pure]
+        new T this[int index] { get; }
 
         /// <summary>
         ///     Returns an <see cref="IDirectedCollectionValue{T}"/> containing the items in the specified index range of this
@@ -160,19 +166,6 @@ namespace C6
     internal abstract class IIndexedContract<T> : IIndexed<T>
     {
         // ReSharper disable InvocationIsSkipped
-
-        public int Count
-        {
-            get {
-                // No additional preconditions allowed
-
-
-                // No postconditions
-
-
-                return default(int);
-            }
-        }
 
         public Speed IndexingSpeed
         {
@@ -391,6 +384,7 @@ namespace C6
 
         #region ICollection<T>
 
+        public abstract int Count { get; }
         public abstract Speed ContainsSpeed { get; }
         public abstract bool IsReadOnly { get; }
         public abstract bool Add(T item);
