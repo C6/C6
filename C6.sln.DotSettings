@@ -131,6 +131,19 @@ public void $METHOD$$PARAMETER_TYPES$_$SCENARIO$_RaisesExpectedEvents()&#xD;
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=421ABB269135EF4E81ADC50F3FAA155E/Shortcut/@EntryValue">cf</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=421ABB269135EF4E81ADC50F3FAA155E/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=421ABB269135EF4E81ADC50F3FAA155E/Text/@EntryValue">&lt;c&gt;false&lt;/c&gt;</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Description/@EntryValue">Requires: allows null</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Shortcut/@EntryValue">cran</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Text/@EntryValue">// Argument must be non-null if collection disallows null values&#xD;
+System.Diagnostics.Contracts.Contract.Requires(AllowsNull || item != null, ContractMessage.ItemMustBeNonNull);&#xD;
+$END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6B8B6C099DCB844393489F79043481FF/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6B8B6C099DCB844393489F79043481FF/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=6B8B6C099DCB844393489F79043481FF/Categories/=Unit_0020tests/@EntryIndexedValue">Unit tests</s:String>
@@ -354,6 +367,7 @@ public void $METHOD$$PARAMETERS$_$SCENARIO$_RaisesNoEvents()&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=BC584F8DBE655643AC4DD52F1279D89E/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=BC584F8DBE655643AC4DD52F1279D89E/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=BC584F8DBE655643AC4DD52F1279D89E/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=BC584F8DBE655643AC4DD52F1279D89E/Description/@EntryValue">Requires: non-null</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=BC584F8DBE655643AC4DD52F1279D89E/Field/=PARAMETER/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=BC584F8DBE655643AC4DD52F1279D89E/Field/=PARAMETER/Expression/@EntryValue">parameterOfType("")</s:String>
@@ -402,4 +416,16 @@ public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_ThrowsInvalid
 &#xD;
     // Assert&#xD;
     NUnit.Framework.Assert.That(() =&gt; enumerator.MoveNext(), NUnit.Framework.Throws.InvalidOperationException.Because(CollectionWasModified));&#xD;
-}</s:String></wpf:ResourceDictionary>
+}</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Description/@EntryValue">Requires: allows nulls</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Shortcut/@EntryValue">crans</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Text/@EntryValue">// All items must be non-null if collection disallows null values&#xD;
+System.Diagnostics.Contracts.Contract.Requires(AllowsNull || System.Diagnostics.Contracts.Contract.ForAll(items, item =&gt; item != null), ContractMessage.ItemsMustBeNonNull);&#xD;
+$END$</s:String></wpf:ResourceDictionary>
