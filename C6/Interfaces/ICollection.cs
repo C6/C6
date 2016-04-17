@@ -384,6 +384,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
+        /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
         bool RemoveRange(SCG.IEnumerable<T> items);
 
         // TODO: Reconsider rewriting event behavior documentation
