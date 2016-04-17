@@ -1065,6 +1065,9 @@ namespace C6
             // If collection doesn't allow duplicates, the collection no more contains the item
             Ensures(AllowsDuplicates || !Contains(item));
 
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
 
             return default(bool);
         }
@@ -1101,6 +1104,9 @@ namespace C6
 
             // Old value is non-null
             Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out removedItem) != null);
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             removedItem = default(T);
@@ -1172,6 +1178,9 @@ namespace C6
 
             // The collection is equal to the old collection without item
             Ensures(this.HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             return default(bool);
@@ -1285,6 +1294,9 @@ namespace C6
             // If the item is updated, that item is in the collection
             Ensures(!Result<bool>() || this.ContainsSame(item));
 
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
             // TODO: Make contract that ensures that the right number of items are updated based on DuplicatesByCounting
 
 
@@ -1322,6 +1334,9 @@ namespace C6
 
             // If the item is updated, that item is in the collection
             Ensures(!Result<bool>() || this.ContainsSame(item));
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             oldItem = default(T);

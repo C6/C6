@@ -282,6 +282,9 @@ namespace C6
             // If the item is add and its not a counter that is incremented, that item is in the collection
             Ensures(!Result<bool>() || DuplicatesByCounting || this.ContainsSame(item));
 
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
 
             return default(bool);
         }

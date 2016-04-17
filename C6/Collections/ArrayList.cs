@@ -701,9 +701,12 @@ namespace C6
             _items[index] = item;
             Count++;
         }
-
+        
         private bool RemoveAllWhere(Func<T, bool> predicate)
         {
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
             if (IsEmpty) {
                 return false;
             }
