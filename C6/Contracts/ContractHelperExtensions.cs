@@ -170,12 +170,12 @@ namespace C6.Contracts
         }
 
         [Pure]
-        public static bool ContainsAllSame<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
-            => enumerable.ContainsAll(otherEnumerable, GetSameEqualityComparer<T>());
+        public static bool ContainsSameRange<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
+            => enumerable.ContainsRange(otherEnumerable, GetSameEqualityComparer<T>());
 
         // TODO: Should work, but could still use some attention
         [Pure]
-        public static bool ContainsAll<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable, SCG.IEqualityComparer<T> equalityComparer = null)
+        public static bool ContainsRange<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable, SCG.IEqualityComparer<T> equalityComparer = null)
         {
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);

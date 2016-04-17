@@ -134,8 +134,8 @@ namespace C6.Tests
 
             // Act
             var firstSequencedHashCode = sequence.GetSequencedHashCode();
-            sequence.AddAll(newItems);
-            sequence.RemoveAll(newItems);
+            sequence.AddRange(newItems);
+            sequence.RemoveRange(newItems);
             var secondSequencedHashCode = sequence.GetSequencedHashCode();
 
             // Assert
@@ -153,7 +153,7 @@ namespace C6.Tests
             // Act
             var hashCode = sequence.GetSequencedHashCode();
             sequence.Clear();
-            sequence.AddAll(items);
+            sequence.AddRange(items);
             hashCode = sequence.GetSequencedHashCode();
 
             // Assert

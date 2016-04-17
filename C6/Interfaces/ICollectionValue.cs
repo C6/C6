@@ -149,7 +149,7 @@ namespace C6
         ///         <see cref="CollectionChanged"/> as its last event.
         ///     </para>
         ///     <para>
-        ///         Normally, a multi-operation like <see cref="IExtensible{T}.AddAll"/> will only raise one
+        ///         Normally, a multi-operation like <see cref="IExtensible{T}.AddRange"/> will only raise one
         ///         <see cref="CollectionChanged"/> event.
         ///     </para>
         /// </remarks>
@@ -159,21 +159,21 @@ namespace C6
         /// <seealso cref="ICollection{T}.FindOrAdd"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>
         /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
+        /// <seealso cref="ICollection{T}.RemoveRange"/>
         /// <seealso cref="ICollection{T}.RemoveDuplicates"/>
-        /// <seealso cref="ICollection{T}.RetainAll"/>
+        /// <seealso cref="ICollection{T}.RetainRange"/>
         /// <seealso cref="ICollection{T}.Update(T)"/>
         /// <seealso cref="ICollection{T}.Update(T, out T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IExtensible{T}.Add"/>
-        /// <seealso cref="IExtensible{T}.AddAll"/>
+        /// <seealso cref="IExtensible{T}.AddRange"/>
         /// <seealso cref="IIndexed{T}.RemoveAt"/>
         /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
         /// <seealso cref="IList{T}.this"/>
         /// <seealso cref="IList{T}.Clear"/>
         /// <seealso cref="IList{T}.Insert(int,T)"/>
-        /// <seealso cref="IList{T}.InsertAll"/>
+        /// <seealso cref="IList{T}.InsertRange"/>
         /// <seealso cref="IList{T}.InsertFirst"/>
         /// <seealso cref="IList{T}.InsertLast"/>
         /// <seealso cref="IList{T}.Remove()"/>
@@ -224,7 +224,7 @@ namespace C6
         /// <seealso cref="EventTypes.Inserted"/>
         /// <seealso cref="IList{T}.this"/>
         /// <seealso cref="IList{T}.Insert(int,T)"/>
-        /// <seealso cref="IList{T}.InsertAll"/>
+        /// <seealso cref="IList{T}.InsertRange"/>
         /// <seealso cref="IList{T}.InsertFirst"/>
         /// <seealso cref="IList{T}.InsertLast"/>
         /// <seealso cref="IQueue{T}.Enqueue"/>
@@ -264,10 +264,10 @@ namespace C6
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IExtensible{T}.Add"/>
-        /// <seealso cref="IExtensible{T}.AddAll"/>
+        /// <seealso cref="IExtensible{T}.AddRange"/>
         /// <seealso cref="IList{T}.this"/>
         /// <seealso cref="IList{T}.Insert(int,T)"/>
-        /// <seealso cref="IList{T}.InsertAll"/>
+        /// <seealso cref="IList{T}.InsertRange"/>
         /// <seealso cref="IList{T}.InsertFirst"/>
         /// <seealso cref="IList{T}.InsertLast"/>
         /// <seealso cref="IPriorityQueue{T}.Replace"/>
@@ -286,9 +286,9 @@ namespace C6
         /// <seealso cref="EventTypes.Removed"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>
         /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveAll(SCG.IEnumerable{T})"/>
+        /// <seealso cref="ICollection{T}.RemoveRange"/>
         /// <seealso cref="ICollection{T}.RemoveDuplicates"/>
-        /// <seealso cref="ICollection{T}.RetainAll"/>
+        /// <seealso cref="ICollection{T}.RetainRange"/>
         /// <seealso cref="ICollection{T}.Update(T)"/>
         /// <seealso cref="ICollection{T}.Update(T, out T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>

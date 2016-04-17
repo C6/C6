@@ -859,7 +859,7 @@ namespace C6
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool IsFixedSize { get; }
         public abstract bool IsReadOnly { get; }
-        public abstract bool AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddRange(SCG.IEnumerable<T> items);
 
         #endregion
 

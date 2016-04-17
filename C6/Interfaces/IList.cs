@@ -95,15 +95,15 @@ namespace C6
         ///     end of the list.
         /// </value>
         /// <remarks>
-        ///     Notice that <see cref="IExtensible{T}.Add"/> and <see cref="IExtensible{T}.AddAll"/> always adds items to the end
+        ///     Notice that <see cref="IExtensible{T}.Add"/> and <see cref="IExtensible{T}.AddRange"/> always adds items to the end
         ///     of the list.
         /// </remarks>
         /// <seealso cref="Remove"/>
         /// <seealso cref="System.Collections.IList.Remove"/>
         /// <seealso cref="ICollection{T}.Remove(T)"/>
         /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveAll"/>
-        /// <seealso cref="ICollection{T}.RetainAll"/>
+        /// <seealso cref="ICollection{T}.RemoveRange"/>
+        /// <seealso cref="ICollection{T}.RetainRange"/>
         /// <seealso cref="ICollection{T}.Update(T)"/>
         /// <seealso cref="ICollection{T}.Update(T, out T)"/>
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
@@ -289,7 +289,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
-        void InsertAll(int index, SCG.IEnumerable<T> items);
+        void InsertRange(int index, SCG.IEnumerable<T> items);
 
         /// <summary>
         ///     Inserts an item at the beginning of the list.
@@ -894,7 +894,7 @@ namespace C6
             return;
         }
 
-        public void InsertAll(int index, SCG.IEnumerable<T> items)
+        public void InsertRange(int index, SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -1357,7 +1357,7 @@ namespace C6
             return default(bool);
         }
 
-        public bool RemoveAll(SCG.IEnumerable<T> items)
+        public bool RemoveRange(SCG.IEnumerable<T> items)
         {
             // No extra preconditions allowed
 
@@ -1380,7 +1380,7 @@ namespace C6
             return default(bool);
         }
 
-        public bool RetainAll(SCG.IEnumerable<T> items)
+        public bool RetainRange(SCG.IEnumerable<T> items)
         {
             // No extra preconditions allowed
 
@@ -1503,7 +1503,7 @@ namespace C6
 
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
-        public abstract bool AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddRange(SCG.IEnumerable<T> items);
 
         #endregion
 
@@ -1525,7 +1525,7 @@ namespace C6
 
         public abstract Speed ContainsSpeed { get; }
         public abstract bool Contains(T item);
-        public abstract bool ContainsAll(SCG.IEnumerable<T> items);
+        public abstract bool ContainsRange(SCG.IEnumerable<T> items);
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);

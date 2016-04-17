@@ -173,8 +173,8 @@ namespace C6
             return true;
         }
 
-        // TODO: Use InsertAll?
-        public bool AddAll(SCG.IEnumerable<T> items)
+        // TODO: Use InsertRange?
+        public bool AddRange(SCG.IEnumerable<T> items)
         {
             #region Code Contracts
 
@@ -200,7 +200,7 @@ namespace C6
             Array.Copy(array, 0, _items, Count, length);
             Count += length;
 
-            RaiseForAddAll(array);
+            RaiseForAddRange(array);
 
             return true;
         }
@@ -231,7 +231,7 @@ namespace C6
 
         public bool Contains(T item) => IndexOfPrivate(item) >= 0;
 
-        public bool ContainsAll(SCG.IEnumerable<T> items)
+        public bool ContainsRange(SCG.IEnumerable<T> items)
         {
             if (items.IsEmpty()) {
                 return true;
@@ -385,7 +385,7 @@ namespace C6
             return false;
         }
 
-        public bool RemoveAll(SCG.IEnumerable<T> items)
+        public bool RemoveRange(SCG.IEnumerable<T> items)
         {
             if (IsEmpty || items.IsEmpty()) {
                 return false;
@@ -400,7 +400,7 @@ namespace C6
 
         public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
 
-        public bool RetainAll(SCG.IEnumerable<T> items)
+        public bool RetainRange(SCG.IEnumerable<T> items)
         {
             if (IsEmpty) {
                 return false;
@@ -802,7 +802,7 @@ namespace C6
             OnCollectionChanged();
         }
 
-        private void RaiseForAddAll(SCG.IEnumerable<T> items)
+        private void RaiseForAddRange(SCG.IEnumerable<T> items)
         {
             Requires(items != null);
 

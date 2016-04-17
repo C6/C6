@@ -133,7 +133,8 @@ namespace C6
 
         /// <summary>
         ///     Checks whether the collection contains all the items in the specified <see cref="SCG.IEnumerable{T}"/>. If the
-        ///     collection has bag semantics, multiplicities is taken into account.
+        ///     collection allows duplicates, i.e. <see cref="IExtensible{T}.AllowsDuplicates"/> is <c>true</c>, multiplicities is
+        ///     taken into account.
         /// </summary>
         /// <param name="items">
         ///     The specified <see cref="SCG.IEnumerable{T}"/>. The enumerable itself cannot be <c>null</c>, but its items can, if
@@ -152,7 +153,7 @@ namespace C6
         /// </remarks>
         /// <seealso cref="Contains(T)"/>
         [Pure]
-        bool ContainsAll(SCG.IEnumerable<T> items);
+        bool ContainsRange(SCG.IEnumerable<T> items);
 
         /// <summary>
         ///     Copies the items of the collection to an <see cref="Array"/>, starting at a particular <see cref="Array"/> index.
@@ -360,9 +361,9 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         If the collection has bag semantics, this means reducing the item multiplicity of each item in the collection
-        ///         by at most the multiplicity of the item in <paramref name="items"/>. The collection's
-        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         If the collection allows duplicates, i.e. <see cref="IExtensible{T}.AllowsDuplicates"/>, the item multiplicity
+        ///         of each item in the collection is reduced by (at most) the multiplicity of the item in <paramref name="items"/>
+        ///         . The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
@@ -383,7 +384,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
-        bool RemoveAll(SCG.IEnumerable<T> items);
+        bool RemoveRange(SCG.IEnumerable<T> items);
 
         // TODO: Reconsider rewriting event behavior documentation
         // TODO: Should the order of removing items depend on RemovesFromBeginning?
@@ -444,7 +445,8 @@ namespace C6
 
         /// <summary>
         ///     Removes the items of the current collection that do not exist in the specified <see cref="SCG.IEnumerable{T}"/>. If
-        ///     the collection has bag semantics, multiplicities is taken into account.
+        ///     the collection allows duplicates, i.e. <see cref="IExtensible{T}.AllowsDuplicates"/> is <c>true</c>, multiplicities
+        ///     is taken into account.
         /// </summary>
         /// <param name="items">
         ///     The specified <see cref="SCG.IEnumerable{T}"/> whose items should be retained in the collection. The enumerable
@@ -455,7 +457,7 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         The items remaining in the collection is the intersection between the original collection and the specified
+        ///         The items that remain in the collection are the intersection between the original collection and the specified
         ///         collection.
         ///     </para>
         ///     <para>
@@ -480,7 +482,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
-        bool RetainAll(SCG.IEnumerable<T> items);
+        bool RetainRange(SCG.IEnumerable<T> items);
 
         // TODO: Consider returning a read-only collection instead
         /// <summary>
@@ -914,7 +916,7 @@ namespace C6
             return default(bool);
         }
 
-        public bool ContainsAll(SCG.IEnumerable<T> items)
+        public bool ContainsRange(SCG.IEnumerable<T> items)
         {
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
@@ -925,7 +927,7 @@ namespace C6
 
             // The collection contains the same items as items, with a multiplicity equal or greater
             Ensures(Result<bool>() == items.GroupBy(key => key, element => element, EqualityComparer).All(group => CountDuplicates(group.Key) >= group.Count()));
-            Ensures(Result<bool>() == this.ContainsAll(items, EqualityComparer));
+            Ensures(Result<bool>() == this.ContainsRange(items, EqualityComparer));
 
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray()))); // TODO: Method is already pure...
@@ -1105,7 +1107,7 @@ namespace C6
             return default(bool);
         }
 
-        public bool RemoveAll(SCG.IEnumerable<T> items)
+        public bool RemoveRange(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -1121,10 +1123,10 @@ namespace C6
 
 
             // TODO: Write ensures
-            
+
             // Collection doesn't change if enumerator throws an exception
             EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
-            
+
             // If items were removed, the count decreases; otherwise it stays the same
             Ensures(Result<bool>() ? Count < OldValue(Count) : Count == OldValue(Count));
 
@@ -1138,7 +1140,7 @@ namespace C6
             Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
 
             // If the collection contains all items, then the count decreases accordingly
-            Ensures(!ContainsAll(items) || Count == OldValue(Count) - items.Count());
+            Ensures(!ContainsRange(items) || Count == OldValue(Count) - items.Count());
 
 
             return default(bool);
@@ -1175,7 +1177,7 @@ namespace C6
             return default(bool);
         }
 
-        public bool RetainAll(SCG.IEnumerable<T> items)
+        public bool RetainRange(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -1214,7 +1216,7 @@ namespace C6
             Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
 
             // Items will afterwards contain all items in the collection
-            Ensures(items.ContainsAllSame(this));
+            Ensures(items.ContainsSameRange(this));
 
 
             return default(bool);
@@ -1441,7 +1443,7 @@ namespace C6
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool IsFixedSize { get; }
-        public abstract bool AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddRange(SCG.IEnumerable<T> items);
 
         #endregion
 

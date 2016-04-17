@@ -20,38 +20,38 @@ namespace C6.Tests.Contracts
     [TestFixture]
     public sealed class ContractHelperExtensionsTests : TestBase
     {
-        #region ContainsAll<T>(this SCG.IEnumerable<T>, SCG.IEnumerable<T>, SCG.IEqualityComparer<T>)
+        #region ContainsRange<T>(this SCG.IEnumerable<T>, SCG.IEnumerable<T>, SCG.IEqualityComparer<T>)
 
         [Test]
-        public void ContainsAll_SecondEmptyEnumerable_True()
+        public void ContainsRange_SecondEmptyEnumerable_True()
         {
             // Arrange
             var first = TestHelper.GetStrings(Random);
             var second = Enumerable.Empty<string>();
 
             // Act
-            var containsAll = first.ContainsAll(second);
+            var containsRange = first.ContainsRange(second);
 
             // Assert
-            Assert.That(containsAll, Is.True);
+            Assert.That(containsRange, Is.True);
         }
 
         [Test]
-        public void ContainsAll_FirstEmptyEnumerable_False()
+        public void ContainsRange_FirstEmptyEnumerable_False()
         {
             // Arrange
             var first = Enumerable.Empty<string>();
             var second = TestHelper.GetStrings(Random);
 
             // Act
-            var containsAll = first.ContainsAll(second);
+            var containsRange = first.ContainsRange(second);
 
             // Assert
-            Assert.That(containsAll, Is.False);
+            Assert.That(containsRange, Is.False);
         }
 
         [Test]
-        public void ContainsAll_Subset_True()
+        public void ContainsRange_Subset_True()
         {
             // Arrange
             var first = new[] {
@@ -73,10 +73,10 @@ namespace C6.Tests.Contracts
             };
 
             // Act
-            var containsAll = first.ContainsAll(second);
+            var containsRange = first.ContainsRange(second);
 
             // Assert
-            Assert.That(containsAll, Is.True);
+            Assert.That(containsRange, Is.True);
         }
 
         [DebuggerDisplay("{Letter} ({HashCode})")]

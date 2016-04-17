@@ -333,33 +333,33 @@ namespace C6.Tests
 
         #endregion
 
-        #region AddAll(IEnumerable<T>)
+        #region AddRange(IEnumerable<T>)
 
         // TODO: Add test with unique items?
 
         [Test]
-        public void AddAll_AddNull_ViolatesPrecondition()
+        public void AddRange_AddNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+            Assert.That(() => collection.AddRange(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
         }
 
         [Test]
-        public void AddAll_DisallowNullAddNull_ViolatesPrecondition()
+        public void AddRange_DisallowNullAddNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringExtensible(Random, allowsNull: false);
             var items = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(items), Violates.PreconditionSaying(ItemsMustBeNonNull));
+            Assert.That(() => collection.AddRange(items), Violates.PreconditionSaying(ItemsMustBeNonNull));
         }
 
         [Test]
-        public void AddAll_AllowNullAddNull_True()
+        public void AddRange_AllowNullAddNull_True()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -368,15 +368,15 @@ namespace C6.Tests
             var allItems = items.Union(newItems);
 
             // Act
-            var addAll = collection.AddAll(newItems);
+            var addRange = collection.AddRange(newItems);
 
             // Assert
-            Assert.That(addAll, Is.True);
+            Assert.That(addRange, Is.True);
             Assert.That(collection, Is.EquivalentTo(allItems));
         }
 
         [Test]
-        public void AddAll_AddEmptyEnumerable_Nothing()
+        public void AddRange_AddEmptyEnumerable_Nothing()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -384,26 +384,26 @@ namespace C6.Tests
             var empty = Enumerable.Empty<string>();
 
             // Act
-            var addAll = collection.AddAll(empty);
+            var addRange = collection.AddRange(empty);
 
             // Assert
-            Assert.That(addAll, Is.False);
+            Assert.That(addRange, Is.False);
             Assert.That(collection, Is.EquivalentTo(items));
         }
 
         [Test]
-        public void AddAll_AddEmptyEnumerable_RaisesNoEvents()
+        public void AddRange_AddEmptyEnumerable_RaisesNoEvents()
         {
             // Arrange
             var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
             var empty = Enumerable.Empty<string>();
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(empty), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.AddRange(empty), RaisesNoEventsFor(collection));
         }
 
         [Test]
-        public void AddAll_AddDuplicates_RaisesNoEvents()
+        public void AddRange_AddDuplicates_RaisesNoEvents()
         {
             Run.If(!AllowsDuplicates);
 
@@ -413,11 +413,11 @@ namespace C6.Tests
             var shuffledItems = items.ShuffledCopy(Random);
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(shuffledItems), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.AddRange(shuffledItems), RaisesNoEventsFor(collection));
         }
 
         [Test]
-        public void AddAll_AddDuplicates_ExpectedItems()
+        public void AddRange_AddDuplicates_ExpectedItems()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -425,15 +425,15 @@ namespace C6.Tests
             var expectedItems = AllowsDuplicates ? items.Concat(items) : items;
 
             // Act
-            var addAll = collection.AddAll(items);
+            var addRange = collection.AddRange(items);
 
             // Assert
-            Assert.That(addAll, Is.EqualTo(AllowsDuplicates));
+            Assert.That(addRange, Is.EqualTo(AllowsDuplicates));
             Assert.That(collection, Is.EquivalentTo(expectedItems));
         }
 
         [Test]
-        public void AddAll_AddItemsWithDuplicates_RaisesExpectedEvents()
+        public void AddRange_AddItemsWithDuplicates_RaisesExpectedEvents()
         {
             // Arrange
             var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
@@ -457,11 +457,11 @@ namespace C6.Tests
                 };
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(items), Raises(expectedEvents).For(collection));
+            Assert.That(() => collection.AddRange(items), Raises(expectedEvents).For(collection));
         }
 
         [Test]
-        public void AddAll_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
+        public void AddRange_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -469,12 +469,12 @@ namespace C6.Tests
             var badEnumerable = GetStrings(Random).AsBadEnumerable();
 
             // Act & Assert
-            Assert.That(() => collection.AddAll(badEnumerable), Throws.TypeOf<BadEnumerableException>());
+            Assert.That(() => collection.AddRange(badEnumerable), Throws.TypeOf<BadEnumerableException>());
             Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
         }
 
         [Test]
-        public void AddAll_AddItemsDuringEnumeration_ThrowsInvalidOperationException()
+        public void AddRange_AddItemsDuringEnumeration_ThrowsInvalidOperationException()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
@@ -483,7 +483,7 @@ namespace C6.Tests
             // Act
             var enumerator = collection.GetEnumerator();
             enumerator.MoveNext();
-            collection.AddAll(items);
+            collection.AddRange(items);
 
             // Assert
             Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
@@ -491,7 +491,7 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void AddAll_ReadOnlyCollection_Fail()
+        public void AddRange_ReadOnlyCollection_Fail()
         {
             Run.If(IsReadOnly);
 
@@ -500,7 +500,7 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void AddAll_FixedSizeCollection_Fail()
+        public void AddRange_FixedSizeCollection_Fail()
         {
             Run.If(IsFixedSize);
 
@@ -509,7 +509,7 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void AddAll_Set_Fail()
+        public void AddRange_Set_Fail()
         {
             Run.If(!AllowsDuplicates);
 

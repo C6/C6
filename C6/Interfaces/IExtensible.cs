@@ -174,7 +174,7 @@ namespace C6
         ///         </list>
         ///     </para>
         /// </remarks>
-        bool AddAll(SCG.IEnumerable<T> items);
+        bool AddRange(SCG.IEnumerable<T> items);
     }
 
 
@@ -286,7 +286,7 @@ namespace C6
             return default(bool);
         }
 
-        public bool AddAll(SCG.IEnumerable<T> items)
+        public bool AddRange(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
