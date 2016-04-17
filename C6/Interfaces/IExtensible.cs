@@ -98,7 +98,6 @@ namespace C6
         [Pure]
         bool IsReadOnly { get; }
 
-        // TODO: Should we allow/disallow null values generally? Seems only to be a problem with hash-based collections.
         /// <summary>
         ///     Adds an item to the collection if possible.
         /// </summary>
@@ -111,9 +110,9 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         If the collection has set semantics, the item will be added if not already in the collection. If bag semantics,
-        ///         the item will always be added. The collection's <see cref="EqualityComparer"/> is used to determine item
-        ///         equality.
+        ///         If the collection does not allow duplicates, i.e. <see cref="ICollectionValue{T}.AllowsNull"/> is <c>false</c>,
+        ///         then the item will only be added if the collection does not already contain an item equal to it. The
+        ///         collection's <see cref="EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the item is added, it raises the following events (in that order) with the collection as sender:
@@ -132,7 +131,7 @@ namespace C6
         ///     </para>
         /// </remarks>
         bool Add(T item);
-        
+
         /// <summary>
         ///     Adds each item of the specified enumerable to the collection, if possible, in enumeration order.
         /// </summary>
@@ -145,9 +144,9 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         If the collection has set semantics, each item will be added if not already in the collection. If bag
-        ///         semantics, the items will always be added. The collection's <see cref="EqualityComparer"/> is used to determine
-        ///         item equality.
+        ///         If the collection does not allow duplicates, i.e. <see cref="ICollectionValue{T}.AllowsNull"/> is <c>false</c>,
+        ///         then the item will only be added if the collection does not already contain an item equal to it. The
+        ///         collection's <see cref="EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         This is equivalent to <c>
