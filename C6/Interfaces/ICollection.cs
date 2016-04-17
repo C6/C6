@@ -979,6 +979,9 @@ namespace C6
             // If collection doesn't allow duplicates, count is at most one
             Ensures(AllowsDuplicates || Result<int>() <= 1);
 
+            // If collection doesn't allow duplicates, the result is 1 if collection contains item, otherwise 0
+            Ensures(AllowsDuplicates || Result<int>() == (Contains(item) ? 1 : 0));
+
             return default(int);
         }
 
@@ -1007,8 +1010,11 @@ namespace C6
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
+            // Result is non-null
+            Ensures(Result<SCG.IEnumerable<T>>() != null);
+
             // The result is all items in the collection equal to item
-            Ensures(Result<SCG.IEnumerable<T>>().IsSameSequenceAs(this.Where(x => EqualityComparer.Equals(item, x))));
+            Ensures(Result<SCG.IEnumerable<T>>().HasSameAs(this.Where(x => EqualityComparer.Equals(item, x))));
 
             // If collection is empty, so is the result
             Ensures(!IsEmpty || Result<SCG.IEnumerable<T>>().IsEmpty());
@@ -1019,8 +1025,8 @@ namespace C6
             // If collection counts duplicates, all items in result are the same
             Ensures(!DuplicatesByCounting || Result<SCG.IEnumerable<T>>().IsEmpty() || ForAll(Result<SCG.IEnumerable<T>>(), x => Result<SCG.IEnumerable<T>>().First().IsSameAs(x)));
 
-            // If duplicates are not allowed, the number of items is never greater than 1
-            Ensures(AllowsDuplicates || Result<SCG.IEnumerable<T>>().Count() <= 1);
+            // If collection doesn't allow duplicates, the result is 1 if collection contains item, otherwise 0
+            Ensures(AllowsDuplicates || Result<SCG.IEnumerable<T>>().Count() == (Contains(item) ? 1 : 0));
 
 
             return default(SCG.IEnumerable<T>);

@@ -256,7 +256,7 @@ namespace C6
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
         // TODO: Test performance?
-        public int CountDuplicates(T item) => _items.Take(Count).Count(x => Equals(x, item));
+        public int CountDuplicates(T item) => this.Count(x => Equals(x, item));
 
         public bool Find(ref T item)
         {
@@ -270,10 +270,7 @@ namespace C6
             return false;
         }
 
-        public SCG.IEnumerable<T> FindDuplicates(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public SCG.IEnumerable<T> FindDuplicates(T item) => this.Where(x => Equals(x, item));
 
         public bool FindOrAdd(ref T item)
         {

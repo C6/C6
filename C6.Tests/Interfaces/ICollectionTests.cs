@@ -484,6 +484,22 @@ namespace C6.Tests
         }
 
         [Test]
+        public void CountDuplicates_SingleItemCollection_Count()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var count = AllowsDuplicates ? GetCount(Random) : 1;
+            var items = ((Func<string>) (() => string.Copy(item))).Repeat(count);
+            var collection = GetCollection(items);
+
+            // Act
+            var countDuplicates = collection.CountDuplicates(item);
+
+            // Assert
+            Assert.That(countDuplicates, Is.EqualTo(count));
+        }
+
+        [Test]
         public void CountDuplicates_RandomCollectionWithCountEqualItems_Count()
         {
             // Arrange
@@ -518,18 +534,18 @@ namespace C6.Tests
         }
 
         [Test]
-        public void CountDuplicates_AllowsNull_Two()
+        public void CountDuplicates_AllowsNull_Count()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
-            collection.Add(null);
+            var count = collection.Add(null) ? 2 : 1;
 
             // Act
             var countDuplicates = collection.CountDuplicates(null);
 
             // Assert
-            Assert.That(countDuplicates, Is.EqualTo(2));
+            Assert.That(countDuplicates, Is.EqualTo(count));
         }
 
         [Test]
@@ -682,6 +698,120 @@ namespace C6.Tests
         }
 
         // TODO
+
+        #endregion
+
+        #region FindDuplicates(T)
+
+        [Test]
+        public void FindDuplicates_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.FindDuplicates(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void FindDuplicates_AllowsNull_Nulls()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            var count = collection.Add(null) ? 2 : 1;
+            var nulls = ((string) null).Repeat(count);
+
+            // Act
+            var findDuplicates = collection.FindDuplicates(null);
+
+            // Assert
+            Assert.That(findDuplicates, Is.EqualTo(nulls));
+        }
+
+        [Test]
+        public void FindDuplicates_EmptyCollection_Empty()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+
+            // Act
+            var findDuplicates = collection.FindDuplicates(item);
+
+            // Assert
+            Assert.That(findDuplicates, Is.Empty);
+        }
+
+        [Test]
+        public void FindDuplicates_SingleItemCollection_WholeCollection()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var count = AllowsDuplicates ? GetCount(Random) : 1;
+            var items = ((Func<string>) (() => string.Copy(item))).Repeat(count);
+            var collection = GetCollection(items);
+
+            // Act
+            var findDuplicates = collection.FindDuplicates(item);
+
+            // Assert
+            Assert.That(findDuplicates, Is.EqualTo(items));
+        }
+
+        [Test]
+        public void FindDuplicates_RandomCollectionWithDuplicateItems_EqualTo()
+        {
+            // Arrange
+            var item = GetLowercaseString(Random);
+            var count = GetCount(Random);
+            var duplicateItems = item.Repeat(count);
+            var items = GetUppercaseStrings(Random).Concat(duplicateItems).ShuffledCopy(Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var findDuplicates = collection.FindDuplicates(item);
+
+            // Assert
+            Assert.That(findDuplicates, Is.EqualTo(duplicateItems));
+        }
+
+        // TODO: This test would change if result is a ICollectionValue<T>
+        [Test]
+        public void FindDuplicates_AlterDuringResultEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var item = GetLowercaseString(Random);
+            var count = GetCount(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+
+            // Act
+            var enumerator = collection.FindDuplicates(item).GetEnumerator();
+            enumerator.MoveNext();
+            while (!collection.Add(GetLowercaseString(Random))) {}
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void FindDuplicates_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void FindDuplicates_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
 
         #endregion
 
@@ -1304,7 +1434,7 @@ namespace C6.Tests
         #endregion
 
         #region RemoveRange(IEnumerable<T>)
-        
+
         [Test]
         public void RemoveRange_AddNull_ViolatesPrecondition()
         {
@@ -1499,7 +1629,7 @@ namespace C6.Tests
             var repeatedItems = items.SelectMany(item => item.Repeat(Random.Next(2, 5))).ToArray();
             var collection = GetCollection(repeatedItems);
             var itemCounts = repeatedItems.GroupBy(item => item).Select(grouping => new KeyValuePair<string, int>(grouping.Key, grouping.Count() - 1));
-            
+
             // Act
             var removeRange = collection.RemoveRange(items);
 
@@ -1525,7 +1655,7 @@ namespace C6.Tests
             Assert.That(removeRange, Is.True);
             Assert.That(collection, Is.EquivalentTo(remainingItems));
         }
-        
+
         [Test]
         [Ignore("Figure out the best way to assess events")]
         public void RemoveRange_RemoveOverlap_RaisesExpectedEvents()
