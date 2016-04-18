@@ -8,6 +8,6 @@ using SCG = System.Collections.Generic;
 
 namespace C6.Tests
 {
-    [TestFixture]
+    //[TestFixture]
     public class ComparerFactoryTests {}
 }
