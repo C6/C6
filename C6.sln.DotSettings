@@ -307,6 +307,29 @@ public void $METHOD$$PARAMETER_TYPES$_NullEnumerable_ViolatesPrecondition()&#xD;
     // Act &amp; Assert&#xD;
     NUnit.Framework.Assert.That(() =&gt; collection.$METHOD$(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));&#xD;
 }</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Description/@EntryValue">Requires: index in bounds</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=COUNT/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=COUNT/Expression/@EntryValue">parameterOfType("int")</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=COUNT/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=START_005FINDEX/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=START_005FINDEX/Expression/@EntryValue">parameterOfType("int")</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=START_005FINDEX/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=TOTAL_005FCOUNT/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=TOTAL_005FCOUNT/Expression/@EntryValue">variableOfType("int")</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Field/=TOTAL_005FCOUNT/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Shortcut/@EntryValue">crib</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A59C29FE8077BF48BBCCBACC87E51DDA/Text/@EntryValue">// Argument must be within bounds&#xD;
+System.Diagnostics.Contracts.Contract.Requires(0 &lt;= $START_INDEX$, ContractMessage.ArgumentMustBeWithinBounds);&#xD;
+System.Diagnostics.Contracts.Contract.Requires($START_INDEX$ + $COUNT$ &lt;= $TOTAL_COUNT$, ContractMessage.ArgumentMustBeWithinBounds);&#xD;
+$END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AC6519C0935FD24B9EF55778B5BD1C23/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AC6519C0935FD24B9EF55778B5BD1C23/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AC6519C0935FD24B9EF55778B5BD1C23/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
@@ -419,6 +442,7 @@ public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_ThrowsInvalid
 }</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Description/@EntryValue">Requires: allows nulls</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Reformat/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
@@ -428,4 +452,22 @@ public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_ThrowsInvalid
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Text/@EntryValue">// All items must be non-null if collection disallows null values&#xD;
 System.Diagnostics.Contracts.Contract.Requires(AllowsNull || System.Diagnostics.Contracts.Contract.ForAll(items, item =&gt; item != null), ContractMessage.ItemsMustBeNonNull);&#xD;
+$END$</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Description/@EntryValue">Requires: enum defined</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM/Expression/@EntryValue">parameterOfType("Enum")</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM_005FTYPE/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM_005FTYPE/Expression/@EntryValue">suggestVariableType()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM_005FTYPE/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Shortcut/@EntryValue">cred</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Text/@EntryValue">// Argument must be valid enum constant&#xD;
+System.Diagnostics.Contracts.Contract.Requires(Enum.IsDefined(typeof($ENUM_TYPE$), $ENUM$), ContractMessage.EnumMustBeDefined);&#xD;
 $END$</s:String></wpf:ResourceDictionary>
