@@ -12,6 +12,7 @@ using static System.Diagnostics.Contracts.Contract;
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 using static C6.ExceptionMessages;
+using static C6.Speed;
 
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
@@ -136,11 +137,11 @@ namespace C6
 
         public bool AllowsNull { get; }
 
-        public Speed ContainsSpeed => Speed.Linear;
+        public Speed ContainsSpeed => Linear;
 
         public int Count { get; private set; }
 
-        public Speed CountSpeed => Speed.Constant;
+        public Speed CountSpeed => Constant;
 
         public EnumerationDirection Direction => EnumerationDirection.Forwards;
 
@@ -205,6 +206,8 @@ namespace C6
         public IDirectedCollectionValue<T> Backwards()
         {
             throw new NotImplementedException();
+            // Only creates one Range instead of two as with GetIndexRange(0, Count).Backwards()
+            return new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
         }
 
         public T Choose() => _items[Count - 1];
@@ -700,7 +703,7 @@ namespace C6
             _items[index] = item;
             Count++;
         }
-        
+
         private bool RemoveAllWhere(Func<T, bool> predicate)
         {
             // If result is false, the collection remains unchanged
@@ -852,6 +855,234 @@ namespace C6
         #endregion
 
         #endregion
+
+        #endregion
+
+        #region Nested Types
+
+        /// <summary>
+        ///     Represents a range of an <see cref="ArrayList{T}"/>.
+        /// </summary>
+        [Serializable]
+        private class Range : IDirectedCollectionValue<T>
+        {
+            #region Fields
+
+            private readonly ArrayList<T> _base;
+            private readonly int _version, _startIndex, _count, _sign;
+            private readonly EnumerationDirection _direction;
+
+            #endregion
+
+            #region Constructors
+
+            /// <summary>
+            ///     Initializes a new instance of the <see cref="Range"/> class that starts at the specified index and spans the next
+            ///     <paramref name="count"/> items in the specified direction.
+            /// </summary>
+            /// <param name="list">
+            ///     The underlying <see cref="ArrayList{T}"/>.
+            /// </param>
+            /// <param name="startIndex">
+            ///     The zero-based <see cref="ArrayList{T}"/> index at which the range starts.
+            /// </param>
+            /// <param name="count">
+            ///     The number of elements in the range.
+            /// </param>
+            /// <param name="direction">
+            ///     The direction of the range.
+            /// </param>
+            public Range(ArrayList<T> list, int startIndex, int count, EnumerationDirection direction)
+            {
+                #region Code Contracts
+
+                // Argument must be non-null
+                Requires(list != null, ArgumentMustBeNonNull);
+
+                // Argument must be within bounds
+                Requires(-1 <= startIndex, ArgumentMustBeWithinBounds);
+                Requires(startIndex < list.Count, ArgumentMustBeWithinBounds);
+
+                // Argument must be within bounds
+                Requires(0 <= count, ArgumentMustBeWithinBounds);
+                Requires(direction.IsForward() ? startIndex + count <= list.Count : count <= startIndex + 1, ArgumentMustBeWithinBounds);
+
+                // Argument must be valid enum constant
+                Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
+
+
+                Ensures(_base != null);
+                Ensures(_version == _base._version);
+                Ensures(_sign == (direction.IsForward() ? 1 : -1));
+                Ensures(-1 <= _startIndex);
+                Ensures(_startIndex < _base.Count);
+                Ensures(-1 <= _startIndex + _sign * _count);
+                Ensures(_startIndex + _sign * _count <= _base.Count);
+
+                #endregion
+
+                throw new NotImplementedException();
+
+                _base = list;
+                _version = list._version;
+                _sign = (int) direction;
+                _startIndex = startIndex;
+                _count = count;
+                _direction = direction;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public EventTypes ActiveEvents
+            {
+                get {
+                    throw new NotImplementedException();
+                    CheckVersion();
+                    return None;
+                }
+            }
+
+            public bool AllowsNull
+            {
+                get {
+                    throw new NotImplementedException();
+                    CheckVersion();
+                    return _base.AllowsNull;
+                }
+            }
+
+            public int Count
+            {
+                get {
+                    throw new NotImplementedException();
+                    CheckVersion();
+                    return _count;
+                }
+            }
+
+            public Speed CountSpeed
+            {
+                get {
+                    throw new NotImplementedException();
+                    CheckVersion();
+                    return Constant;
+                }
+            }
+
+            public EnumerationDirection Direction
+            {
+                get {
+                    throw new NotImplementedException();
+                    CheckVersion();
+                    return _direction;
+                }
+            }
+
+            public bool IsEmpty
+            {
+                get {
+                    throw new NotImplementedException();
+                    CheckVersion();
+                    return _count == 0;
+                }
+            }
+
+            // Let Count check version
+
+            public EventTypes ListenableEvents
+            {
+                get {
+                    throw new NotImplementedException();
+                    CheckVersion();
+                    return None;
+                }
+            }
+
+            #endregion
+
+            #region Public Methods
+
+            public IDirectedCollectionValue<T> Backwards()
+            {
+                throw new NotImplementedException();
+                CheckVersion();
+                var startIndex = _startIndex + (_count - 1) * _sign;
+                var direction = (EnumerationDirection) (-_sign);
+                return new Range(_base, startIndex, _count, direction);
+            }
+
+            public T Choose()
+            {
+                throw new NotImplementedException();
+                CheckVersion();
+                // Select the highest index in the range
+                var index = _direction.IsForward() ? _startIndex + _count : _startIndex;
+                return _base._items[index];
+            }
+
+            public void CopyTo(T[] array, int arrayIndex)
+            {
+                throw new NotImplementedException();
+                CheckVersion();
+                if (_direction.IsForward()) {
+                    // Copy array directly
+                    Array.Copy(_base._items, _startIndex, array, arrayIndex, _count);
+                }
+                else {
+                    // Use enumerator instead of copying and then reversing
+                    foreach (var item in this) {
+                        array[arrayIndex++] = item;
+                    }
+                }
+            }
+
+            public SCG.IEnumerator<T> GetEnumerator()
+            {
+                throw new NotImplementedException();
+                var items = _base._items;
+                for (var i = 0; i < _count; i++) {
+                    CheckVersion();
+                    yield return items[_startIndex + _sign * i];
+                }
+            }
+
+            public T[] ToArray()
+            {
+                throw new NotImplementedException();
+                CheckVersion();
+                var array = new T[_count];
+                CopyTo(array, 0);
+                return array;
+            }
+
+            #endregion
+
+            #region Events
+
+            // Not used since Range does not have any listenable events
+            public event EventHandler CollectionChanged;
+            public event EventHandler<ClearedEventArgs> CollectionCleared;
+            public event EventHandler<ItemAtEventArgs<T>> ItemInserted , ItemRemovedAt;
+            public event EventHandler<ItemCountEventArgs<T>> ItemsAdded , ItemsRemoved;
+
+            #endregion
+
+            #region Explicit Implementations
+
+            IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => Backwards();
+
+            SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
+
+            #endregion
+
+            #region Private Members
+
+            private void CheckVersion() => _base.CheckVersion(_version);
+
+            #endregion
+        }
 
         #endregion
     }
