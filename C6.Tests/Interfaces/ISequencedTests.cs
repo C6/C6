@@ -1,23 +1,18 @@
-﻿// This file is part of the C6 Generic Sequenced Library for C# and CLI
+﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
 using System.Linq;
 
-using C6.Tests.Contracts;
 using C6.Tests.Helpers;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
-using static C6.Contracts.ContractMessage;
 using static C6.EnumerationDirection;
-using static C6.ExceptionMessages;
-using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
-using KVP = C6.KeyValuePair<int, int>;
 
 
 namespace C6.Tests
@@ -31,6 +26,15 @@ namespace C6.Tests
 
         protected abstract ISequenced<T> GetSequence<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
 
+        private IDirectedCollectionValue<T> GetEmptyDirectedCollectionValue<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+            => GetEmptySequence(equalityComparer, allowsNull);
+
+        private IDirectedCollectionValue<T> GetDirectedCollectionValue<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+            => GetSequence(enumerable, equalityComparer, allowsNull);
+
+        protected IDirectedEnumerable<T> GetEmptyDirectedEnumerable<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+            => GetEmptySequence(equalityComparer, allowsNull);
+
         #region Helpers
 
         private ISequenced<int> GetIntSequence(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
@@ -43,6 +47,18 @@ namespace C6.Tests
             => GetSequence(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
         private ISequenced<string> GetStringSequence(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetSequence(GetStrings(random, count), equalityComparer, allowsNull);
+
+        private IDirectedEnumerable<string> GetStringDirectedEnumerable(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetSequence(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
+
+        private IDirectedEnumerable<string> GetStringDirectedEnumerable(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetSequence(GetStrings(random, count), equalityComparer, allowsNull);
+
+        private IDirectedCollectionValue<string> GetStringDirectedCollectionValue(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetSequence(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
+
+        private IDirectedCollectionValue<string> GetStringDirectedCollectionValue(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetSequence(GetStrings(random, count), equalityComparer, allowsNull);
 
         #endregion
@@ -69,10 +85,10 @@ namespace C6.Tests
         public void Direction_EmptyCollection_Forwards()
         {
             // Arrange
-            var sequence = GetEmptySequence<string>();
+            var directedEnumerable = GetEmptyDirectedEnumerable<string>();
 
             // Act
-            var direction = sequence.Direction;
+            var direction = directedEnumerable.Direction;
 
             // Assert
             Assert.That(direction, Is.EqualTo(Forwards));
@@ -82,10 +98,10 @@ namespace C6.Tests
         public void Direction_RandomCollection_Forwards()
         {
             // Arrange
-            var sequence = GetStringSequence(Random);
+            var directedEnumerable = GetStringDirectedEnumerable(Random);
 
             // Act
-            var direction = sequence.Direction;
+            var direction = directedEnumerable.Direction;
 
             // Assert
             Assert.That(direction, Is.EqualTo(Forwards));
