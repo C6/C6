@@ -11,11 +11,11 @@ namespace C6
         /// <summary>
         ///     Enumeration order is the same as the original collection.
         /// </summary>
-        Forwards,
+        Forwards = 1,
 
         /// <summary>
         ///     Enumeration order is the opposite of the original collection.
         /// </summary>
-        Backwards,
+        Backwards = -1,
     }
 }
