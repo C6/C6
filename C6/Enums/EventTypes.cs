@@ -24,22 +24,22 @@ namespace C6
         None = 0,
 
         /// <summary>
-        ///     Corresponds to the <see cref="ICollectionValue{T}.CollectionChanged"/> event.
+        ///     Corresponds to the <see cref="IListenable{T}.CollectionChanged"/> event.
         /// </summary>
         Changed = 1 << 0,
 
         /// <summary>
-        ///     Corresponds to the <see cref="ICollectionValue{T}.CollectionCleared"/> event.
+        ///     Corresponds to the <see cref="IListenable{T}.CollectionCleared"/> event.
         /// </summary>
         Cleared = 1 << 1,
 
         /// <summary>
-        ///     Corresponds to the <see cref="ICollectionValue{T}.ItemsAdded"/> event.
+        ///     Corresponds to the <see cref="IListenable{T}.ItemsAdded"/> event.
         /// </summary>
         Added = 1 << 2,
 
         /// <summary>
-        ///     Corresponds to the <see cref="ICollectionValue{T}.ItemsRemoved"/> event.
+        ///     Corresponds to the <see cref="IListenable{T}.ItemsRemoved"/> event.
         /// </summary>
         Removed = 1 << 3,
 
@@ -50,12 +50,12 @@ namespace C6
         Basic = Changed | Cleared | Added | Removed,
 
         /// <summary>
-        ///     Corresponds to the <see cref="ICollectionValue{T}.ItemInserted"/> event.
+        ///     Corresponds to the <see cref="IListenable{T}.ItemInserted"/> event.
         /// </summary>
         Inserted = 1 << 4,
 
         /// <summary>
-        ///     Corresponds to the <see cref="ICollectionValue{T}.ItemRemovedAt"/> event.
+        ///     Corresponds to the <see cref="IListenable{T}.ItemRemovedAt"/> event.
         /// </summary>
         RemovedAt = 1 << 5,
 

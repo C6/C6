@@ -12,7 +12,7 @@ using static C6.Contracts.ContractMessage;
 namespace C6
 {
     /// <summary>
-    ///     Provides data for the <see cref="ICollectionValue{T}.CollectionCleared"/> event.
+    ///     Provides data for the <see cref="IListenable{T}.CollectionCleared"/> event.
     /// </summary>
     [Serializable]
     public class ClearedEventArgs : EventArgs

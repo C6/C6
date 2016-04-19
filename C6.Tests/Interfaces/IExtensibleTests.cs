@@ -21,7 +21,7 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests
 {
     [TestFixture]
-    public abstract class IExtensibleTests : ICollectionValueTests
+    public abstract class IExtensibleTests : IListenableTests
     {
         #region Factories
 
@@ -52,10 +52,10 @@ namespace C6.Tests
 
         #region Inherited
 
-        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false)
+        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false)
             => GetEmptyExtensible<T>(allowsNull: allowsNull);
 
-        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false)
+        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false)
             => GetExtensible(enumerable, allowsNull: allowsNull);
 
         #endregion

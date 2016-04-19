@@ -115,17 +115,17 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the removed item and the index.
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the removed item and the index.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -147,13 +147,13 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionCleared"/> as non-full and with count equal to
+        ///                 <see cref="IListenable{T}.CollectionCleared"/> as non-full and with count equal to
         ///                 <paramref name="count"/>.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -337,13 +337,18 @@ namespace C6
 
         #region ICollectionValue<T>
 
-        public abstract EventTypes ActiveEvents { get; }
         public abstract bool AllowsNull { get; }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
-        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract T[] ToArray();
+
+        #endregion
+
+        #region IListenable<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;

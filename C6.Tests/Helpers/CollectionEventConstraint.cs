@@ -15,11 +15,11 @@ namespace C6.Tests.Helpers
 {
     public class CollectionEventConstraint<T> : Constraint
     {
-        private readonly ICollectionValue<T> _collection;
+        private readonly IListenable<T> _collection;
         private readonly SCG.IEnumerable<CollectionEvent<T>> _expectedEvents;
         private readonly SCG.IList<CollectionEvent<T>> _actualEvents; // TODO: Change to C5.IList<T>
 
-        public CollectionEventConstraint(ICollectionValue<T> collection, CollectionEvent<T>[] expectedEvents)
+        public CollectionEventConstraint(IListenable<T> collection, CollectionEvent<T>[] expectedEvents)
         {
             _collection = collection;
             _expectedEvents = expectedEvents;
