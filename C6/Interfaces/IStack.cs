@@ -25,7 +25,7 @@ namespace C6
     ///     The type of items in the stack.
     /// </typeparam>
     [ContractClass(typeof(IStackContract<>))]
-    public interface IStack<T> : IDirectedCollectionValue<T>
+    public interface IStack<T> : IDirectedCollectionValue<T>, IListenable<T>
     {
         // Also found in IQueue<T>
         /// <summary>
