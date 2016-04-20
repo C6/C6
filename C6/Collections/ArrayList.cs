@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 
 using C6.Contracts;
 
@@ -421,11 +422,29 @@ namespace C6
 
         public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
 
+        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
+        {
+            throw new NotImplementedException();
+            return Showing.Show(this, stringBuilder, ref rest, formatProvider);
+        }
+
         public T[] ToArray()
         {
             var array = new T[Count];
             Array.Copy(_items, array, Count);
             return array;
+        }
+
+        public override string ToString()
+        {
+            throw new NotImplementedException();
+            return ToString(null, null);
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            throw new NotImplementedException();
+            return Showing.ShowString(this, format, formatProvider);
         }
 
         public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
@@ -1026,6 +1045,11 @@ namespace C6
                 }
             }
 
+            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
+            {
+                throw new NotImplementedException();
+            }
+
             public T[] ToArray()
             {
                 throw new NotImplementedException();
@@ -1033,6 +1057,11 @@ namespace C6
                 var array = new T[_count];
                 CopyTo(array, 0);
                 return array;
+            }
+
+            public string ToString(string format, IFormatProvider formatProvider)
+            {
+                throw new NotImplementedException();
             }
 
             #endregion
