@@ -61,7 +61,7 @@ namespace C6
 
 
             // Returns true if rest >= 0 on return; otherwise, false.
-            Ensures(Result<bool>() == (ValueAtReturn(out rest) >= 0));
+            Ensures(Result<bool>() == (ValueAtReturn(out rest) >= 0)); // TODO: Is this actually true?
 
             // The length of the formatted string is subtracted from rest
             Ensures(stringBuilder.Length - OldValue(stringBuilder.Length) == OldValue(rest) - ValueAtReturn(out rest));

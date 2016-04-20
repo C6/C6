@@ -28,7 +28,7 @@ namespace C6
     ///     collection. Its main usage is to be the return type of query operations on generic collection.
     /// </remarks>
     [ContractClass(typeof(ICollectionValueContract<>))]
-    public interface ICollectionValue<T> : SCG.IEnumerable<T> // TODO: Add IShowable again
+    public interface ICollectionValue<T> : SCG.IEnumerable<T>, IShowable
     {
         /// <summary>
         ///     Gets a value indicating whether the collection allows <c>null</c> items.

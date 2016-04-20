@@ -2,10 +2,12 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 
+using C6.Contracts;
 using C6.Tests.Contracts;
-using C6.Tests.Helpers;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -13,7 +15,6 @@ using NUnit.Framework.Internal;
 using SCG = System.Collections.Generic;
 
 using static C6.Contracts.ContractMessage;
-using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
 
 
@@ -23,27 +24,35 @@ namespace C6.Tests
     public abstract class ICollectionValueTests : IEnumerableTests
     {
         #region Factories
-        
+
         /// <summary>
-        /// Creates an empty collection value.
+        ///     Creates an empty collection value.
         /// </summary>
-        /// <param name="allowsNull">A value indicating whether the collection
-        /// allows <c>null</c> items.</param>
-        /// <typeparam name="T">The type of the items in the collection value.
+        /// <param name="allowsNull">
+        ///     A value indicating whether the collection allows <c>null</c> items.
+        /// </param>
+        /// <typeparam name="T">
+        ///     The type of the items in the collection value.
         /// </typeparam>
-        /// <returns>An empty collection value.</returns>
+        /// <returns>
+        ///     An empty collection value.
+        /// </returns>
         protected abstract ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false);
 
         /// <summary>
-        /// Creates a collection value containing the items in the enumerable.
+        ///     Creates a collection value containing the items in the enumerable.
         /// </summary>
-        /// <typeparam name="T">The type of the items in the collection value.
+        /// <typeparam name="T">
+        ///     The type of the items in the collection value.
         /// </typeparam>
-        /// <param name="enumerable">The collection whose items are copied to
-        /// the new collection value.</param>
-        /// <param name="allowsNull">A value indicating whether the collection
-        /// allows <c>null</c> items.</param>
-        /// <returns>A collection value containing the items in the enumerable.
+        /// <param name="enumerable">
+        ///     The collection whose items are copied to the new collection value.
+        /// </param>
+        /// <param name="allowsNull">
+        ///     A value indicating whether the collection allows <c>null</c> items.
+        /// </param>
+        /// <returns>
+        ///     A collection value containing the items in the enumerable.
         /// </returns>
         protected abstract ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 
@@ -62,7 +71,7 @@ namespace C6.Tests
 
         private ICollectionValue<string> GetStringCollectionValue(Randomizer random, int count, bool allowsNull = false)
             => GetCollectionValue(GetStrings(random, count), allowsNull);
-        
+
         #endregion
 
         #region Inherited
@@ -77,8 +86,10 @@ namespace C6.Tests
 
         #region Test Methods
 
+        #region ICollectionValue<T>
+
         #region Properties
-        
+
         #region AllowsNull
 
         // TODO: Are there better tests to perform here?
@@ -215,7 +226,7 @@ namespace C6.Tests
         }
 
         #endregion
-        
+
         #endregion
 
         #region Methods
@@ -329,7 +340,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetIntCollectionValue(Random);
-            var array = GetIntegers(Random, (int) (collection.Count*1.7));
+            var array = GetIntegers(Random, (int) (collection.Count * 1.7));
             var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act
@@ -402,7 +413,129 @@ namespace C6.Tests
         #endregion
 
         #endregion
-        
+
+        #endregion
+
+        #region IShowable
+
+        #region Methods
+
+        #region Show
+
+        [Test]
+        public void Show_NullStringBuilder_ViolatesPrecondition()
+        {
+            // Arrange
+            var collectionValue = GetIntCollectionValue(Random);
+            var rest = int.MaxValue;
+            var formatProvider = CultureInfo.CurrentCulture.NumberFormat;
+
+            // Act & Assert
+            Assert.That(() => collectionValue.Show(null, ref rest, formatProvider), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void Show_EmptyCollection_BEHAVIOR()
+        {
+            // Arrange
+            var collectionValue = GetEmptyCollectionValue<int>();
+            var stringBuilder = new StringBuilder();
+            var rest = int.MaxValue;
+            var formatProvider = CultureInfo.CurrentCulture.NumberFormat;
+            var shortestEmptyCollection = "{{  }}";
+
+            // Act
+            var show = collectionValue.Show(stringBuilder, ref rest, formatProvider);
+            var result = stringBuilder.ToString();
+            var length = result.Length;
+
+            // Assert
+            Assert.That(show, Is.True);
+            Assert.That(result, Does.Not.Contain(Showing.Ellipses));
+            Assert.That(length, Is.LessThanOrEqualTo(shortestEmptyCollection.Length));
+        }
+
+        [Test]
+        public void Show_NegativeRest_EllipsesString()
+        {
+            // Arrange
+            var collectionValue = GetIntCollectionValue(Random);
+            var stringBuilder = new StringBuilder();
+            var rest = Random.Next(int.MinValue, 0);
+            var formatProvider = CultureInfo.CurrentCulture.NumberFormat;
+            var shortestEmptyCollection = "{{  }}";
+
+            // Act
+            var show = collectionValue.Show(stringBuilder, ref rest, formatProvider);
+            var result = stringBuilder.ToString();
+            var length = result.Length;
+
+            // Assert
+            Assert.That(show, Is.False);
+            Assert.That(result, Contains.Substring(Showing.Ellipses));
+            Assert.That(length, Is.LessThanOrEqualTo(shortestEmptyCollection.Length + Showing.Ellipses.Length));
+        }
+
+        [Test]
+        public void Show_RandomCollection_RestIsDecreasedByStringLength()
+        {
+            // Arrange
+            var collectionValue = GetIntCollectionValue(Random);
+            var stringBuilder = new StringBuilder();
+            var originalLength = GetCount(Random);
+            stringBuilder.Append(Random.GetString(originalLength));
+            var rest = int.MaxValue;
+            var formatProvider = CultureInfo.CurrentCulture.NumberFormat;
+
+            // Act
+            var show = collectionValue.Show(stringBuilder, ref rest, formatProvider);
+            var result = stringBuilder.ToString();
+            var length = result.Length - originalLength;
+
+            // Assert
+            Assert.That(show, Is.True);
+            Assert.That(rest, Is.EqualTo(int.MaxValue - length));
+        }
+
+        [Test]
+        public void Show_RandomCollectionTooBig_ResultIsTruncated()
+        {
+            // Arrange
+            var collectionValue = GetIntCollectionValue(Random);
+            var stringBuilder = new StringBuilder();
+            var rest = 10;
+            var refRest = rest;
+            var formatProvider = CultureInfo.CurrentCulture.NumberFormat;
+
+            // Act
+            var show = collectionValue.Show(stringBuilder, ref refRest, formatProvider);
+            var result = stringBuilder.ToString();
+            var length = result.Length;
+
+            // Assert
+            Assert.That(show, Is.False);
+            Assert.That(length, Is.EqualTo(rest - refRest));
+            Assert.That(result, Contains.Substring(Showing.Ellipses));
+        }
+
+        #endregion
+
+        #region ToString()
+
+        // TODO: Test properly
+
+        #endregion
+
+        #region ToString(string, IFormatProvider)
+
+        // TODO: Test properly
+
+        #endregion
+
+        #endregion
+
+        #endregion
+
         #endregion
     }
 }
