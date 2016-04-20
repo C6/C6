@@ -582,8 +582,6 @@ namespace C6
 
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => Backwards();
-
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
@@ -1040,8 +1038,6 @@ namespace C6
             #endregion
 
             #region Explicit Implementations
-
-            IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => Backwards();
 
             SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 

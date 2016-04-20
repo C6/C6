@@ -268,7 +268,6 @@
     <Compile Include="Interfaces\ISequenced.cs" />
     <Compile Include="Interfaces\IStack.cs" />
     <Compile Include="Interfaces\IDirectedCollectionValue.cs" />
-    <Compile Include="Interfaces\IDirectedEnumerable.cs" />
     <Compile Include="Interfaces\IExtensible.cs" />
     <Compile Include="Interfaces\IPriorityQueue.cs" />
     <Compile Include="Interfaces\IQueue.cs" />
