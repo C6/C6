@@ -14,6 +14,8 @@ namespace C6
 {
     public static class Showing
     {
+        public static string Ellipses => "...";
+
         public static bool Show(object obj, StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
         {
             if (rest <= 0) {
@@ -107,7 +109,7 @@ namespace C6
             }
 
             if (!complete) {
-                stringbuilder.Append("...", ref rest);
+                stringbuilder.Append(Ellipses, ref rest);
             }
 
             stringbuilder.Append(endDelimiter);

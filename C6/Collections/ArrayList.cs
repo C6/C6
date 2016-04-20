@@ -395,9 +395,7 @@ namespace C6
             }
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
-            // TODO: use aux hash bag to obtain linear time procedure (old comment)
             var itemsToRemove = new ArrayList<T>(items, EqualityComparer, AllowsNull);
-
             return RemoveAllWhere(item => itemsToRemove.Remove(item));
         }
 
@@ -422,11 +420,7 @@ namespace C6
 
         public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
 
-        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
-        {
-            throw new NotImplementedException();
-            return Showing.Show(this, stringBuilder, ref rest, formatProvider);
-        }
+        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
 
         public T[] ToArray()
         {
@@ -435,17 +429,9 @@ namespace C6
             return array;
         }
 
-        public override string ToString()
-        {
-            throw new NotImplementedException();
-            return ToString(null, null);
-        }
+        public override string ToString() => ToString(null, null);
 
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            throw new NotImplementedException();
-            return Showing.ShowString(this, format, formatProvider);
-        }
+        public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
 
         public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
 
@@ -951,7 +937,7 @@ namespace C6
             #endregion
 
             #region Properties
-            
+
             public bool AllowsNull
             {
                 get {
@@ -996,7 +982,7 @@ namespace C6
                     return _count == 0;
                 }
             }
-            
+
             #endregion
 
             #region Public Methods
