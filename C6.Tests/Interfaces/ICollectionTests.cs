@@ -2360,7 +2360,7 @@ namespace C6.Tests
 
         #region Update(T)
 
-        // TODO: Test that the proper item is replaced (based on RemovesFromBeginning) when several exist
+        // TODO: Test that the proper item is replaced when several exist
 
         [Test]
         public void Update_DisallowsNullUpdateNull_ViolatesPrecondition()
@@ -2534,7 +2534,7 @@ namespace C6.Tests
         // TODO: Null
         // TODO: Simple type, properly replaced
 
-        // TODO: Proper item replaced based on RemovesFromBeginning
+        // TODO: Proper item replaced
 
         [Test]
         [Category("Unfinished")]
@@ -2750,7 +2750,7 @@ namespace C6.Tests
 
         #region UpdateOrAdd(T)
 
-        // TODO: Test that the proper item is replaced (based on RemovesFromBeginning) when several exist
+        // TODO: Test that the proper item is replaced when several exist
 
         [Test]
         public void UpdateOrAdd_DisallowsNullUpdateOrAddNull_ViolatesPrecondition()
@@ -2930,7 +2930,7 @@ namespace C6.Tests
         // TODO: Null
         // TODO: Simple type, properly replaced
 
-        // TODO: Proper item replaced based on RemovesFromBeginning
+        // TODO: Proper item replaced
 
         [Test]
         [Category("Unfinished")]
@@ -2964,7 +2964,7 @@ namespace C6.Tests
 
         #region UpdateOrAdd(T, out T)
 
-        // TODO: Test that the proper item is replaced (based on RemovesFromBeginning) when several exist
+        // TODO: Test that the proper item is replaced when several exist
 
         [Test]
         public void UpdateOrAddOut_DisallowsNullUpdateOrAddNull_ViolatesPrecondition()
@@ -3162,7 +3162,7 @@ namespace C6.Tests
         // TODO: Null
         // TODO: Simple type, properly replaced
 
-        // TODO: Proper item replaced based on RemovesFromBeginning
+        // TODO: Proper item replaced
 
         [Test]
         [Category("Unfinished")]

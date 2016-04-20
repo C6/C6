@@ -86,31 +86,6 @@ namespace C6
         [Pure]
         T Last { get; }
 
-        // TODO: override methods to change documentation
-        /// <summary>
-        ///     Gets or sets a value indicating whether methods remove items from the beginning of the list.
-        /// </summary>
-        /// <value>
-        ///     <c>true</c> if methods remove items from the beginning of the list; <c>false</c> if they remove the items from the
-        ///     end of the list.
-        /// </value>
-        /// <remarks>
-        ///     Notice that <see cref="IExtensible{T}.Add"/> and <see cref="IExtensible{T}.AddRange"/> always adds items to the end
-        ///     of the list.
-        /// </remarks>
-        /// <seealso cref="Remove"/>
-        /// <seealso cref="System.Collections.IList.Remove"/>
-        /// <seealso cref="ICollection{T}.Remove(T)"/>
-        /// <seealso cref="ICollection{T}.Remove(T, out T)"/>
-        /// <seealso cref="ICollection{T}.RemoveRange"/>
-        /// <seealso cref="ICollection{T}.RetainRange"/>
-        /// <seealso cref="ICollection{T}.Update(T)"/>
-        /// <seealso cref="ICollection{T}.Update(T, out T)"/>
-        /// <seealso cref="ICollection{T}.UpdateOrAdd(T)"/>
-        /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
-        [Pure]
-        bool RemovesFromBeginning { get; set; }
-
         /// <summary>
         ///     Gets or sets the item at the specified index.
         /// </summary>
@@ -441,44 +416,6 @@ namespace C6
         IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer);
 
         /// <summary>
-        ///     Removes and returns an item from either the beginning or the end of the list, depending on the value of
-        ///     <see cref="RemovesFromBeginning"/>.
-        /// </summary>
-        /// <returns>
-        ///     The item removed from the list.
-        /// </returns>
-        /// <remarks>
-        ///     <para>
-        ///         If <see cref="RemovesFromBeginning"/> is <c>true</c>, this methods removes an item from the beginning of the
-        ///         list; if <see cref="RemovesFromBeginning"/> is <c>false</c>, it removes an item from the end of the list.
-        ///     </para>
-        ///     <para>
-        ///         Raises the following events (in that order) with the collection as sender:
-        ///         <list type="bullet">
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of either zero if
-        ///                     <see cref="RemovesFromBeginning"/> is <c>true</c>, or <c>Count</c> - 1 if
-        ///                     <see cref="RemovesFromBeginning"/> is <c>false</c>.
-        ///                 </description>
-        ///             </item>
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
-        ///                 </description>
-        ///             </item>
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
-        ///                 </description>
-        ///             </item>
-        ///         </list>
-        ///     </para>
-        /// </remarks>
-        /// <seealso cref="RemovesFromBeginning"/>
-        T Remove();
-
-        /// <summary>
         ///     Removes and returns the item at the specified index of the collection.
         /// </summary>
         /// <param name="index">
@@ -726,22 +663,6 @@ namespace C6
 
 
                 return default(T);
-            }
-        }
-
-        public bool RemovesFromBeginning
-        {
-            get { return default(bool); }
-            set {
-                // Collection must be non-read-only
-                Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-
-                // Value is updated
-                Ensures(RemovesFromBeginning == value);
-
-
-                return;
             }
         }
 
@@ -1068,35 +989,6 @@ namespace C6
             return default(IList<V>);
         }
 
-        public T Remove()
-        {
-            // Collection must be non-empty
-            Requires(!IsEmpty, CollectionMustBeNonEmpty);
-
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
-
-
-            // Result is the item previously first/last
-            Ensures(Result<T>().IsSameAs(OldValue(RemovesFromBeginning ? First : Last)));
-
-            // Only the item at index is removed
-            Ensures(this.IsSameSequenceAs(OldValue((RemovesFromBeginning ? this.Skip(1) : this.Take(Count - 1)).ToList())));
-
-            // Result is non-null
-            Ensures(AllowsNull || Result<T>() != null);
-
-            // Removing an item decreases the count by one
-            Ensures(Count == OldValue(Count) - 1);
-
-
-            return default(T);
-        }
-
-
         public T RemoveAt(int index)
         {
             // No additional preconditions allowed
@@ -1316,26 +1208,13 @@ namespace C6
             return default(int);
         }
 
-        public void Remove(object value)
-        {
-            // No extra preconditions allowed
-
-
-            // TODO: How do this fail when value is not of type T?
-            // If an item is removed, it is removed according to RemovesFromBeginning
-            Ensures(!OldValue(Contains(value)) || this.IsSameSequenceAs(OldValue(this.SkipRange(RemovesFromBeginning ? IndexOf(value) : LastIndexOf((T) value), 1).ToList()))); // TODO: Is ToList needed?
-
-
-            return;
-        }
-
         public bool Remove(T item)
         {
             // No extra preconditions allowed
 
 
-            // If an item is removed, it is removed according to RemovesFromBeginning
-            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+            // Removes the last occurrence of the item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
 
 
             return default(bool);
@@ -1346,11 +1225,11 @@ namespace C6
             // No extra preconditions allowed
 
 
-            // If an item is removed, it is removed according to RemovesFromBeginning
-            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+            // If an item is removed, it is the last equal to item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
 
-            // The item removed is the first/last equal to item depending on the value of RemovesFromBeginning
-            Ensures(!Result<bool>() || ValueAtReturn(out removedItem).IsSameAs(OldValue(this[RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)])));
+            // The item removed is the last equal to item
+            Ensures(!Result<bool>() || ValueAtReturn(out removedItem).IsSameAs(OldValue(this[LastIndexOf(item)])));
 
 
             removedItem = default(T);
@@ -1363,7 +1242,7 @@ namespace C6
 
 
             //  
-            Ensures(false); // TODO: Write contract that uses RemovesFromBeginning
+            Ensures(false); // TODO: Write contract
 
 
             return default(bool);
@@ -1386,7 +1265,7 @@ namespace C6
 
 
             //  
-            Ensures(false); // TODO: Write contract that uses RemovesFromBeginning
+            Ensures(false); // TODO: Write contracts
 
 
             return default(bool);
@@ -1397,8 +1276,8 @@ namespace C6
             // No extra preconditions allowed
 
 
-            // If an item is updated, it is updated according to RemovesFromBeginning
-            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)).ToList()))); // TODO: Is ToList needed?
+            // Updates the last occurrence of the item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)).ToList()))); // TODO: Is ToList needed?
 
 
             return default(bool);
@@ -1409,11 +1288,11 @@ namespace C6
             // No extra preconditions allowed
 
 
-            // If an item is updated, it is updated according to RemovesFromBeginning
-            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)).ToList()))); // TODO: Is ToList needed?
+            // Updates the last occurrence of the item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)).ToList()))); // TODO: Is ToList needed?
 
-            // The item removed is the first/last equal to item depending on the value of RemovesFromBeginning
-            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)])));
+            // The item removed is the last equal to item
+            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[LastIndexOf(item)])));
 
 
             oldItem = default(T);
@@ -1425,8 +1304,8 @@ namespace C6
             // No extra preconditions allowed
 
 
-            // If an item is updated, it is updated according to RemovesFromBeginning
-            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
+            // If an item is updated, it is the last occurrence
+            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
 
 
             return default(bool);
@@ -1437,11 +1316,11 @@ namespace C6
             // No extra preconditions allowed
 
 
-            // If an item is updated, it is updated according to RemovesFromBeginning
-            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)).Append(item).Concat(this.Skip((RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
+            // If an item is updated, it is the last occurrence
+            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
 
-            // The item removed is the first/last equal to item depending on the value of RemovesFromBeginning
-            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[RemovesFromBeginning ? IndexOf(item) : LastIndexOf(item)])));
+            // The item removed is the last equal to item
+            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[LastIndexOf(item)])));
 
 
             oldItem = default(T);
@@ -1570,10 +1449,11 @@ namespace C6
         public abstract bool Contains(object value);
         public abstract int IndexOf(object value);
         public abstract void Insert(int index, object value);
+        public abstract void Remove(object value);
         void IList.RemoveAt(int index) {}
 
         #endregion
-
+        
         #region SCG.IList<T>
 
         void SCG.IList<T>.RemoveAt(int index) {}

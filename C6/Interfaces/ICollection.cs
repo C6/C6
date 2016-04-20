@@ -102,8 +102,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection
-        ///                 count.
+        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection count.
         ///             </description>
         ///         </item>
         ///         <item>
@@ -181,7 +180,7 @@ namespace C6
         ///     collection.
         /// </returns>
         /// <remarks>
-        ///         The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///     The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         /// </remarks>
         [Pure]
         int CountDuplicates(T item);
@@ -208,7 +207,8 @@ namespace C6
         ///     Returns all items in the collection that are equal to the specified item.
         /// </summary>
         /// <param name="item">
-        ///     The item whose duplicates to locate in the collection. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        ///     The item whose duplicates to locate in the collection. <c>null</c> is allowed, if
+        ///     <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <returns>
         ///     All items in the collection that are equal to the specified item.
@@ -303,16 +303,18 @@ namespace C6
         ///     <c>true</c>.
         /// </param>
         /// <returns>
-        ///     <c>true</c> if item was successfully removed from the collection; otherwise, <c>false</c> if item is not found in
-        ///     the original collection.
+        ///     <c>true</c> if item was removed from the collection; otherwise, <c>false</c> if item is not found in the original
+        ///     collection.
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         At most one item is removed, even if the collection has bag semantics. The collection's
+        ///         At most one item is removed, even if the collection allows duplicates, i.e.
+        ///         <see cref="IExtensible{T}.AllowsDuplicates"/> is <c>true</c>. If the collection contains duplicates, the item
+        ///         removed is the one that is most efficiently removed. The collection's
         ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
-        ///         If the item is removed, it raises the following events (in that order) with the collection as sender:
+        ///         If an item is removed, it raises the following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -344,11 +346,13 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         At most one item is removed, even if the collection has bag semantics. The collection's
+        ///         At most one item is removed, even if the collection allows duplicates, i.e.
+        ///         <see cref="IExtensible{T}.AllowsDuplicates"/> is <c>true</c>. If the collection contains duplicates, the item
+        ///         removed is the one that is most efficiently removed. The collection's
         ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
-        ///         If the item is removed, it raises the following events (in that order) with the collection as sender:
+        ///         If an item is removed, it raises the following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -379,7 +383,8 @@ namespace C6
         ///     <para>
         ///         If the collection allows duplicates, i.e. <see cref="IExtensible{T}.AllowsDuplicates"/>, the item multiplicity
         ///         of each item in the collection is reduced by (at most) the multiplicity of the item in <paramref name="items"/>
-        ///         . The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         . The items removed are the ones that are most efficiently removed. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
@@ -404,7 +409,6 @@ namespace C6
         bool RemoveRange(SCG.IEnumerable<T> items);
 
         // TODO: Reconsider rewriting event behavior documentation
-        // TODO: Should the order of removing items depend on RemovesFromBeginning?
         /// <summary>
         ///     Removes all occurrences of a specific item from the collection, if any.
         /// </summary>
@@ -475,10 +479,8 @@ namespace C6
         /// <remarks>
         ///     <para>
         ///         The items that remain in the collection are the intersection between the original collection and the specified
-        ///         collection.
-        ///     </para>
-        ///     <para>
-        ///         The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         collection. The items removed are the ones that are most efficiently removed. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
@@ -559,7 +561,8 @@ namespace C6
         ///     <para>
         ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
         ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         item updated is the one that is most efficiently updated. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the item is updated, and the collection has bag semantics and
@@ -574,8 +577,7 @@ namespace C6
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's
-        ///                     multiplicity.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's multiplicity.
         ///                 </description>
         ///             </item>
         ///             <item>
@@ -626,7 +628,8 @@ namespace C6
         ///     <para>
         ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
         ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         item updated is the one that is most efficiently updated. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the item is updated, and the collection has bag semantics and
@@ -641,8 +644,7 @@ namespace C6
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's
-        ///                     multiplicity.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's multiplicity.
         ///                 </description>
         ///             </item>
         ///             <item>
@@ -692,7 +694,8 @@ namespace C6
         ///     <para>
         ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
         ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         item updated is the one that is most efficiently updated. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the item is updated, and the collection has bag semantics and
@@ -707,8 +710,7 @@ namespace C6
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's
-        ///                     multiplicity.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's multiplicity.
         ///                 </description>
         ///             </item>
         ///             <item>
@@ -774,7 +776,8 @@ namespace C6
         ///     <para>
         ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
         ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         item updated is the one that is most efficiently updated. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
         ///     </para>
         ///     <para>
         ///         If the item is updated, and the collection has bag semantics and
@@ -789,8 +792,7 @@ namespace C6
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's
-        ///                     multiplicity.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of the item's multiplicity.
         ///                 </description>
         ///             </item>
         ///             <item>
@@ -1486,7 +1488,7 @@ namespace C6
         public abstract bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
 
         #endregion
-        
+
         #region ICollectionValue<T>
 
         public abstract bool AllowsNull { get; }

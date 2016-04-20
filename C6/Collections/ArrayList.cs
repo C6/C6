@@ -373,8 +373,8 @@ namespace C6
             Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
 
             #endregion
-
-            // TODO: Work based on RemovesFromBeginning
+            
+            // TODO: Remove last item
             var index = IndexOfPrivate(item);
 
             if (index >= 0) {
@@ -650,7 +650,6 @@ namespace C6
         private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
 
         // TODO: Inline in IndexOf
-        // TODO: Make version that works with RemovesFromBeginning
         [Pure]
         private int IndexOfPrivate(T item)
         {
@@ -718,8 +717,7 @@ namespace C6
 
             var shouldRememberItems = ActiveEvents.HasFlag(Removed);
             IExtensible<T> itemsRemoved = null;
-
-            // TODO: Respect RemovesFromBeginning
+            
             // TODO: Use bulk moves - consider using predicate(item) ^ something
             var j = 0;
             for (var i = 0; i < Count; i++) {
