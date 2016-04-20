@@ -934,16 +934,7 @@ namespace C6
             #endregion
 
             #region Properties
-
-            public EventTypes ActiveEvents
-            {
-                get {
-                    throw new NotImplementedException();
-                    CheckVersion();
-                    return None;
-                }
-            }
-
+            
             public bool AllowsNull
             {
                 get {
@@ -988,18 +979,7 @@ namespace C6
                     return _count == 0;
                 }
             }
-
-            // Let Count check version
-
-            public EventTypes ListenableEvents
-            {
-                get {
-                    throw new NotImplementedException();
-                    CheckVersion();
-                    return None;
-                }
-            }
-
+            
             #endregion
 
             #region Public Methods
@@ -1056,16 +1036,6 @@ namespace C6
                 CopyTo(array, 0);
                 return array;
             }
-
-            #endregion
-
-            #region Events
-
-            // Not used since Range does not have any listenable events
-            public event EventHandler CollectionChanged;
-            public event EventHandler<ClearedEventArgs> CollectionCleared;
-            public event EventHandler<ItemAtEventArgs<T>> ItemInserted , ItemRemovedAt;
-            public event EventHandler<ItemCountEventArgs<T>> ItemsAdded , ItemsRemoved;
 
             #endregion
 
