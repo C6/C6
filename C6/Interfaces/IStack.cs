@@ -51,17 +51,17 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>Count</c> - 1.
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of <c>Count</c> - 1.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -80,17 +80,17 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>Count</c> - 1.
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the item and an index of <c>Count</c> - 1.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -200,15 +200,20 @@ namespace C6
 
         #region ICollectionValue<T>
 
-        public abstract EventTypes ActiveEvents { get; }
         public abstract bool AllowsNull { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
-        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();
+
+        #endregion
+
+        #region IListenable<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
@@ -218,15 +223,9 @@ namespace C6
 
         #endregion
 
-        #region IDirectedEnumerable<T>
-
-        public abstract EnumerationDirection Direction { get; }
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => default(IDirectedEnumerable<T>);
-
-        #endregion
-
         #region IDirectedCollectionValue<T>
 
+        public abstract EnumerationDirection Direction { get; }
         public abstract IDirectedCollectionValue<T> Backwards();
 
         #endregion

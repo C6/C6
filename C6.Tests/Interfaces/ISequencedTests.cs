@@ -32,9 +32,6 @@ namespace C6.Tests
         private IDirectedCollectionValue<T> GetDirectedCollectionValue<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
             => GetSequence(enumerable, equalityComparer, allowsNull);
 
-        protected IDirectedEnumerable<T> GetEmptyDirectedEnumerable<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
-            => GetEmptySequence(equalityComparer, allowsNull);
-
         #region Helpers
 
         private ISequenced<int> GetIntSequence(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
@@ -48,13 +45,7 @@ namespace C6.Tests
 
         private ISequenced<string> GetStringSequence(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetSequence(GetStrings(random, count), equalityComparer, allowsNull);
-
-        private IDirectedEnumerable<string> GetStringDirectedEnumerable(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
-            => GetSequence(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
-
-        private IDirectedEnumerable<string> GetStringDirectedEnumerable(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
-            => GetSequence(GetStrings(random, count), equalityComparer, allowsNull);
-
+        
         private IDirectedCollectionValue<string> GetStringDirectedCollectionValue(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetSequence(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
@@ -75,7 +66,7 @@ namespace C6.Tests
 
         #region Test Methods
 
-        #region IDirectedEnumerable<T>
+        #region IDirectedCollectionValue<T>
 
         #region Properties
 
@@ -85,10 +76,10 @@ namespace C6.Tests
         public void Direction_EmptyCollection_Forwards()
         {
             // Arrange
-            var directedEnumerable = GetEmptyDirectedEnumerable<string>();
+            var directedCollectionValue = GetEmptyDirectedCollectionValue<string>();
 
             // Act
-            var direction = directedEnumerable.Direction;
+            var direction = directedCollectionValue.Direction;
 
             // Assert
             Assert.That(direction, Is.EqualTo(Forwards));
@@ -98,10 +89,10 @@ namespace C6.Tests
         public void Direction_RandomCollection_Forwards()
         {
             // Arrange
-            var directedEnumerable = GetStringDirectedEnumerable(Random);
+            var directedCollectionValue = GetStringDirectedCollectionValue(Random);
 
             // Act
-            var direction = directedEnumerable.Direction;
+            var direction = directedCollectionValue.Direction;
 
             // Assert
             Assert.That(direction, Is.EqualTo(Forwards));
@@ -110,10 +101,6 @@ namespace C6.Tests
         #endregion
 
         #endregion
-
-        #endregion
-
-        #region IDirectedCollectionValue<T>
 
         #endregion
 

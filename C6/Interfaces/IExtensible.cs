@@ -25,7 +25,7 @@ namespace C6
     ///     The type of the items in the collection.
     /// </typeparam>
     [ContractClass(typeof(IExtensibleContract<>))]
-    public interface IExtensible<T> : ICollectionValue<T>
+    public interface IExtensible<T> : IListenable<T>
     {
         // TODO: Which one does it use, when there is a IComparer as well?!
         /// <summary>
@@ -119,12 +119,12 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsAdded"/> with the added item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the added item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -152,7 +152,7 @@ namespace C6
         ///         This is equivalent to <c>
         ///             foreach (var item in items) { Add(item); }
         ///         </c>, but might be more efficient and it only raises the event
-        ///         <see cref="ICollectionValue{T}.CollectionChanged"/> once.
+        ///         <see cref="IListenable{T}.CollectionChanged"/> once.
         ///     </para>
         ///     <para>
         ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
@@ -162,13 +162,13 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsAdded"/> once for each item added (using a count of one) in
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> once for each item added (using a count of one) in
         ///                     enumeration order.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/> once at the end.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/> once at the end.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -348,15 +348,20 @@ namespace C6
 
         #region ICollectionValue<T>
 
-        public abstract EventTypes ActiveEvents { get; }
         public abstract bool AllowsNull { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
-        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();
+
+        #endregion
+
+        #region IListenable<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;

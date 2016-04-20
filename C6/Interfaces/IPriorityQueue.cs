@@ -72,17 +72,17 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the old item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the old item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsAdded"/> with the new item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the new item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -119,12 +119,12 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -224,12 +224,12 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -247,12 +247,12 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the least item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the least item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -273,12 +273,12 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the least item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the least item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -296,12 +296,12 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the largest item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the largest item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -346,17 +346,17 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsRemoved"/> with the old item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the old item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsAdded"/> with the new item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the new item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
         ///                 </description>
         ///             </item>
         ///         </list>

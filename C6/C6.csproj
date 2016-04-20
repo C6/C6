@@ -257,6 +257,7 @@
     <Compile Include="Exceptions\ExceptionMessages.cs" />
     <Compile Include="Exceptions\InvalidPriorityQueueHandleException.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Interfaces\IListenable.cs" />
     <Compile Include="SequencedEqualityComparer.cs" />
     <Compile Include="UnsequencedEqualityComparer.cs" />
     <Compile Include="Interfaces\ICollection.cs" />
@@ -267,7 +268,6 @@
     <Compile Include="Interfaces\ISequenced.cs" />
     <Compile Include="Interfaces\IStack.cs" />
     <Compile Include="Interfaces\IDirectedCollectionValue.cs" />
-    <Compile Include="Interfaces\IDirectedEnumerable.cs" />
     <Compile Include="Interfaces\IExtensible.cs" />
     <Compile Include="Interfaces\IPriorityQueue.cs" />
     <Compile Include="Interfaces\IQueue.cs" />

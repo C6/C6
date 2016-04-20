@@ -14,8 +14,8 @@ using static C6.Contracts.ContractMessage;
 namespace C6
 {
     /// <summary>
-    ///     Provides data for the <see cref="ICollectionValue{T}.ItemInserted"/> event and the
-    ///     <see cref="ICollectionValue{T}.ItemRemovedAt"/> event.
+    ///     Provides data for the <see cref="IListenable{T}.ItemInserted"/> event and the
+    ///     <see cref="IListenable{T}.ItemRemovedAt"/> event.
     /// </summary>
     /// <typeparam name="T">
     ///     The type of the items in the collection.

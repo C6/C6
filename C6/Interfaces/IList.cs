@@ -126,27 +126,27 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the removed item and the index.
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the removed item and the index.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the inserted item and the index.
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the inserted item and the index.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsAdded"/> with the inserted item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the inserted item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -167,13 +167,13 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionCleared"/> as full and with count equal to the collection
+        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection
         ///                 count.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -235,17 +235,17 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemInserted"/> with the inserted item and the index.
+        ///                     <see cref="IListenable{T}.ItemInserted"/> with the inserted item and the index.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -272,18 +272,18 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemInserted"/> once for each item and the index at which is was
+        ///                     <see cref="IListenable{T}.ItemInserted"/> once for each item and the index at which is was
         ///                     inserted.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsAdded"/> once for each item added (using a count of one).
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> once for each item added (using a count of one).
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/> once at the end.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/> once at the end.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -303,17 +303,17 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of zero.
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the item and an index of zero.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -332,17 +332,17 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an index of <c>Count</c>.
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the item and an index of <c>Count</c>.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -457,19 +457,19 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of either zero if
+        ///                     <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of either zero if
         ///                     <see cref="RemovesFromBeginning"/> is <c>true</c>, or <c>Count</c> - 1 if
         ///                     <see cref="RemovesFromBeginning"/> is <c>false</c>.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -492,17 +492,17 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the removed item and the index.
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the removed item and the index.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
         ///             </description>
         ///         </item>
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -525,17 +525,17 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of zero.
+        ///                     <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of zero.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -559,17 +559,17 @@ namespace C6
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and an index of <c>Count</c> - 1.
+        ///                     <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of <c>Count</c> - 1.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
         ///                 </description>
         ///             </item>
         ///             <item>
         ///                 <description>
-        ///                     <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
         ///                 </description>
         ///             </item>
         ///         </list>
@@ -585,7 +585,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -600,7 +600,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -616,7 +616,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -636,7 +636,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -664,7 +664,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -686,7 +686,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="ICollectionValue{T}.CollectionChanged"/>.
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
         ///             </description>
         ///         </item>
         ///     </list>
@@ -1470,13 +1470,18 @@ namespace C6
 
         #region ICollectionValue<T>
 
-        public abstract EventTypes ActiveEvents { get; }
         public abstract bool AllowsNull { get; }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
-        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract T[] ToArray();
+
+        #endregion
+
+        #region IListenable<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
@@ -1486,15 +1491,9 @@ namespace C6
 
         #endregion
 
-        #region IDirectedEnumerable<T>
-
-        public abstract EnumerationDirection Direction { get; }
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => default(IDirectedEnumerable<T>);
-
-        #endregion
-
         #region IDirectedCollectionValue<T>
 
+        public abstract EnumerationDirection Direction { get; }
         public abstract IDirectedCollectionValue<T> Backwards();
 
         #endregion

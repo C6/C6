@@ -151,6 +151,7 @@
     <Compile Include="Helpers\BadEnumerable.cs" />
     <Compile Include="Helpers\Run.cs" />
     <Compile Include="Helpers\TenEqualityComparer.cs" />
+    <Compile Include="Interfaces\IListenableTests.cs" />
     <Compile Include="Interfaces\ISequencedTests.cs" />
     <Compile Include="Interfaces\ICollectionValueTests.cs" />
     <Compile Include="Interfaces\IEnumerableTests.cs" />
