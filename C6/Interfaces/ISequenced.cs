@@ -202,8 +202,8 @@ namespace C6
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         public abstract bool Remove(T item);
         public abstract bool Remove(T item, out T removedItem);
-        public abstract bool RemoveRange(SCG.IEnumerable<T> items);
         public abstract bool RemoveDuplicates(T item);
+        public abstract bool RemoveRange(SCG.IEnumerable<T> items);
         public abstract bool RetainRange(SCG.IEnumerable<T> items);
         public abstract ICollectionValue<T> UniqueItems();
         public abstract bool UnsequencedEquals(ICollection<T> otherCollection);

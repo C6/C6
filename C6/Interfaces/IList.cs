@@ -229,44 +229,6 @@ namespace C6
         new void Insert(int index, T item);
 
         /// <summary>
-        ///     Inserts the items into the list starting at the specified index.
-        /// </summary>
-        /// <param name="index">
-        ///     The zero-based index at which the new items should be inserted.
-        /// </param>
-        /// <param name="items">
-        ///     The enumerable whose items should be inserted into the list. The enumerable itself cannot be <c>null</c>, but its
-        ///     items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
-        /// </param>
-        /// <remarks>
-        ///     <para>
-        ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
-        ///     </para>
-        ///     <para>
-        ///         Raises the following events (in that order) with the collection as sender:
-        ///         <list type="bullet">
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemInserted"/> once for each item and the index at which is was
-        ///                     inserted.
-        ///                 </description>
-        ///             </item>
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemsAdded"/> once for each item added (using a count of one).
-        ///                 </description>
-        ///             </item>
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.CollectionChanged"/> once at the end.
-        ///                 </description>
-        ///             </item>
-        ///         </list>
-        ///     </para>
-        /// </remarks>
-        void InsertRange(int index, SCG.IEnumerable<T> items);
-
-        /// <summary>
         ///     Inserts an item at the beginning of the list.
         /// </summary>
         /// <param name="item">
@@ -323,6 +285,44 @@ namespace C6
         ///     </list>
         /// </remarks>
         void InsertLast(T item);
+
+        /// <summary>
+        ///     Inserts the items into the list starting at the specified index.
+        /// </summary>
+        /// <param name="index">
+        ///     The zero-based index at which the new items should be inserted.
+        /// </param>
+        /// <param name="items">
+        ///     The enumerable whose items should be inserted into the list. The enumerable itself cannot be <c>null</c>, but its
+        ///     items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
+        /// <remarks>
+        ///     <para>
+        ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
+        ///     </para>
+        ///     <para>
+        ///         Raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemInserted"/> once for each item and the index at which is was
+        ///                     inserted.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> once for each item added (using a count of one).
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/> once at the end.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
+        void InsertRange(int index, SCG.IEnumerable<T> items);
 
         /// <summary>
         ///     Determines whether the list is sorted in non-descending order according to the default comparer.
@@ -815,38 +815,6 @@ namespace C6
             return;
         }
 
-        public void InsertRange(int index, SCG.IEnumerable<T> items)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
-
-            // Argument must be within bounds
-            Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
-
-            // Argument must be non-null
-            Requires(items != null, ArgumentMustBeNonNull);
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
-
-            // Collection must not already contain the items if collection disallows duplicate values
-            Requires(AllowsDuplicates || ForAll(this, item => !Contains(item)), CollectionMustAllowDuplicates);
-
-
-            // The items are inserted into the list without replacing other items
-            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Concat(items).Concat(this.Skip(index)).ToList())));
-
-            // Collection doesn't change if enumerator throws an exception
-            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
-
-
-            return;
-        }
-
         public void InsertFirst(T item)
         {
             // Collection must be non-read-only
@@ -910,6 +878,38 @@ namespace C6
 
             // The item is added to the end
             Ensures(item.IsSameAs(Last));
+
+
+            return;
+        }
+
+        public void InsertRange(int index, SCG.IEnumerable<T> items)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
+            // Argument must be within bounds
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index < Count, ArgumentMustBeWithinBounds);
+
+            // Argument must be non-null
+            Requires(items != null, ArgumentMustBeNonNull);
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
+
+            // Collection must not already contain the items if collection disallows duplicate values
+            Requires(AllowsDuplicates || ForAll(this, item => !Contains(item)), CollectionMustAllowDuplicates);
+
+
+            // The items are inserted into the list without replacing other items
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Concat(items).Concat(this.Skip(index)).ToList())));
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             return;
@@ -1236,17 +1236,6 @@ namespace C6
             return default(bool);
         }
 
-        public bool RemoveRange(SCG.IEnumerable<T> items)
-        {
-            // No extra preconditions allowed
-
-
-            //  
-            Ensures(false); // TODO: Write contract
-
-
-            return default(bool);
-        }
         public bool RemoveDuplicates(T item)
         {
             // No extra preconditions allowed
@@ -1254,6 +1243,18 @@ namespace C6
 
             // The list is the same as the old collection without item
             Ensures(this.IsSameSequenceAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
+
+
+            return default(bool);
+        }
+
+        public bool RemoveRange(SCG.IEnumerable<T> items)
+        {
+            // No extra preconditions allowed
+
+
+            //  
+            Ensures(false); // TODO: Write contract
 
 
             return default(bool);

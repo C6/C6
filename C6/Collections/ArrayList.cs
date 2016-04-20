@@ -388,6 +388,8 @@ namespace C6
             return false;
         }
 
+        public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
+
         public bool RemoveRange(SCG.IEnumerable<T> items)
         {
             if (IsEmpty || items.IsEmpty()) {
@@ -398,8 +400,6 @@ namespace C6
             var itemsToRemove = new ArrayList<T>(items, EqualityComparer, AllowsNull);
             return RemoveAllWhere(item => itemsToRemove.Remove(item));
         }
-
-        public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
 
         public bool RetainRange(SCG.IEnumerable<T> items)
         {

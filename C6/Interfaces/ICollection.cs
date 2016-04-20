@@ -369,45 +369,6 @@ namespace C6
         /// </remarks>
         bool Remove(T item, out T removedItem);
 
-        /// <summary>
-        ///     Removes each item of the specified enumerable from the collection, if possible, in enumeration order.
-        /// </summary>
-        /// <param name="items">
-        ///     The enumerable whose items should be removed from the collection. The enumerable itself cannot be <c>null</c>, but
-        ///     its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
-        /// </param>
-        /// <returns>
-        ///     <c>true</c> if any items were removed from the collection; <c>false</c> if collection was unchanged.
-        /// </returns>
-        /// <remarks>
-        ///     <para>
-        ///         If the collection allows duplicates, i.e. <see cref="IExtensible{T}.AllowsDuplicates"/>, the item multiplicity
-        ///         of each item in the collection is reduced by (at most) the multiplicity of the item in <paramref name="items"/>
-        ///         . The items removed are the ones that are most efficiently removed. The collection's
-        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
-        ///     </para>
-        ///     <para>
-        ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
-        ///     </para>
-        ///     <para>
-        ///         If any items are removed, it raises the following events (in that order) with the collection as sender:
-        ///         <list type="bullet">
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.ItemsRemoved"/> once for each item removed (using a count of one).
-        ///                 </description>
-        ///             </item>
-        ///             <item>
-        ///                 <description>
-        ///                     <see cref="IListenable{T}.CollectionChanged"/> once at the end.
-        ///                 </description>
-        ///             </item>
-        ///         </list>
-        ///     </para>
-        /// </remarks>
-        /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
-        bool RemoveRange(SCG.IEnumerable<T> items);
-
         // TODO: Reconsider rewriting event behavior documentation
         /// <summary>
         ///     Removes all occurrences of a specific item from the collection, if any.
@@ -463,6 +424,45 @@ namespace C6
         ///     </para>
         /// </remarks>
         bool RemoveDuplicates(T item);
+
+        /// <summary>
+        ///     Removes each item of the specified enumerable from the collection, if possible, in enumeration order.
+        /// </summary>
+        /// <param name="items">
+        ///     The enumerable whose items should be removed from the collection. The enumerable itself cannot be <c>null</c>, but
+        ///     its items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if any items were removed from the collection; <c>false</c> if collection was unchanged.
+        /// </returns>
+        /// <remarks>
+        ///     <para>
+        ///         If the collection allows duplicates, i.e. <see cref="IExtensible{T}.AllowsDuplicates"/>, the item multiplicity
+        ///         of each item in the collection is reduced by (at most) the multiplicity of the item in <paramref name="items"/>
+        ///         . The items removed are the ones that are most efficiently removed. The collection's
+        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///     </para>
+        ///     <para>
+        ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
+        ///     </para>
+        ///     <para>
+        ///         If any items are removed, it raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> once for each item removed (using a count of one).
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/> once at the end.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
+        /// <seealso cref="IIndexed{T}.RemoveIndexRange"/>
+        bool RemoveRange(SCG.IEnumerable<T> items);
 
         /// <summary>
         ///     Removes the items of the current collection that do not exist in the specified <see cref="SCG.IEnumerable{T}"/>. If
@@ -1168,6 +1168,40 @@ namespace C6
             return default(bool);
         }
 
+        public bool RemoveDuplicates(T item)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+
+            // Returns true if the collection contained the item
+            Ensures(Result<bool>() == OldValue(Contains(item)));
+
+            // Removing all instances of an item decreases the count by its multiplicity
+            Ensures(Count == OldValue(Count - CountDuplicates(item)));
+
+            // Removing the item decreases the number of equal items to zero
+            Ensures(CountDuplicates(item) == 0);
+
+            // The collection no longer contains the item
+            Ensures(!Contains(item));
+
+            // The collection is equal to the old collection without item
+            Ensures(this.HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
+
+
+            return default(bool);
+        }
+
         public bool RemoveRange(SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
@@ -1202,40 +1236,6 @@ namespace C6
 
             // If the collection contains all items, then the count decreases accordingly
             Ensures(!ContainsRange(items) || Count == OldValue(Count) - items.Count());
-
-
-            return default(bool);
-        }
-
-        public bool RemoveDuplicates(T item)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
-
-
-            // Returns true if the collection contained the item
-            Ensures(Result<bool>() == OldValue(Contains(item)));
-
-            // Removing all instances of an item decreases the count by its multiplicity
-            Ensures(Count == OldValue(Count - CountDuplicates(item)));
-
-            // Removing the item decreases the number of equal items to zero
-            Ensures(CountDuplicates(item) == 0);
-
-            // The collection no longer contains the item
-            Ensures(!Contains(item));
-
-            // The collection is equal to the old collection without item
-            Ensures(this.HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
-
-            // If result is false, the collection remains unchanged
-            Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             return default(bool);
