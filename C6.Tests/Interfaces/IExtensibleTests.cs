@@ -267,7 +267,6 @@ namespace C6.Tests
             var item = GetLowercaseString(Random);
             var expectedEvents = new[] {
                 Added(item, 1, collection),
-                Changed(collection)
             };
 
             // Act & Assert
@@ -447,13 +446,11 @@ namespace C6.Tests
                     Added(item2, 1, collection),
                     Added(item1, 1, collection),
                     Added(item3, 1, collection),
-                    Changed(collection)
                 }
                 : new[] {
                     Added(item1, 1, collection),
                     Added(item2, 1, collection),
                     Added(item3, 1, collection),
-                    Changed(collection)
                 };
 
             // Act & Assert

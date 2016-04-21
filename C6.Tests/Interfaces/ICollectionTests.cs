@@ -145,7 +145,6 @@ namespace C6.Tests
             var collection = GetCollection(items);
             var expectedEvents = new[] {
                 Cleared(true, count, null, collection),
-                Changed(collection),
             };
 
             // Act & Assert
@@ -884,7 +883,6 @@ namespace C6.Tests
             var collection = GetCollection(items);
             var expectedEvents = new[] {
                 Added(item, 1, collection),
-                Changed(collection),
             };
 
             // Act & Assert
@@ -1129,7 +1127,6 @@ namespace C6.Tests
             var item = existingItem.ToLower();
             var expectedEvents = new[] {
                 Removed(existingItem, 1, collection),
-                Changed(collection),
             };
 
             // Act & Assert
@@ -1296,7 +1293,6 @@ namespace C6.Tests
             string removedItem;
             var expectedEvents = new[] {
                 Removed(existingItem, 1, collection),
-                Changed(collection),
             };
 
             // Act & Assert
@@ -1668,7 +1664,7 @@ namespace C6.Tests
             var itemsToRemove = GetStrings(Random).Concat(overlappingItems).ShuffledCopy(Random);
             var expectedEvents = new[] {
                 // TODO: Add missing events
-                Changed(collection),
+                Removed(null, 1, collection),
             };
 
             // Act & Assert
@@ -1750,11 +1746,8 @@ namespace C6.Tests
             var collection = GetCollection(items);
             var eventCount = AllowsDuplicates ? count : 1;
             var expectedEvents = DuplicatesByCounting
-                ? new[] {
-                    Removed(item, eventCount, collection),
-                    Changed(collection),
-                }
-                : Removed(item, 1, collection).Repeat(eventCount).Append(Changed(collection)).ToArray();
+                ? new[] { Removed(item, eventCount, collection) }
+                : Removed(item, 1, collection).Repeat(eventCount);
 
             // Act & Assert
             Assert.That(() => collection.RemoveDuplicates(item), Raises(expectedEvents).For(collection));
@@ -1958,7 +1951,7 @@ namespace C6.Tests
             var itemsToRemove = Enumerable.Empty<string>();
             var expectedEvents = new[] {
                 // TODO: Add events
-                Changed(collection),
+                Removed(null, 1, collection),
             };
 
             // Act & Assert
@@ -2016,7 +2009,7 @@ namespace C6.Tests
             var newItems = GetLowercaseStrings(Random);
             var expectedEvents = new[] {
                 // TODO: Add events
-                Changed(collection),
+                Removed(null, 1, collection),
             };
 
             // Act & Assert
@@ -2117,7 +2110,7 @@ namespace C6.Tests
             var itemsToRetain = GetStrings(Random).Concat(overlappingItems).ShuffledCopy(Random);
             var expectedEvents = new[] {
                 // TODO: Add missing events
-                Changed(collection),
+                Removed(null, 1, collection),
             };
 
             // Act & Assert
@@ -2427,7 +2420,6 @@ namespace C6.Tests
             var expectedEvents = new[] {
                 Removed(oldItem, 1, collection),
                 Added(item, 1, collection),
-                Changed(collection),
             };
 
             // Act & Assert
@@ -2445,7 +2437,6 @@ namespace C6.Tests
             var expectedEvents = new[] {
                 Removed(54, count, collection),
                 Added(item, count, collection),
-                Changed(collection)
             };
 
             // Act & Assert
@@ -2644,7 +2635,6 @@ namespace C6.Tests
             var expectedEvents = new[] {
                 Removed(item, eventCount, collection),
                 Added(duplicateItem, eventCount, collection),
-                Changed(collection)
             };
 
             // Act & Assert
@@ -2819,7 +2809,6 @@ namespace C6.Tests
             var expectedEvents = new[] {
                 Removed(oldItem, 1, collection),
                 Added(item, 1, collection),
-                Changed(collection),
             };
 
             // Act & Assert
@@ -2837,7 +2826,6 @@ namespace C6.Tests
             var expectedEvents = new[] {
                 Removed(54, count, collection),
                 Added(item, count, collection),
-                Changed(collection)
             };
 
             // Act & Assert
@@ -2853,7 +2841,6 @@ namespace C6.Tests
             var item = GetLowercaseString(Random);
             var expectedEvents = new[] {
                 Added(item, 1, collection),
-                Changed(collection)
             };
 
             // Act & Assert
@@ -3042,7 +3029,6 @@ namespace C6.Tests
             var expectedEvents = new[] {
                 Removed(existingItem, 1, collection),
                 Added(item, 1, collection),
-                Changed(collection),
             };
 
             // Act & Assert
@@ -3061,7 +3047,6 @@ namespace C6.Tests
             var expectedEvents = new[] {
                 Removed(54, count, collection),
                 Added(item, count, collection),
-                Changed(collection)
             };
 
             // Act & Assert
@@ -3078,7 +3063,6 @@ namespace C6.Tests
             string oldItem;
             var expectedEvents = new[] {
                 Added(item, 1, collection),
-                Changed(collection)
             };
 
             // Act & Assert

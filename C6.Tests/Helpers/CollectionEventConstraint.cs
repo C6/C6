@@ -22,7 +22,7 @@ namespace C6.Tests.Helpers
         public CollectionEventConstraint(IListenable<T> collection, CollectionEvent<T>[] expectedEvents)
         {
             _collection = collection;
-            _expectedEvents = expectedEvents;
+            _expectedEvents = !expectedEvents.IsEmpty() ? expectedEvents.Append(CollectionEvent.Changed(collection)) : expectedEvents;
 
             _actualEvents = new SCG.List<CollectionEvent<T>>(); // TODO: Change to C5.ArrayList<T>
 
