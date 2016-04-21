@@ -266,7 +266,7 @@ namespace C6.Tests
         protected override bool IsReadOnly => false;
         protected override Speed ContainsSpeed => Speed.Linear;
 
-        protected override Speed IndexingSpeed { get; }
+        protected override Speed IndexingSpeed => Speed.Constant;
 
         protected override IIndexed<T> GetEmptyIndexed<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
 
