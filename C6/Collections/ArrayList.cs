@@ -237,7 +237,7 @@ namespace C6
             RaiseForClear(oldCount);
         }
 
-        public bool Contains(T item) => IndexOfPrivate(item) >= 0;
+        public bool Contains(T item) => IndexOf(item) >= 0;
 
         public bool ContainsRange(SCG.IEnumerable<T> items)
         {
@@ -268,7 +268,7 @@ namespace C6
 
         public bool Find(ref T item)
         {
-            var index = IndexOfPrivate(item);
+            var index = IndexOf(item);
 
             if (index >= 0) {
                 item = _items[index];
@@ -337,10 +337,30 @@ namespace C6
 
             return _unsequencedHashCode;
         }
-
+        
+        [Pure]
         public int IndexOf(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.IndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.Skip(Result<int>()).First()));
+
+            #endregion
+
+            for (var i = 0; i < Count; i++) {
+                if (Equals(item, _items[i])) {
+                    return i;
+                }
+            }
+
+            return ~Count;
         }
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
@@ -397,7 +417,7 @@ namespace C6
             #endregion
 
             // TODO: Remove last item
-            var index = IndexOfPrivate(item);
+            var index = IndexOf(item);
 
             if (index >= 0) {
                 UpdateVersion();
@@ -491,7 +511,7 @@ namespace C6
 
             #endregion
 
-            var index = IndexOfPrivate(item);
+            var index = IndexOf(item);
 
             if (index >= 0) {
                 // Only update version if item is actually updated
@@ -680,36 +700,6 @@ namespace C6
 
         [Pure]
         private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
-
-        // TODO: Inline in IndexOf
-        [Pure]
-        private int IndexOfPrivate(T item)
-        {
-            #region Code Contracts
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
-
-
-            // TODO: Add contract to IList<T>.IndexOf
-            // Result is a valid index
-            Ensures(Contains(item)
-                ? 0 <= Result<int>() && Result<int>() < Count
-                : ~Result<int>() == Count);
-
-            // Item at index is the first equal to item
-            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.Skip(Result<int>()).First()));
-
-            #endregion
-
-            for (var i = 0; i < Count; i++) {
-                if (Equals(item, _items[i])) {
-                    return i;
-                }
-            }
-
-            return ~Count;
-        }
 
         // TODO: Rename?
         private void InsertPrivate(int index, T item)
