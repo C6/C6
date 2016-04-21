@@ -22,7 +22,7 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     [Serializable]
-    public class ArrayList<T> : ISequenced<T>
+    public class ArrayList<T> : IIndexed<T>
     {
         #region Fields
 
@@ -150,6 +150,11 @@ namespace C6
 
         public SCG.IEqualityComparer<T> EqualityComparer { get; }
 
+        public Speed IndexingSpeed
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public bool IsEmpty => Count == 0;
 
         public bool IsFixedSize => false;
@@ -157,6 +162,11 @@ namespace C6
         public bool IsReadOnly => false;
 
         public EventTypes ListenableEvents => All;
+
+        public T this[int index]
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         #endregion
 
@@ -304,6 +314,11 @@ namespace C6
             }
         }
 
+        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
+        {
+            throw new NotImplementedException();
+        }
+
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public int GetSequencedHashCode()
         {
@@ -324,6 +339,11 @@ namespace C6
             }
 
             return _unsequencedHashCode;
+        }
+
+        public int IndexOf(T item)
+        {
+            throw new NotImplementedException();
         }
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
@@ -352,6 +372,11 @@ namespace C6
             return new ArrayList<KeyValuePair<T, int>>(dictionary.Select(kvp => new KeyValuePair<T, int>(kvp.Key, kvp.Value)), equalityComparer);
         }
 
+        public int LastIndexOf(T item)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Remove(T item)
         {
             #region Code Contracts
@@ -373,13 +398,13 @@ namespace C6
             Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
 
             #endregion
-            
+
             // TODO: Remove last item
             var index = IndexOfPrivate(item);
 
             if (index >= 0) {
                 UpdateVersion();
-                removedItem = RemoveAt(index);
+                removedItem = RemoveAtPrivate(index);
                 RaiseForRemove(removedItem);
                 return true;
             }
@@ -388,7 +413,17 @@ namespace C6
             return false;
         }
 
+        public T RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
+
+        public void RemoveIndexRange(int startIndex, int count)
+        {
+            throw new NotImplementedException();
+        }
 
         public bool RemoveRange(SCG.IEnumerable<T> items)
         {
@@ -717,7 +752,7 @@ namespace C6
 
             var shouldRememberItems = ActiveEvents.HasFlag(Removed);
             IExtensible<T> itemsRemoved = null;
-            
+
             // TODO: Use bulk moves - consider using predicate(item) ^ something
             var j = 0;
             for (var i = 0; i < Count; i++) {
@@ -753,7 +788,7 @@ namespace C6
             return true;
         }
 
-        private T RemoveAt(int index)
+        private T RemoveAtPrivate(int index)
         {
             var item = _items[index];
 

@@ -1,23 +1,21 @@
-﻿using NUnit.Framework;
-using System;
-using System.Linq;
-
-using C6.Tests.Helpers;
+﻿// This file is part of the C6 Generic Collection Library for C# and CLI
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
-using static C6.EnumerationDirection;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
-namespace C6.Tests.Interfaces
+
+
+namespace C6.Tests
 {
     [TestFixture]
     public abstract class IIndexedTests : ISequencedTests
     {
         #region Factories
-    
+
         protected abstract Speed IndexingSpeed { get; }
 
         protected abstract IIndexed<T> GetEmptyIndexed<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
@@ -37,6 +35,29 @@ namespace C6.Tests.Interfaces
 
         #endregion
 
+        #region Test Methods
 
+        #region Properties
+
+        [Test]
+        public void IndexingSpeed_RandomCollection_IndexingSpeed()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+
+            // Act
+            var indexingSpeed = collection.IndexingSpeed;
+
+            // Assert
+            Assert.That(indexingSpeed, Is.EqualTo(IndexingSpeed));
+        }
+
+        #endregion
+
+        #region Methods
+
+        #endregion
+
+        #endregion
     }
 }
