@@ -1,6 +1,8 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
+using System.Linq;
+
 using C6.Tests.Contracts;
 
 using NUnit.Framework;
@@ -42,6 +44,8 @@ namespace C6.Tests
 
         #region Properties
 
+        #region IndexingSpeed
+
         [Test]
         public void IndexingSpeed_RandomCollection_IndexingSpeed()
         {
@@ -54,6 +58,116 @@ namespace C6.Tests
             // Assert
             Assert.That(indexingSpeed, Is.EqualTo(IndexingSpeed));
         }
+
+        #endregion
+
+        #region this[int]
+
+        [Test]
+        public void Item_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = Random.Next(int.MinValue, 0);
+
+            // Act & Assert
+            Assert.That(() => collection[index], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void Item_IndexOfCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = collection.Count;
+
+            // Act & Assert
+            Assert.That(() => collection[index], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void Item_IndexLargerThanCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = collection.Count;
+            var index = Random.Next(count + 1, int.MaxValue);
+            
+            // Act & Assert
+            Assert.That(() => collection[index], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void Item_EmptyCollection_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetEmptyIndexed<string>();
+            
+            // Act & Assert
+            Assert.That(() => collection[0], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void Item_RandomCollectionWithNull_Null()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetIndexed(items, allowsNull: true);
+            var index = collection.ToArray().IndexOf(null);
+
+            // Act
+            var item = collection[index];
+
+            // Act & Assert
+            Assert.That(item, Is.Null);
+        }
+
+        [Test]
+        public void Item_RandomCollectionIndexZero_FirstItem()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var first = collection.First();
+
+            // Act
+            var item = collection[0];
+
+            // Assert
+            Assert.That(item, Is.SameAs(first));
+        }
+
+        [Test]
+        public void Item_RandomCollectionIndexCountMinusOne_LastItem()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var last = collection.Last();
+            var count = collection.Count;
+
+            // Act
+            var item = collection[count - 1];
+
+            // Assert
+            Assert.That(item, Is.SameAs(last));
+        }
+
+        [Test]
+        public void Item_RandomCollectionRandomIndex_ItemAtPositionIndex()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var array = collection.ToArray();
+            var index = Random.Next(0, array.Length);
+
+            // Act
+            var item = collection[index];
+
+            // Assert
+            Assert.That(item, Is.SameAs(array[index]));
+        }
+
+        #endregion
+
 
         #endregion
 
@@ -163,6 +277,23 @@ namespace C6.Tests
 
             // Assert
             Assert.That(indexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void IndexOf_RandomCollectionNewItem_GetsTildeIndex()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetIndexed(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var expectedIndex = ~collection.IndexOf(item);
+            collection.Add(item);
+            var indexOf = collection.IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(expectedIndex));
         }
 
         #endregion

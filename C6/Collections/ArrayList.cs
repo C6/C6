@@ -160,10 +160,7 @@ namespace C6
 
         public EventTypes ListenableEvents => All;
 
-        public T this[int index]
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public T this[int index] => _items[index];
 
         #endregion
 
@@ -250,7 +247,6 @@ namespace C6
             }
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
-            // TODO: use aux hash bag to obtain linear time procedure (old comment)
             var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
 
             foreach (var item in this) {
