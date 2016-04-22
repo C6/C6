@@ -173,6 +173,145 @@ namespace C6.Tests
 
         #region Methods
 
+        #region GetIndexRange(int, int)
+
+        [Test]
+        public void GetIndexRange_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(int.MinValue, 0);
+            var count = collection.Count / 2;
+
+            // Act & Assert
+            Assert.That(() => collection.GetIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void GetIndexRange_IndexOfCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = collection.Count;
+            var count = collection.Count / 2;
+
+            // Act & Assert
+            Assert.That(() => collection.GetIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void GetIndexRange_IndexLargerThanCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(collection.Count + 1, int.MaxValue);
+            var count = collection.Count / 2;
+
+            // Act & Assert
+            Assert.That(() => collection.GetIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void GetIndexRange_NegativeCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = collection.Count / 2;
+            var startIndex = Random.Next(0, count);
+
+            // Act & Assert
+            Assert.That(() => collection.GetIndexRange(startIndex, -count), Violates.PreconditionSaying(ArgumentMustBeNonNegative));
+        }
+
+        [Test]
+        public void GetIndexRange_CountIsOneLongerThanCollection_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(0, collection.Count);
+            var count = collection.Count - startIndex + 1;
+
+            // Act & Assert
+            Assert.That(() => collection.GetIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void GetIndexRange_GetFullRange_EqualsCollection()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = collection.Count;
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(0, count);
+
+            // Assert
+            Assert.That(getIndexRange, Is.EqualTo(collection));
+        }
+
+        [Test]
+        public void GetIndexRange_RandomRange_ContainsCountItems()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(0, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(getIndexRange.Count, Is.EqualTo(count));
+        }
+
+        [Test]
+        public void GetIndexRange_RandomRange_EqualsSubrange()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var array = collection.ToArray();
+            var count = Random.Next(0, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var subrange = array.Skip(startIndex).Take(count);
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(getIndexRange, Is.EqualTo(subrange));
+        }
+
+        // TODO: Test IDirectedCollectionValue extensively
+
+        [Test]
+        public void GetIndexRange_EmptyCollection_Empty()
+        {
+            // Arrange
+            var collection = GetEmptyIndexed<string>();
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(0, 0);
+
+            // Assert
+            Assert.That(getIndexRange, Is.Empty);
+        }
+
+        [Test]
+        public void GetIndexRange_EmptyRange_Empty()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(0, collection.Count);
+            
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, 0);
+
+            // Assert
+            Assert.That(getIndexRange, Is.Empty);
+        }
+
+        #endregion
+
         #region IndexOf(T)
 
         [Test]
