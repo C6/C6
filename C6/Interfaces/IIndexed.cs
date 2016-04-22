@@ -25,12 +25,11 @@ namespace C6
     public interface IIndexed<T> : ISequenced<T>
     {
         /// <summary>
-        ///     Gets a value characterizing the asymptotic complexity of <see cref="SCG.IReadOnlyList{T}.this"/> proportional to
-        ///     collection size (worst-case or amortized as relevant).
+        ///     Gets a value characterizing the asymptotic complexity of <see cref="this"/> proportional to collection size
+        ///     (worst-case or amortized as relevant).
         /// </summary>
         /// <value>
-        ///     A characterization of the asymptotic speed of <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
-        ///     size.
+        ///     A characterization of the asymptotic speed of <see cref="this"/> proportional to collection size.
         /// </value>
         [Pure]
         Speed IndexingSpeed { get; }
@@ -47,7 +46,7 @@ namespace C6
         /// </value>
         [IndexerName("Item")]
         [Pure]
-        new T this[int index] { get; }
+        T this[int index] { get; }
 
         /// <summary>
         ///     Returns an <see cref="IDirectedCollectionValue{T}"/> containing the items in the specified index range of this
@@ -181,6 +180,22 @@ namespace C6
             }
         }
 
+        public T this[int index]
+        {
+            get {
+                // Argument must be within bounds (collection must be non-empty)
+                Requires(0 <= index, ArgumentMustBeWithinBounds);
+                Requires(index < Count, ArgumentMustBeWithinBounds);
+
+
+                // Result is item at index
+                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
+
+
+                return default(T);
+            }
+        }
+
         public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
         {
             // Argument must be within bounds
@@ -297,25 +312,6 @@ namespace C6
 
             return;
         }
-
-        #region Hardened Postconditions
-
-        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public T this[int index]
-        {
-            get {
-                // No additional preconditions allowed
-
-
-                // Result is item at index
-                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
-
-
-                return default(T);
-            }
-        }
-
-        #endregion
 
         // ReSharper restore InvocationIsSkipped
 

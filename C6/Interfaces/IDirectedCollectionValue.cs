@@ -57,7 +57,7 @@ namespace C6
         ///     </c>.
         /// </remarks>
         [Pure]
-        new IDirectedCollectionValue<T> Backwards();
+        IDirectedCollectionValue<T> Backwards();
     }
 
 
