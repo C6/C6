@@ -89,10 +89,25 @@ namespace C6
             Ensures(Result<IDirectedCollectionValue<T>>() != null);
 
             // Result enumeration is backwards
-            Ensures(this.Reverse().IsSameSequenceAs(Result<IDirectedCollectionValue<T>>()));
+            Ensures(Result<IDirectedCollectionValue<T>>().IsSameSequenceAs(this.Reverse()));
+
+            // Result allows null if this does
+            Ensures(Result<IDirectedCollectionValue<T>>().AllowsNull == AllowsNull);
+
+            // Result has same count
+            Ensures(Result<IDirectedCollectionValue<T>>().Count == Count);
+
+            // Result count speed is constant
+            Ensures(Result<IDirectedCollectionValue<T>>().CountSpeed == Speed.Constant); // TODO: Is this always constant? We would at least like that, right?
 
             // Result direction is opposite
             Ensures(Result<IDirectedCollectionValue<T>>().Direction.IsOppositeOf(Direction));
+
+            // Result is empty if this is
+            Ensures(Result<IDirectedCollectionValue<T>>().IsEmpty == IsEmpty);
+
+            // Result array is backwards
+            Ensures(Result<IDirectedCollectionValue<T>>().ToArray().IsSameSequenceAs(ToArray().Reverse()));
 
 
             return default(IDirectedCollectionValue<T>);

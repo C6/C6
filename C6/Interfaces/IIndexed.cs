@@ -206,11 +206,29 @@ namespace C6
             Requires(0 <= count, ArgumentMustBeNonNegative);
 
 
-            // Result has the same count
-            Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
+            // Result is non-null
+            Ensures(Result<IDirectedCollectionValue<T>>() != null);
 
             // Result equals subrange
             Ensures(Result<IDirectedCollectionValue<T>>().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
+
+            // Result has the same count
+            Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
+
+            // Result allows null if this does
+            Ensures(Result<IDirectedCollectionValue<T>>().AllowsNull == AllowsNull);
+
+            // Result count speed is constant
+            Ensures(Result<IDirectedCollectionValue<T>>().CountSpeed == Speed.Constant); // TODO: Is this always constant? We would at least like that, right?
+
+            // Result direction is opposite
+            Ensures(Result<IDirectedCollectionValue<T>>().Direction == EnumerationDirection.Forwards);
+
+            // Result is empty if this is
+            Ensures(Result<IDirectedCollectionValue<T>>().IsEmpty == (count == 0));
+
+            // Result array is backwards
+            Ensures(Result<IDirectedCollectionValue<T>>().ToArray().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
 
 
             return default(IDirectedCollectionValue<T>);
