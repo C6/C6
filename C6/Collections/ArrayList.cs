@@ -208,12 +208,8 @@ namespace C6
             return true;
         }
 
-        public IDirectedCollectionValue<T> Backwards()
-        {
-            throw new NotImplementedException();
-            // Only creates one Range instead of two as with GetIndexRange(0, Count).Backwards()
-            return new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
-        }
+        // Only creates one Range instead of two as with GetIndexRange(0, Count).Backwards()
+        public IDirectedCollectionValue<T> Backwards() => new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
 
         public T Choose() => _items[Count - 1];
 

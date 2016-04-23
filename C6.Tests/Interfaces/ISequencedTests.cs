@@ -102,6 +102,72 @@ namespace C6.Tests
 
         #endregion
 
+        #region Methods
+
+        #region Backwards()
+
+        [Test]
+        public void Backwards_EmptyCollection_Expected()
+        {
+            // Arrange
+            var collection = GetEmptySequence<string>();
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                NoStrings,
+                ReferenceEqualityComparer,
+                Backwards
+            );
+
+            // Act
+            var backwards = collection.Backwards();
+            
+            // Assert
+            Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Backwards_RandomCollection_Expected()
+        {
+            // Arrange
+            var collection = GetStringSequence(Random);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Reverse(),
+                ReferenceEqualityComparer,
+                Backwards
+            );
+
+            // Act
+            var backwards = collection.Backwards();
+            
+            // Assert
+            Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Backwards_AllowsNull_Expected()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetSequence(items, allowsNull: true);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Reverse(),
+                ReferenceEqualityComparer,
+                Backwards
+            );
+
+            // Act
+            var backwards = collection.Backwards();
+
+            // Assert
+            Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        #endregion
+
+        #endregion
+
         #endregion
 
         #region ISeqenced<T>
