@@ -23,7 +23,7 @@ namespace C6.Tests
     public abstract class ISequencedTests : ICollectionTests
     {
         #region Factories
-        
+
         protected abstract ISequenced<T> GetEmptySequence<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
 
         protected abstract ISequenced<T> GetSequence<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
@@ -47,7 +47,7 @@ namespace C6.Tests
 
         private ISequenced<string> GetStringSequence(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetSequence(GetStrings(random, count), equalityComparer, allowsNull);
-        
+
         private IDirectedCollectionValue<string> GetStringDirectedCollectionValue(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetSequence(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
@@ -118,11 +118,11 @@ namespace C6.Tests
                 NoStrings,
                 ReferenceEqualityComparer,
                 Backwards
-            );
+                );
 
             // Act
             var backwards = collection.Backwards();
-            
+
             // Assert
             Assert.That(backwards, Is.EqualTo(expected));
         }
@@ -137,11 +137,11 @@ namespace C6.Tests
                 collection.Reverse(),
                 ReferenceEqualityComparer,
                 Backwards
-            );
+                );
 
             // Act
             var backwards = collection.Backwards();
-            
+
             // Assert
             Assert.That(backwards, Is.EqualTo(expected));
         }
@@ -157,13 +157,31 @@ namespace C6.Tests
                 collection.Reverse(),
                 ReferenceEqualityComparer,
                 Backwards
-            );
+                );
 
             // Act
             var backwards = collection.Backwards();
 
             // Assert
             Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Backwards_BackwardsRandomCollection_Expected()
+        {
+            // Arrange
+            var collection = GetStringSequence(Random);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.ToArray(),
+                ReferenceEqualityComparer
+                );
+
+            // Act
+            var backwardsBackwards = collection.Backwards().Backwards();
+
+            // Assert
+            Assert.That(backwardsBackwards, Is.EqualTo(expected));
         }
 
         [Test]
@@ -314,7 +332,7 @@ namespace C6.Tests
         // TODO: Test for shuffled list in IListTests
 
         #endregion
-        
+
         #region SequencedEquals(ISequence<T>)
 
         [Test]
