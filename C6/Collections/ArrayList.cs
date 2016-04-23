@@ -920,7 +920,7 @@ namespace C6
 
                 // Argument must be within bounds
                 Requires(-1 <= startIndex, ArgumentMustBeWithinBounds);
-                Requires(startIndex < list.Count, ArgumentMustBeWithinBounds);
+                Requires(startIndex < list.Count || startIndex == 0 && count == 0, ArgumentMustBeWithinBounds);
 
                 // Argument must be within bounds
                 Requires(0 <= count, ArgumentMustBeWithinBounds);
@@ -934,7 +934,7 @@ namespace C6
                 Ensures(_version == _base._version);
                 Ensures(_sign == (direction.IsForward() ? 1 : -1));
                 Ensures(-1 <= _startIndex);
-                Ensures(_startIndex < _base.Count);
+                Ensures(_startIndex < _base.Count || _startIndex == 0 && _base.Count == 0);
                 Ensures(-1 <= _startIndex + _sign * _count);
                 Ensures(_startIndex + _sign * _count <= _base.Count);
 
