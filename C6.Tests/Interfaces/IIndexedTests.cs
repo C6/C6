@@ -12,6 +12,7 @@ using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
 using static C6.ExceptionMessages;
+using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -473,6 +474,186 @@ namespace C6.Tests
 
             // Assert
             Assert.That(indexOf, Is.EqualTo(expectedIndex));
+        }
+
+        #endregion
+
+        #region RemoveAt(int)
+
+        [Test]
+        public void RemoveAt_EmptyCollection_ViolatesPrecondtion()
+        {
+            // Arrange
+            var collection = GetEmptyIndexed<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(0), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveAt_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = Random.Next(int.MinValue, 0);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveAt_IndexOfCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = collection.Count;
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveAt_IndexLargerThanCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = Random.Next(collection.Count + 1, int.MaxValue);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveAt_RemoveDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = Random.Next(0, collection.Count);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveAt(index);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void RemoveAt_RandomCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = Random.Next(0, collection.Count);
+            var item = collection[index];
+            var expectedEvents = new[] {
+                RemovedAt(item, index, collection),
+                Removed(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(index), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void RemoveAt_RandomCollection_ItemAtIndex()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = Random.Next(0, collection.Count);
+            var expectedItem = collection[index];
+
+            // Act
+            var item = collection.RemoveAt(index);
+
+            // Assert
+            Assert.That(item, Is.SameAs(expectedItem));
+        }
+
+        [Test]
+        public void RemoveAt_RandomCollectionWithNullRemoveNull_Null()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetIndexed(items, allowsNull: true);
+            var index = collection.IndexOf(null);
+
+            // Act
+            var removeAt = collection.RemoveAt(index);
+
+            // Assert
+            Assert.That(removeAt, Is.Null);
+        }
+
+        [Test]
+        public void RemoveAt_SingleItemCollection_Item()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var collection = GetIndexed(itemArray);
+            
+            // Act
+            var removeAt = collection.RemoveAt(0);
+
+            // Assert
+            Assert.That(removeAt, Is.SameAs(item));
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveAt_RemoveFirstItem_Removed()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var items = collection.ToArray();
+            var index = 0;
+            var firstItem = collection[index];
+
+            // Act
+            var removeAt = collection.RemoveAt(index);
+
+            // Assert
+            Assert.That(removeAt, Is.EqualTo(firstItem));
+            Assert.That(collection, Is.EqualTo(items.Skip(1)));
+        }
+
+        [Test]
+        public void RemoveAt_RemoveLastItem_Removed()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = collection.Count;
+            var items = collection.ToArray();
+            var index = count - 1;
+            var lastItem = collection[index];
+
+            // Act
+            var removeAt = collection.RemoveAt(index);
+
+            // Assert
+            Assert.That(removeAt, Is.EqualTo(lastItem));
+            Assert.That(collection, Is.EqualTo(items.Take(index)));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveAt_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveAt_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
         }
 
         #endregion

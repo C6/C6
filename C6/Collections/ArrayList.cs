@@ -405,7 +405,7 @@ namespace C6
 
             #endregion
 
-            // TODO: Remove last item
+            // TODO: Use LastIndexOf(item);
             var index = IndexOf(item);
 
             if (index >= 0) {
@@ -421,7 +421,10 @@ namespace C6
 
         public T RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+            var item = RemoveAtPrivate(index);
+            RaiseForRemovedAt(item, index);
+            return item;
         }
 
         public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
@@ -767,13 +770,10 @@ namespace C6
         private T RemoveAtPrivate(int index)
         {
             var item = _items[index];
-
             if (--Count > index) {
                 Array.Copy(_items, index + 1, _items, index, Count - index);
             }
-
             _items[Count] = default(T);
-
             return item;
         }
 
@@ -841,6 +841,13 @@ namespace C6
 
         private void RaiseForRemove(T item)
         {
+            OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForRemovedAt(T item, int index)
+        {
+            OnItemRemovedAt(item, index);
             OnItemsRemoved(item, 1);
             OnCollectionChanged();
         }
