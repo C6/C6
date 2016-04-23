@@ -1024,6 +1024,12 @@ namespace C6
                 }
             }
 
+            public override bool Equals(object obj)
+            {
+                CheckVersion();
+                return base.Equals(obj);
+            }
+
             public SCG.IEnumerator<T> GetEnumerator()
             {
                 var items = _base._items;
@@ -1031,6 +1037,12 @@ namespace C6
                     CheckVersion();
                     yield return items[_startIndex + _sign * i];
                 }
+            }
+
+            public override int GetHashCode()
+            {
+                CheckVersion();
+                return base.GetHashCode();
             }
 
             public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);

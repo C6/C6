@@ -2,6 +2,7 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System.Linq;
+using System.Text;
 
 using C6.Tests.Contracts;
 using C6.Tests.Helpers;
@@ -11,6 +12,7 @@ using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
 using static C6.EnumerationDirection;
+using static C6.ExceptionMessages;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -310,6 +312,43 @@ namespace C6.Tests
 
             // Assert
             Assert.That(getIndexRange, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetIndexRange_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetIndexed(items);
+            var count = Random.Next(0, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var array = new string[collection.Count];
+            var stringBuilder = new StringBuilder();
+            var rest = 0;
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, count);
+            collection.Add(GetLowercaseString(Random));
+
+            // TODO: Refactor into separate DirectCollectionValueConstraint
+            // Assert
+            Assert.That(() => getIndexRange.AllowsNull, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.Count, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.CountSpeed, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.Direction, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.IsEmpty, Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => getIndexRange.Backwards(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.Choose(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.CopyTo(array, 0), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.GetEnumerator().MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.ToArray(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.Show(stringBuilder, ref rest, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.ToString(null, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => getIndexRange.Equals(null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.GetHashCode(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => getIndexRange.ToString(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         #endregion
