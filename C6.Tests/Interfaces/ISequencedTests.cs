@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 
 using C6.Tests.Helpers;
 
@@ -10,6 +11,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.EnumerationDirection;
+using static C6.ExceptionMessages;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -162,6 +164,41 @@ namespace C6.Tests
 
             // Assert
             Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetIndexRange_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetSequence(items);
+            var array = new string[collection.Count];
+            var stringBuilder = new StringBuilder();
+            var rest = 0;
+
+            // Act
+            var backwards = collection.Backwards();
+            collection.Add(GetLowercaseString(Random));
+
+            // TODO: Refactor into separate DirectCollectionValueConstraint
+            // Assert
+            Assert.That(() => backwards.AllowsNull, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Count, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.CountSpeed, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Direction, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.IsEmpty, Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => backwards.Backwards(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Choose(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.CopyTo(array, 0), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.GetEnumerator().MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.ToArray(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Show(stringBuilder, ref rest, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.ToString(null, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => backwards.Equals(null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.GetHashCode(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.ToString(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         #endregion

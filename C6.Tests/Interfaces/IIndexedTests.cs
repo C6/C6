@@ -11,7 +11,6 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
-using static C6.EnumerationDirection;
 using static C6.ExceptionMessages;
 using static C6.Tests.Helpers.TestHelper;
 
