@@ -70,6 +70,8 @@ namespace C6.Tests.Helpers
             throw new Exception();
         }
 
+        public static SCG.IEnumerable<string> NoStrings => Enumerable.Empty<string>();
+
         public static T[] WithNull<T>(this T[] array, Random random) where T : class
         {
             array[random.Next(0, array.Length)] = null;

@@ -4,11 +4,13 @@
 using System.Linq;
 
 using C6.Tests.Contracts;
+using C6.Tests.Helpers;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EnumerationDirection;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -92,7 +94,7 @@ namespace C6.Tests
             var collection = GetStringIndexed(Random);
             var count = collection.Count;
             var index = Random.Next(count + 1, int.MaxValue);
-            
+
             // Act & Assert
             Assert.That(() => collection[index], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
@@ -102,7 +104,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
-            
+
             // Act & Assert
             Assert.That(() => collection[0], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
@@ -167,7 +169,6 @@ namespace C6.Tests
         }
 
         #endregion
-
 
         #endregion
 
@@ -288,12 +289,18 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                NoStrings,
+                Forwards,
+                ReferenceEqualityComparer
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(0, 0);
 
             // Assert
-            Assert.That(getIndexRange, Is.Empty);
+            Assert.That(getIndexRange, Is.EqualTo(expected));
         }
 
         [Test]
@@ -302,7 +309,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringIndexed(Random);
             var startIndex = Random.Next(0, collection.Count);
-            
+
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, 0);
 
