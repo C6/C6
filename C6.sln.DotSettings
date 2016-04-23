@@ -146,6 +146,31 @@ public void $METHOD$$PARAMETER_TYPES$_$SCENARIO$_RaisesExpectedEvents()&#xD;
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=421ABB269135EF4E81ADC50F3FAA155E/Shortcut/@EntryValue">cf</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=421ABB269135EF4E81ADC50F3FAA155E/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=421ABB269135EF4E81ADC50F3FAA155E/Text/@EntryValue">&lt;c&gt;false&lt;/c&gt;</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Description/@EntryValue">Violates precondition: index greater than count</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=COLLECTION/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=COLLECTION/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=METHOD/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=METHOD/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=PARAMETER_005FTYPES/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=PARAMETER_005FTYPES/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Shortcut/@EntryValue">index greater than count</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Text/@EntryValue">[NUnit.Framework.Test]&#xD;
+public void $METHOD$$PARAMETER_TYPES$_IndexLargerThanCount_ViolatesPrecondition()&#xD;
+{&#xD;
+    // Arrange&#xD;
+    var collection = GetString$COLLECTION$(Random);&#xD;
+    var index = Random.Next(collection.Count + 1, int.MaxValue);&#xD;
+&#xD;
+    // Act &amp; Assert&#xD;
+    NUnit.Framework.Assert.That(() =&gt; collection.$METHOD$(index), Violates.PreconditionSaying(ContractMessage.ArgumentMustBeWithinBounds));&#xD;
+}</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C0A28240AF921489ABBEA16FF0F47CB/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
@@ -297,6 +322,31 @@ public void $METHOD$$PARAMETER_TYPES$_DisallowsNullsInEnumerable_ViolatesPrecond
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=902FD10D80F9794AAAD38F301A9F9B3A/Shortcut/@EntryValue">ct</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=902FD10D80F9794AAAD38F301A9F9B3A/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=902FD10D80F9794AAAD38F301A9F9B3A/Text/@EntryValue">&lt;c&gt;true&lt;/c&gt;</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Description/@EntryValue">Violates precondition: index of count</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=COLLECTION/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=COLLECTION/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=METHOD/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=METHOD/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=PARAMETER_005FTYPES/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=PARAMETER_005FTYPES/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Shortcut/@EntryValue">index of count</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Text/@EntryValue">[NUnit.Framework.Test]&#xD;
+public void $METHOD$$PARAMETER_TYPES$_IndexOfCount_ViolatesPrecondition()&#xD;
+{&#xD;
+    // Arrange&#xD;
+    var collection = GetString$COLLECTION$(Random);&#xD;
+    var index = collection.Count;&#xD;
+&#xD;
+    // Act &amp; Assert&#xD;
+    NUnit.Framework.Assert.That(() =&gt; collection.$METHOD$(index), Violates.PreconditionSaying(ContractMessage.ArgumentMustBeWithinBounds));&#xD;
+}</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A4494C7025563F4CB83A0F0F42F9028B/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A4494C7025563F4CB83A0F0F42F9028B/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A4494C7025563F4CB83A0F0F42F9028B/Categories/=Unit_0020tests/@EntryIndexedValue">Unit tests</s:String>
