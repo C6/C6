@@ -307,10 +307,7 @@ namespace C6
             }
         }
 
-        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
-        {
-            throw new NotImplementedException();
-        }
+        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, EnumerationDirection.Forwards);
 
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public int GetSequencedHashCode()
@@ -940,8 +937,6 @@ namespace C6
 
                 #endregion
 
-                throw new NotImplementedException();
-
                 _base = list;
                 _version = list._version;
                 _sign = (int) direction;
@@ -957,7 +952,6 @@ namespace C6
             public bool AllowsNull
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _base.AllowsNull;
                 }
@@ -966,7 +960,6 @@ namespace C6
             public int Count
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _count;
                 }
@@ -975,7 +968,6 @@ namespace C6
             public Speed CountSpeed
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return Constant;
                 }
@@ -984,7 +976,6 @@ namespace C6
             public EnumerationDirection Direction
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _direction;
                 }
@@ -993,7 +984,6 @@ namespace C6
             public bool IsEmpty
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _count == 0;
                 }
@@ -1005,7 +995,6 @@ namespace C6
 
             public IDirectedCollectionValue<T> Backwards()
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 var startIndex = _startIndex + (_count - 1) * _sign;
                 var direction = (EnumerationDirection) (-_sign);
@@ -1014,7 +1003,6 @@ namespace C6
 
             public T Choose()
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 // Select the highest index in the range
                 var index = _direction.IsForward() ? _startIndex + _count : _startIndex;
@@ -1023,7 +1011,6 @@ namespace C6
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 if (_direction.IsForward()) {
                     // Copy array directly
@@ -1039,7 +1026,6 @@ namespace C6
 
             public SCG.IEnumerator<T> GetEnumerator()
             {
-                throw new NotImplementedException();
                 var items = _base._items;
                 for (var i = 0; i < _count; i++) {
                     CheckVersion();
@@ -1047,24 +1033,19 @@ namespace C6
                 }
             }
 
-            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
-            {
-                throw new NotImplementedException();
-            }
+            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
 
             public T[] ToArray()
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 var array = new T[_count];
                 CopyTo(array, 0);
                 return array;
             }
 
-            public string ToString(string format, IFormatProvider formatProvider)
-            {
-                throw new NotImplementedException();
-            }
+            public override string ToString() => ToString(null, null);
+
+            public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
 
             #endregion
 
