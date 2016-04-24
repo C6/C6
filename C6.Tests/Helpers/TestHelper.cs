@@ -70,6 +70,28 @@ namespace C6.Tests.Helpers
             throw new Exception();
         }
 
+        public static int LastIndexOf<T>(this T[] array, T item, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            Contract.Requires(array.Contains(item, equalityComparer));
+
+            if (equalityComparer == null) {
+                equalityComparer = SCG.EqualityComparer<T>.Default;
+            }
+
+            var index = -1;
+            for (var i = 0; i < array.Length; i++) {
+                if (equalityComparer.Equals(array[i], item)) {
+                    index = i;
+                }
+            }
+
+            if (index >= 0) {
+                return index;
+            }
+
+            throw new Exception();
+        }
+
         public static SCG.IEnumerable<string> NoStrings => Enumerable.Empty<string>();
 
         public static T[] WithNull<T>(this T[] array, Random random) where T : class

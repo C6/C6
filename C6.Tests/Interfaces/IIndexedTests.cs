@@ -398,9 +398,9 @@ namespace C6.Tests
         public void IndexOf_RandomCollectionIndexOfNewItem_NegativeIndex()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
+            var items = GetStrings(Random);
             var collection = GetIndexed(items);
-            var item = GetLowercaseString(Random);
+            var item = items.DifferentItem(() => Random.GetString());
             var count = collection.Count;
 
             // Act
@@ -474,6 +474,131 @@ namespace C6.Tests
 
             // Assert
             Assert.That(indexOf, Is.EqualTo(expectedIndex));
+        }
+
+        #endregion
+
+        #region LastIndexOf(T)
+
+        [Test]
+        public void LastIndexOf_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.LastIndexOf(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void LastIndexOf_AllowsNull_PositiveIndex()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetIndexed(items, allowsNull: true);
+            var index = collection.ToArray().LastIndexOf(null);
+
+            // Act
+            var lastIndexOf = collection.LastIndexOf(null);
+
+            // Assert
+            Assert.That(lastIndexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void LastIndexOf_EmptyCollection_TildeZero()
+        {
+            // Arrange
+            var collection = GetEmptyIndexed<string>();
+            var item = Random.GetString();
+
+            // Act
+            var lastIndexOf = collection.LastIndexOf(item);
+
+            // Assert
+            Assert.That(lastIndexOf, Is.EqualTo(~0));
+        }
+
+        [Test]
+        public void LastIndexOf_RandomCollectionLastIndexOfNewItem_NegativeIndex()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetIndexed(items);
+            var item = items.DifferentItem(() => Random.GetString());
+            var count = collection.Count;
+
+            // Act
+            var lastIndexOf = collection.LastIndexOf(item);
+
+            // Assert
+            Assert.That(~lastIndexOf, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(count));
+        }
+
+        [Test]
+        public void LastIndexOf_RandomCollectionLastIndexOfExistingItem_Index()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random, ReferenceEqualityComparer);
+            var items = collection.ToArray();
+            var index = Random.Next(0, items.Length);
+            var item = items[index];
+
+            // Act
+            var lastIndexOf = collection.LastIndexOf(item);
+
+            // Assert
+            Assert.That(lastIndexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void LastIndexOf_DuplicateItems_CountMinusOne()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = item.Repeat(count);
+            var collection = GetIndexed(items);
+
+            // Act
+            var lastIndexOf = collection.LastIndexOf(item);
+
+            // Assert
+            Assert.That(lastIndexOf, Is.EqualTo(count - 1));
+        }
+
+        [Test]
+        public void LastIndexOf_CollectionWithDuplicateItems_LastIndex()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetIndexed(items);
+            var index = collection.ToArray().LastIndexOf(item);
+
+            // Act
+            var lastIndexOf = collection.LastIndexOf(item);
+
+            // Assert
+            Assert.That(lastIndexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void LastIndexOf_RandomCollectionNewItem_GetsTildeIndex()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetIndexed(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var expectedIndex = ~collection.LastIndexOf(item);
+            collection.Add(item);
+            var lastIndexOf = collection.LastIndexOf(item);
+
+            // Assert
+            Assert.That(lastIndexOf, Is.EqualTo(expectedIndex));
         }
 
         #endregion
