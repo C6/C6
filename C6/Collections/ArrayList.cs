@@ -380,7 +380,26 @@ namespace C6
 
         public int LastIndexOf(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.LastIndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Skip(Result<int>() + 1).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
+
+            #endregion
+
+            for (var i = Count - 1; i >= 0; i--) {
+                if (Equals(item, _items[i])) {
+                    return i;
+                }
+            }
+
+            return ~Count;
         }
 
         public bool Remove(T item)
@@ -405,8 +424,7 @@ namespace C6
 
             #endregion
 
-            // TODO: Use LastIndexOf(item);
-            var index = IndexOf(item);
+            var index = LastIndexOf(item);
 
             if (index >= 0) {
                 UpdateVersion();
