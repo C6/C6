@@ -255,7 +255,6 @@ namespace C6
 
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
-        // TODO: Test performance?
         public int CountDuplicates(T item) => this.Count(x => Equals(x, item));
 
         public bool Find(ref T item)
@@ -474,9 +473,7 @@ namespace C6
             }
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
-            // TODO: use aux hash bag to obtain linear time procedure (old comment)
             var itemsToRemove = new ArrayList<T>(items, EqualityComparer, AllowsNull);
-
             return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
