@@ -796,10 +796,12 @@ namespace C6
 
         private void CheckVersion(int version)
         {
-            if (version != _version) {
-                // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
-                throw new InvalidOperationException(CollectionWasModified);
+            if (version == _version) {
+                return;
             }
+
+            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
+            throw new InvalidOperationException(CollectionWasModified);
         }
 
         #region Event Helpers
