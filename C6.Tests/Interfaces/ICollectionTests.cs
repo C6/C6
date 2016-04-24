@@ -1946,13 +1946,12 @@ namespace C6.Tests
         public void RetainRange_EmptyEnumerable_RaisesExpectedEvents()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetCollection(items);
+            var collection = GetStringCollection(Random);
+            var items = collection.ToArray();
             var itemsToRemove = Enumerable.Empty<string>();
-            var expectedEvents = new[] {
-                // TODO: Add events
-                Removed(null, 1, collection),
-            };
+            // TODO: Doesn't take order into account
+            // TODO: Doesn't work for DuplicatesByCounting
+            var expectedEvents = items.Select(item => Removed(item, 1, collection)).Append(Changed(collection)).ToArray();
 
             // Act & Assert
             Assert.That(() => collection.RetainRange(itemsToRemove), Raises(expectedEvents).InNoParticularOrder().For(collection));
