@@ -118,7 +118,7 @@ namespace C6
                 Ensures(AllowsNull || Result<T>() != null);
 
                 // Result is the same as skipping the first index items
-                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.ElementAt(index)));
 
 
                 return default(T);

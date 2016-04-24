@@ -339,7 +339,7 @@ namespace C6
                 : ~Result<int>() == Count);
 
             // Item at index is the first equal to item
-            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.Skip(Result<int>()).First()));
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
 
             #endregion
 
