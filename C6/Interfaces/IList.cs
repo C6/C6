@@ -1165,21 +1165,6 @@ namespace C6
         }
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public bool AllowsDuplicates
-        {
-            get {
-                // No additional preconditions allowed
-
-
-                // Always true for lists
-                Ensures(Result<bool>());
-
-
-                return default(bool);
-            }
-        }
-
-        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool IsSynchronized
         {
             get {
@@ -1380,6 +1365,7 @@ namespace C6
 
         #region IExtensible
 
+        public abstract bool AllowsDuplicates { get; }
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool AddRange(SCG.IEnumerable<T> items);
