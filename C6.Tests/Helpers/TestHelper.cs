@@ -2,6 +2,7 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 using NUnit.Framework.Constraints;
@@ -51,6 +52,47 @@ namespace C6.Tests.Helpers
         public static string GetLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");
 
         public static T Choose<T>(this T[] array, Random random) => array[random.Next(array.Length)];
+
+        public static int IndexOf<T>(this T[] array, T item, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            Contract.Requires(array.Contains(item, equalityComparer));
+
+            if (equalityComparer == null) {
+                equalityComparer = SCG.EqualityComparer<T>.Default;
+            }
+
+            for (var i = 0; i < array.Length; i++) {
+                if (equalityComparer.Equals(array[i], item)) {
+                    return i;
+                }
+            }
+
+            throw new Exception();
+        }
+
+        public static int LastIndexOf<T>(this T[] array, T item, SCG.IEqualityComparer<T> equalityComparer = null)
+        {
+            Contract.Requires(array.Contains(item, equalityComparer));
+
+            if (equalityComparer == null) {
+                equalityComparer = SCG.EqualityComparer<T>.Default;
+            }
+
+            var index = -1;
+            for (var i = 0; i < array.Length; i++) {
+                if (equalityComparer.Equals(array[i], item)) {
+                    index = i;
+                }
+            }
+
+            if (index >= 0) {
+                return index;
+            }
+
+            throw new Exception();
+        }
+
+        public static SCG.IEnumerable<string> NoStrings => Enumerable.Empty<string>();
 
         public static T[] WithNull<T>(this T[] array, Random random) where T : class
         {

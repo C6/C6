@@ -25,12 +25,11 @@ namespace C6
     public interface IIndexed<T> : ISequenced<T>
     {
         /// <summary>
-        ///     Gets a value characterizing the asymptotic complexity of <see cref="SCG.IReadOnlyList{T}.this"/> proportional to
-        ///     collection size (worst-case or amortized as relevant).
+        ///     Gets a value characterizing the asymptotic complexity of <see cref="this"/> proportional to collection size
+        ///     (worst-case or amortized as relevant).
         /// </summary>
         /// <value>
-        ///     A characterization of the asymptotic speed of <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
-        ///     size.
+        ///     A characterization of the asymptotic speed of <see cref="this"/> proportional to collection size.
         /// </value>
         [Pure]
         Speed IndexingSpeed { get; }
@@ -47,7 +46,7 @@ namespace C6
         /// </value>
         [IndexerName("Item")]
         [Pure]
-        new T this[int index] { get; }
+        T this[int index] { get; }
 
         /// <summary>
         ///     Returns an <see cref="IDirectedCollectionValue{T}"/> containing the items in the specified index range of this
@@ -181,6 +180,22 @@ namespace C6
             }
         }
 
+        public T this[int index]
+        {
+            get {
+                // Argument must be within bounds (collection must be non-empty)
+                Requires(0 <= index, ArgumentMustBeWithinBounds);
+                Requires(index < Count, ArgumentMustBeWithinBounds);
+
+
+                // Result is item at index
+                Ensures(Result<T>().IsSameAs(this.ElementAt(index)));
+
+
+                return default(T);
+            }
+        }
+
         public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
         {
             // Argument must be within bounds
@@ -191,11 +206,29 @@ namespace C6
             Requires(0 <= count, ArgumentMustBeNonNegative);
 
 
-            // Result has the same count
-            Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
+            // Result is non-null
+            Ensures(Result<IDirectedCollectionValue<T>>() != null);
 
             // Result equals subrange
             Ensures(Result<IDirectedCollectionValue<T>>().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
+
+            // Result has the same count
+            Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
+
+            // Result allows null if this does
+            Ensures(Result<IDirectedCollectionValue<T>>().AllowsNull == AllowsNull);
+
+            // Result count speed is constant
+            Ensures(Result<IDirectedCollectionValue<T>>().CountSpeed == Speed.Constant); // TODO: Is this always constant? We would at least like that, right?
+
+            // Result direction is opposite
+            Ensures(Result<IDirectedCollectionValue<T>>().Direction == EnumerationDirection.Forwards);
+
+            // Result is empty if this is
+            Ensures(Result<IDirectedCollectionValue<T>>().IsEmpty == (count == 0));
+
+            // Result array is backwards
+            Ensures(Result<IDirectedCollectionValue<T>>().ToArray().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
 
 
             return default(IDirectedCollectionValue<T>);
@@ -282,7 +315,7 @@ namespace C6
 
             // Argument must be within bounds (collection must be non-empty)
             Requires(0 <= startIndex, ArgumentMustBeWithinBounds);
-            Requires(startIndex + count < Count, ArgumentMustBeWithinBounds);
+            Requires(startIndex + count <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-negative
             Requires(0 <= count, ArgumentMustBeNonNegative);
@@ -297,25 +330,6 @@ namespace C6
 
             return;
         }
-
-        #region Hardened Postconditions
-
-        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public T this[int index]
-        {
-            get {
-                // No additional preconditions allowed
-
-
-                // Result is item at index
-                Ensures(Result<T>().IsSameAs(this.Skip(index).First()));
-
-
-                return default(T);
-            }
-        }
-
-        #endregion
 
         // ReSharper restore InvocationIsSkipped
 

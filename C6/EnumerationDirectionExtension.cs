@@ -4,6 +4,8 @@
 using System;
 using System.Diagnostics.Contracts;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using static C6.Contracts.ContractMessage;
 
 
@@ -27,7 +29,7 @@ namespace C6
         public static bool IsForward(this EnumerationDirection direction)
         {
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
+            Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
 
 
             return direction == EnumerationDirection.Forwards;
@@ -50,13 +52,38 @@ namespace C6
         public static bool IsOppositeOf(this EnumerationDirection direction, EnumerationDirection otherDirection)
         {
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
+            Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
 
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EnumerationDirection), otherDirection), EnumMustBeDefined);
+            Requires(Enum.IsDefined(typeof(EnumerationDirection), otherDirection), EnumMustBeDefined);
 
 
             return direction != otherDirection;
+        }
+
+        /// <summary>
+        ///     Returns the opposite direction.
+        /// </summary>
+        /// <param name="direction">
+        ///     The direction to get the opposite of.
+        /// </param>
+        /// <returns>
+        ///     <see cref="EnumerationDirection.Backwards"/> if direction is <see cref="EnumerationDirection.Forwards"/>;
+        ///     otherwise, <see cref="EnumerationDirection.Forwards"/>.
+        /// </returns>
+        [Pure]
+        public static EnumerationDirection Opposite(this EnumerationDirection direction)
+        {
+            // Argument must be valid enum constant
+            Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
+
+            // Result is the opposite direction
+            Ensures(direction == EnumerationDirection.Forwards
+                ? Result<EnumerationDirection>() == EnumerationDirection.Backwards
+                : direction == EnumerationDirection.Backwards && Result<EnumerationDirection>() == EnumerationDirection.Forwards);
+
+
+            return direction.IsForward() ? EnumerationDirection.Backwards : EnumerationDirection.Forwards;
         }
     }
 }

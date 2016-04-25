@@ -22,7 +22,7 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     [Serializable]
-    public class ArrayList<T> : ISequenced<T>
+    public class ArrayList<T> : IIndexed<T>
     {
         #region Fields
 
@@ -150,6 +150,8 @@ namespace C6
 
         public SCG.IEqualityComparer<T> EqualityComparer { get; }
 
+        public Speed IndexingSpeed => Constant;
+
         public bool IsEmpty => Count == 0;
 
         public bool IsFixedSize => false;
@@ -157,6 +159,8 @@ namespace C6
         public bool IsReadOnly => false;
 
         public EventTypes ListenableEvents => All;
+
+        public T this[int index] => _items[index];
 
         #endregion
 
@@ -204,12 +208,8 @@ namespace C6
             return true;
         }
 
-        public IDirectedCollectionValue<T> Backwards()
-        {
-            throw new NotImplementedException();
-            // Only creates one Range instead of two as with GetIndexRange(0, Count).Backwards()
-            return new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
-        }
+        // Only creates one Range instead of two as with GetIndexRange(0, Count).Backwards()
+        public IDirectedCollectionValue<T> Backwards() => new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
 
         public T Choose() => _items[Count - 1];
 
@@ -230,7 +230,7 @@ namespace C6
             RaiseForClear(oldCount);
         }
 
-        public bool Contains(T item) => IndexOfPrivate(item) >= 0;
+        public bool Contains(T item) => IndexOf(item) >= 0;
 
         public bool ContainsRange(SCG.IEnumerable<T> items)
         {
@@ -243,7 +243,6 @@ namespace C6
             }
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
-            // TODO: use aux hash bag to obtain linear time procedure (old comment)
             var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
 
             foreach (var item in this) {
@@ -256,12 +255,11 @@ namespace C6
 
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
-        // TODO: Test performance?
         public int CountDuplicates(T item) => this.Count(x => Equals(x, item));
 
         public bool Find(ref T item)
         {
-            var index = IndexOfPrivate(item);
+            var index = IndexOf(item);
 
             if (index >= 0) {
                 item = _items[index];
@@ -304,6 +302,8 @@ namespace C6
             }
         }
 
+        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, EnumerationDirection.Forwards);
+
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public int GetSequencedHashCode()
         {
@@ -324,6 +324,31 @@ namespace C6
             }
 
             return _unsequencedHashCode;
+        }
+        
+        [Pure]
+        public int IndexOf(T item)
+        {
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.IndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
+
+            #endregion
+
+            for (var i = 0; i < Count; i++) {
+                if (Equals(item, _items[i])) {
+                    return i;
+                }
+            }
+
+            return ~Count;
         }
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
@@ -352,6 +377,30 @@ namespace C6
             return new ArrayList<KeyValuePair<T, int>>(dictionary.Select(kvp => new KeyValuePair<T, int>(kvp.Key, kvp.Value)), equalityComparer);
         }
 
+        public int LastIndexOf(T item)
+        {
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.LastIndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Skip(Result<int>() + 1).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
+
+            #endregion
+
+            for (var i = Count - 1; i >= 0; i--) {
+                if (Equals(item, _items[i])) {
+                    return i;
+                }
+            }
+
+            return ~Count;
+        }
+
         public bool Remove(T item)
         {
             #region Code Contracts
@@ -373,13 +422,12 @@ namespace C6
             Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
 
             #endregion
-            
-            // TODO: Remove last item
-            var index = IndexOfPrivate(item);
+
+            var index = LastIndexOf(item);
 
             if (index >= 0) {
                 UpdateVersion();
-                removedItem = RemoveAt(index);
+                removedItem = RemoveAtPrivate(index);
                 RaiseForRemove(removedItem);
                 return true;
             }
@@ -388,7 +436,30 @@ namespace C6
             return false;
         }
 
+        public T RemoveAt(int index)
+        {
+            UpdateVersion();
+            var item = RemoveAtPrivate(index);
+            RaiseForRemovedAt(item, index);
+            return item;
+        }
+
         public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
+
+        public void RemoveIndexRange(int startIndex, int count)
+        {
+            if (count == 0) {
+                return;
+            }
+
+            UpdateVersion();
+
+            Array.Copy(_items, startIndex + count, _items, startIndex, Count - startIndex - count);
+            Count -= count;
+            Array.Clear(_items, Count, count);
+
+            RaiseForRemoveIndexRange(startIndex, count);
+        }
 
         public bool RemoveRange(SCG.IEnumerable<T> items)
         {
@@ -412,9 +483,7 @@ namespace C6
             }
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
-            // TODO: use aux hash bag to obtain linear time procedure (old comment)
             var itemsToRemove = new ArrayList<T>(items, EqualityComparer, AllowsNull);
-
             return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
@@ -459,7 +528,7 @@ namespace C6
 
             #endregion
 
-            var index = IndexOfPrivate(item);
+            var index = IndexOf(item);
 
             if (index >= 0) {
                 // Only update version if item is actually updated
@@ -649,36 +718,6 @@ namespace C6
         [Pure]
         private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
 
-        // TODO: Inline in IndexOf
-        [Pure]
-        private int IndexOfPrivate(T item)
-        {
-            #region Code Contracts
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null);
-
-
-            // TODO: Add contract to IList<T>.IndexOf
-            // Result is a valid index
-            Ensures(Contains(item)
-                ? 0 <= Result<int>() && Result<int>() < Count
-                : ~Result<int>() == Count);
-
-            // Item at index is the first equal to item
-            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.Skip(Result<int>()).First()));
-
-            #endregion
-
-            for (var i = 0; i < Count; i++) {
-                if (Equals(item, _items[i])) {
-                    return i;
-                }
-            }
-
-            return ~Count;
-        }
-
         // TODO: Rename?
         private void InsertPrivate(int index, T item)
         {
@@ -717,7 +756,7 @@ namespace C6
 
             var shouldRememberItems = ActiveEvents.HasFlag(Removed);
             IExtensible<T> itemsRemoved = null;
-            
+
             // TODO: Use bulk moves - consider using predicate(item) ^ something
             var j = 0;
             for (var i = 0; i < Count; i++) {
@@ -753,16 +792,13 @@ namespace C6
             return true;
         }
 
-        private T RemoveAt(int index)
+        private T RemoveAtPrivate(int index)
         {
             var item = _items[index];
-
             if (--Count > index) {
                 Array.Copy(_items, index + 1, _items, index, Count - index);
             }
-
             _items[Count] = default(T);
-
             return item;
         }
 
@@ -770,10 +806,12 @@ namespace C6
 
         private void CheckVersion(int version)
         {
-            if (version != _version) {
-                // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
-                throw new InvalidOperationException(CollectionWasModified);
+            if (version == _version) {
+                return;
             }
+
+            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
+            throw new InvalidOperationException(CollectionWasModified);
         }
 
         #region Event Helpers
@@ -831,6 +869,19 @@ namespace C6
         private void RaiseForRemove(T item)
         {
             OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForRemovedAt(T item, int index)
+        {
+            OnItemRemovedAt(item, index);
+            OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForRemoveIndexRange(int startIndex, int count)
+        {
+            OnCollectionCleared(false, count, startIndex);
             OnCollectionChanged();
         }
 
@@ -902,7 +953,7 @@ namespace C6
 
                 // Argument must be within bounds
                 Requires(-1 <= startIndex, ArgumentMustBeWithinBounds);
-                Requires(startIndex < list.Count, ArgumentMustBeWithinBounds);
+                Requires(startIndex < list.Count || startIndex == 0 && count == 0, ArgumentMustBeWithinBounds);
 
                 // Argument must be within bounds
                 Requires(0 <= count, ArgumentMustBeWithinBounds);
@@ -916,13 +967,11 @@ namespace C6
                 Ensures(_version == _base._version);
                 Ensures(_sign == (direction.IsForward() ? 1 : -1));
                 Ensures(-1 <= _startIndex);
-                Ensures(_startIndex < _base.Count);
+                Ensures(_startIndex < _base.Count || _startIndex == 0 && _base.Count == 0);
                 Ensures(-1 <= _startIndex + _sign * _count);
                 Ensures(_startIndex + _sign * _count <= _base.Count);
 
                 #endregion
-
-                throw new NotImplementedException();
 
                 _base = list;
                 _version = list._version;
@@ -939,7 +988,6 @@ namespace C6
             public bool AllowsNull
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _base.AllowsNull;
                 }
@@ -948,7 +996,6 @@ namespace C6
             public int Count
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _count;
                 }
@@ -957,7 +1004,6 @@ namespace C6
             public Speed CountSpeed
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return Constant;
                 }
@@ -966,7 +1012,6 @@ namespace C6
             public EnumerationDirection Direction
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _direction;
                 }
@@ -975,7 +1020,6 @@ namespace C6
             public bool IsEmpty
             {
                 get {
-                    throw new NotImplementedException();
                     CheckVersion();
                     return _count == 0;
                 }
@@ -987,7 +1031,6 @@ namespace C6
 
             public IDirectedCollectionValue<T> Backwards()
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 var startIndex = _startIndex + (_count - 1) * _sign;
                 var direction = (EnumerationDirection) (-_sign);
@@ -996,7 +1039,6 @@ namespace C6
 
             public T Choose()
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 // Select the highest index in the range
                 var index = _direction.IsForward() ? _startIndex + _count : _startIndex;
@@ -1005,7 +1047,6 @@ namespace C6
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 if (_direction.IsForward()) {
                     // Copy array directly
@@ -1019,9 +1060,14 @@ namespace C6
                 }
             }
 
+            public override bool Equals(object obj)
+            {
+                CheckVersion();
+                return base.Equals(obj);
+            }
+
             public SCG.IEnumerator<T> GetEnumerator()
             {
-                throw new NotImplementedException();
                 var items = _base._items;
                 for (var i = 0; i < _count; i++) {
                     CheckVersion();
@@ -1029,24 +1075,25 @@ namespace C6
                 }
             }
 
-            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
+            public override int GetHashCode()
             {
-                throw new NotImplementedException();
+                CheckVersion();
+                return base.GetHashCode();
             }
+
+            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
 
             public T[] ToArray()
             {
-                throw new NotImplementedException();
                 CheckVersion();
                 var array = new T[_count];
                 CopyTo(array, 0);
                 return array;
             }
 
-            public string ToString(string format, IFormatProvider formatProvider)
-            {
-                throw new NotImplementedException();
-            }
+            public override string ToString() => ToString(null, null);
+
+            public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
 
             #endregion
 

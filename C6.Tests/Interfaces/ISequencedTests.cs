@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 
 using C6.Tests.Helpers;
 
@@ -10,6 +11,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.EnumerationDirection;
+using static C6.ExceptionMessages;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -21,7 +23,7 @@ namespace C6.Tests
     public abstract class ISequencedTests : ICollectionTests
     {
         #region Factories
-        
+
         protected abstract ISequenced<T> GetEmptySequence<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
 
         protected abstract ISequenced<T> GetSequence<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
@@ -45,7 +47,7 @@ namespace C6.Tests
 
         private ISequenced<string> GetStringSequence(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetSequence(GetStrings(random, count), equalityComparer, allowsNull);
-        
+
         private IDirectedCollectionValue<string> GetStringDirectedCollectionValue(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetSequence(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
@@ -96,6 +98,125 @@ namespace C6.Tests
 
             // Assert
             Assert.That(direction, Is.EqualTo(Forwards));
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Methods
+
+        #region Backwards()
+
+        [Test]
+        public void Backwards_EmptyCollection_Expected()
+        {
+            // Arrange
+            var collection = GetEmptySequence<string>();
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                NoStrings,
+                ReferenceEqualityComparer,
+                Backwards
+                );
+
+            // Act
+            var backwards = collection.Backwards();
+
+            // Assert
+            Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Backwards_RandomCollection_Expected()
+        {
+            // Arrange
+            var collection = GetStringSequence(Random);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Reverse(),
+                ReferenceEqualityComparer,
+                Backwards
+                );
+
+            // Act
+            var backwards = collection.Backwards();
+
+            // Assert
+            Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Backwards_AllowsNull_Expected()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetSequence(items, allowsNull: true);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Reverse(),
+                ReferenceEqualityComparer,
+                Backwards
+                );
+
+            // Act
+            var backwards = collection.Backwards();
+
+            // Assert
+            Assert.That(backwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Backwards_BackwardsRandomCollection_Expected()
+        {
+            // Arrange
+            var collection = GetStringSequence(Random);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.ToArray(),
+                ReferenceEqualityComparer
+                );
+
+            // Act
+            var backwardsBackwards = collection.Backwards().Backwards();
+
+            // Assert
+            Assert.That(backwardsBackwards, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetIndexRange_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetSequence(items);
+            var array = new string[collection.Count];
+            var stringBuilder = new StringBuilder();
+            var rest = 0;
+
+            // Act
+            var backwards = collection.Backwards();
+            collection.Add(GetLowercaseString(Random));
+
+            // TODO: Refactor into separate DirectCollectionValueConstraint
+            // Assert
+            Assert.That(() => backwards.AllowsNull, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Count, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.CountSpeed, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Direction, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.IsEmpty, Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => backwards.Backwards(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Choose(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.CopyTo(array, 0), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.GetEnumerator().MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.ToArray(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.Show(stringBuilder, ref rest, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.ToString(null, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => backwards.Equals(null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.GetHashCode(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => backwards.ToString(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         #endregion
@@ -211,7 +332,7 @@ namespace C6.Tests
         // TODO: Test for shuffled list in IListTests
 
         #endregion
-        
+
         #region SequencedEquals(ISequence<T>)
 
         [Test]
