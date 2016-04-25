@@ -262,7 +262,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var count = Random.Next(0, collection.Count);
+            var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
                 collection,
@@ -320,7 +320,7 @@ namespace C6.Tests
             // Arrange
             var items = GetUppercaseStrings(Random);
             var collection = GetIndexed(items);
-            var count = Random.Next(0, collection.Count);
+            var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var array = new string[collection.Count];
             var stringBuilder = new StringBuilder();
