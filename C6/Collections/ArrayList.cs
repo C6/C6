@@ -22,7 +22,7 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     [Serializable]
-    public class ArrayList<T> : IIndexed<T>
+    public class ArrayList<T> : IList<T>
     {
         #region Fields
 
@@ -150,6 +150,11 @@ namespace C6
 
         public SCG.IEqualityComparer<T> EqualityComparer { get; }
 
+        public T First
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public Speed IndexingSpeed => Constant;
 
         public bool IsEmpty => Count == 0;
@@ -158,9 +163,28 @@ namespace C6
 
         public bool IsReadOnly => false;
 
+        public bool IsSynchronized
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public T Last
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public EventTypes ListenableEvents => All;
 
-        public T this[int index] => _items[index];
+        public object SyncRoot
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public T this[int index]
+        {
+            get { return _items[index]; }
+            set { throw new NotImplementedException(); }
+        }
 
         #endregion
 
@@ -269,6 +293,11 @@ namespace C6
             return false;
         }
 
+        public IList<T> FindAll(Func<T, bool> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
         public SCG.IEnumerable<T> FindDuplicates(T item) => this.Where(x => Equals(x, item));
 
         public bool FindOrAdd(ref T item)
@@ -325,7 +354,7 @@ namespace C6
 
             return _unsequencedHashCode;
         }
-        
+
         [Pure]
         public int IndexOf(T item)
         {
@@ -349,6 +378,41 @@ namespace C6
             }
 
             return ~Count;
+        }
+
+        public void Insert(int index, T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertFirst(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertLast(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertRange(int index, SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsSorted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsSorted(Comparison<T> comparison)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsSorted(SCG.IComparer<T> comparer)
+        {
+            throw new NotImplementedException();
         }
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
@@ -401,6 +465,16 @@ namespace C6
             return ~Count;
         }
 
+        public IList<V> Map<V>(Func<T, V> mapper)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Remove(T item)
         {
             #region Code Contracts
@@ -446,6 +520,11 @@ namespace C6
 
         public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
 
+        public T RemoveFirst()
+        {
+            throw new NotImplementedException();
+        }
+
         public void RemoveIndexRange(int startIndex, int count)
         {
             if (count == 0) {
@@ -459,6 +538,11 @@ namespace C6
             Array.Clear(_items, Count, count);
 
             RaiseForRemoveIndexRange(startIndex, count);
+        }
+
+        public T RemoveLast()
+        {
+            throw new NotImplementedException();
         }
 
         public bool RemoveRange(SCG.IEnumerable<T> items)
@@ -487,9 +571,39 @@ namespace C6
             return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
+        public void Reverse()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
 
         public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
+
+        public void Shuffle()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Shuffle(Random random)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Sort()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Sort(Comparison<T> comparison)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Sort(SCG.IComparer<T> comparer)
+        {
+            throw new NotImplementedException();
+        }
 
         public T[] ToArray()
         {
@@ -654,9 +768,60 @@ namespace C6
 
         #region Explicit Implementations
 
+        int SC.IList.Add(object value)
+        {
+            throw new NotImplementedException();
+        }
+
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
+        bool SC.IList.Contains(object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void SC.ICollection.CopyTo(Array array, int index)
+        {
+            throw new NotImplementedException();
+        }
+
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
+
+        int SC.IList.IndexOf(object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        int SCG.IList<T>.IndexOf(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        void SC.IList.Insert(int index, object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void SC.IList.Remove(object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void SC.IList.RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        void SCG.IList<T>.RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        object SC.IList.this[int index]
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
 
         #endregion
 
