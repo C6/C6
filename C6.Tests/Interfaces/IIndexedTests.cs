@@ -4,6 +4,7 @@
 using System.Linq;
 using System.Text;
 
+using C6.Contracts;
 using C6.Tests.Contracts;
 using C6.Tests.Helpers;
 
@@ -248,7 +249,7 @@ namespace C6.Tests
                 collection,
                 collection.ToArray(),
                 ReferenceEqualityComparer
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(0, count);
@@ -268,7 +269,7 @@ namespace C6.Tests
                 collection,
                 collection.Skip(startIndex).Take(count),
                 ReferenceEqualityComparer
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count);
@@ -286,7 +287,7 @@ namespace C6.Tests
                 collection,
                 NoStrings,
                 ReferenceEqualityComparer
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(0, 0);
@@ -305,7 +306,7 @@ namespace C6.Tests
                 collection,
                 NoStrings,
                 ReferenceEqualityComparer
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, 0);
@@ -718,7 +719,7 @@ namespace C6.Tests
             var item = Random.GetString();
             var itemArray = new[] { item };
             var collection = GetIndexed(itemArray);
-            
+
             // Act
             var removeAt = collection.RemoveAt(0);
 
@@ -778,6 +779,221 @@ namespace C6.Tests
             Run.If(DuplicatesByCounting);
 
             // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region RemoveIndexRange(int, int)
+
+        [Test]
+        public void RemoveIndexRange_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(int.MinValue, 0);
+            var count = collection.Count / 2;
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveIndexRange_IndexOfCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = collection.Count;
+            var count = collection.Count / 2;
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveIndexRange_IndexLargerThanCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(collection.Count + 1, int.MaxValue);
+            var count = collection.Count / 2;
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveIndexRange_NegativeCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = collection.Count / 2;
+            var startIndex = Random.Next(0, count);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, -count), Violates.PreconditionSaying(ArgumentMustBeNonNegative));
+        }
+
+        [Test]
+        public void RemoveIndexRange_CountIsOneLongerThanCollection_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(0, collection.Count);
+            var count = collection.Count - startIndex + 1;
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void RemoveIndexRange_RemoveWholeCollection_Empty()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = collection.Count;
+
+            // Act
+            collection.RemoveIndexRange(0, count);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveIndexRange_RemoveWholeCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = collection.Count;
+            var expectedEvents = new[] {
+                Cleared(false, count, 0, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(0, count), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void RemoveIndexRange_RandomRange_Expected()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(1, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var expected = collection.SkipRange(startIndex, count).ToList();
+
+            // Act
+            collection.RemoveIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void RemoveIndexRange_EmptyCollection_Empty()
+        {
+            // Arrange
+            var collection = GetEmptyIndexed<string>();
+
+            // Act
+            collection.RemoveIndexRange(0, 0);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveIndexRange_EmptyRange_UnchangedCollection()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(0, collection.Count);
+            var expected = collection.ToArray();
+
+            // Act
+            collection.RemoveIndexRange(startIndex, 0);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void RemoveIndexRange_EmptyRange_NoEvents()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(0, collection.Count);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, 0), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void RemoveIndexRange_RandomCollectionRandomRange_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(1, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var expectedEvents = new[] {
+                Cleared(false, count, startIndex, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, count), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void RemoveIndexRange_RemoveIndexRangeDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(1, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void RemoveIndexRange_RemoveIndexRangeDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var startIndex = Random.Next(0, collection.Count);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveIndexRange(startIndex, 0);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveIndexRange_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveIndexRange_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
             Assert.Fail("Tests have not been written yet");
         }
 

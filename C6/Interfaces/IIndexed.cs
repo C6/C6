@@ -315,7 +315,7 @@ namespace C6
 
             // Argument must be within bounds (collection must be non-empty)
             Requires(0 <= startIndex, ArgumentMustBeWithinBounds);
-            Requires(startIndex + count < Count, ArgumentMustBeWithinBounds);
+            Requires(startIndex + count <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-negative
             Requires(0 <= count, ArgumentMustBeNonNegative);

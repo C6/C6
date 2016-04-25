@@ -148,6 +148,7 @@ public void $METHOD$$PARAMETER_TYPES$_$SCENARIO$_RaisesExpectedEvents()&#xD;
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=421ABB269135EF4E81ADC50F3FAA155E/Text/@EntryValue">&lt;c&gt;false&lt;/c&gt;</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Categories/=Unit_0020tests/@EntryIndexedValue">Unit tests</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Description/@EntryValue">Violates precondition: index greater than count</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=COLLECTION/@KeyIndexDefined">True</s:Boolean>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4B3ED7918EE16A4DA5043EB19ACBB5B6/Field/=COLLECTION/Order/@EntryValue">2</s:Int64>
@@ -324,6 +325,7 @@ public void $METHOD$$PARAMETER_TYPES$_DisallowsNullsInEnumerable_ViolatesPrecond
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=902FD10D80F9794AAAD38F301A9F9B3A/Text/@EntryValue">&lt;c&gt;true&lt;/c&gt;</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Categories/=Unit_0020tests/@EntryIndexedValue">Unit tests</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Description/@EntryValue">Violates precondition: index of count</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=COLLECTION/@KeyIndexDefined">True</s:Boolean>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F010F6AC11259438CC55836A6F9C48B/Field/=COLLECTION/Order/@EntryValue">2</s:Int64>
@@ -505,6 +507,35 @@ public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_ThrowsInvalid
     // Assert&#xD;
     NUnit.Framework.Assert.That(() =&gt; enumerator.MoveNext(), NUnit.Framework.Throws.InvalidOperationException.Because(CollectionWasModified));&#xD;
 }</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Field/=COLLECTION/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Field/=COLLECTION/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Field/=METHOD/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Field/=METHOD/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Field/=PARAMETER_005FTYPES/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Field/=PARAMETER_005FTYPES/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Shortcut/@EntryValue">break enumerator not</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Text/@EntryValue">[NUnit.Framework.Test]&#xD;
+public void $METHOD$$PARAMETER_TYPES$_$METHOD$DuringEnumeration_ThrowsNothing()&#xD;
+{&#xD;
+    // Arrange&#xD;
+    var collection = GetString$COLLECTION$(Random);&#xD;
+&#xD;
+    // Act&#xD;
+    var enumerator = collection.GetEnumerator();&#xD;
+    enumerator.MoveNext();&#xD;
+    collection.$METHOD$();&#xD;
+&#xD;
+    // Assert&#xD;
+    NUnit.Framework.Assert.That(() =&gt; enumerator.MoveNext(), NUnit.Framework.Throws.Nothing);&#xD;
+}&#xD;
+$END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
@@ -520,6 +551,7 @@ System.Diagnostics.Contracts.Contract.Requires(AllowsNull || System.Diagnostics.
 $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Description/@EntryValue">Requires: enum defined</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E418BF4B3A367B4B82F0A684AC9AD67E/Field/=ENUM/Expression/@EntryValue">parameterOfType("Enum")</s:String>
