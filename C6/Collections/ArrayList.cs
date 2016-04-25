@@ -448,7 +448,17 @@ namespace C6
 
         public void RemoveIndexRange(int startIndex, int count)
         {
-            throw new NotImplementedException();
+            if (count == 0) {
+                return;
+            }
+
+            UpdateVersion();
+
+            Array.Copy(_items, startIndex + count, _items, startIndex, Count - startIndex - count);
+            Count -= count;
+            Array.Clear(_items, Count, count);
+
+            RaiseForRemoveIndexRange(startIndex, count);
         }
 
         public bool RemoveRange(SCG.IEnumerable<T> items)
@@ -866,6 +876,12 @@ namespace C6
         {
             OnItemRemovedAt(item, index);
             OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForRemoveIndexRange(int startIndex, int count)
+        {
+            OnCollectionCleared(false, count, startIndex);
             OnCollectionChanged();
         }
 
