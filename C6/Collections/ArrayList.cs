@@ -163,22 +163,12 @@ namespace C6
 
         public bool IsReadOnly => false;
 
-        public bool IsSynchronized
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public T Last
         {
             get { throw new NotImplementedException(); }
         }
 
         public EventTypes ListenableEvents => All;
-
-        public object SyncRoot
-        {
-            get { throw new NotImplementedException(); }
-        }
 
         public T this[int index]
         {
@@ -768,6 +758,19 @@ namespace C6
 
         #region Explicit Implementations
 
+        bool SC.ICollection.IsSynchronized => false;
+
+        object SC.ICollection.SyncRoot
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        object SC.IList.this[int index]
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
         int SC.IList.Add(object value)
         {
             throw new NotImplementedException();
@@ -815,12 +818,6 @@ namespace C6
         void SCG.IList<T>.RemoveAt(int index)
         {
             throw new NotImplementedException();
-        }
-
-        object SC.IList.this[int index]
-        {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
         }
 
         #endregion

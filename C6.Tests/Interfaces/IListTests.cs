@@ -29,8 +29,8 @@ namespace C6.Tests
 
         protected abstract IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
         
-        private IIndexed<string> GetStringList(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
-            => GetIndexed(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
+        private IList<string> GetStringList(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetList(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
         #region Inherited
 
@@ -44,11 +44,32 @@ namespace C6.Tests
 
         #region Test Methods
 
+        #region SC.ICollection
+
         #region Properties
+
+        #region IsSynchronized
+
+        [Test]
+        public void IsSynchronized_RandomCollection_False()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            var isSynchronized = collection.IsSynchronized;
+
+            // Assert
+            Assert.That(isSynchronized, Is.False);
+        }
+
+        #endregion
 
         #endregion
 
         #region Methods
+
+        #endregion
 
         #endregion
 
