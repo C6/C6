@@ -60,8 +60,8 @@ namespace C6
             Requires(stringBuilder != null, ArgumentMustBeNonNull);
 
 
-            // Returns true if rest >= 0 on return; otherwise, false.
-            Ensures(Result<bool>() == (ValueAtReturn(out rest) >= 0)); // TODO: Is this actually true?
+            // If result is false, the rest is non-positive
+            Ensures(Result<bool>() || ValueAtReturn(out rest) <= 0);
 
             // The length of the formatted string is subtracted from rest
             Ensures(stringBuilder.Length - OldValue(stringBuilder.Length) == OldValue(rest) - ValueAtReturn(out rest));
