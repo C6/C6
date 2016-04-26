@@ -762,6 +762,144 @@ namespace C6.Tests
 
         #endregion
 
+        #region InsertLast(int, T)
+        
+        [Test]
+        public void InsertLast_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.InsertLast(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void InsertLast_RandomCollectionInsertExistingLast_ViolatesPrecondition()
+        {
+            Run.If(!AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.ToArray().Choose(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.InsertLast(item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
+        }
+
+        [Test]
+        public void InsertLast_RandomCollectionInsertExistingLast_InsertedLast()
+        {
+            Run.If(AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.ToArray().Choose(Random);
+            var array = collection.Append(item).ToArray();
+
+            // Act
+            collection.InsertLast(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertLast_EmptyCollection_SingleItemCollection()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var item = Random.GetString();
+            var array = new[] { item };
+
+            // Act
+            collection.InsertLast(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertLast_AllowsNull_Null()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            var array = collection.Append(null).ToArray();
+
+            // Act
+            collection.InsertLast(null);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertLast_RandomCollectionInsertLast_InsertedLast()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var array = collection.Append(item).ToArray();
+
+            // Act
+            collection.InsertLast(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertLast_RandomCollectionInsertLast_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var expectedEvents = new[] {
+                Inserted(item, collection.Count, collection),
+                Added(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.InsertLast(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void InsertLast_InsertLastDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.InsertLast(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void InsertLast_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void InsertLast_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region IsSorted()
 
         [Test]

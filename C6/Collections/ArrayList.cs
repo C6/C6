@@ -373,10 +373,7 @@ namespace C6
 
         public void InsertFirst(T item) => Insert(0, item);
 
-        public void InsertLast(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public void InsertLast(T item) => Insert(Count, item);
 
         public void InsertRange(int index, SCG.IEnumerable<T> items)
         {
