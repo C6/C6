@@ -388,7 +388,16 @@ namespace C6
 
         public bool IsSorted()
         {
-            throw new NotImplementedException();
+            var comparer = SCG.Comparer<T>.Default;
+
+            for (var i = 1; i < Count; i++) {
+                // Throws exception if T is not comparable
+                if (comparer.Compare(_items[i - 1], _items[i]) > 0) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public bool IsSorted(Comparison<T> comparison)
