@@ -30,6 +30,8 @@ namespace C6.Tests.Helpers
         public static KeyValuePair<int, int>[] GetKeyValuePairs(Random random, int count)
             => Enumerable.Range(0, count).Select(i => new KeyValuePair<int, int>(random.Next(), random.Next())).ToArray();
 
+        public static int GetIndex<T>(IIndexed<T> collection, Random random) => random.Next(0, collection.Count);
+
         public static string[] GetStrings(Randomizer random)
             => GetStrings(random, GetCount(random));
 
