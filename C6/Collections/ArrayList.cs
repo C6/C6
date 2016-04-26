@@ -310,12 +310,9 @@ namespace C6
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
-            // Cache count to ensure that clearing while enumerating throws an exception
-            var count = Count;
             var version = _version;
-
-            for (var i = 0; i < count; i++) {
-                CheckVersion(version);
+            // Check version at each call to MoveNext() to ensure an exception is thrown even when the enumerator was really finished
+            for (var i = 0; CheckVersion(version) & i < Count; i++) {
                 yield return _items[i];
             }
         }
@@ -562,7 +559,14 @@ namespace C6
 
         public void Reverse()
         {
-            throw new NotImplementedException();
+            if (Count <= 1) {
+                return;
+            }
+
+            UpdateVersion();
+
+            Array.Reverse(_items);
+            RaiseForReverse();
         }
 
         public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
@@ -965,10 +969,10 @@ namespace C6
 
         private void UpdateVersion() => _version++;
 
-        private void CheckVersion(int version)
+        private bool CheckVersion(int version)
         {
             if (version == _version) {
-                return;
+                return true;
             }
 
             // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
@@ -1064,6 +1068,11 @@ namespace C6
                     OnItemsRemoved(item, 1);
                 }
             }
+            OnCollectionChanged();
+        }
+
+        private void RaiseForReverse()
+        {
             OnCollectionChanged();
         }
 
@@ -1277,7 +1286,7 @@ namespace C6
 
             #region Private Members
 
-            private void CheckVersion() => _base.CheckVersion(_version);
+            private bool CheckVersion() => _base.CheckVersion(_version);
 
             #endregion
         }
