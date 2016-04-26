@@ -167,7 +167,12 @@ namespace C6
         public T this[int index]
         {
             get { return _items[index]; }
-            set { throw new NotImplementedException(); }
+            set {
+                UpdateVersion();
+                var oldItem = _items[index];
+                _items[index] = value;
+                RaiseForIndexSetter(oldItem, value, index);
+            }
         }
 
         #endregion
@@ -1020,6 +1025,17 @@ namespace C6
 
             OnCollectionCleared(true, count);
             OnCollectionChanged();
+        }
+
+        private void RaiseForIndexSetter(T oldItem, T newItem, int index)
+        {
+            if (ActiveEvents != None) {
+                OnItemRemovedAt(oldItem, index);
+                OnItemsRemoved(oldItem, 1);
+                OnItemInserted(newItem, index);
+                OnItemsAdded(newItem, 1);
+                OnCollectionChanged();
+            }
         }
 
         private void RaiseForRemove(T item)
