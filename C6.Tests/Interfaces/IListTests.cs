@@ -190,7 +190,206 @@ namespace C6.Tests
         }
 
         #endregion
-        
+
+        #region this[int]
+
+        [Test]
+        public void ItemSet_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(int.MinValue, 0);
+            var item = Random.GetString();
+
+            // Act & Assert
+            Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void ItemSet_IndexOfCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = collection.Count;
+            var item = Random.GetString();
+
+            // Act & Assert
+            Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void ItemSet_IndexLargerThanCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(collection.Count + 1, int.MaxValue);
+            var item = Random.GetString();
+
+            // Act & Assert
+            Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void ItemSet_EmptyCollection_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var item = Random.GetString();
+
+            // Act & Assert
+            Assert.That(() => collection[0] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void ItemSet_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+            var index = Random.Next(0, collection.Count);
+
+            // Act & Assert
+            Assert.That(() => collection[index] = null, Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void ItemSet_RandomCollectionSetDuplicate_ViolatesPrecondition()
+        {
+            Run.If(!AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(0, collection.Count);
+            var item = collection.ToArray().Choose(Random);
+
+            // Act & Assert
+            Assert.That(() => collection[index] = item, Violates.PreconditionSaying(CollectionMustAllowDuplicates));
+        }
+
+        [Test]
+        public void ItemSet_RandomCollectionSetDuplicate_Inserted()
+        {
+            Run.If(AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(0, collection.Count);
+            var item = collection.ToArray().Choose(Random);
+
+            // Act
+            collection[index] = item;
+
+            // Assert
+            Assert.That(collection[index], Is.SameAs(item));
+            Assert.That(collection.CountDuplicates(item), Is.GreaterThanOrEqualTo(2));
+        }
+
+        [Test]
+        public void ItemSet_AllowsNull_Null()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            var index = Random.Next(0, collection.Count);
+            
+            // Act
+            collection[index] = null;
+            
+            // Assert
+            Assert.That(collection[index], Is.Null);
+        }
+
+        [Test]
+        public void ItemSet_RandomCollectionIndexZero_FirstItem()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var index = 0;
+
+            // Act
+            collection[index] = item;
+
+            // Assert
+            Assert.That(collection[index], Is.SameAs(item));
+        }
+
+        [Test]
+        public void ItemSet_RandomCollectionIndexCountMinusOne_LastItem()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var index = collection.Count - 1;
+
+            // Act
+            collection[index] = item;
+
+            // Assert
+            Assert.That(collection[index], Is.SameAs(item));
+        }
+
+        [Test]
+        public void ItemSet_RandomCollectionRandomIndex_ItemAtPositionIndex()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var index = Random.Next(0, collection.Count);
+
+            // Act
+            collection[index] = item;
+
+            // Assert
+            Assert.That(collection[index], Is.SameAs(item));
+        }
+
+        [Test]
+        public void ItemSet_RandomCollectionRandomIndex_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var index = Random.Next(0, collection.Count);
+            var oldItem = collection[index];
+            var expectedEvents = new[] {
+                RemovedAt(oldItem, index, collection),
+                Removed(oldItem, 1, collection),
+                Inserted(item, index, collection),
+                Added(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection[index] = item, Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void ItemSet_SetDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var index = Random.Next(0, collection.Count);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection[index] = item;
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void ItemSet_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #endregion
 
         #endregion

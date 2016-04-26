@@ -69,7 +69,7 @@ namespace C6.Tests
         #region this[int]
 
         [Test]
-        public void Item_NegativeIndex_ViolatesPrecondition()
+        public void ItemGet_NegativeIndex_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -80,7 +80,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_IndexOfCount_ViolatesPrecondition()
+        public void ItemGet_IndexOfCount_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -91,7 +91,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_IndexLargerThanCount_ViolatesPrecondition()
+        public void ItemGet_IndexLargerThanCount_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -103,7 +103,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_EmptyCollection_ViolatesPrecondition()
+        public void ItemGet_EmptyCollection_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
@@ -113,7 +113,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionWithNull_Null()
+        public void ItemGet_RandomCollectionWithNull_Null()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -128,7 +128,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionIndexZero_FirstItem()
+        public void ItemGet_RandomCollectionIndexZero_FirstItem()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -142,7 +142,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionIndexCountMinusOne_LastItem()
+        public void ItemGet_RandomCollectionIndexCountMinusOne_LastItem()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -157,7 +157,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionRandomIndex_ItemAtPositionIndex()
+        public void ItemGet_RandomCollectionRandomIndex_ItemAtPositionIndex()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -269,7 +269,7 @@ namespace C6.Tests
                 collection,
                 collection.Skip(startIndex).Take(count),
                 ReferenceEqualityComparer
-                );
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count);

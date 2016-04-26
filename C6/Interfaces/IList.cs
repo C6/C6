@@ -727,7 +727,7 @@ namespace C6
                 Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
                 // Argument must be non-null if collection disallows null values
-                Requires(AllowsNull || value != null, ArgumentMustBeNonNull);
+                Requires(AllowsNull || value != null, ItemMustBeNonNull);
 
                 // Argument must be within bounds
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
