@@ -182,9 +182,7 @@ namespace C6
         public bool Add(T item)
         {
             UpdateVersion();
-
             InsertPrivate(Count, item);
-
             RaiseForAdd(item);
             return true;
         }
@@ -368,7 +366,9 @@ namespace C6
 
         public void Insert(int index, T item)
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+            InsertPrivate(index, item);
+            RaiseForInsert(index, item);
         }
 
         public void InsertFirst(T item)
@@ -892,7 +892,6 @@ namespace C6
         [Pure]
         private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
 
-        // TODO: Rename?
         private void InsertPrivate(int index, T item)
         {
             #region Code Contracts
@@ -1049,6 +1048,13 @@ namespace C6
                 OnItemsAdded(newItem, 1);
                 OnCollectionChanged();
             }
+        }
+
+        private void RaiseForInsert(int index, T item)
+        {
+            OnItemInserted(item, index);
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
         }
 
         private void RaiseForRemove(T item)
