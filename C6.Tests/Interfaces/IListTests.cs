@@ -293,12 +293,14 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random, allowsNull: true);
             var index = Random.Next(0, collection.Count);
+            var array = collection.ToArray();
+            array[index] = null;
 
             // Act
             collection[index] = null;
 
             // Assert
-            Assert.That(collection[index], Is.Null);
+            Assert.That(collection, Is.EqualTo(array));
         }
 
         [Test]
@@ -308,12 +310,15 @@ namespace C6.Tests
             var collection = GetStringList(Random);
             var item = Random.GetString();
             var index = 0;
+            var array = collection.ToArray();
+            array[index] = item;
 
             // Act
             collection[index] = item;
 
             // Assert
             Assert.That(collection[index], Is.SameAs(item));
+            Assert.That(collection, Is.EqualTo(array));
         }
 
         [Test]
@@ -323,12 +328,15 @@ namespace C6.Tests
             var collection = GetStringList(Random);
             var item = Random.GetString();
             var index = collection.Count - 1;
+            var array = collection.ToArray();
+            array[index] = item;
 
             // Act
             collection[index] = item;
 
             // Assert
             Assert.That(collection[index], Is.SameAs(item));
+            Assert.That(collection, Is.EqualTo(array));
         }
 
         [Test]
@@ -338,12 +346,15 @@ namespace C6.Tests
             var collection = GetStringList(Random);
             var item = Random.GetString();
             var index = Random.Next(0, collection.Count);
+            var array = collection.ToArray();
+            array[index] = item;
 
             // Act
             collection[index] = item;
 
             // Assert
             Assert.That(collection[index], Is.SameAs(item));
+            Assert.That(collection, Is.EqualTo(array));
         }
 
         [Test]
