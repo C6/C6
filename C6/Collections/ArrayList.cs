@@ -150,10 +150,7 @@ namespace C6
 
         public SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public T First
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public T First => _items[0];
 
         public Speed IndexingSpeed => Constant;
 

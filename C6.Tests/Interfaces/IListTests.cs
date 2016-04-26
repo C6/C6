@@ -73,6 +73,71 @@ namespace C6.Tests
 
         #endregion
 
+        #region IList<T>
+
+        #region Properties
+
+        #region First
+
+        [Test]
+        public void First_EmptyCollection_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            
+            // Act & Assert
+            Assert.That(() => collection.First, Violates.PreconditionSaying(CollectionMustBeNonEmpty));
+        }
+
+        [Test]
+        public void First_SingleItemCollection_Item()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item };
+            var collection = GetList(items);
+
+            // Act
+            var first = collection.First;
+
+            // Assert
+            Assert.That(first, Is.SameAs(item));
+        }
+
+        [Test]
+        public void First_RandomCollection_FirstItem()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.First();
+
+            // Act
+            var first = collection.First;
+
+            // Assert
+            Assert.That(first, Is.EqualTo(item));
+        }
+
+        [Test]
+        public void First_RandomCollectionStartingWithNull_Null()
+        {
+            // Arrange
+            var items = new string[] { null }.Concat(GetStrings(Random));
+            var collection = GetList(items, allowsNull: true);
+
+            // Act
+            var first = collection.First;
+
+            // Assert
+            Assert.That(first, Is.Null);
+        }
+
+        #endregion
+        
+        #endregion
+
+        #endregion
+
         #endregion
     }
 }
