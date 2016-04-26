@@ -133,6 +133,63 @@ namespace C6.Tests
         }
 
         #endregion
+
+        #region Last
+
+        [Test]
+        public void Last_EmptyCollection_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            
+            // Act & Assert
+            Assert.That(() => collection.Last, Violates.PreconditionSaying(CollectionMustBeNonEmpty));
+        }
+
+        [Test]
+        public void Last_SingleItemCollection_Item()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item };
+            var collection = GetList(items);
+
+            // Act
+            var last = collection.Last;
+
+            // Assert
+            Assert.That(last, Is.SameAs(item));
+        }
+
+        [Test]
+        public void Last_RandomCollection_LastItem()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.Last();
+
+            // Act
+            var last = collection.Last;
+
+            // Assert
+            Assert.That(last, Is.EqualTo(item));
+        }
+
+        [Test]
+        public void Last_RandomCollectionStartingWithNull_Null()
+        {
+            // Arrange
+            var items = GetStrings(Random).Append(null);
+            var collection = GetList(items, allowsNull: true);
+
+            // Act
+            var last = collection.Last;
+
+            // Assert
+            Assert.That(last, Is.Null);
+        }
+
+        #endregion
         
         #endregion
 

@@ -160,10 +160,7 @@ namespace C6
 
         public bool IsReadOnly => false;
 
-        public T Last
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public T Last => _items[Count - 1];
 
         public EventTypes ListenableEvents => All;
 
