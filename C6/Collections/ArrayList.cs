@@ -371,10 +371,7 @@ namespace C6
             RaiseForInsert(index, item);
         }
 
-        public void InsertFirst(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public void InsertFirst(T item) => Insert(0, item);
 
         public void InsertLast(T item)
         {

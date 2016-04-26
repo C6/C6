@@ -624,6 +624,144 @@ namespace C6.Tests
 
         #endregion
 
+        #region InsertFirst(int, T)
+        
+        [Test]
+        public void InsertFirst_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.InsertFirst(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void InsertFirst_RandomCollectionInsertExistingFirst_ViolatesPrecondition()
+        {
+            Run.If(!AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.ToArray().Choose(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.InsertFirst(item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
+        }
+
+        [Test]
+        public void InsertFirst_RandomCollectionInsertExistingFirst_InsertedFirst()
+        {
+            Run.If(AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.ToArray().Choose(Random);
+            var array = collection.ToArray().Insert(0, item);
+
+            // Act
+            collection.InsertFirst(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertFirst_EmptyCollection_SingleItemCollection()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var item = Random.GetString();
+            var array = new[] { item };
+
+            // Act
+            collection.InsertFirst(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertFirst_AllowsNull_Null()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            var array = collection.ToArray().Insert(0, null);
+
+            // Act
+            collection.InsertFirst(null);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertFirst_RandomCollectionInsertFirst_InsertedFirst()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var array = collection.ToArray().Insert(0, item);
+
+            // Act
+            collection.InsertFirst(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertFirst_RandomCollectionInsertFirst_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var expectedEvents = new[] {
+                Inserted(item, 0, collection),
+                Added(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.InsertFirst(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void InsertFirst_InsertFirstDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.InsertFirst(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void InsertFirst_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void InsertFirst_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region IsSorted()
 
         [Test]
