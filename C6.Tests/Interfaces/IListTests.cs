@@ -1,6 +1,7 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
+using System;
 using System.Linq;
 using System.Text;
 
@@ -382,6 +383,163 @@ namespace C6.Tests
         [Test]
         [Category("Unfinished")]
         public void ItemSet_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Methods
+
+        #region Reverse()
+
+        [Test]
+        public void Reverse_EmptyCollection_Nothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            
+            // Act
+            collection.Reverse();
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Reverse_EmptyCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.Reverse(), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void Reverse_RandomCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            
+            var expectedEvents = new[] {
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Reverse(), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void Reverse_ReverseDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Reverse();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void Reverse_ReverseDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Reverse();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void Reverse_RandomCollectionWithNull_Reversed()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetList(items, allowsNull: true);
+            var reversedCollection = collection.ToArray().Reverse();
+
+            // Act
+            collection.Reverse();
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(reversedCollection));
+        }
+
+        [Test]
+        public void Reverse_SingleItemCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item };
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Reverse(), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void Reverse_SingleItemCollectionReverseDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item };
+            var collection = GetList(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Reverse();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void Reverse_RandomCollection_Reversed()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var reversedCollection = collection.ToArray().Reverse();
+
+            // Act
+            collection.Reverse();
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(reversedCollection));
+        }
+
+        [Test]
+        public void Reverse_ReverseReversedRandomCollection_OriginalCollection()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = collection.ToArray();
+
+            // Act
+            collection.Reverse();
+            collection.Reverse();
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Reverse_ReadOnlyCollection_Fail()
         {
             Run.If(IsReadOnly);
 
