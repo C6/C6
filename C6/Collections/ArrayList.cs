@@ -181,13 +181,11 @@ namespace C6
 
         public bool Add(T item)
         {
-            UpdateVersion();
             InsertPrivate(Count, item);
             RaiseForAdd(item);
             return true;
         }
 
-        // TODO: Use InsertRange?
         public bool AddRange(SCG.IEnumerable<T> items)
         {
             #region Code Contracts
@@ -200,22 +198,12 @@ namespace C6
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
 
-            var count = array.Length;
-
-            if (count == 0) {
+            if (array.IsEmpty()) {
                 return false;
             }
 
-            // Only update version if items are actually added
-            UpdateVersion();
-
-            EnsureCapacity(Count + count);
-
-            Array.Copy(array, 0, _items, Count, count);
-            Count += count;
-
+            InsertRangePrivate(Count, array);
             RaiseForAddRange(array);
-
             return true;
         }
 
@@ -366,7 +354,6 @@ namespace C6
 
         public void Insert(int index, T item)
         {
-            UpdateVersion();
             InsertPrivate(index, item);
             RaiseForInsert(index, item);
         }
@@ -377,6 +364,13 @@ namespace C6
 
         public void InsertRange(int index, SCG.IEnumerable<T> items)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
 
@@ -384,19 +378,7 @@ namespace C6
                 return;
             }
 
-            // Only update version if items are actually added
-            UpdateVersion();
-
-            var count = array.Length;
-
-            EnsureCapacity(Count + count);
-
-            if (index < Count) {
-                Array.Copy(_items, index, _items, index + count, Count - index);
-            }
-            Array.Copy(array, 0, _items, index, count);
-            Count += count;
-
+            InsertRangePrivate(index, array);
             RaiseForInsertRange(index, array);
         }
 
@@ -876,6 +858,16 @@ namespace C6
             }
         }
 
+        private bool CheckVersion(int version)
+        {
+            if (version == _version) {
+                return true;
+            }
+
+            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
+            throw new InvalidOperationException(CollectionWasModified);
+        }
+
         private void EnsureCapacity(int requiredCapacity)
         {
             #region Code Contracts
@@ -919,17 +911,43 @@ namespace C6
 
             #endregion
 
-            if (Capacity == Count) {
-                EnsureCapacity(Count + 1);
-            }
+            // Only update version if items are actually added
+            UpdateVersion();
+
+            EnsureCapacity(Count + 1);
 
             // Move items one to the right
             if (index < Count) {
                 Array.Copy(_items, index, _items, index + 1, Count - index);
             }
-
             _items[index] = item;
             Count++;
+        }
+
+        private void InsertRangePrivate(int index, T[] items)
+        {
+            #region Code Contracts
+
+            // Argument must be within bounds
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
+
+            #endregion
+
+            // Only update version if items are actually added
+            UpdateVersion();
+
+            var count = items.Length;
+            EnsureCapacity(Count + count);
+
+            if (index < Count) {
+                Array.Copy(_items, index, _items, index + count, Count - index);
+            }
+            Array.Copy(items, 0, _items, index, count);
+            Count += count;
         }
 
         private bool RemoveAllWhere(Func<T, bool> predicate)
@@ -990,16 +1008,6 @@ namespace C6
         }
 
         private void UpdateVersion() => _version++;
-
-        private bool CheckVersion(int version)
-        {
-            if (version == _version) {
-                return true;
-            }
-
-            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
-            throw new InvalidOperationException(CollectionWasModified);
-        }
 
         #region Event Helpers
 
