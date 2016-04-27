@@ -899,7 +899,7 @@ namespace C6
 
             // Argument must be within bounds
             Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);

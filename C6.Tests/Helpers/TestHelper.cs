@@ -30,9 +30,10 @@ namespace C6.Tests.Helpers
         public static KeyValuePair<int, int>[] GetKeyValuePairs(Random random, int count)
             => Enumerable.Range(0, count).Select(i => new KeyValuePair<int, int>(random.Next(), random.Next())).ToArray();
 
-        public static int GetIndex<T>(IIndexed<T> collection, Random random) => random.Next(0, collection.Count);
+        public static int GetIndex<T>(IIndexed<T> collection, Random random, bool includeCount = false) => random.Next(0, collection.Count + (includeCount ? 1 : 0));
 
-        public static T[] Insert<T>(this SCG.IEnumerable<T> enumerable, int index, T item) => enumerable.Take(index).Append(item).Concat(enumerable.Skip(index)).ToArray();
+        public static T[] InsertItem<T>(this SCG.IEnumerable<T> enumerable, int index, T item) => enumerable.Take(index).Append(item).Concat(enumerable.Skip(index)).ToArray();
+        public static T[] InsertItems<T>(this SCG.IEnumerable<T> enumerable, int index, SCG.IEnumerable<T> items) => enumerable.Take(index).Concat(items).Concat(enumerable.Skip(index)).ToArray();
 
         public static string[] GetStrings(Randomizer random)
             => GetStrings(random, GetCount(random));
