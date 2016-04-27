@@ -55,11 +55,17 @@ namespace C6
         }
 
         /// <summary>
-        ///     Gets a value indicating whether the <see cref="SCG.IEnumerable{T}"/> is empty.
+        ///     Determines whether the <see cref="SCG.IEnumerable{T}"/> is empty.
         /// </summary>
-        /// <value>
+        /// <typeparam name="T">
+        ///     The type of the items in the array.
+        /// </typeparam>
+        /// <param name="enumerable">
+        ///     The <see cref="SCG.IEnumerable{T}"/> to check for emptiness.
+        /// </param>
+        /// <returns>
         ///     <c>true</c> if the <see cref="SCG.IEnumerable{T}"/> is empty; otherwise, <c>false</c>.
-        /// </value>
+        /// </returns>
         [Pure]
         public static bool IsEmpty<T>(this SCG.IEnumerable<T> enumerable)
         {
@@ -85,6 +91,35 @@ namespace C6
             }
 
             return !enumerable.Any();
+        }
+
+        /// <summary>
+        ///     Determines whether the <see cref="Array"/> is empty.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the array.
+        /// </typeparam>
+        /// <param name="array">
+        ///     The <see cref="Array"/> to check for emptiness.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the <see cref="Array"/> is empty; otherwise, <c>false</c>.
+        /// </returns>
+        [Pure]
+        public static bool IsEmpty<T>(this T[] array)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(array != null, ArgumentMustBeNonNull);
+
+
+            // Returns true if Count is zero, otherwise false
+            Ensures(Result<bool>() != array.Any());
+
+            #endregion
+
+            return array.Length == 0;
         }
 
         /// <summary>
