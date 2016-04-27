@@ -1387,6 +1387,224 @@ namespace C6.Tests
 
         #endregion
 
+        #region RemoveFirst()
+
+        [Test]
+        public void RemoveFirst_EmptyCollection_ViolatesPrecondtion()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveFirst(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
+        }
+        
+        [Test]
+        public void RemoveFirst_RemoveFirstDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveFirst();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void RemoveFirst_RandomCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.First;
+            var expectedEvents = new[] {
+                RemovedAt(item, 0, collection),
+                Removed(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveFirst(), Raises(expectedEvents).For(collection));
+        }
+        
+        [Test]
+        public void RemoveFirst_RandomCollectionWithNullRemoveNull_Null()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            collection[0] = null;
+
+            // Act
+            var removeFirst = collection.RemoveFirst();
+
+            // Assert
+            Assert.That(removeFirst, Is.Null);
+        }
+
+        [Test]
+        public void RemoveFirst_SingleItemCollection_Empty()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var collection = GetList(itemArray);
+
+            // Act
+            var removeFirst = collection.RemoveFirst();
+
+            // Assert
+            Assert.That(removeFirst, Is.SameAs(item));
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveFirst_RemoveFirstItem_Removed()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var firstItem = collection.First;
+            var array = collection.Skip(1).ToArray();
+
+            // Act
+            var removeFirst = collection.RemoveFirst();
+
+            // Assert
+            Assert.That(removeFirst, Is.SameAs(firstItem));
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveFirst_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveFirst_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region RemoveLast()
+
+        [Test]
+        public void RemoveLast_EmptyCollection_ViolatesPrecondtion()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveLast(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
+        }
+        
+        [Test]
+        public void RemoveLast_RemoveLastDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveLast();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void RemoveLast_RandomCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = collection.Last;
+            var expectedEvents = new[] {
+                RemovedAt(item, collection.Count - 1, collection),
+                Removed(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveLast(), Raises(expectedEvents).For(collection));
+        }
+        
+        [Test]
+        public void RemoveLast_RandomCollectionWithNullRemoveNull_Null()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            collection[collection.Count - 1] = null;
+
+            // Act
+            var removeLast = collection.RemoveLast();
+
+            // Assert
+            Assert.That(removeLast, Is.Null);
+        }
+
+        [Test]
+        public void RemoveLast_SingleItemCollection_Empty()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var collection = GetList(itemArray);
+
+            // Act
+            var removeLast = collection.RemoveLast();
+
+            // Assert
+            Assert.That(removeLast, Is.SameAs(item));
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveLast_RemoveLastItem_Removed()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var lastItem = collection.Last;
+            var array = collection.Take(collection.Count - 1).ToArray();
+
+            // Act
+            var removeLast = collection.RemoveLast();
+
+            // Assert
+            Assert.That(removeLast, Is.SameAs(lastItem));
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveLast_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void RemoveLast_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region Reverse()
 
         [Test]

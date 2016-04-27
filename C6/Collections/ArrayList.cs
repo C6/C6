@@ -501,10 +501,7 @@ namespace C6
 
         public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
 
-        public T RemoveFirst()
-        {
-            throw new NotImplementedException();
-        }
+        public T RemoveFirst() => RemoveAt(0);
 
         public void RemoveIndexRange(int startIndex, int count)
         {
@@ -522,10 +519,7 @@ namespace C6
             RaiseForRemoveIndexRange(startIndex, count);
         }
 
-        public T RemoveLast()
-        {
-            throw new NotImplementedException();
-        }
+        public T RemoveLast() => RemoveAt(Count - 1);
 
         public bool RemoveRange(SCG.IEnumerable<T> items)
         {
