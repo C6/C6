@@ -222,10 +222,8 @@ namespace C6
             UpdateVersion();
 
             var oldCount = Count;
-
             _items = EmptyArray;
             Count = 0;
-
             RaiseForClear(oldCount);
         }
 
@@ -243,13 +241,7 @@ namespace C6
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
             var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
-
-            foreach (var item in this) {
-                if (itemsToContain.Remove(item) && itemsToContain.IsEmpty) {
-                    return true;
-                }
-            }
-            return false;
+            return this.Any(item => itemsToContain.Remove(item) && itemsToContain.IsEmpty);
         }
 
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
