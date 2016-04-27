@@ -491,7 +491,6 @@ namespace C6
             var index = LastIndexOf(item);
 
             if (index >= 0) {
-                UpdateVersion();
                 removedItem = RemoveAtPrivate(index);
                 RaiseForRemove(removedItem);
                 return true;
@@ -503,7 +502,6 @@ namespace C6
 
         public T RemoveAt(int index)
         {
-            UpdateVersion();
             var item = RemoveAtPrivate(index);
             RaiseForRemovedAt(item, index);
             return item;
@@ -524,8 +522,9 @@ namespace C6
 
             UpdateVersion();
 
-            Array.Copy(_items, startIndex + count, _items, startIndex, Count - startIndex - count);
-            Count -= count;
+            if ((Count -= count) > startIndex) {
+                Array.Copy(_items, startIndex + count, _items, startIndex, Count - startIndex);
+            }
             Array.Clear(_items, Count, count);
 
             RaiseForRemoveIndexRange(startIndex, count);
@@ -999,11 +998,14 @@ namespace C6
 
         private T RemoveAtPrivate(int index)
         {
+            UpdateVersion();
             var item = _items[index];
+
             if (--Count > index) {
                 Array.Copy(_items, index + 1, _items, index, Count - index);
             }
             _items[Count] = default(T);
+
             return item;
         }
 

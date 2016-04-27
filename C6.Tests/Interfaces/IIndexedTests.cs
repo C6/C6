@@ -861,6 +861,38 @@ namespace C6.Tests
         }
 
         [Test]
+        public void RemoveIndexRange_RemoveBeginning_EndRetained()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(0, collection.Count - 1);
+            var startIndex = 0;
+            var expected = collection.Skip(count).ToList();
+
+            // Act
+            collection.RemoveIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected)); // TODO: Use reference equality
+        }
+
+        [Test]
+        public void RemoveIndexRange_RemoveEnd_BeginningRetained()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(0, collection.Count - 1);
+            var startIndex = collection.Count - count;
+            var expected = collection.Take(startIndex).ToList();
+
+            // Act
+            collection.RemoveIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected)); // TODO: Use reference equality
+        }
+
+        [Test]
         public void RemoveIndexRange_RemoveWholeCollection_RaisesExpectedEvents()
         {
             // Arrange
