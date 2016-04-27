@@ -200,19 +200,19 @@ namespace C6
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
 
-            var length = array.Length;
+            var count = array.Length;
 
-            if (length == 0) {
+            if (count == 0) {
                 return false;
             }
 
             // Only update version if items are actually added
             UpdateVersion();
 
-            EnsureCapacity(Count + length);
+            EnsureCapacity(Count + count);
 
-            Array.Copy(array, 0, _items, Count, length);
-            Count += length;
+            Array.Copy(array, 0, _items, Count, count);
+            Count += count;
 
             RaiseForAddRange(array);
 
@@ -377,7 +377,27 @@ namespace C6
 
         public void InsertRange(int index, SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            // A bad enumerator will throw an exception here
+            var array = items.ToArray();
+
+            if (array.IsEmpty()) {
+                return;
+            }
+
+            // Only update version if items are actually added
+            UpdateVersion();
+
+            var count = array.Length;
+
+            EnsureCapacity(Count + count);
+
+            if (index < Count) {
+                Array.Copy(_items, index, _items, index + count, Count - index);
+            }
+            Array.Copy(array, 0, _items, index, count);
+            Count += count;
+
+            RaiseForInsertRange(index, array);
         }
 
         public bool IsSorted()
@@ -1048,6 +1068,18 @@ namespace C6
         {
             OnItemInserted(item, index);
             OnItemsAdded(item, 1);
+            OnCollectionChanged();
+        }
+
+        private void RaiseForInsertRange(int index, T[] array)
+        {
+            if (ActiveEvents.HasFlag(Inserted | Added)) {
+                for (var i = 0; i < array.Length; i++) {
+                    var item = array[i];
+                    OnItemInserted(item, index + i);
+                    OnItemsAdded(item, 1);
+                }
+            }
             OnCollectionChanged();
         }
 
