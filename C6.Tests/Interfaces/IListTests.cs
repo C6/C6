@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 
+using C6.Contracts;
 using C6.Tests.Contracts;
 using C6.Tests.Helpers;
 
@@ -15,6 +16,7 @@ using static C6.ExceptionMessages;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
+using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
@@ -442,6 +444,185 @@ namespace C6.Tests
         {
             Run.If(IsFixedSize);
 
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region RemoveAt(int)
+
+        [Test]
+        public void SCIListRemoveAt_EmptyCollection_ViolatesPrecondtion()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).RemoveAt(0), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCIListRemoveAt_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(int.MinValue, 0);
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).RemoveAt(index), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCIListRemoveAt_IndexOfCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = collection.Count;
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).RemoveAt(index), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCIListRemoveAt_IndexLargerThanCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(collection.Count + 1, int.MaxValue);
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).RemoveAt(index), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCIListRemoveAt_RemoveDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(0, collection.Count);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            ((SC.IList) collection).RemoveAt(index);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void SCIListRemoveAt_RandomCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(0, collection.Count);
+            var item = collection[index];
+            var expectedEvents = new[] {
+                RemovedAt(item, index, collection),
+                Removed(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).RemoveAt(index), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void SCIListRemoveAt_RandomCollection_ItemAtIndex()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(0, collection.Count);
+            var expectedItem = collection[index];
+            var array = collection.SkipRange(index, 1).ToArray();
+
+            // Act
+            ((SC.IList) collection).RemoveAt(index);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListRemoveAt_RandomCollectionWithNullRemoveNull_Null()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetList(items, allowsNull: true);
+            var index = collection.IndexOf(null);
+            var array = collection.SkipRange(index, 1).ToArray();
+
+            // Act
+            ((SC.IList) collection).RemoveAt(index);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListRemoveAt_SingleItemCollection_Item()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var collection = GetList(itemArray);
+
+            // Act
+            ((SC.IList) collection).RemoveAt(0);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void SCIListRemoveAt_RemoveFirstItem_Removed()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var items = collection.ToArray();
+            var index = 0;
+            var firstItem = collection[index];
+
+            // Act
+            ((SC.IList) collection).RemoveAt(index);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items.Skip(1)).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListRemoveAt_RemoveLastItem_Removed()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var count = collection.Count;
+            var items = collection.ToArray();
+            var index = count - 1;
+            var lastItem = collection[index];
+
+            // Act
+            ((SC.IList) collection).RemoveAt(index);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items.Take(index)).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListRemoveAt_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListRemoveAt_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
             Assert.Fail("Tests have not been written yet");
         }
 

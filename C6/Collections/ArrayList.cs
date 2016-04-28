@@ -795,10 +795,7 @@ namespace C6
             throw new NotImplementedException();
         }
 
-        void SC.IList.RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
+        void SC.IList.RemoveAt(int index) => RemoveAt(index);
 
         void SCG.IList<T>.RemoveAt(int index)
         {
