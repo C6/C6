@@ -129,7 +129,7 @@ namespace C6.Tests
             var indexOf = collection.IndexOf(item);
 
             // Assert
-            Assert.That(indexOf, Is.EqualTo(~0));
+            Assert.That(indexOf, Is.EqualTo(-1));
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace C6.Tests
             var indexOf = collection.IndexOf(item);
 
             // Assert
-            Assert.That(~indexOf, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(count));
+            Assert.That(indexOf, Is.EqualTo(-1));
         }
 
         [Test]
