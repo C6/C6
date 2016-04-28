@@ -785,10 +785,8 @@ namespace C6
 
         int SC.IList.IndexOf(object value) => Math.Max(-1, IndexOf((T) value));
 
-        int SCG.IList<T>.IndexOf(T item)
-        {
-            throw new NotImplementedException();
-        }
+        // Explicit implementation is needed, since C6.IList<T>.IndexOf(T) breaks SCG.IList<T>.IndexOf(T)'s precondition: Result<T>() >= -1
+        int SCG.IList<T>.IndexOf(T item) => Math.Max(-1, IndexOf(item));
 
         void SC.IList.Insert(int index, object value) => Insert(index, (T) value);
 

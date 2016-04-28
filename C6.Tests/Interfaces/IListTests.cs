@@ -447,6 +447,135 @@ namespace C6.Tests
 
         #endregion
 
+        #region SCG.IList<T>
+
+        #region IndexOf(T)
+
+        [Test]
+        public void SCGIListIndexOf_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => ((SCG.IList<string>) collection).IndexOf(null), Violates.UncaughtPrecondition);
+        }
+
+        [Test]
+        public void SCGIListIndexOf_AllowsNull_PositiveIndex()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetList(items, allowsNull: true);
+            var index = collection.ToArray().IndexOf(null);
+
+            // Act
+            var indexOf = ((SCG.IList<string>) collection).IndexOf(null);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void SCGIListIndexOf_EmptyCollection_TildeZero()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var item = Random.GetString();
+
+            // Act
+            var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void SCGIListIndexOf_RandomCollectionIndexOfNewItem_NegativeIndex()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items);
+            var item = items.DifferentItem(() => Random.GetString());
+            var count = collection.Count;
+
+            // Act
+            var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void SCGIListIndexOf_RandomCollectionIndexOfExistingItem_Index()
+        {
+            // Arrange
+            var collection = GetStringList(Random, ReferenceEqualityComparer);
+            var items = collection.ToArray();
+            var index = Random.Next(0, items.Length);
+            var item = items[index];
+
+            // Act
+            var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void SCGIListIndexOf_DuplicateItems_Zero()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = item.Repeat(count);
+            var collection = GetList(items);
+
+            // Act
+            var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.Zero);
+        }
+
+        [Test]
+        public void SCGIListIndexOf_CollectionWithDuplicateItems_FirstIndex()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetList(items);
+            var index = collection.ToArray().IndexOf(item);
+
+            // Act
+            var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void SCGIListIndexOf_RandomCollectionNewItem_GetsTildeIndex()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var expectedIndex = ~collection.IndexOf(item);
+            collection.Add(item);
+            var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(expectedIndex));
+        }
+
+        #endregion
+
+        #endregion
+
         #region IList<T>
 
         #region Properties
