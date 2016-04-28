@@ -78,6 +78,375 @@ namespace C6.Tests
 
         #endregion
 
+        #region SC.IList
+
+        #region IndexOf(T)
+
+        [Test]
+        public void SCIListIndexOf_InvalidType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            object item = Random.Next();
+
+            // Act & Assert
+            Assert.That(() => collection.IndexOf(item), Throws.TypeOf<InvalidCastException>());
+        }
+
+        [Test]
+        public void SCIListIndexOf_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.IndexOf((object) null), Violates.UncaughtPrecondition);
+        }
+
+        [Test]
+        public void SCIListIndexOf_AllowsNull_PositiveIndex()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetList(items, allowsNull: true);
+            var index = collection.ToArray().IndexOf(null);
+
+            // Act
+            var indexOf = collection.IndexOf((object) null);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void SCIListIndexOf_EmptyCollection_TildeZero()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            object item = Random.GetString();
+
+            // Act
+            var indexOf = collection.IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(~0));
+        }
+
+        [Test]
+        public void SCIListIndexOf_RandomCollectionIndexOfNewItem_NegativeIndex()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items);
+            object item = items.DifferentItem(() => Random.GetString());
+            var count = collection.Count;
+
+            // Act
+            var indexOf = collection.IndexOf(item);
+
+            // Assert
+            Assert.That(~indexOf, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(count));
+        }
+
+        [Test]
+        public void SCIListIndexOf_RandomCollectionIndexOfExistingItem_Index()
+        {
+            // Arrange
+            var collection = GetStringList(Random, ReferenceEqualityComparer);
+            var items = collection.ToArray();
+            var index = Random.Next(0, items.Length);
+            object item = items[index];
+
+            // Act
+            var indexOf = collection.IndexOf(item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void SCIListIndexOf_DuplicateItems_Zero()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = item.Repeat(count);
+            var collection = GetList(items);
+
+            // Act
+            var indexOf = collection.IndexOf((object) item);
+
+            // Assert
+            Assert.That(indexOf, Is.Zero);
+        }
+
+        [Test]
+        public void SCIListIndexOf_CollectionWithDuplicateItems_FirstIndex()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetList(items);
+            var index = collection.ToArray().IndexOf(item);
+
+            // Act
+            var indexOf = collection.IndexOf((object) item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void SCIListIndexOf_RandomCollectionNewItem_GetsTildeIndex()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var expectedIndex = ~collection.IndexOf(item);
+            collection.Add(item);
+            var indexOf = collection.IndexOf((object) item);
+
+            // Assert
+            Assert.That(indexOf, Is.EqualTo(expectedIndex));
+        }
+
+        #endregion
+
+        #region Insert(int, object)
+
+        [Test]
+        public void SCIListInsert_InvalidType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            object item = Random.Next();
+
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Throws.TypeOf<InvalidCastException>());
+        }
+
+        [Test]
+        public void SCIListInsert_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(int.MinValue, 0);
+            object item = Random.GetString();
+
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCIListInsert_IndexLargerThanCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(collection.Count + 1, int.MaxValue);
+            object item = Random.GetString();
+
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Violates.UncaughtPrecondition);
+        }
+
+        [Test]
+        public void SCIListInsert_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+            var index = GetIndex(collection, Random, true);
+
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, (object) null), Violates.UncaughtPrecondition);
+        }
+
+        [Test]
+        public void SCIListInsert_RandomCollectionSetDuplicate_ViolatesPrecondition()
+        {
+            Run.If(!AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            object item = collection.ToArray().Choose(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCIListInsert_RandomCollectionSetDuplicate_Inserted()
+        {
+            Run.If(AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            object item = collection.ToArray().Choose(Random);
+
+            // Act
+            collection.Insert(index, item);
+
+            // Assert
+            Assert.That(collection[index], Is.SameAs(item));
+        }
+
+        [Test]
+        public void SCIListInsert_EmptyCollection_SingleItemCollection()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var index = 0;
+            object item = Random.GetString();
+            var array = new[] { item };
+
+            // Act
+            collection.Insert(index, item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListInsert_IndexOfCount_Appended()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = collection.Count;
+            object item = Random.GetString();
+            var array = collection.Append(item).ToArray();
+
+            // Act
+            collection.Insert(index, item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListInsert_AllowsNull_Null()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            var index = GetIndex(collection, Random, true);
+            var array = collection.ToArray().InsertItem(index, null);
+
+            // Act
+            collection.Insert(index, (object) null);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListInsert_RandomCollectionIndexZero_FirstItem()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            object item = Random.GetString();
+            var index = 0;
+            var array = collection.ToArray().InsertItem(index, item);
+
+            // Act
+            collection.Insert(index, item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListInsert_RandomCollectionIndexCountMinusOne_LastItem()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            object item = Random.GetString();
+            var index = collection.Count - 1;
+            var array = collection.ToArray().InsertItem(index, item);
+
+            // Act
+            collection.Insert(index, item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListInsert_RandomCollectionRandomIndex_ItemAtPositionIndex()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            object item = Random.GetString();
+            var index = GetIndex(collection, Random, true);
+            var array = collection.ToArray().InsertItem(index, item);
+
+            // Act
+            collection.Insert(index, item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListInsert_RandomCollectionRandomIndex_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+            var index = GetIndex(collection, Random, true);
+            var expectedEvents = new[] {
+                Inserted(item, index, collection),
+                Added(item, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, (object) item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void SCIListInsert_InsertDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            object item = Random.GetString();
+            var index = GetIndex(collection, Random, true);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Insert(index, item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListInsert_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListInsert_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #endregion
+
         #region IList<T>
 
         #region Properties
@@ -625,7 +994,7 @@ namespace C6.Tests
         #endregion
 
         #region InsertFirst(int, T)
-        
+
         [Test]
         public void InsertFirst_DisallowsNull_ViolatesPrecondition()
         {
@@ -763,7 +1132,7 @@ namespace C6.Tests
         #endregion
 
         #region InsertLast(int, T)
-        
+
         [Test]
         public void InsertLast_DisallowsNull_ViolatesPrecondition()
         {
@@ -1398,7 +1767,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.RemoveFirst(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
         }
-        
+
         [Test]
         public void RemoveFirst_RemoveFirstDuringEnumeration_ThrowsInvalidOperationException()
         {
@@ -1429,7 +1798,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.RemoveFirst(), Raises(expectedEvents).For(collection));
         }
-        
+
         [Test]
         public void RemoveFirst_RandomCollectionWithNullRemoveNull_Null()
         {
@@ -1507,7 +1876,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.RemoveLast(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
         }
-        
+
         [Test]
         public void RemoveLast_RemoveLastDuringEnumeration_ThrowsInvalidOperationException()
         {
@@ -1538,7 +1907,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.RemoveLast(), Raises(expectedEvents).For(collection));
         }
-        
+
         [Test]
         public void RemoveLast_RandomCollectionWithNullRemoveNull_Null()
         {

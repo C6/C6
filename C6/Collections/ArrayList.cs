@@ -783,20 +783,14 @@ namespace C6
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
-        int SC.IList.IndexOf(object value)
-        {
-            throw new NotImplementedException();
-        }
+        int SC.IList.IndexOf(object value) => Math.Max(-1, IndexOf((T) value));
 
         int SCG.IList<T>.IndexOf(T item)
         {
             throw new NotImplementedException();
         }
 
-        void SC.IList.Insert(int index, object value)
-        {
-            throw new NotImplementedException();
-        }
+        void SC.IList.Insert(int index, object value) => Insert(index, (T) value);
 
         void SC.IList.Remove(object value)
         {
@@ -856,6 +850,8 @@ namespace C6
         private void EnsureCapacity(int requiredCapacity)
         {
             #region Code Contracts
+
+            Requires(requiredCapacity >= 0);
 
             Ensures(Capacity >= requiredCapacity);
 
