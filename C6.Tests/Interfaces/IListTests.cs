@@ -80,6 +80,7 @@ namespace C6.Tests
 
         #region SC.IList
 
+        // TODO: Should we rather cast the collection than the object?
         #region IndexOf(T)
 
         [Test]
@@ -216,6 +217,7 @@ namespace C6.Tests
 
         #endregion
 
+        // TODO: Should we rather cast the collection than the object?
         #region Insert(int, object)
 
         [Test]
