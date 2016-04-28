@@ -84,7 +84,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.That(() => new ArrayList<string>(enumerable), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(enumerable), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace C6.Tests
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(array), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace C6.Tests
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
         }
 
         [Test]
