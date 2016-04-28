@@ -797,10 +797,7 @@ namespace C6
 
         void SC.IList.RemoveAt(int index) => RemoveAt(index);
 
-        void SCG.IList<T>.RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
+        void SCG.IList<T>.RemoveAt(int index) => RemoveAt(index);
 
         #endregion
 
