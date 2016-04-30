@@ -449,6 +449,172 @@ namespace C6.Tests
 
         #endregion
 
+        #region Remove(object)
+
+        [Test]
+        public void SCIListRemove_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Remove(null), Violates.UncaughtPrecondition);
+        }
+
+        [Test]
+        public void SCIListRemove_AllowsNull_RemovesNull()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetList(items, allowsNull: true);
+            var expected = collection.Where(item => item != null).ToList();
+
+            // Act
+            ((SC.IList) collection).Remove(null);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListRemove_RemoveExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items, CaseInsensitiveStringComparer.Default);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            var expectedEvents = new[] {
+                Removed(existingItem, 1, collection),
+                Changed(collection),
+            };
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Remove(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void SCIListRemove_RemoveNewItem_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Remove(item), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void SCIListRemove_EmptyList_Empty()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var item = Random.GetString();
+
+            // Act
+            ((SC.IList) collection).Remove(item);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void SCIListRemove_RemoveExistingItem_Removed()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower(); // TODO: Could potentially fail, if there are duplicates
+            var collection = GetList(items, CaseInsensitiveStringComparer.Default);
+            var expected = collection.SkipRange(collection.IndexOf(item), 1).ToList();
+
+            // Act
+            ((SC.IList) collection).Remove(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListRemove_RemoveNewItem_Unchanged()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = GetLowercaseString(Random);
+            var collection = GetList(items);
+            var expected = collection.ToArray();
+
+            // Act
+            ((SC.IList) collection).Remove(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListRemove_RemoveItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var item = items.Choose(Random).ToLower();
+            var collection = GetList(items, CaseInsensitiveStringComparer.Default);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            ((SC.IList) collection).Remove(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void SCIListRemove_RemoveItemDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items);
+            var item = GetLowercaseString(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            ((SC.IList) collection).Remove(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListRemove_ReadOnlyList_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListRemove_DuplicatesByCounting_Fail()
+        {
+            Run.If(DuplicatesByCounting);
+
+            // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListRemove_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region RemoveAt(int)
 
         [Test]

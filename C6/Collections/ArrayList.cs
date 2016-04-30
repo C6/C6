@@ -790,10 +790,7 @@ namespace C6
 
         void SC.IList.Insert(int index, object value) => Insert(index, (T) value);
 
-        void SC.IList.Remove(object value)
-        {
-            throw new NotImplementedException();
-        }
+        void SC.IList.Remove(object value) => Remove((T) value);
 
         void SC.IList.RemoveAt(int index) => RemoveAt(index);
 

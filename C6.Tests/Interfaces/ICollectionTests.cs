@@ -1111,12 +1111,14 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
+            var expected = collection.Where(item => item != null).ToList();
 
             // Act
             var remove = collection.Remove(null);
 
             // Assert
             Assert.That(remove, Is.True);
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -1160,6 +1162,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(remove, Is.False);
+            Assert.That(collection, Is.Empty);
         }
 
         [Test]
@@ -1184,12 +1187,14 @@ namespace C6.Tests
             var items = GetUppercaseStrings(Random);
             var item = GetLowercaseString(Random);
             var collection = GetCollection(items);
+            var expected = collection.ToArray();
 
             // Act
             var remove = collection.Remove(item);
 
             // Assert
             Assert.That(remove, Is.False);
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
         }
 
         [Test]
