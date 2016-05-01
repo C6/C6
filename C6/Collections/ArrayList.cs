@@ -382,10 +382,7 @@ namespace C6
             return true;
         }
 
-        public bool IsSorted(SCG.IComparer<T> comparer)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsSorted(SCG.IComparer<T> comparer) => IsSorted((comparer ?? SCG.Comparer<T>.Default).Compare);
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
