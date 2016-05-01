@@ -142,8 +142,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection
-        ///                 count.
+        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection count.
         ///             </description>
         ///         </item>
         ///         <item>
@@ -154,7 +153,7 @@ namespace C6
         ///     </list>
         /// </remarks>
         new void Clear();
-        
+
         /// <summary>
         ///     Searches from the beginning of the collection for the specified item and returns the zero-based index of the first
         ///     occurrence within the collection.
@@ -271,6 +270,7 @@ namespace C6
         /// </remarks>
         void InsertLast(T item);
 
+        // TODO: Document that events are raise pairwise for each item!
         /// <summary>
         ///     Inserts the items into the list starting at the specified index.
         /// </summary>
@@ -361,7 +361,7 @@ namespace C6
         /// </returns>
         [Pure]
         bool IsSorted(Comparison<T> comparison);
-        
+
         /// <summary>
         ///     Removes and returns the item at the specified index of the collection.
         /// </summary>
@@ -465,14 +465,7 @@ namespace C6
         ///     Reverses the sequence order of the items in the list.
         /// </summary>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
         /// </remarks>
         void Reverse();
 
@@ -480,14 +473,8 @@ namespace C6
         ///     Randomly shuffles the items in the list.
         /// </summary>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>, even
+        ///     if the item order was not changed by the shuffle.
         /// </remarks>
         void Shuffle();
 
@@ -496,14 +483,8 @@ namespace C6
         /// </summary>
         /// <param name="random">The random source.</param>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>, even
+        ///     if the item order was not changed by the shuffle.
         /// </remarks>
         void Shuffle(Random random);
 
@@ -516,14 +497,13 @@ namespace C6
         ///     <typeparamref name="T"/>.
         /// </exception>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort();
 
@@ -544,14 +524,13 @@ namespace C6
         ///     <paramref name="comparer"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort(SCG.IComparer<T> comparer);
 
@@ -566,14 +545,13 @@ namespace C6
         ///     <paramref name="comparison"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort(Comparison<T> comparison);
     }
@@ -1014,22 +992,6 @@ namespace C6
             return;
         }
 
-        public void Sort(SCG.IComparer<T> comparer)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-
-            // List becomes sorted
-            Ensures(IsSorted(comparer));
-
-            // The collection remains the same
-            Ensures(this.HasSameAs(OldValue(ToArray())));
-
-
-            return;
-        }
-
         public void Sort(Comparison<T> comparison)
         {
             // Collection must be non-read-only
@@ -1041,6 +1003,22 @@ namespace C6
 
             // List becomes sorted
             Ensures(IsSorted(comparison));
+
+            // The collection remains the same
+            Ensures(this.HasSameAs(OldValue(ToArray())));
+
+
+            return;
+        }
+
+        public void Sort(SCG.IComparer<T> comparer)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+
+            // List becomes sorted
+            Ensures(IsSorted(comparer));
 
             // The collection remains the same
             Ensures(this.HasSameAs(OldValue(ToArray())));
@@ -1124,7 +1102,7 @@ namespace C6
         public bool RemoveDuplicates(T item)
         {
             // No extra preconditions allowed
-            
+
 
             // The list is the same as the old collection without item
             Ensures(this.IsSameSequenceAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
@@ -1340,7 +1318,7 @@ namespace C6
         void IList.RemoveAt(int index) {}
 
         #endregion
-        
+
         #region SCG.IList<T>
 
         void SCG.IList<T>.RemoveAt(int index) {}
