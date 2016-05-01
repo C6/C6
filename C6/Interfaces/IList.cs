@@ -154,22 +154,7 @@ namespace C6
         ///     </list>
         /// </remarks>
         new void Clear();
-
-        // TODO: Include index in predicate?
-        // TODO: Should this be deprecated?
-        // TODO: Copy docs from Enumerable.Where?
-        /// <summary>
-        ///     Creates a new list consisting of the items in this list satisfying a specified predicate.
-        /// </summary>
-        /// <param name="predicate">
-        ///     A delegate that returns <c>true</c> for the items that should be included in the new list.
-        /// </param>
-        /// <returns>
-        ///     A new list containing the items that satisfy the predicate.
-        /// </returns>
-        [Pure]
-        IList<T> FindAll(Func<T, bool> predicate);
-
+        
         /// <summary>
         ///     Searches from the beginning of the collection for the specified item and returns the zero-based index of the first
         ///     occurrence within the collection.
@@ -376,45 +361,7 @@ namespace C6
         /// </returns>
         [Pure]
         bool IsSorted(Comparison<T> comparison);
-
-        // TODO: Deprecate?
-        // TODO: Check List<T>.ConvertAll
-        /// <summary>
-        ///     Creates a new list consisting of the results of mapping all items in this list using the specified mapper. The new
-        ///     list will use the default equality comparer for type <typeparamref name="V"/>.
-        /// </summary>
-        /// <typeparam name="V">
-        ///     The type of the items in the new list.
-        /// </typeparam>
-        /// <param name="mapper">
-        ///     A function that maps each item in this list to an item in the new list.
-        /// </param>
-        /// <returns>
-        ///     An new list whose items are the results of mapping all items in this list.
-        /// </returns>
-        [Pure]
-        IList<V> Map<V>(Func<T, V> mapper);
-
-        // TODO: Deprecate?
-        /// <summary>
-        ///     Creates a new list consisting of the results of mapping all items in this list using the specified mapper. The new
-        ///     list will use the specified equality comparer.
-        /// </summary>
-        /// <typeparam name="V">
-        ///     The type of the items in the new list.
-        /// </typeparam>
-        /// <param name="mapper">
-        ///     A function that maps each item in this list to an item in the new list.
-        /// </param>
-        /// <param name="equalityComparer">
-        ///     The <see cref="SCG.IEqualityComparer{T}"/> to use for the new list.
-        /// </param>
-        /// <returns>
-        ///     An new list whose items are the results of mapping all items in this list.
-        /// </returns>
-        [Pure]
-        IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer);
-
+        
         /// <summary>
         ///     Removes and returns the item at the specified index of the collection.
         /// </summary>
@@ -756,22 +703,6 @@ namespace C6
             return;
         }
 
-        public IList<T> FindAll(Func<T, bool> predicate)
-        {
-            // Argument must be non-null
-            Requires(predicate != null, ArgumentMustBeNonNull);
-
-
-            // The result is the same as filtering this list based on the predicate
-            Ensures(Result<IList<T>>().IsSameSequenceAs(this.Where(predicate)));
-
-            // The returned list has the same type as this list
-            Ensures(Result<IList<T>>().GetType() == GetType());
-
-
-            return default(IList<T>);
-        }
-
         public int IndexOf(T item)
         {
             // No additional preconditions allowed
@@ -956,43 +887,6 @@ namespace C6
 
 
             return default(bool);
-        }
-
-        public IList<V> Map<V>(Func<T, V> mapper)
-        {
-            // Argument must be non-null
-            Requires(mapper != null, ArgumentMustBeNonNull);
-
-
-            // Result is equal to mapping each item
-            // This would only work if the mapper is deterministic!
-            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper)));
-
-            // The returned list has the same type as this list
-            Ensures(Result<IList<V>>().GetType() == GetType());
-
-
-            return default(IList<V>);
-        }
-
-        public IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer)
-        {
-            // Argument must be non-null
-            Requires(mapper != null, ArgumentMustBeNonNull);
-
-
-            // Result is equal to mapping each item
-            // This would only work if the mapper is deterministic!
-            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper), equalityComparer));
-
-            // Result uses equality comparer
-            Ensures(Result<IList<V>>().EqualityComparer == (equalityComparer ?? SCG.EqualityComparer<V>.Default));
-
-            // The returned list has the same type as this list
-            Ensures(Result<IList<V>>().GetType() == GetType());
-
-
-            return default(IList<V>);
         }
 
         public T RemoveAt(int index)

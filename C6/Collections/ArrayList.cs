@@ -259,12 +259,7 @@ namespace C6
 
             return false;
         }
-
-        public IList<T> FindAll(Func<T, bool> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public SCG.IEnumerable<T> FindDuplicates(T item) => this.Where(x => Equals(x, item));
 
         public bool FindOrAdd(ref T item)
@@ -447,17 +442,7 @@ namespace C6
 
             return ~Count;
         }
-
-        public IList<V> Map<V>(Func<T, V> mapper)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public bool Remove(T item)
         {
             #region Code Contracts
