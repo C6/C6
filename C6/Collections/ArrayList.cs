@@ -259,7 +259,7 @@ namespace C6
 
             return false;
         }
-        
+
         public SCG.IEnumerable<T> FindDuplicates(T item) => this.Where(x => Equals(x, item));
 
         public bool FindOrAdd(ref T item)
@@ -433,7 +433,7 @@ namespace C6
 
             return ~Count;
         }
-        
+
         public bool Remove(T item)
         {
             #region Code Contracts
@@ -1164,13 +1164,7 @@ namespace C6
 
             #region Properties
 
-            public bool AllowsNull
-            {
-                get {
-                    CheckVersion();
-                    return _base.AllowsNull;
-                }
-            }
+            public bool AllowsNull => CheckVersion() & _base.AllowsNull;
 
             public int Count
             {
@@ -1196,13 +1190,7 @@ namespace C6
                 }
             }
 
-            public bool IsEmpty
-            {
-                get {
-                    CheckVersion();
-                    return _count == 0;
-                }
-            }
+            public bool IsEmpty => CheckVersion() &_count == 0;
 
             #endregion
 
@@ -1239,11 +1227,7 @@ namespace C6
                 }
             }
 
-            public override bool Equals(object obj)
-            {
-                CheckVersion();
-                return base.Equals(obj);
-            }
+            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
 
             public SCG.IEnumerator<T> GetEnumerator()
             {
