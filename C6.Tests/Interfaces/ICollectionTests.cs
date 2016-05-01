@@ -214,6 +214,20 @@ namespace C6.Tests
         }
 
         [Test]
+        public void Contains_AllowNullContainsNoNull_False()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, allowsNull: true);
+
+            // Act
+            var contains = collection.Contains(null);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
         public void Contains_EmptyCollection_False()
         {
             // Arrange

@@ -82,6 +82,174 @@ namespace C6.Tests
 
         #region SC.IList
 
+        #region Contains(object)
+
+        [Test]
+        public void SCIListContains_InvalidType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            object item = Random.Next();
+
+            // Act & Assert
+            Assert.That(() => collection.Contains(item), Throws.TypeOf<InvalidCastException>());
+        }
+
+        [Test]
+        public void SCIListContains_DisallowsNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Contains(null), Violates.UncaughtPrecondition);
+        }
+
+        [Test]
+        public void SCIListContains_AllowNullContainsNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetList(items, allowsNull: true);
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(null);
+
+            // Assert
+            Assert.That(contains, Is.True);
+        }
+
+        [Test]
+        public void SCIListContains_AllowNullContainsNoNull_False()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items, allowsNull: true);
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(null);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void SCIListContains_EmptyCollection_False()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var item = Random.GetString();
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void SCIListContains_SingleItemCollectionNonDuplicateItem_False()
+        {
+            // Arrange
+            var item = GetUppercaseString(Random);
+            var itemArray = new[] { item };
+            var collection = GetList(itemArray);
+            var nonDuplicateItem = item.ToLower();
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(nonDuplicateItem);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void SCIListContains_SingleItemCollectionDuplicateItem_True()
+        {
+            // Arrange
+            var item = GetUppercaseString(Random);
+            var itemArray = new[] { item };
+            var collection = GetList(itemArray, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = item.ToLower();
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(duplicateItem);
+
+            // Assert
+            Assert.That(contains, Is.True);
+        }
+
+        [Test]
+        public void SCIListContains_SingleItemCollectionReferenceInequalItem_False()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+            var collection = GetList(itemArray, ReferenceEqualityComparer);
+            var nonDuplicateItem = string.Copy(item);
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(nonDuplicateItem);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void SCIListContains_RandomCollectionNewItem_False()
+        {
+            // Arrange
+            var collection = GetStringList(Random, ReferenceEqualityComparer);
+            var item = Random.GetString();
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void SCIListContains_RandomCollectionExistingItem_True()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random).ToLower();
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.True);
+        }
+
+        [Test]
+        public void SCIListContains_RandomCollectionNewItem_True()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items, ReferenceEqualityComparer);
+            var item = string.Copy(items.Choose(Random));
+
+            // Act
+            var contains = ((SC.IList) collection).Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListContains_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         // TODO: Should we rather cast the collection than the object?
         #region IndexOf(T)
 

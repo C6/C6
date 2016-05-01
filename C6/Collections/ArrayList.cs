@@ -747,10 +747,7 @@ namespace C6
 
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
-        bool SC.IList.Contains(object value)
-        {
-            throw new NotImplementedException();
-        }
+        bool SC.IList.Contains(object value) => Contains((T) value);
 
         void SC.ICollection.CopyTo(Array array, int index)
         {
