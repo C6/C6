@@ -112,6 +112,7 @@ namespace C6.Tests.Helpers
         public static CollectionEventHolder<T> Raises<T>(CollectionEvent<T>[] expectedEvents) => new CollectionEventHolder<T>(expectedEvents);
 
         public static CollectionEventConstraint<T> RaisesNoEventsFor<T>(IListenable<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
+        public static CollectionEventConstraint<T> RaisesCollectionChangedEventFor<T>(IListenable<T> collection) => new CollectionEventConstraint<T>(collection, new[] { CollectionEvent.Changed(collection) });
 
         public static EqualConstraint Because(this ExactTypeConstraint constraint, string exceptionMessage) => constraint.With.Message.EqualTo(exceptionMessage);
 

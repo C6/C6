@@ -551,7 +551,13 @@ namespace C6
 
         public void Sort()
         {
-            throw new NotImplementedException();
+            if (IsSorted()) {
+                return;
+            }
+
+            Array.Sort(_items, 0, Count);
+
+            RaiseForSort();
         }
 
         public void Sort(Comparison<T> comparison)
@@ -1067,6 +1073,11 @@ namespace C6
         }
 
         private void RaiseForReverse()
+        {
+            OnCollectionChanged();
+        }
+
+        private void RaiseForSort()
         {
             OnCollectionChanged();
         }

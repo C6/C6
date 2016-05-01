@@ -2504,7 +2504,6 @@ namespace C6.Tests
             Assert.That(isSorted, Is.True);
         }
 
-
         [Test]
         public void IsSorted_NonComparables_ThrowsArgumentException()
         {
@@ -2769,7 +2768,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var comparer = SCG.Comparer<string>.Default;
-            
+
             // Act
             var isSorted = collection.IsSorted(comparer);
 
@@ -3296,6 +3295,201 @@ namespace C6.Tests
         [Test]
         [Category("Unfinished")]
         public void Reverse_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
+        #region Sort()
+
+        [Test]
+        public void Sort_EmptyCollection_Nothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_SingleItemCollection_Nothing()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item };
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_TwoItemsAscending_Nothing()
+        {
+            // Arrange
+            var items = new[] { Random.Next(int.MinValue, 0), Random.Next() };
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_TwoItemsDescending_Sorted()
+        {
+            // Arrange
+            var items = new[] { Random.Next(), Random.Next(int.MinValue, 0) };
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesCollectionChangedEventFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_TwoEqualItems_Nothing()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item, string.Copy(item) };
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_EqualItems_Nothing()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = TestHelper.Repeat(() => string.Copy(item), count);
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        // TODO: Test again when NUnit changes its behavior
+        [Test]
+        [Ignore("Because NUnit does not allow null values in Ordered: https://github.com/nunit/nunit/issues/1473")]
+        public void Sort_RandomCollectionWithNull_Sorted()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var index = Random.Next(1, items.Length);
+            items[index] = null;
+            var collection = GetList(items, allowsNull: true);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesCollectionChangedEventFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_NonComparables_ThrowsArgumentException()
+        {
+            // Arrange
+            var items = GetNonComparables(Random);
+            var collection = GetList(items);
+
+            // Act & Assert
+            // TODO: This is not the exception stated in the documentation!
+            Assert.That(() => collection.Sort(), Throws.ArgumentException.Because("At least one object must implement IComparable."));
+        }
+
+        [Test]
+        public void Sort_NonDescendingRandomCollection_Nothing()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count);
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_Descending_Sorted()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem + 1, previousItem + maxGap)), count).Reverse();
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesCollectionChangedEventFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_AllButLastAreSorted_Sorted()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count).Append(new Comparable(previousItem - 1));
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesCollectionChangedEventFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void Sort_RandomCollection_Sorted()
+        {
+            // Arrange
+            var items = GetStrings(Random, 10000);
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Sort(), RaisesCollectionChangedEventFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Sort_ReadOnlyCollection_Fail()
         {
             Run.If(IsReadOnly);
 
