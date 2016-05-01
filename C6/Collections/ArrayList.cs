@@ -369,23 +369,17 @@ namespace C6
             RaiseForInsertRange(index, array);
         }
 
-        public bool IsSorted()
-        {
-            var comparer = SCG.Comparer<T>.Default;
+        public bool IsSorted() => IsSorted(SCG.Comparer<T>.Default.Compare);
 
+        public bool IsSorted(Comparison<T> comparison)
+        {
             for (var i = 1; i < Count; i++) {
-                // Throws exception if T is not comparable
-                if (comparer.Compare(_items[i - 1], _items[i]) > 0) {
+                if (comparison(_items[i - 1], _items[i]) > 0) {
                     return false;
                 }
             }
 
             return true;
-        }
-
-        public bool IsSorted(Comparison<T> comparison)
-        {
-            throw new NotImplementedException();
         }
 
         public bool IsSorted(SCG.IComparer<T> comparer)

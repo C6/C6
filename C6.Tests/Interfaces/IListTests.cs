@@ -2413,6 +2413,176 @@ namespace C6.Tests
 
         #endregion
 
+        #region IsSorted(Comparison<T>)
+
+        [Test]
+        public void IsSortedComparison_NullComparison_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.IsSorted((Comparison<string>) null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void IsSortedComparison_EmptyCollection_True()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            Comparison<string> comparison = string.Compare;
+
+            // Act
+            var isSorted = collection.IsSorted(comparison);
+
+            // Assert
+            Assert.That(isSorted, Is.True);
+        }
+
+        [Test]
+        public void IsSortedComparison_SingleItemCollection_True()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item };
+            var collection = GetList(items);
+            Comparison<string> comparison = string.Compare;
+
+            // Act
+            var isSorted = collection.IsSorted(comparison);
+
+            // Assert
+            Assert.That(isSorted, Is.True);
+        }
+
+        [Test]
+        public void IsSortedComparison_TwoItemsAscending_True()
+        {
+            // Arrange
+            var items = new[] { Random.Next(int.MinValue, 0), Random.Next() };
+            var collection = GetList(items);
+            Comparison<int> comparison = (x, y) => x.CompareTo(y);
+
+            // Act
+            var isSorted = collection.IsSorted(comparison);
+
+            // Assert
+            Assert.That(isSorted, Is.True);
+        }
+
+        [Test]
+        public void IsSortedComparison_TwoItemsDescending_False()
+        {
+            // Arrange
+            var items = new[] { Random.Next(), Random.Next(int.MinValue, 0) };
+            var collection = GetList(items);
+            Comparison<int> comparison = (x, y) => x.CompareTo(y);
+
+            // Act
+            var isSorted = collection.IsSorted(comparison);
+
+            // Assert
+            Assert.That(isSorted, Is.False);
+        }
+
+        [Test]
+        public void IsSortedComparison_TwoEqualItems_True()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var items = new[] { item, string.Copy(item) };
+            var collection = GetList(items);
+            Comparison<string> comparison = string.Compare;
+
+            // Act
+            var isSorted = collection.IsSorted(comparison);
+
+            // Assert
+            Assert.That(isSorted, Is.True);
+        }
+
+        [Test]
+        public void IsSortedComparison_EqualItems_True()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = Random.GetString();
+            var items = TestHelper.Repeat(() => string.Copy(item), count);
+            var collection = GetList(items);
+            Comparison<string> comparison = string.Compare;
+
+            // Act
+            var isSorted = collection.IsSorted(comparison);
+
+            // Assert
+            Assert.That(isSorted, Is.True);
+        }
+        
+
+        [Test]
+        public void IsSortedComparison_Comparables_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetComparables(Random);
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.IsSorted(_nonComparableComparison), Throws.Nothing);
+        }
+
+        [Test]
+        public void IsSortedComparison_NonDescendingRandomCollection_True()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count);
+            var collection = GetList(items);
+
+            // Act
+            var isSorted = collection.IsSorted(_nonComparableComparison);
+
+            // Assert
+            Assert.That(isSorted, Is.True);
+        }
+
+        [Test]
+        public void IsSortedComparison_Descending_False()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem + 1, previousItem + maxGap)), count).Reverse();
+            var collection = GetList(items);
+
+            // Act
+            var isSorted = collection.IsSorted(_nonComparableComparison);
+
+            // Assert
+            Assert.That(isSorted, Is.False);
+        }
+
+        [Test]
+        public void IsSortedComparison_AllButLastAreSorted_False()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count).Append(new Comparable(previousItem - 1));
+            var collection = GetList(items);
+
+            // Act
+            var isSorted = collection.IsSorted(_nonComparableComparison);
+
+            // Assert
+            Assert.That(isSorted, Is.False);
+        }
+
+        #endregion
+
         #region RemoveFirst()
 
         [Test]
@@ -2808,6 +2978,9 @@ namespace C6.Tests
             public Comparable(int value) : base(value) {}
             public int CompareTo(NonComparable other) => Value.CompareTo(other.Value);
         }
+
+
+        private readonly Comparison<NonComparable> _nonComparableComparison = (x, y) => x.Value.CompareTo(y.Value);
 
         #endregion
     }
