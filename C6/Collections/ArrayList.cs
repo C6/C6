@@ -549,31 +549,24 @@ namespace C6
             throw new NotImplementedException();
         }
 
-        public void Sort()
-        {
-            if (IsSorted()) {
-                return;
-            }
+        public void Sort() => Sort((SCG.IComparer<T>) null);
 
-            Array.Sort(_items, 0, Count);
-
-            RaiseForSort();
-        }
-
-        public void Sort(Comparison<T> comparison)
-        {
-            if (IsSorted(comparison)) {
-                return;
-            }
-
-            Array.Sort(_items, 0, Count, comparison.AsComparer());
-
-            RaiseForSort();
-        }
+        // TODO: It seems that Array.Sort(T[], Comparison<T>) is the only method that takes an Comparison<T>, not allowing us to set bounds on the sorting
+        public void Sort(Comparison<T> comparison) => Sort(comparison.AsComparer());
 
         public void Sort(SCG.IComparer<T> comparer)
         {
-            throw new NotImplementedException();
+            if (comparer == null) {
+                comparer = SCG.Comparer<T>.Default;
+            }
+
+            if (IsSorted(comparer)) {
+                return;
+            }
+
+            Array.Sort(_items, 0, Count, comparer);
+
+            RaiseForSort();
         }
 
         public T[] ToArray()
@@ -1204,7 +1197,7 @@ namespace C6
                 }
             }
 
-            public bool IsEmpty => CheckVersion() &_count == 0;
+            public bool IsEmpty => CheckVersion() & _count == 0;
 
             #endregion
 
