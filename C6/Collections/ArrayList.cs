@@ -751,10 +751,7 @@ namespace C6
 
         bool SC.IList.Contains(object value) => Contains((T) value);
 
-        void SC.ICollection.CopyTo(Array array, int index)
-        {
-            throw new NotImplementedException();
-        }
+        void SC.ICollection.CopyTo(Array array, int index) => Array.Copy(_items, 0, array, index, Count);
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 

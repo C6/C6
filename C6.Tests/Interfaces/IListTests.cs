@@ -76,6 +76,84 @@ namespace C6.Tests
 
         #region Methods
 
+        #region CopyTo(Array, int)
+
+        [Test]
+        public void SCICollectionCopyTo_InvalidType_ThrowsArrayTypeMismatchException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = new int[collection.Count];
+
+            // Act & Assert
+            Assert.That(() => ((SC.ICollection) collection).CopyTo(array, 0), Throws.TypeOf<ArrayTypeMismatchException>());
+        }
+
+        [Test]
+        public void SCICollectionCopyTo_NullArray_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act & Assert
+            Assert.That(() => ((SC.ICollection) collection).CopyTo(null, 0), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCICollectionCopyTo_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = new string[collection.Count];
+
+            // Act & Assert
+            Assert.That(() => ((SC.ICollection) collection).CopyTo(array, -1), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCICollectionCopyTo_IndexOutOfBound_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = new string[collection.Count];
+            var index = Random.Next(1, collection.Count);
+
+            // Act & Assert
+            Assert.That(() => ((SC.ICollection) collection).CopyTo(array, index), Violates.Precondition);
+        }
+
+        [Test]
+        public void SCICollectionCopyTo_EqualSizeArray_Equals()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = new string[collection.Count];
+
+            // Act
+            ((SC.ICollection) collection).CopyTo(array, 0);
+
+            // Assert
+            Assert.That(array, Is.EqualTo(collection).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCICollectionCopyTo_CopyToRandomIndex_SectionEquals()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = GetStrings(Random, (int) (collection.Count * 1.7));
+            var arrayIndex = Random.Next(0, array.Length - collection.Count);
+
+            // Act
+            ((SC.ICollection) collection).CopyTo(array, arrayIndex);
+            var section = array.Skip(arrayIndex).Take(collection.Count);
+
+            // Assert
+            Assert.That(section, Is.EqualTo(collection).Using(ReferenceEqualityComparer));
+        }
+
+        #endregion
+
         #endregion
 
         #endregion
