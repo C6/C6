@@ -562,7 +562,13 @@ namespace C6
 
         public void Sort(Comparison<T> comparison)
         {
-            throw new NotImplementedException();
+            if (IsSorted(comparison)) {
+                return;
+            }
+
+            Array.Sort(_items, 0, Count, comparison.AsComparer());
+
+            RaiseForSort();
         }
 
         public void Sort(SCG.IComparer<T> comparer)
