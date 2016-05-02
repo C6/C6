@@ -741,8 +741,8 @@ namespace C6
 
         object SC.IList.this[int index]
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return this[index]; }
+            set { this[index] = (T) value; }
         }
 
         int SC.IList.Add(object value) => Add((T) value) ? Count - 1 : -1;
