@@ -82,6 +82,169 @@ namespace C6.Tests
 
         #region SC.IList
 
+        #region Add(T)
+
+        [Test]
+        public void SCIListAdd_InvalidType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            object item = Random.Next();
+
+            // Act & Assert
+            Assert.That(() => collection.Add(item), Throws.TypeOf<InvalidCastException>());
+        }
+
+        [Test]
+        public void SCIListAdd_DisallowsNullAddNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Add(null), Violates.UncaughtPrecondition);
+        }
+
+        [Test]
+        public void SCIListAdd_AllowsNullAddNull_ReturnsTrue()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            var index = collection.Count;
+
+            // Act
+            var result = ((SC.IList) collection).Add(null);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(index));
+        }
+
+        [Test]
+        public void SCIListAdd_EmptyCollectionAddItem_CollectionIsSingleItemCollection()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var item = Random.GetString();
+            var itemArray = new[] { item };
+
+            // Act
+            var result = ((SC.IList) collection).Add(item);
+
+            // Assert
+            Assert.That(result, Is.Zero);
+            Assert.That(collection, Is.EqualTo(itemArray));
+        }
+
+        [Test]
+        public void SCIListAdd_AddDuplicateItem_AllowsDuplicates()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = items.Choose(Random).ToLower();
+            var index = AllowsDuplicates ? collection.Count : -1;
+
+            // Act
+            var result = ((SC.IList) collection).Add(duplicateItem);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(index));
+        }
+
+        // TODO: Add test to IList<T>.Add ensuring that order is the same
+        [Test]
+        public void SCIListAdd_ManyItems_Equivalent()
+        {
+            // Arrange
+            var referenceEqualityComparer = ComparerFactory.CreateReferenceEqualityComparer<string>();
+            var collection = GetEmptyList(referenceEqualityComparer);
+            var count = Random.Next(100, 250);
+            var items = GetStrings(Random, count);
+
+            // Act
+            foreach (var item in items) {
+                ((SC.IList) collection).Add(item); // TODO: Verify that items were added?
+            }
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void SCIListAdd_AddItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items);
+            var item = GetLowercaseString(Random);
+            var expectedEvents = new[] {
+                Added(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Add(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void SCIListAdd_AddDuplicateItem_RaisesNoEvents()
+        {
+            Run.If(!AllowsDuplicates);
+
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetList(items, CaseInsensitiveStringComparer.Default);
+            var duplicateItem = items.Choose(Random).ToLower();
+
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Add(duplicateItem), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void SCIListAdd_AddItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var item = Random.GetString();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            ((SC.IList) collection).Add(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListAdd_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListAdd_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void SCIListAdd_Set_Fail()
+        {
+            Run.If(!AllowsDuplicates);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region Contains(object)
 
         [Test]

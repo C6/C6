@@ -745,10 +745,7 @@ namespace C6
             set { throw new NotImplementedException(); }
         }
 
-        int SC.IList.Add(object value)
-        {
-            throw new NotImplementedException();
-        }
+        int SC.IList.Add(object value) => Add((T) value) ? Count - 1 : -1;
 
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
