@@ -88,6 +88,9 @@ namespace C6
             // Equality comparer is non-null
             Invariant(EqualityComparer != null);
 
+            // Empty array is always empty
+            Invariant(EmptyArray.IsEmpty());
+
             // ReSharper restore InvocationIsSkipped
         }
 
@@ -119,9 +122,7 @@ namespace C6
 
             _items = items.ToArray();
             Count = Capacity;
-
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
-
             AllowsNull = allowsNull;
         }
 
@@ -141,10 +142,8 @@ namespace C6
 
             #endregion
 
-            _items = capacity > 0 ? new T[capacity] : EmptyArray;
-
+            Capacity = capacity;
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
-
             AllowsNull = allowsNull;
         }
 
@@ -281,6 +280,11 @@ namespace C6
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
             var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
+
+            if (itemsToContain.Count > Count) {
+                return false;
+            }
+
             return this.Any(item => itemsToContain.Remove(item) && itemsToContain.IsEmpty);
         }
 
@@ -300,6 +304,7 @@ namespace C6
             return false;
         }
 
+        // TODO: Implement with an ICollectionValue<T>
         public SCG.IEnumerable<T> FindDuplicates(T item) => this.Where(x => Equals(x, item));
 
         public bool FindOrAdd(ref T item)
@@ -556,6 +561,7 @@ namespace C6
                 return;
             }
 
+            // Only update version if item is actually removed
             UpdateVersion();
 
             if ((Count -= count) > startIndex) {
@@ -626,6 +632,7 @@ namespace C6
                 return;
             }
 
+            // Only update version if the collection is actually reversed
             UpdateVersion();
 
             Array.Reverse(_items);
@@ -651,7 +658,9 @@ namespace C6
                 return;
             }
 
+            // Only update version if the collection is shuffled
             UpdateVersion();
+
             _items.Shuffle(0, Count, random);
             RaiseForShuffle();
         }
@@ -678,6 +687,7 @@ namespace C6
                 return;
             }
 
+            // Only update version if the collection is actually sorted
             UpdateVersion();
             Array.Sort(_items, 0, Count, comparer);
             RaiseForSort();
@@ -696,7 +706,7 @@ namespace C6
 
         // TODO: Test that changing the collection breaks the collection value!
         // TODO: Defer execution
-        public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
+        public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: new HashBag<T>(this);
 
         public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
 
@@ -913,9 +923,9 @@ namespace C6
 
                 #endregion
 
-                if (value == _items.Length) {
-                    return;
-                }
+                    if (value == _items.Length) {
+                        return;
+                    }
                 if (value > 0) {
                     Array.Resize(ref _items, value);
                 }
@@ -1062,8 +1072,10 @@ namespace C6
                 return false;
             }
 
-            // Clean up
+            // Only update version if items are actually removed
             UpdateVersion();
+
+            // Clean up
             Array.Clear(_items, j, Count - j);
             Count = j;
 

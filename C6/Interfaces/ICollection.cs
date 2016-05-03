@@ -203,7 +203,7 @@ namespace C6
         [Pure]
         bool Find(ref T item);
 
-        // TODO: Return an ICollectionValue<T>?
+        // TODO: Return an ICollectionValue<T>
         /// <summary>
         ///     Returns all items in the collection that are equal to the specified item.
         /// </summary>
