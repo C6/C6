@@ -222,8 +222,7 @@ namespace C6
             UpdateVersion();
 
             var oldCount = Count;
-            _items = EmptyArray;
-            Count = 0;
+            ClearPrivate();
             RaiseForClear(oldCount);
         }
 
@@ -386,6 +385,8 @@ namespace C6
 
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
+            // TODO: Defer execution
+
             throw new NotImplementedException();
 
             var dictionary = new SCG.Dictionary<T, int>(EqualityComparer); // TODO: Use C6 version (HashBag<T>)
@@ -515,7 +516,11 @@ namespace C6
             }
 
             if (items.IsEmpty()) {
-                // TODO: Optimize
+                // Optimize call, if no items should be retained
+                var itemsRemoved = _items;
+                ClearPrivate();
+                RaiseForRemoveAllWhere(itemsRemoved);
+                return true;
             }
 
             // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
@@ -583,6 +588,7 @@ namespace C6
 
         public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
 
+        // TODO: Defer execution
         public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
 
         public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
@@ -806,6 +812,12 @@ namespace C6
 
             // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
             throw new InvalidOperationException(CollectionWasModified);
+        }
+
+        private void ClearPrivate()
+        {
+            _items = EmptyArray;
+            Count = 0;
         }
 
         private void EnsureCapacity(int requiredCapacity)
@@ -1197,7 +1209,7 @@ namespace C6
             {
                 CheckVersion();
                 var startIndex = _startIndex + (_count - 1) * _sign;
-                var direction = (EnumerationDirection) (-_sign);
+                var direction = Direction.Opposite();
                 return new Range(_base, startIndex, _count, direction);
             }
 
@@ -1229,8 +1241,7 @@ namespace C6
             public SCG.IEnumerator<T> GetEnumerator()
             {
                 var items = _base._items;
-                for (var i = 0; i < _count; i++) {
-                    CheckVersion();
+                for (var i = 0; i < Count; i++) {
                     yield return items[_startIndex + _sign * i];
                 }
             }
