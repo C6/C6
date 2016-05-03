@@ -3954,6 +3954,117 @@ namespace C6.Tests
 
         #endregion
 
+        #region Shuffle(Random)
+
+        [Test]
+        public void ShuffleRandom_NullArgument_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(null), Violates.PreconditionSaying(ArgumentMustBeNonNull));
+        }
+
+        [Test]
+        public void ShuffleRandom_EmptyCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(Random), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void ShuffleRandom_SingleItemCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetStrings(Random, 1);
+            var collection = GetList(items);
+
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(Random), RaisesNoEventsFor(collection));
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void ShuffleRandom_RandomCollection_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(Random), RaisesCollectionChangedEventFor(collection));
+        }
+
+        [Test]
+        public void ShuffleRandom_RandomCollection_ContainsSameItems()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = collection.ToArray();
+
+            // Act
+            collection.Shuffle(Random);
+
+            // Assert
+            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void ShuffleRandom_RandomCollection_NotEqualThreeTimes()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            collection.Shuffle(Random);
+            var result1 = collection.ToArray();
+            collection.Shuffle(Random);
+            var result2 = collection.ToArray();
+            collection.Shuffle(Random);
+            var result3 = collection.ToArray();
+
+            // Assert
+            Assert.That(result1, Is.EquivalentTo(result2).And.EquivalentTo(result3));
+            Assert.That(result1, Is.Not.EqualTo(result2).And.Not.EqualTo(result3), "If this test fails more than once, the Shuffle(Random) method likely contains an error");
+        }
+
+        [Test]
+        public void ShuffleRandom_EqualCollections_SameResultUsingEqualRandom()
+        {
+            // Arrange
+            var seed = Random.Next();
+            var random1 = new Random(seed);
+            var random2 = new Random(seed);
+            var collection1 = GetStringList(Random);
+            var collection2 = GetList(collection1);
+
+            // Act
+            collection1.Shuffle(random1);
+            collection2.Shuffle(random2);
+
+            // Assert
+            Assert.That(collection1, Is.EqualTo(collection2).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void ShuffleRandom_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        #endregion
+
         #region Sort()
 
         [Test]

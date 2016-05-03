@@ -539,20 +539,17 @@ namespace C6
 
         public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
 
-        public void Shuffle()
+        public void Shuffle() => Shuffle(new Random());
+
+        public void Shuffle(Random random)
         {
             if (Count <= 1) {
                 return;
             }
-            
-            _items.Shuffle(0, Count);
+
+            _items.Shuffle(0, Count, random);
 
             RaiseForShuffle();
-        }
-
-        public void Shuffle(Random random)
-        {
-            throw new NotImplementedException();
         }
 
         public void Sort() => Sort((SCG.IComparer<T>) null);
