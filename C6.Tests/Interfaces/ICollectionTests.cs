@@ -411,6 +411,20 @@ namespace C6.Tests
         }
 
         [Test]
+        public void ContainsRange_LargerRangeThanCollection_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var items = collection.Append(collection.Choose()).ShuffledCopy(Random);
+
+            // Act
+            var containsRange = collection.ContainsRange(items);
+
+            // Assert
+            Assert.That(containsRange, Is.False);
+        }
+
+        [Test]
         public void ContainsRange_RandomCollectionEmptyEnumerable_True()
         {
             // Arrange
