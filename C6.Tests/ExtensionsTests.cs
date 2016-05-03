@@ -163,7 +163,7 @@ namespace C6.Tests
         public void IsSorted_ReversedComparer_IsSortedInReverse(int[] array)
         {
             // Arrange
-            var comparer = ComparerFactory.CreateComparer<int>((x, y) => x.CompareTo(y));
+            var comparer = ComparerFactory.CreateComparer<int>((x, y) => y.CompareTo(x));
 
             // Act
             var isSorted = array.IsSorted(comparer);
