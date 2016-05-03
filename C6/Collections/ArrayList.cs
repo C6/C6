@@ -909,6 +909,7 @@ namespace C6
 
         #region Private Members
 
+        // TODO: Make public?
         private int Capacity
         {
             get { return _items.Length; }
@@ -921,12 +922,15 @@ namespace C6
                 // Capacity is at least as big as the number of items
                 Ensures(value >= Count);
 
+                Ensures(Capacity == value);
+
                 #endregion
 
+                if (value > 0) {
                     if (value == _items.Length) {
                         return;
                     }
-                if (value > 0) {
+
                     Array.Resize(ref _items, value);
                 }
                 else {
@@ -957,7 +961,11 @@ namespace C6
 
             Requires(requiredCapacity >= 0);
 
+            Requires(requiredCapacity >= Count);
+
             Ensures(Capacity >= requiredCapacity);
+
+            Ensures(MinArrayLength <= Capacity && Capacity <= MaxArrayLength);
 
             #endregion
 
@@ -965,11 +973,15 @@ namespace C6
                 return;
             }
 
-            var capacity = IsEmpty ? MinArrayLength : Capacity * 2;
+            var capacity = Capacity * 2;
 
             if ((uint) capacity > MaxArrayLength) {
                 capacity = MaxArrayLength;
             }
+            else if (capacity < MinArrayLength) {
+                capacity = MinArrayLength;
+            }
+
             if (capacity < requiredCapacity) {
                 capacity = requiredCapacity;
             }
