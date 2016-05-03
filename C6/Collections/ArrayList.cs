@@ -21,6 +21,26 @@ using SCG = System.Collections.Generic;
 
 namespace C6
 {
+    /// <summary>
+    ///     Represents a generic list whose items that can be accessed efficiently by index.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
+    /// <remarks>
+    ///     <para>
+    ///         <see cref="ArrayList{T}"/> uses an internal array whose size is dynamically increased as required. Item access
+    ///         by index takes constant time. Items are added to the end of the list in amortized constant time, but insertion
+    ///         of one or more items takes time proportional to the number of items that must be moved to make room for the new
+    ///         item(s). The collection allows duplicates and stores them explicitly.
+    ///     </para>
+    ///     <para>
+    ///         Changing the state of an item while it is stored in an <see cref="ArrayList{T}"/> does not affect the
+    ///         <see cref="ArrayList{T}"/>. It might, however, affect any accessible <see cref="ICollectionValue{T}"/> returned
+    ///         from the collection, if that <see cref="ICollectionValue{T}"/> relies on the state of the item, e.g. when the
+    ///         change affects the item's hash code while unique items are enumerated.
+    ///     </para>
+    /// </remarks>
     [Serializable]
     public class ArrayList<T> : IList<T>
     {
