@@ -445,7 +445,7 @@ namespace C6
 
         // TODO: Test
         /// <summary>
-        ///     Shuffles the items in the array according to the specified random source.
+        ///     Shuffles the elements in the array according to the specified random source.
         /// </summary>
         /// <param name="array">The array to shuffle.</param>
         /// <param name="random">The random source.</param>
@@ -456,13 +456,40 @@ namespace C6
             // Argument must be non-null
             Requires(array != null, ArgumentMustBeNonNull);
 
+            // The elements are the same
+            Ensures(array.HasSameAs(OldValue(array.ToList())));
+
             #endregion
 
-            random = random ?? new Random(); // TODO: Use C5.Random?
-            var n = array.Length;
+            array.Shuffle(0, array.Length, random);
+        }
+
+        public static void Shuffle<T>(this T[] array, int startIndex, int count, Random random = null)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(array != null, ArgumentMustBeNonNull);
+
+
+            // The elements are the same
+            Ensures(array.HasSameAs(OldValue(array.ToList())));
+
+            // The elements before do not change order
+            Ensures(array.Take(startIndex).IsSameSequenceAs(OldValue(array.Take(startIndex).ToList())));
+
+            // The elements after do not change order
+            Ensures(array.Skip(startIndex + count).IsSameSequenceAs(OldValue(array.Skip(startIndex + count).ToList())));
+
+            #endregion
+
+            if (random == null) {
+                random = new Random(); // TODO: Use C5.Random?
+            }
+            var n = count;
 
             while (--n > 0) {
-                array.Swap(random.Next(n + 1), n);
+                array.Swap(startIndex + random.Next(n + 1), startIndex + n);
             }
         }
 
@@ -482,11 +509,16 @@ namespace C6
             // List must be non-read-only
             Requires(!list.IsReadOnly, CollectionMustBeNonReadOnly);
 
+            // The elements are the same
+            Ensures(list.HasSameAs(OldValue(list.ToList())));
+
             #endregion
 
-            random = random ?? new Random(); // TODO: Use C5.Random?
-            var n = list.Count;
+            if (random == null) {
+                random = new Random(); // TODO: Use C5.Random?
+            }
 
+            var n = list.Count;
             while (--n > 0) {
                 list.Swap(random.Next(n + 1), n);
             }

@@ -541,7 +541,13 @@ namespace C6
 
         public void Shuffle()
         {
-            throw new NotImplementedException();
+            if (Count <= 1) {
+                return;
+            }
+            
+            _items.Shuffle(0, Count);
+
+            RaiseForShuffle();
         }
 
         public void Shuffle(Random random)
@@ -1062,15 +1068,11 @@ namespace C6
             OnCollectionChanged();
         }
 
-        private void RaiseForReverse()
-        {
-            OnCollectionChanged();
-        }
+        private void RaiseForReverse() => OnCollectionChanged();
 
-        private void RaiseForSort()
-        {
-            OnCollectionChanged();
-        }
+        private void RaiseForShuffle() => OnCollectionChanged();
+
+        private void RaiseForSort() => OnCollectionChanged();
 
         private void RaiseForUpdate(T item, T oldItem)
         {
