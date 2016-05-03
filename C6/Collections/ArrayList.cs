@@ -734,10 +734,7 @@ namespace C6
 
         bool SC.ICollection.IsSynchronized => false;
 
-        object SC.ICollection.SyncRoot
-        {
-            get { throw new NotImplementedException(); }
-        }
+        object SC.ICollection.SyncRoot { get; } = new object();
 
         object SC.IList.this[int index]
         {

@@ -72,6 +72,12 @@ namespace C6.Tests
 
         #endregion
 
+        #region SyncRoot
+
+        // TODO: Test?
+
+        #endregion
+
         #endregion
 
         #region Methods
