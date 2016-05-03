@@ -5,6 +5,10 @@ using System;
 using System.Linq;
 using System.Text;
 
+using C6.Contracts;
+
+using static System.Diagnostics.Contracts.Contract;
+
 using static C6.Speed;
 
 using SC = System.Collections;
@@ -18,6 +22,7 @@ namespace C6.Tests.Helpers
         #region Fields
 
         private readonly SCG.IEqualityComparer<T> _equalityComparer;
+        private readonly Func<T> _chooseFunction;
         private readonly T[] _items;
         private readonly IExtensible<T> _originalCollection;
 
@@ -25,9 +30,10 @@ namespace C6.Tests.Helpers
 
         #region Constructors
 
-        public ExpectedDirectedCollectionValue(IExtensible<T> originalCollection, SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, EnumerationDirection direction = EnumerationDirection.Forwards)
+        public ExpectedDirectedCollectionValue(IExtensible<T> originalCollection, SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, EnumerationDirection direction = EnumerationDirection.Forwards, Func<T> chooseFunction = null)
         {
             _equalityComparer = equalityComparer ?? originalCollection.EqualityComparer;
+            _chooseFunction = chooseFunction;
             // Copy the array instead of referencing it
             _items = items.ToArray();
             _originalCollection = originalCollection;
@@ -47,6 +53,7 @@ namespace C6.Tests.Helpers
         public Speed CountSpeed => Constant;
 
         public EnumerationDirection Direction { get; }
+        public bool HasChoose => _chooseFunction != null;
 
         public bool IsEmpty => Count == 0;
 
@@ -63,12 +70,15 @@ namespace C6.Tests.Helpers
 
         public T Choose()
         {
-            throw new NotImplementedException("It is unknown what this value should be.");
+            if (HasChoose) {
+                return _chooseFunction();
+            }
+            throw new NotImplementedException($"Use the {nameof(_chooseFunction)} to define the value of {nameof(Choose)}.");
         }
 
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
-        public bool Equals(IDirectedCollectionValue<T> other) => Equals(this, other, _equalityComparer) && Equals(Backwards(), other.Backwards(), _equalityComparer);
+        public bool Equals(IDirectedCollectionValue<T> other) => Equals(this, other, _equalityComparer) && Equals((ExpectedDirectedCollectionValue<T>) Backwards(), other.Backwards(), _equalityComparer);
 
         public override bool Equals(object obj)
         {
@@ -112,7 +122,7 @@ namespace C6.Tests.Helpers
 
         #region Private Members
 
-        private static bool Equals(IDirectedCollectionValue<T> expected, IDirectedCollectionValue<T> actual, SCG.IEqualityComparer<T> equalityComparer)
+        private static bool Equals(ExpectedDirectedCollectionValue<T> expected, IDirectedCollectionValue<T> actual, SCG.IEqualityComparer<T> equalityComparer)
         {
             // Prepare CopyTo()
             var padding = 2;
@@ -129,11 +139,11 @@ namespace C6.Tests.Helpers
                 && expected.Direction == actual.Direction
                 && expected.IsEmpty == actual.IsEmpty
 
-                    // Pure methods
-                    // TODO: Choose() - this is dependent on the specific implementation. Can we predict it and compare against that value?
+                // Pure methods
+                && (!expected.HasChoose || expected.Choose().IsSameAs(actual.Choose()))
                 && expectedArray.SequenceEqual(actualArray, equalityComparer)
                 && expected.SequenceEqual(actual, equalityComparer)
-                    // Show() is tested with ToString()
+                // Show() is tested with ToString()
                 && expected.ToArray().SequenceEqual(actual.ToArray(), equalityComparer)
                 && expected.ToString().Equals(actual.ToString()) // TODO: Should they always return the same result? Couldn't this differ between collection types?
                 ;

@@ -4,6 +4,7 @@
 using System.Linq;
 
 using C6.Tests.Contracts;
+using C6.Tests.Helpers;
 
 using NUnit.Framework;
 
@@ -251,6 +252,53 @@ namespace C6.Tests
 
             // Assert
             Assert.That(choose, Is.SameAs(lastItem));
+        }
+
+        #endregion
+
+        #region GetIndexRange(int, int)
+
+        [Test]
+        public void GetIndexRange_ForwardsRange_ChooseReturnsLastItem()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items);
+            var count = Random.Next(1, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Skip(startIndex).Take(count),
+                chooseFunction: () => collection[startIndex + count - 1]
+            );
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(getIndexRange, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetIndexRange_BackwardsRange_ChooseReturnsLastItem()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items);
+            var count = Random.Next(1, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Skip(startIndex).Take(count).Reverse(),
+                direction: EnumerationDirection.Backwards,
+                chooseFunction: () => collection[startIndex + count - 1]
+            );
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, count).Backwards();
+
+            // Assert
+            Assert.That(getIndexRange, Is.EqualTo(expected));
         }
 
         #endregion

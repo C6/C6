@@ -1205,7 +1205,7 @@ namespace C6
             {
                 CheckVersion();
                 // Select the highest index in the range
-                var index = _direction.IsForward() ? _startIndex + _count : _startIndex;
+                var index = _direction.IsForward() ? _startIndex + _count - 1 : _startIndex;
                 return _base._items[index];
             }
 
