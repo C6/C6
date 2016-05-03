@@ -427,16 +427,7 @@ namespace C6
 
         public bool IsSorted(Comparison<T> comparison)
         {
-            #region Code Contracts
-
-            // The version is updated
-            Ensures(_version != OldValue(_version));
-
-            // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
-
-            #endregion
-
+            // TODO: Can we check that comparison doesn't alter the collection?
             for (var i = 1; i < Count; i++) {
                 if (comparison(_items[i - 1], _items[i]) > 0) {
                     return false;
@@ -672,6 +663,13 @@ namespace C6
 
         public void Sort(SCG.IComparer<T> comparer)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             if (comparer == null) {
                 comparer = SCG.Comparer<T>.Default;
             }
@@ -680,8 +678,8 @@ namespace C6
                 return;
             }
 
+            UpdateVersion();
             Array.Sort(_items, 0, Count, comparer);
-
             RaiseForSort();
         }
 
@@ -696,6 +694,7 @@ namespace C6
 
         public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
 
+        // TODO: Test that changing the collection breaks the collection value!
         // TODO: Defer execution
         public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: Use C6 set
 
@@ -743,12 +742,26 @@ namespace C6
 
         public bool UpdateOrAdd(T item)
         {
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(_version != OldValue(_version));
+
+            #endregion
+
             T oldItem;
             return UpdateOrAdd(item, out oldItem);
         }
 
         public bool UpdateOrAdd(T item, out T oldItem)
         {
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(_version != OldValue(_version));
+
+            #endregion
+
             if (Update(item, out oldItem)) {
                 return true;
             }

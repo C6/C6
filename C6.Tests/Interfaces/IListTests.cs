@@ -4342,6 +4342,71 @@ namespace C6.Tests
         }
 
         [Test]
+        public void Sort_SortEmptyCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void Sort_SortSingleItemCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetStrings(Random, 1);
+            var collection = GetList(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void Sort_SortSortedCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count);
+            var collection = GetList(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void Sort_SortDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
         [Category("Unfinished")]
         public void Sort_ReadOnlyCollection_Fail()
         {
@@ -4544,6 +4609,74 @@ namespace C6.Tests
         }
 
         [Test]
+        public void SortComparison_SortEmptyCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            Comparison<string> comparison = string.Compare;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(comparison);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void SortComparison_SortSingleItemCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetStrings(Random, 1);
+            var collection = GetList(items);
+            Comparison<string> comparison = string.Compare;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(comparison);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void SortComparison_SortSortedCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count);
+            var collection = GetList(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(_nonComparableComparison);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void SortComparison_SortDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            Comparison<string> comparison = string.Compare;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(comparison);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
         [Category("Unfinished")]
         public void SortComparison_ReadOnlyCollection_Fail()
         {
@@ -4743,6 +4876,75 @@ namespace C6.Tests
 
             // Assert
             Assert.That(collection, Is.Ordered);
+        }
+
+        [Test]
+        public void SortIComparer_SortEmptyCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var comparer = SCG.Comparer<string>.Default;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(comparer);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void SortIComparer_SortSingleItemCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetStrings(Random, 1);
+            var collection = GetList(items);
+            var comparer = SCG.Comparer<string>.Default;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(comparer);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void SortIComparer_SortSortedCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var previousItem = 0;
+            var maxGap = 5;
+            var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count);
+            var collection = GetList(items);
+            var comparer = SCG.Comparer<Comparable>.Default;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(comparer);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void SortIComparer_SortDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var comparer = SCG.Comparer<string>.Default;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Sort(comparer);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]
