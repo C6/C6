@@ -3944,6 +3944,52 @@ namespace C6.Tests
         }
 
         [Test]
+        public void Shuffle_ShuffleDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Shuffle();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void Shuffle_ShuffleEmptyCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Shuffle();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void Shuffle_ShuffleSingleItemCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetStrings(Random, 1);
+            var collection = GetList(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Shuffle();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
         [Category("Unfinished")]
         public void Shuffle_ReadOnlyCollection_Fail()
         {
@@ -4052,6 +4098,52 @@ namespace C6.Tests
 
             // Assert
             Assert.That(collection1, Is.EqualTo(collection2).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void ShuffleRandom_ShuffleDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Shuffle(Random);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void ShuffleRandom_ShuffleEmptyCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Shuffle(Random);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void ShuffleRandom_ShuffleSingleItemCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetStrings(Random, 1);
+            var collection = GetList(items);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Shuffle(Random);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
         }
 
         [Test]

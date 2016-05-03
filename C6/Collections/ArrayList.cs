@@ -168,6 +168,13 @@ namespace C6
         {
             get { return _items[index]; }
             set {
+                #region Code Contracts
+
+                // The version is updated
+                Ensures(_version != OldValue(_version));
+
+                #endregion
+
                 UpdateVersion();
                 var oldItem = _items[index];
                 _items[index] = value;
@@ -181,6 +188,13 @@ namespace C6
 
         public bool Add(T item)
         {
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(_version != OldValue(_version));
+
+            #endregion
+
             InsertPrivate(Count, item);
             RaiseForAdd(item);
             return true;
@@ -214,6 +228,13 @@ namespace C6
 
         public void Clear()
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             if (IsEmpty) {
                 return;
             }
@@ -282,6 +303,13 @@ namespace C6
 
         public SCG.IEnumerator<T> GetEnumerator()
         {
+            #region Code Contracts
+
+            // The version is not updated
+            Ensures(_version == OldValue(_version));
+
+            #endregion
+
             var version = _version;
             // Check version at each call to MoveNext() to ensure an exception is thrown even when the enumerator was really finished
             for (var i = 0; CheckVersion(version) & i < Count; i++) {
@@ -340,6 +368,13 @@ namespace C6
 
         public void Insert(int index, T item)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             InsertPrivate(index, item);
             RaiseForInsert(index, item);
         }
@@ -372,6 +407,16 @@ namespace C6
 
         public bool IsSorted(Comparison<T> comparison)
         {
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(_version != OldValue(_version));
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             for (var i = 1; i < Count; i++) {
                 if (comparison(_items[i - 1], _items[i]) > 0) {
                     return false;
@@ -471,6 +516,13 @@ namespace C6
 
         public T RemoveAt(int index)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             var item = RemoveAtPrivate(index);
             RaiseForRemovedAt(item, index);
             return item;
@@ -482,6 +534,13 @@ namespace C6
 
         public void RemoveIndexRange(int startIndex, int count)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             if (count == 0) {
                 return;
             }
@@ -500,6 +559,13 @@ namespace C6
 
         public bool RemoveRange(SCG.IEnumerable<T> items)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             if (IsEmpty || items.IsEmpty()) {
                 return false;
             }
@@ -511,12 +577,20 @@ namespace C6
 
         public bool RetainRange(SCG.IEnumerable<T> items)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             if (IsEmpty) {
                 return false;
             }
 
             if (items.IsEmpty()) {
                 // Optimize call, if no items should be retained
+                UpdateVersion();
                 var itemsRemoved = _items;
                 ClearPrivate();
                 RaiseForRemoveAllWhere(itemsRemoved);
@@ -530,6 +604,13 @@ namespace C6
 
         public void Reverse()
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             if (Count <= 1) {
                 return;
             }
@@ -548,12 +629,19 @@ namespace C6
 
         public void Shuffle(Random random)
         {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
             if (Count <= 1) {
                 return;
             }
 
+            UpdateVersion();
             _items.Shuffle(0, Count, random);
-
             RaiseForShuffle();
         }
 
