@@ -111,7 +111,9 @@ namespace C6.Contracts
             }
 
             // Use default comparer if none is supplied
-            comparer = comparer ?? SCG.EqualityComparer<T>.Default;
+            if (comparer == null) {
+                comparer = SCG.EqualityComparer<T>.Default;
+            }
 
             // Sort based on hash code
             Comparison<T> hashCodeComparison = (x, y) => comparer.GetHashCode(x).CompareTo(comparer.GetHashCode(y));

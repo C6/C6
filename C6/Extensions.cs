@@ -372,7 +372,9 @@ namespace C6
 
             #endregion
 
-            comparer = comparer ?? SCG.Comparer<T>.Default;
+            if (comparer == null) {
+                comparer = SCG.Comparer<T>.Default;
+            }
 
             return enumerable.AllConsecutiveElements((x, y) => comparer.Compare(x, y) <= 0);
         }

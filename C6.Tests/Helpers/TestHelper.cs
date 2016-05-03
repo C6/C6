@@ -120,7 +120,9 @@ namespace C6.Tests.Helpers
 
         public static T DifferentItem<T>(this SCG.IEnumerable<T> items, Func<T> newItem, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+            if (equalityComparer == null) {
+                equalityComparer = SCG.EqualityComparer<T>.Default;
+            }
 
             var item = newItem();
             while (items.Contains(item, equalityComparer)) {
