@@ -289,8 +289,9 @@ namespace C6
         }
 
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
-
-        public int CountDuplicates(T item) => this.Count(x => Equals(x, item));
+        
+        // Explicitly check against null to avoid using the (slower) equality comparer
+        public int CountDuplicates(T item) => item == null ? this.Count(x => x == null) : this.Count(x => Equals(x, item));
 
         public bool Find(ref T item)
         {
@@ -305,7 +306,8 @@ namespace C6
         }
 
         // TODO: Implement with an ICollectionValue<T>
-        public SCG.IEnumerable<T> FindDuplicates(T item) => this.Where(x => Equals(x, item));
+        // Explicitly check against null to avoid using the (slower) equality comparer
+        public SCG.IEnumerable<T> FindDuplicates(T item) => item == null ? this.Where(x => x == null) : this.Where(x => Equals(x, item));
 
         public bool FindOrAdd(ref T item)
         {
@@ -381,10 +383,20 @@ namespace C6
             Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
 
             #endregion
-
-            for (var i = 0; i < Count; i++) {
-                if (Equals(item, _items[i])) {
-                    return i;
+            
+            if (item == null) {
+                for (var i = 0; i < Count; i++) {
+                    // Explicitly check against null to avoid using the (slower) equality comparer
+                    if (_items[i] == null) {
+                        return i;
+                    }
+                }
+            }
+            else {
+                for (var i = 0; i < Count; i++) {
+                    if (Equals(item, _items[i])) {
+                        return i;
+                    }
                 }
             }
 
@@ -487,9 +499,19 @@ namespace C6
 
             #endregion
 
-            for (var i = Count - 1; i >= 0; i--) {
-                if (Equals(item, _items[i])) {
-                    return i;
+            if (item == null) {
+                for (var i = Count - 1; i >= 0; i--) {
+                    // Explicitly check against null to avoid using the (slower) equality comparer
+                    if (_items[i] == null) {
+                        return i;
+                    }
+                }
+            }
+            else {
+                for (var i = Count - 1; i >= 0; i--) {
+                    if (Equals(item, _items[i])) {
+                        return i;
+                    }
                 }
             }
 
@@ -518,6 +540,7 @@ namespace C6
 
             #endregion
 
+            // Remove last instance of item, since this moves the fewest items
             var index = LastIndexOf(item);
 
             if (index >= 0) {
@@ -544,7 +567,8 @@ namespace C6
             return item;
         }
 
-        public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
+        // Explicitly check against null to avoid using the (slower) equality comparer
+        public bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
         public T RemoveFirst() => RemoveAt(0);
 
