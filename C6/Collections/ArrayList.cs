@@ -120,10 +120,27 @@ namespace C6
 
             #endregion
 
-            _items = items.ToArray();
-            Count = Capacity;
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
             AllowsNull = allowsNull;
+
+            var collectionValue = items as ICollectionValue<T>;
+            var collection = items as SCG.ICollection<T>;
+
+            // Use ToArray() for ICollectionValue<T>
+            if (collectionValue != null) {
+                _items = collectionValue.IsEmpty ? EmptyArray : collectionValue.ToArray();
+                Count = Capacity;
+            }
+            // Use CopyTo() for ICollection<T>
+            else if (collection != null) {
+                Count = collection.Count;
+                _items = Count == 0 ? EmptyArray : new T[Count];
+                collection.CopyTo(_items, 0);
+            }
+            else {
+                _items = EmptyArray;
+                AddRange(items);
+            }
         }
 
         public ArrayList(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
@@ -228,6 +245,9 @@ namespace C6
 
             #endregion
 
+            // TODO: Handle ICollectionValue<T> and ICollection<T>
+
+            // TODO: Avoid creating an array? Requires a lot of extra code, since we need to properly handle items already added from a bad enumerable
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
 
@@ -429,6 +449,9 @@ namespace C6
 
             #endregion
 
+            // TODO: Handle ICollectionValue<T> and ICollection<T>
+
+            // TODO: Avoid creating an array? Requires a lot of extra code, since we need to properly handle items already added from a bad enumerable
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
 
@@ -1071,6 +1094,7 @@ namespace C6
             // Only update version if items are actually added
             UpdateVersion();
 
+            // TODO: Check if Count == Capacity?
             EnsureCapacity(Count + 1);
 
             // Move items one to the right

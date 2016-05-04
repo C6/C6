@@ -85,17 +85,14 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.UncaughtPrecondition);
         }
 
         [Test]
         public void Constructor_ValueTypeCollectionDisallowsNull_DisallowsNull()
         {
-            // Arrange
-            var allowsNull = false;
-
             // Act
-            var collection = new ArrayList<int>(allowsNull: allowsNull);
+            var collection = new ArrayList<int>(allowsNull: false);
 
             // Assert
             Assert.That(collection.AllowsNull, Is.False);
@@ -120,7 +117,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.That(() => new ArrayList<string>(enumerable), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(enumerable), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -156,7 +153,7 @@ namespace C6.Tests
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(array), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -182,7 +179,7 @@ namespace C6.Tests
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.UncaughtPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -212,6 +209,60 @@ namespace C6.Tests
 
             // Assert
             Assert.That(equalityComparer, Is.SameAs(customEqualityComparer));
+        }
+
+        [Test]
+        public void Constructor_EmptySCGIList_Empty()
+        {
+            // Arrange
+            var enumerable = new SCG.List<string>();
+
+            // Act
+            var collection = new ArrayList<string>(enumerable);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Constructor_RandomSCGIList_Equal()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var enumerable = new SCG.List<string>(items);
+
+            // Act
+            var collection = new ArrayList<string>(enumerable);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void Constructor_EmptyICollectionValue_Empty()
+        {
+            // Arrange
+            var collectionValue = new ArrayList<string>();
+
+            // Act
+            var collection = new ArrayList<string>(collectionValue);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Constructor_RandomICollectionValue_Equal()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collectionValue = new ArrayList<string>(items);
+
+            // Act
+            var collection = new ArrayList<string>(collectionValue);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
         }
 
         #endregion
