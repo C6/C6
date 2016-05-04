@@ -879,27 +879,63 @@ namespace C6
         object SC.IList.this[int index]
         {
             get { return this[index]; }
-            set { this[index] = (T) value; }
+            set {
+                try {
+                    this[index] = (T) value;
+                }
+                catch (InvalidCastException) {
+                    throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+                }
+            }
         }
 
-        int SC.IList.Add(object value) => Add((T) value) ? Count - 1 : -1;
+        int SC.IList.Add(object value)
+        {
+            try {
+                return Add((T) value) ? Count - 1 : -1;
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
 
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
-        bool SC.IList.Contains(object value) => Contains((T) value);
+        bool SC.IList.Contains(object value) => IsCompatibleObject(value) && Contains((T) value);
 
-        void SC.ICollection.CopyTo(Array array, int index) => Array.Copy(_items, 0, array, index, Count);
+        void SC.ICollection.CopyTo(Array array, int index)
+        {
+            try {
+                Array.Copy(_items, 0, array, index, Count);
+            }
+            catch (ArrayTypeMismatchException) {
+                throw new ArgumentException("Target array type is not compatible with the type of items in the collection.");
+            }
+        }
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
-        int SC.IList.IndexOf(object value) => Math.Max(-1, IndexOf((T) value));
+        int SC.IList.IndexOf(object value) => IsCompatibleObject(value) ? Math.Max(-1, IndexOf((T) value)) : -1;
 
         // Explicit implementation is needed, since C6.IList<T>.IndexOf(T) breaks SCG.IList<T>.IndexOf(T)'s precondition: Result<T>() >= -1
         int SCG.IList<T>.IndexOf(T item) => Math.Max(-1, IndexOf(item));
 
-        void SC.IList.Insert(int index, object value) => Insert(index, (T) value);
+        void SC.IList.Insert(int index, object value)
+        {
+            try {
+                Insert(index, (T) value);
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
 
-        void SC.IList.Remove(object value) => Remove((T) value);
+        void SC.IList.Remove(object value)
+        {
+            if (IsCompatibleObject(value)) {
+                Remove((T) value);
+            }
+        }
 
         void SC.IList.RemoveAt(int index) => RemoveAt(index);
 
@@ -1046,6 +1082,8 @@ namespace C6
             Array.Copy(items, 0, _items, index, count);
             Count += count;
         }
+
+        private static bool IsCompatibleObject(object value) => value is T || value == null && default(T) == null;
 
         private bool RemoveAllWhere(Func<T, bool> predicate)
         {

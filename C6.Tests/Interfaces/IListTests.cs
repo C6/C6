@@ -85,14 +85,26 @@ namespace C6.Tests
         #region CopyTo(Array, int)
 
         [Test]
-        public void SCICollectionCopyTo_InvalidType_ThrowsArrayTypeMismatchException()
+        public void SCICollectionCopyTo_InvalidType_ThrowsArgumentException()
         {
             // Arrange
             var collection = GetStringList(Random);
             var array = new int[collection.Count];
 
             // Act & Assert
-            Assert.That(() => ((SC.ICollection) collection).CopyTo(array, 0), Throws.TypeOf<ArrayTypeMismatchException>());
+            Assert.That(() => ((SC.ICollection) collection).CopyTo(array, 0), Throws.ArgumentException.Because("Target array type is not compatible with the type of items in the collection."));
+        }
+
+        [Test]
+        public void SCICollectionCopyTo_InvalidDimension_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var count = collection.Count;
+            var array = new string[count, count];
+
+            // Act & Assert
+            Assert.That(() => ((SC.ICollection) collection).CopyTo(array, 0), Violates.Precondition);
         }
 
         [Test]
@@ -272,15 +284,18 @@ namespace C6.Tests
         }
         
         [Test]
-        public void SCIListItemSet_InvalidType_ThrowsInvalidCastException()
+        public void SCIListItemSet_InvalidType_ThrowsArgumentException()
         {
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
             object item = Random.Next();
+            var typeString = "System.String";
+            var parameterName = "value";
+            var exceptionMessage = $"The value \"{item}\" is not of type \"{typeString}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {parameterName}";
 
             // Act & Assert
-            Assert.That(() => ((SC.IList) collection)[index] = item, Throws.TypeOf<InvalidCastException>());
+            Assert.That(() => ((SC.IList) collection)[index] = item, Throws.ArgumentException.Because(exceptionMessage));
         }
 
         [Test]
@@ -491,14 +506,17 @@ namespace C6.Tests
         #region Add(T)
 
         [Test]
-        public void SCIListAdd_InvalidType_ThrowsInvalidCastException()
+        public void SCIListAdd_InvalidType_ThrowsArgumentException()
         {
             // Arrange
             var collection = GetStringList(Random);
             object item = Random.Next();
+            var typeString = "System.String";
+            var parameterName = "value";
+            var exceptionMessage = $"The value \"{item}\" is not of type \"{typeString}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {parameterName}";
 
             // Act & Assert
-            Assert.That(() => collection.Add(item), Throws.TypeOf<InvalidCastException>());
+            Assert.That(() => collection.Add(item), Throws.ArgumentException.Because(exceptionMessage));
         }
 
         [Test]
@@ -654,14 +672,17 @@ namespace C6.Tests
         #region Contains(object)
 
         [Test]
-        public void SCIListContains_InvalidType_ThrowsInvalidCastException()
+        public void SCIListContains_InvalidType_False()
         {
             // Arrange
             var collection = GetStringList(Random);
             object item = Random.Next();
 
-            // Act & Assert
-            Assert.That(() => collection.Contains(item), Throws.TypeOf<InvalidCastException>());
+            // Act
+            var contains = collection.Contains(item);
+
+            // Assert
+            Assert.That(contains, Is.False);
         }
 
         [Test]
@@ -823,14 +844,17 @@ namespace C6.Tests
         #region IndexOf(T)
 
         [Test]
-        public void SCIListIndexOf_InvalidType_ThrowsInvalidCastException()
+        public void SCIListIndexOf_InvalidType_MinusOne()
         {
             // Arrange
             var collection = GetStringList(Random);
             object item = Random.Next();
 
+            // Act
+            var indexOf = collection.IndexOf(item);
+
             // Act & Assert
-            Assert.That(() => collection.IndexOf(item), Throws.TypeOf<InvalidCastException>());
+            Assert.That(indexOf, Is.EqualTo(-1));
         }
 
         [Test]
@@ -960,15 +984,18 @@ namespace C6.Tests
         #region Insert(int, object)
 
         [Test]
-        public void SCIListInsert_InvalidType_ThrowsInvalidCastException()
+        public void SCIListInsert_InvalidType_ThrowsArgumentException()
         {
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
             object item = Random.Next();
+            var typeString = "System.String";
+            var parameterName = "value";
+            var exceptionMessage = $"The value \"{item}\" is not of type \"{typeString}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {parameterName}";
 
             // Act & Assert
-            Assert.That(() => collection.Insert(index, item), Throws.TypeOf<InvalidCastException>());
+            Assert.That(() => collection.Insert(index, item), Throws.ArgumentException.Because(exceptionMessage));
         }
 
         [Test]
@@ -1187,6 +1214,21 @@ namespace C6.Tests
         #endregion
 
         #region Remove(object)
+
+        [Test]
+        public void SCIListRemove_InvalidType_Nothing()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var array = collection.ToArray();
+            object item = Random.Next();
+
+            // Act
+            collection.Remove(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
 
         [Test]
         public void SCIListRemove_DisallowsNull_ViolatesPrecondition()
