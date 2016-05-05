@@ -18,18 +18,8 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class ArrayListListTests : IListTests
+    public class ArrayListTests : TestBase
     {
-        #region Helper Methods
-
-        #endregion
-
-        #region Factories
-
-        #endregion
-
-        #region ArrayList<T>
-
         #region Constructors
 
         [Test]
@@ -315,7 +305,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = GetList(items);
+            var collection = new ArrayList<string>(items);
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
@@ -336,7 +326,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = GetList(items);
+            var collection = new ArrayList<string>(items);
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
@@ -356,20 +346,21 @@ namespace C6.Tests.Collections
         #endregion
 
         #endregion
+    }
 
-        #endregion
 
-        protected override EventTypes ListenableEvents => All;
+    [TestFixture]
+    public class ArrayListListTests : IListTests
+    {
         protected override bool AllowsDuplicates => true;
+        protected override Speed ContainsSpeed => Speed.Linear;
         protected override bool DuplicatesByCounting => false;
+        protected override Speed IndexingSpeed => Speed.Constant;
         protected override bool IsFixedSize => false;
         protected override bool IsReadOnly => false;
-        protected override Speed ContainsSpeed => Speed.Linear;
-
-        protected override Speed IndexingSpeed => Speed.Constant;
+        protected override EventTypes ListenableEvents => All;
 
         protected override IList<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
-
         protected override IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
     }
 
@@ -377,8 +368,9 @@ namespace C6.Tests.Collections
     [TestFixture]
     public class ArrayListStackTests : IStackTests
     {
-        protected override EventTypes ListenableEvents => All;
         protected override bool IsReadOnly => false;
+        protected override EventTypes ListenableEvents => All;
+
         protected override IStack<T> GetEmptyStack<T>(bool allowsNull = false) => new ArrayList<T>(allowsNull: allowsNull);
         protected override IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new ArrayList<T>(enumerable, allowsNull: allowsNull);
     }
