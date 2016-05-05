@@ -42,7 +42,7 @@ namespace C6.Collections
     ///     </para>
     /// </remarks>
     [Serializable]
-    public class ArrayList<T> : IList<T>
+    public class ArrayList<T> : IList<T>, IStack<T>
     {
         #region Fields
 
@@ -539,6 +539,16 @@ namespace C6.Collections
             }
 
             return ~Count;
+        }
+
+        public T Pop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Push(T item)
+        {
+            throw new NotImplementedException();
         }
 
         public bool Remove(T item)

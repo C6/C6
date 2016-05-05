@@ -18,7 +18,7 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class ArrayListTests : IListTests
+    public class ArrayListListTests : IListTests
     {
         #region Helper Methods
 
@@ -322,7 +322,7 @@ namespace C6.Tests.Collections
                 collection,
                 collection.Skip(startIndex).Take(count),
                 chooseFunction: () => collection[startIndex + count - 1]
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count);
@@ -344,7 +344,7 @@ namespace C6.Tests.Collections
                 collection.Skip(startIndex).Take(count).Reverse(),
                 direction: EnumerationDirection.Backwards,
                 chooseFunction: () => collection[startIndex + count - 1]
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count).Backwards();
@@ -371,5 +371,14 @@ namespace C6.Tests.Collections
         protected override IList<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
 
         protected override IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
+    }
+
+
+    [TestFixture]
+    public class ArrayListStackTests : IStackTests
+    {
+        protected override EventTypes ListenableEvents => All;
+        protected override IStack<T> GetEmptyStack<T>(bool allowsNull = false) => new ArrayList<T>(allowsNull: allowsNull);
+        protected override IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new ArrayList<T>(enumerable, allowsNull: allowsNull);
     }
 }
