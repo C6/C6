@@ -78,9 +78,6 @@ namespace C6.Collections
             // Count is not bigger than the capacity
             Invariant(Count <= Capacity);
 
-            // If nulls are not allowed, count is equal to the number of non-null items
-            Invariant(AllowsNull || Count == _items.Count(item => item != null));
-
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
