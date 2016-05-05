@@ -1,15 +1,20 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
+using System;
 using System.Linq;
+using System.Reflection;
 
 using C6.Tests.Contracts;
 using C6.Tests.Helpers;
 
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
+using static C6.Tests.Helpers.CollectionEvent;
+using static C6.ExceptionMessages;
 
 using SCG = System.Collections.Generic;
 
@@ -20,6 +25,9 @@ namespace C6.Tests
     public class ArrayListTests : IListTests
     {
         #region Helper Methods
+        
+        private IList<string> GetStringList(Randomizer random, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
+            => GetList(GetStrings(random, GetCount(random)), equalityComparer, allowsNull);
 
         #endregion
 
@@ -215,7 +223,7 @@ namespace C6.Tests
         public void Constructor_EmptySCGIList_Empty()
         {
             // Arrange
-            var enumerable = new SCG.List<string>();
+            var enumerable = NoStrings.ToList();
 
             // Act
             var collection = new ArrayList<string>(enumerable);
@@ -228,14 +236,13 @@ namespace C6.Tests
         public void Constructor_RandomSCGIList_Equal()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var enumerable = new SCG.List<string>(items);
+            var items = GetStrings(Random).ToList();
 
             // Act
-            var collection = new ArrayList<string>(enumerable);
+            var collection = new ArrayList<string>(items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(GetStrings(Random)).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -350,6 +357,262 @@ namespace C6.Tests
 
             // Assert
             Assert.That(getIndexRange, Is.EqualTo(expected));
+        }
+
+        #endregion
+
+        #region InsertRange(int, IEnumerable<T>)
+
+        public static SCG.IEnumerable<T> ToEnumerable<T>(SCG.IEnumerable<T> items) => items;
+        public static SCG.IEnumerable<T> ToArray<T>(SCG.IEnumerable<T> items) => items.ToArray();
+        public static SCG.IEnumerable<T> ToList<T>(SCG.IEnumerable<T> items) => items.ToList();
+        public static SCG.IEnumerable<T> ToCollectionValue<T>(SCG.IEnumerable<T> items) => new ArrayList<T>(items);
+
+        public static SCG.IEnumerable<T> Map<T>(string methodName, SCG.IEnumerable<T> enumerable)
+            => (SCG.IEnumerable<T>) typeof(ArrayListTests).GetMethod(methodName).MakeGenericMethod(typeof(T)).Invoke(null, new object[] { enumerable });
+
+        [Test]
+        [TestCase(nameof(ToEnumerable))]
+        [TestCase(nameof(ToArray))]
+        [TestCase(nameof(ToList))]
+        [TestCase(nameof(ToCollectionValue))]
+        public void InsertRange_RandomCollectionInsertExistingItems_InsertedRange(string mapperMethod)
+        {
+            Run.If(AllowsDuplicates);
+            
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            var count = GetCount(Random);
+            var items = Map(mapperMethod, collection.ShuffledCopy(Random).Take(count));
+            var expected = collection.InsertItems(index, items);
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_RandomCollectionInsertExistingItemsAsCollectionValue_InsertedRange()
+        {
+            Run.If(AllowsDuplicates);
+
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            var count = GetCount(Random);
+            var items = GetCollectionValue(collection.ShuffledCopy(Random).Take(count));
+            var expected = collection.ToArray().InsertItems(index, items);
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_EmptyCollectionInsertCollection_Items()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+            var index = 0;
+            var items = GetStrings(Random).ToList();
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_IndexOfCount_Appended()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = collection.Count;
+            var items = GetStrings(Random);
+            var array = collection.Concat(items).ToArray();
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_AllowsNull_InsertedRangeWithNull()
+        {
+            // Arrange
+            var collection = GetStringList(Random, allowsNull: true);
+            var index = GetIndex(collection, Random, true);
+            var items = GetStrings(Random).WithNull(Random);
+            var array = collection.ToArray().InsertItems(index, items);
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_RandomCollectionIndexZero_FirstItems()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var items = GetStrings(Random);
+            var index = 0;
+            var array = collection.ToArray().InsertItems(index, items);
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_RandomCollectionIndexCountMinusOne_LastItem()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var items = GetStrings(Random);
+            var index = collection.Count - 1;
+            var array = collection.ToArray().InsertItems(index, items);
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_RandomCollectionRandomIndex_ItemAtPositionIndex()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var items = GetStrings(Random);
+            var index = GetIndex(collection, Random, true);
+            var array = collection.ToArray().InsertItems(index, items);
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_RandomCollectionRandomIndex_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var items = GetStrings(Random);
+            var index = GetIndex(collection, Random, true);
+            var expectedEvents = items.SelectMany((item, i) => new[] { Inserted(item, index + i, collection), Added(item, 1, collection) }).Append(Changed(collection)).ToArray();
+
+            // Act & Assert
+            Assert.That(() => collection.InsertRange(index, items), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void InsertRange_InsertEmptyRange_Nothing()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            var items = NoStrings;
+            var array = collection.ToArray();
+
+            // Act
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_InsertEmptyRange_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            var items = NoStrings;
+
+            // Act & Assert
+            Assert.That(() => collection.InsertRange(index, items), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void InsertRange_InsertEmptyRangeDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = GetIndex(collection, Random, true);
+            var items = NoStrings;
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void InsertRange_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
+        {
+            // Arrange
+            var collection = GetStringList(Random, ReferenceEqualityComparer, allowsNull: true);
+            var index = GetIndex(collection, Random, true);
+            var badEnumerable = GetStrings(Random).AsBadEnumerable();
+            var array = collection.ToArray();
+
+            // Act & Assert
+            Assert.That(() => collection.InsertRange(index, badEnumerable), Throws.TypeOf<BadEnumerableException>());
+            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void InsertRange_InsertRangeDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var items = GetStrings(Random);
+            var index = GetIndex(collection, Random, true);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.InsertRange(index, items);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void InsertRange_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void InsertRange_FixedSizeCollection_Fail()
+        {
+            Run.If(IsFixedSize);
+
+            Assert.Fail("Tests have not been written yet");
         }
 
         #endregion

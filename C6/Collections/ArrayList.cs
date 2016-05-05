@@ -451,16 +451,47 @@ namespace C6
 
             // TODO: Handle ICollectionValue<T> and ICollection<T>
 
-            // TODO: Avoid creating an array? Requires a lot of extra code, since we need to properly handle items already added from a bad enumerable
-            // A bad enumerator will throw an exception here
-            var array = items.ToArray();
+            var count = 0;
+            var collectionValue = items as ICollectionValue<T>;
+            var collection = items as SCG.ICollection<T>;
 
-            if (array.IsEmpty()) {
-                return;
+            if (collectionValue != null) {
+                if (collectionValue.IsEmpty) {
+                    return;
+                }
+
+                UpdateVersion();
+                count = collectionValue.Count;
+                EnsureCapacity(Count + count);
+                if (index < Count) {
+                    Array.Copy(_items, index, _items, index + count, Count - index);
+                }
+                collectionValue.CopyTo(_items, index);
+            }
+            else if (collection != null) {
+                count = collection.Count;
+                if (count == 0) {
+                    return;
+                }
+                UpdateVersion();
+                EnsureCapacity(Count + count);
+                if (index < Count) {
+                    Array.Copy(_items, index, _items, index + count, Count - index);
+                }
+                collection.CopyTo(_items, index);
+            }
+            else {
+                // TODO: Avoid creating an array? Requires a lot of extra code, since we need to properly handle items already added from a bad enumerable
+                // A bad enumerator will throw an exception here
+                var array = items.ToArray();
+
+                if (array.IsEmpty()) {
+                    return;
+                }
+                InsertRangePrivate(index, array);
             }
 
-            InsertRangePrivate(index, array);
-            RaiseForInsertRange(index, array);
+            RaiseForInsertRange(index, count);
         }
 
         public bool IsSorted() => IsSorted(SCG.Comparer<T>.Default.Compare);
@@ -1267,12 +1298,12 @@ namespace C6
             OnCollectionChanged();
         }
 
-        private void RaiseForInsertRange(int index, T[] array)
+        private void RaiseForInsertRange(int startIndex, int count)
         {
             if (ActiveEvents.HasFlag(Inserted | Added)) {
-                for (var i = 0; i < array.Length; i++) {
-                    var item = array[i];
-                    OnItemInserted(item, index + i);
+                for (int i = startIndex, end = startIndex + count; i < end; i++) { 
+                    var item = _items[i];
+                    OnItemInserted(item, i);
                     OnItemsAdded(item, 1);
                 }
             }
