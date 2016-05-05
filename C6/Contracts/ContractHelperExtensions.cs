@@ -46,8 +46,12 @@ namespace C6.Contracts
         [Pure]
         public static SCG.IEnumerable<T> SkipRange<T>(this SCG.IEnumerable<T> enumerable, int startIndex, int count)
         {
+            #region Code Contracts
+
             // Argument is non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);
+
+            #endregion
 
             // ReSharper disable PossibleMultipleEnumeration
             return enumerable.Take(startIndex).Concat(enumerable.Skip(startIndex + count));
@@ -95,6 +99,16 @@ namespace C6.Contracts
         [Pure]
         public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second, SCG.IEqualityComparer<T> comparer)
         {
+            #region Code Contracts
+
+            // first remains unchanged
+            Ensures(first == null || first.IsSameSequenceAs(OldValue(first.ToList())));
+
+            // second remains unchanged
+            Ensures(second == null || second.IsSameSequenceAs(OldValue(second.ToList())));
+
+            #endregion
+
             if (ReferenceEquals(first, second)) {
                 return true;
             }
@@ -103,15 +117,17 @@ namespace C6.Contracts
                 return false;
             }
 
-            var firstArray = first as T[] ?? first.ToArray();
-            var secondArray = second as T[] ?? second.ToArray();
+            var firstArray = first.ToArray();
+            var secondArray = second.ToArray();
 
             if (firstArray.Length != secondArray.Length) {
                 return false;
             }
 
             // Use default comparer if none is supplied
-            comparer = comparer ?? SCG.EqualityComparer<T>.Default;
+            if (comparer == null) {
+                comparer = SCG.EqualityComparer<T>.Default;
+            }
 
             // Sort based on hash code
             Comparison<T> hashCodeComparison = (x, y) => comparer.GetHashCode(x).CompareTo(comparer.GetHashCode(y));
@@ -175,16 +191,27 @@ namespace C6.Contracts
 
         // TODO: Should work, but could still use some attention
         [Pure]
-        public static bool ContainsRange<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable, SCG.IEqualityComparer<T> equalityComparer = null)
+        public static bool ContainsRange<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            // Argument must be non-null
-            Requires(enumerable != null, ArgumentMustBeNonNull);
+            #region Code Contracts
 
             // Argument must be non-null
-            Requires(otherEnumerable != null, ArgumentMustBeNonNull);
+            Requires(first != null, ArgumentMustBeNonNull);
 
-            var firstArray = enumerable as T[] ?? enumerable.ToArray();
-            var secondArray = otherEnumerable as T[] ?? otherEnumerable.ToArray();
+            // Argument must be non-null
+            Requires(second != null, ArgumentMustBeNonNull);
+
+
+            // first remains unchanged
+            Ensures(first == null || first.IsSameSequenceAs(OldValue(first.ToList())));
+
+            // second remains unchanged
+            Ensures(second == null || second.IsSameSequenceAs(OldValue(second.ToList())));
+
+            #endregion
+
+            var firstArray = first.ToArray();
+            var secondArray = second.ToArray();
 
             if (firstArray.Length < secondArray.Length) {
                 return false;
@@ -203,7 +230,7 @@ namespace C6.Contracts
             for (var j = 0; j < secondArray.Length; j++) {
                 var found = false;
                 var secondElement = secondArray[j];
-                
+
                 for (var i = j; i < firstArray.Length; i++) {
                     var firstElement = firstArray[i];
 

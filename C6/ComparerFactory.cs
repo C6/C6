@@ -20,7 +20,7 @@ namespace C6
     public static class ComparerFactory
     {
         /// <summary>
-        ///     Create a new <see cref="SCG.IComparer{T}"/> using the specified compare function.
+        ///     Creates a new <see cref="SCG.IComparer{T}"/> using a specified compare function.
         /// </summary>
         /// <param name="compare">The compare function.</param>
         /// <typeparam name="T">
@@ -43,6 +43,32 @@ namespace C6
             #endregion
 
             return new Comparer<T>(compare);
+        }
+
+        /// <summary>
+        ///     Creates a new <see cref="SCG.IComparer{T}"/> using a specified comparison delegate.
+        /// </summary>
+        /// <param name="comparison">The comparison delegate.</param>
+        /// <typeparam name="T">
+        ///     The type of the objects to compare.
+        /// </typeparam>
+        /// <returns>
+        ///     An <see cref="SCG.IComparer{T}"/> that uses the specified comparison delegate.
+        /// </returns>
+        [Pure]
+        public static SCG.IComparer<T> AsComparer<T>(this Comparison<T> comparison)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(comparison != null, ArgumentMustBeNonNull);
+
+            // Result is non-null
+            Ensures(Result<SCG.IComparer<T>>() != null);
+
+            #endregion
+
+            return new Comparer<T>(comparison);
         }
 
         /// <summary>
@@ -119,6 +145,18 @@ namespace C6
                 #endregion
 
                 _compare = compare;
+            }
+
+            public Comparer(Comparison<T> comparison)
+            {
+                #region Code Contracts
+
+                // Argument must be non-null
+                Requires(comparison != null, ArgumentMustBeNonNull);
+
+                #endregion
+
+                _compare = comparison.Invoke;
             }
 
             public int Compare(T x, T y) => _compare(x, y);

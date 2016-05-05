@@ -142,8 +142,7 @@ namespace C6
         ///     <list type="bullet">
         ///         <item>
         ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection
-        ///                 count.
+        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection count.
         ///             </description>
         ///         </item>
         ///         <item>
@@ -154,21 +153,6 @@ namespace C6
         ///     </list>
         /// </remarks>
         new void Clear();
-
-        // TODO: Include index in predicate?
-        // TODO: Should this be deprecated?
-        // TODO: Copy docs from Enumerable.Where?
-        /// <summary>
-        ///     Creates a new list consisting of the items in this list satisfying a specified predicate.
-        /// </summary>
-        /// <param name="predicate">
-        ///     A delegate that returns <c>true</c> for the items that should be included in the new list.
-        /// </param>
-        /// <returns>
-        ///     A new list containing the items that satisfy the predicate.
-        /// </returns>
-        [Pure]
-        IList<T> FindAll(Func<T, bool> predicate);
 
         /// <summary>
         ///     Searches from the beginning of the collection for the specified item and returns the zero-based index of the first
@@ -286,6 +270,7 @@ namespace C6
         /// </remarks>
         void InsertLast(T item);
 
+        // TODO: Document that events are raise pairwise for each item!
         /// <summary>
         ///     Inserts the items into the list starting at the specified index.
         /// </summary>
@@ -376,44 +361,6 @@ namespace C6
         /// </returns>
         [Pure]
         bool IsSorted(Comparison<T> comparison);
-
-        // TODO: Deprecate?
-        // TODO: Check List<T>.ConvertAll
-        /// <summary>
-        ///     Creates a new list consisting of the results of mapping all items in this list using the specified mapper. The new
-        ///     list will use the default equality comparer for type <typeparamref name="V"/>.
-        /// </summary>
-        /// <typeparam name="V">
-        ///     The type of the items in the new list.
-        /// </typeparam>
-        /// <param name="mapper">
-        ///     A function that maps each item in this list to an item in the new list.
-        /// </param>
-        /// <returns>
-        ///     An new list whose items are the results of mapping all items in this list.
-        /// </returns>
-        [Pure]
-        IList<V> Map<V>(Func<T, V> mapper);
-
-        // TODO: Deprecate?
-        /// <summary>
-        ///     Creates a new list consisting of the results of mapping all items in this list using the specified mapper. The new
-        ///     list will use the specified equality comparer.
-        /// </summary>
-        /// <typeparam name="V">
-        ///     The type of the items in the new list.
-        /// </typeparam>
-        /// <param name="mapper">
-        ///     A function that maps each item in this list to an item in the new list.
-        /// </param>
-        /// <param name="equalityComparer">
-        ///     The <see cref="SCG.IEqualityComparer{T}"/> to use for the new list.
-        /// </param>
-        /// <returns>
-        ///     An new list whose items are the results of mapping all items in this list.
-        /// </returns>
-        [Pure]
-        IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer);
 
         /// <summary>
         ///     Removes and returns the item at the specified index of the collection.
@@ -518,14 +465,7 @@ namespace C6
         ///     Reverses the sequence order of the items in the list.
         /// </summary>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
         /// </remarks>
         void Reverse();
 
@@ -533,14 +473,8 @@ namespace C6
         ///     Randomly shuffles the items in the list.
         /// </summary>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>, even
+        ///     if the item order was not changed by the shuffle.
         /// </remarks>
         void Shuffle();
 
@@ -549,14 +483,8 @@ namespace C6
         /// </summary>
         /// <param name="random">The random source.</param>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>, even
+        ///     if the item order was not changed by the shuffle.
         /// </remarks>
         void Shuffle(Random random);
 
@@ -569,14 +497,13 @@ namespace C6
         ///     <typeparamref name="T"/>.
         /// </exception>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort();
 
@@ -597,14 +524,13 @@ namespace C6
         ///     <paramref name="comparer"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort(SCG.IComparer<T> comparer);
 
@@ -619,14 +545,13 @@ namespace C6
         ///     <paramref name="comparison"/> might not return zero when comparing an item with itself.
         /// </exception>
         /// <remarks>
-        ///     Raises the following events (in that order) with the collection as sender:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>
-        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort(Comparison<T> comparison);
     }
@@ -727,7 +652,7 @@ namespace C6
                 Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
                 // Argument must be non-null if collection disallows null values
-                Requires(AllowsNull || value != null, ArgumentMustBeNonNull);
+                Requires(AllowsNull || value != null, ItemMustBeNonNull);
 
                 // Argument must be within bounds
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
@@ -754,22 +679,6 @@ namespace C6
 
 
             return;
-        }
-
-        public IList<T> FindAll(Func<T, bool> predicate)
-        {
-            // Argument must be non-null
-            Requires(predicate != null, ArgumentMustBeNonNull);
-
-
-            // The result is the same as filtering this list based on the predicate
-            Ensures(Result<IList<T>>().IsSameSequenceAs(this.Where(predicate)));
-
-            // The returned list has the same type as this list
-            Ensures(Result<IList<T>>().GetType() == GetType());
-
-
-            return default(IList<T>);
         }
 
         public int IndexOf(T item)
@@ -820,6 +729,9 @@ namespace C6
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
@@ -853,6 +765,9 @@ namespace C6
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
 
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
@@ -893,7 +808,7 @@ namespace C6
 
             // Argument must be within bounds
             Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
@@ -950,43 +865,6 @@ namespace C6
 
 
             return default(bool);
-        }
-
-        public IList<V> Map<V>(Func<T, V> mapper)
-        {
-            // Argument must be non-null
-            Requires(mapper != null, ArgumentMustBeNonNull);
-
-
-            // Result is equal to mapping each item
-            // This would only work if the mapper is deterministic!
-            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper)));
-
-            // The returned list has the same type as this list
-            Ensures(Result<IList<V>>().GetType() == GetType());
-
-
-            return default(IList<V>);
-        }
-
-        public IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer)
-        {
-            // Argument must be non-null
-            Requires(mapper != null, ArgumentMustBeNonNull);
-
-
-            // Result is equal to mapping each item
-            // This would only work if the mapper is deterministic!
-            // Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper), equalityComparer));
-
-            // Result uses equality comparer
-            Ensures(Result<IList<V>>().EqualityComparer == (equalityComparer ?? SCG.EqualityComparer<V>.Default));
-
-            // The returned list has the same type as this list
-            Ensures(Result<IList<V>>().GetType() == GetType());
-
-
-            return default(IList<V>);
         }
 
         public T RemoveAt(int index)
@@ -1114,22 +992,6 @@ namespace C6
             return;
         }
 
-        public void Sort(SCG.IComparer<T> comparer)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-
-            // List becomes sorted
-            Ensures(IsSorted(comparer));
-
-            // The collection remains the same
-            Ensures(this.HasSameAs(OldValue(ToArray())));
-
-
-            return;
-        }
-
         public void Sort(Comparison<T> comparison)
         {
             // Collection must be non-read-only
@@ -1141,6 +1003,22 @@ namespace C6
 
             // List becomes sorted
             Ensures(IsSorted(comparison));
+
+            // The collection remains the same
+            Ensures(this.HasSameAs(OldValue(ToArray())));
+
+
+            return;
+        }
+
+        public void Sort(SCG.IComparer<T> comparer)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+
+            // List becomes sorted
+            Ensures(IsSorted(comparer));
 
             // The collection remains the same
             Ensures(this.HasSameAs(OldValue(ToArray())));
@@ -1162,21 +1040,6 @@ namespace C6
 
 
             return default(bool);
-        }
-
-        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public bool AllowsDuplicates
-        {
-            get {
-                // No additional preconditions allowed
-
-
-                // Always true for lists
-                Ensures(Result<bool>());
-
-
-                return default(bool);
-            }
         }
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
@@ -1239,7 +1102,7 @@ namespace C6
         public bool RemoveDuplicates(T item)
         {
             // No extra preconditions allowed
-            
+
 
             // The list is the same as the old collection without item
             Ensures(this.IsSameSequenceAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
@@ -1380,6 +1243,7 @@ namespace C6
 
         #region IExtensible
 
+        public abstract bool AllowsDuplicates { get; }
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool AddRange(SCG.IEnumerable<T> items);
@@ -1454,7 +1318,7 @@ namespace C6
         void IList.RemoveAt(int index) {}
 
         #endregion
-        
+
         #region SCG.IList<T>
 
         void SCG.IList<T>.RemoveAt(int index) {}

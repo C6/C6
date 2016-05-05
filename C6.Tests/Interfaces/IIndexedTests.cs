@@ -69,7 +69,7 @@ namespace C6.Tests
         #region this[int]
 
         [Test]
-        public void Item_NegativeIndex_ViolatesPrecondition()
+        public void ItemGet_NegativeIndex_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -80,7 +80,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_IndexOfCount_ViolatesPrecondition()
+        public void ItemGet_IndexOfCount_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -91,7 +91,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_IndexLargerThanCount_ViolatesPrecondition()
+        public void ItemGet_IndexLargerThanCount_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -103,7 +103,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_EmptyCollection_ViolatesPrecondition()
+        public void ItemGet_EmptyCollection_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
@@ -113,7 +113,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionWithNull_Null()
+        public void ItemGet_RandomCollectionWithNull_Null()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -128,7 +128,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionIndexZero_FirstItem()
+        public void ItemGet_RandomCollectionIndexZero_FirstItem()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -142,7 +142,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionIndexCountMinusOne_LastItem()
+        public void ItemGet_RandomCollectionIndexCountMinusOne_LastItem()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -157,7 +157,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Item_RandomCollectionRandomIndex_ItemAtPositionIndex()
+        public void ItemGet_RandomCollectionRandomIndex_ItemAtPositionIndex()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
@@ -269,7 +269,7 @@ namespace C6.Tests
                 collection,
                 collection.Skip(startIndex).Take(count),
                 ReferenceEqualityComparer
-                );
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count);
@@ -689,12 +689,14 @@ namespace C6.Tests
             var collection = GetStringIndexed(Random);
             var index = Random.Next(0, collection.Count);
             var expectedItem = collection[index];
+            var array = collection.SkipRange(index, 1).ToArray();
 
             // Act
             var item = collection.RemoveAt(index);
 
             // Assert
             Assert.That(item, Is.SameAs(expectedItem));
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -704,12 +706,14 @@ namespace C6.Tests
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetIndexed(items, allowsNull: true);
             var index = collection.IndexOf(null);
+            var array = collection.SkipRange(index, 1).ToArray();
 
             // Act
             var removeAt = collection.RemoveAt(index);
 
             // Assert
             Assert.That(removeAt, Is.Null);
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -742,7 +746,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(removeAt, Is.EqualTo(firstItem));
-            Assert.That(collection, Is.EqualTo(items.Skip(1)));
+            Assert.That(collection, Is.EqualTo(items.Skip(1)).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -760,7 +764,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(removeAt, Is.EqualTo(lastItem));
-            Assert.That(collection, Is.EqualTo(items.Take(index)));
+            Assert.That(collection, Is.EqualTo(items.Take(index)).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -858,6 +862,38 @@ namespace C6.Tests
 
             // Assert
             Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void RemoveIndexRange_RemoveBeginning_EndRetained()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(0, collection.Count - 1);
+            var startIndex = 0;
+            var expected = collection.Skip(count).ToList();
+
+            // Act
+            collection.RemoveIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected)); // TODO: Use reference equality
+        }
+
+        [Test]
+        public void RemoveIndexRange_RemoveEnd_BeginningRetained()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var count = Random.Next(0, collection.Count - 1);
+            var startIndex = collection.Count - count;
+            var expected = collection.Take(startIndex).ToList();
+
+            // Act
+            collection.RemoveIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected)); // TODO: Use reference equality
         }
 
         [Test]

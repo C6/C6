@@ -16,7 +16,7 @@ namespace C6.Tests.Helpers
     public static class TestHelper
     {
         public static int GetCount(Random random)
-            => random.Next(5, 20);
+            => random.Next(10, 20);
 
         public static int[] GetIntegers(Random random)
             => GetIntegers(random, GetCount(random));
@@ -29,6 +29,11 @@ namespace C6.Tests.Helpers
 
         public static KeyValuePair<int, int>[] GetKeyValuePairs(Random random, int count)
             => Enumerable.Range(0, count).Select(i => new KeyValuePair<int, int>(random.Next(), random.Next())).ToArray();
+
+        public static int GetIndex<T>(IIndexed<T> collection, Random random, bool includeCount = false) => random.Next(0, collection.Count + (includeCount ? 1 : 0));
+
+        public static T[] InsertItem<T>(this SCG.IEnumerable<T> enumerable, int index, T item) => enumerable.Take(index).Append(item).Concat(enumerable.Skip(index)).ToArray();
+        public static T[] InsertItems<T>(this SCG.IEnumerable<T> enumerable, int index, SCG.IEnumerable<T> items) => enumerable.Take(index).Concat(items).Concat(enumerable.Skip(index)).ToArray();
 
         public static string[] GetStrings(Randomizer random)
             => GetStrings(random, GetCount(random));
@@ -107,6 +112,7 @@ namespace C6.Tests.Helpers
         public static CollectionEventHolder<T> Raises<T>(CollectionEvent<T>[] expectedEvents) => new CollectionEventHolder<T>(expectedEvents);
 
         public static CollectionEventConstraint<T> RaisesNoEventsFor<T>(IListenable<T> collection) => new CollectionEventConstraint<T>(collection, new CollectionEvent<T>[0]);
+        public static CollectionEventConstraint<T> RaisesCollectionChangedEventFor<T>(IListenable<T> collection) => new CollectionEventConstraint<T>(collection, new[] { CollectionEvent.Changed(collection) });
 
         public static EqualConstraint Because(this ExactTypeConstraint constraint, string exceptionMessage) => constraint.With.Message.EqualTo(exceptionMessage);
 
@@ -114,7 +120,9 @@ namespace C6.Tests.Helpers
 
         public static T DifferentItem<T>(this SCG.IEnumerable<T> items, Func<T> newItem, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            equalityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+            if (equalityComparer == null) {
+                equalityComparer = SCG.EqualityComparer<T>.Default;
+            }
 
             var item = newItem();
             while (items.Contains(item, equalityComparer)) {

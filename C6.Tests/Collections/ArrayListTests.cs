@@ -4,6 +4,7 @@
 using System.Linq;
 
 using C6.Tests.Contracts;
+using C6.Tests.Helpers;
 
 using NUnit.Framework;
 
@@ -16,7 +17,7 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests
 {
     [TestFixture]
-    public class ArrayListTests : IIndexedTests
+    public class ArrayListTests : IListTests
     {
         #region Helper Methods
 
@@ -84,17 +85,14 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.UncaughtPrecondition);
         }
 
         [Test]
         public void Constructor_ValueTypeCollectionDisallowsNull_DisallowsNull()
         {
-            // Arrange
-            var allowsNull = false;
-
             // Act
-            var collection = new ArrayList<int>(allowsNull: allowsNull);
+            var collection = new ArrayList<int>(allowsNull: false);
 
             // Assert
             Assert.That(collection.AllowsNull, Is.False);
@@ -119,7 +117,7 @@ namespace C6.Tests
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.That(() => new ArrayList<string>(enumerable), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(enumerable), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -155,7 +153,7 @@ namespace C6.Tests
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(array), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -181,7 +179,7 @@ namespace C6.Tests
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.ConstructorPrecondition); // TODO: Violates.Precondition
+            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -211,6 +209,60 @@ namespace C6.Tests
 
             // Assert
             Assert.That(equalityComparer, Is.SameAs(customEqualityComparer));
+        }
+
+        [Test]
+        public void Constructor_EmptySCGIList_Empty()
+        {
+            // Arrange
+            var enumerable = new SCG.List<string>();
+
+            // Act
+            var collection = new ArrayList<string>(enumerable);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Constructor_RandomSCGIList_Equal()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var enumerable = new SCG.List<string>(items);
+
+            // Act
+            var collection = new ArrayList<string>(enumerable);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void Constructor_EmptyICollectionValue_Empty()
+        {
+            // Arrange
+            var collectionValue = new ArrayList<string>();
+
+            // Act
+            var collection = new ArrayList<string>(collectionValue);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void Constructor_RandomICollectionValue_Equal()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collectionValue = new ArrayList<string>(items);
+
+            // Act
+            var collection = new ArrayList<string>(collectionValue);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
         }
 
         #endregion
@@ -255,6 +307,53 @@ namespace C6.Tests
 
         #endregion
 
+        #region GetIndexRange(int, int)
+
+        [Test]
+        public void GetIndexRange_ForwardsRange_ChooseReturnsLastItem()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items);
+            var count = Random.Next(1, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Skip(startIndex).Take(count),
+                chooseFunction: () => collection[startIndex + count - 1]
+            );
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, count);
+
+            // Assert
+            Assert.That(getIndexRange, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetIndexRange_BackwardsRange_ChooseReturnsLastItem()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetList(items);
+            var count = Random.Next(1, collection.Count);
+            var startIndex = Random.Next(0, collection.Count - count);
+            var expected = new ExpectedDirectedCollectionValue<string>(
+                collection,
+                collection.Skip(startIndex).Take(count).Reverse(),
+                direction: EnumerationDirection.Backwards,
+                chooseFunction: () => collection[startIndex + count - 1]
+            );
+
+            // Act
+            var getIndexRange = collection.GetIndexRange(startIndex, count).Backwards();
+
+            // Assert
+            Assert.That(getIndexRange, Is.EqualTo(expected));
+        }
+
+        #endregion
+
         #endregion
 
         #endregion
@@ -268,8 +367,8 @@ namespace C6.Tests
 
         protected override Speed IndexingSpeed => Speed.Constant;
 
-        protected override IIndexed<T> GetEmptyIndexed<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
+        protected override IList<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
 
-        protected override IIndexed<T> GetIndexed<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
+        protected override IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
     }
 }

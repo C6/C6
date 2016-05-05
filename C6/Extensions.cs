@@ -55,11 +55,17 @@ namespace C6
         }
 
         /// <summary>
-        ///     Gets a value indicating whether the <see cref="SCG.IEnumerable{T}"/> is empty.
+        ///     Determines whether the <see cref="SCG.IEnumerable{T}"/> is empty.
         /// </summary>
-        /// <value>
+        /// <typeparam name="T">
+        ///     The type of the items in the array.
+        /// </typeparam>
+        /// <param name="enumerable">
+        ///     The <see cref="SCG.IEnumerable{T}"/> to check for emptiness.
+        /// </param>
+        /// <returns>
         ///     <c>true</c> if the <see cref="SCG.IEnumerable{T}"/> is empty; otherwise, <c>false</c>.
-        /// </value>
+        /// </returns>
         [Pure]
         public static bool IsEmpty<T>(this SCG.IEnumerable<T> enumerable)
         {
@@ -85,6 +91,35 @@ namespace C6
             }
 
             return !enumerable.Any();
+        }
+
+        /// <summary>
+        ///     Determines whether the <see cref="Array"/> is empty.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the array.
+        /// </typeparam>
+        /// <param name="array">
+        ///     The <see cref="Array"/> to check for emptiness.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the <see cref="Array"/> is empty; otherwise, <c>false</c>.
+        /// </returns>
+        [Pure]
+        public static bool IsEmpty<T>(this T[] array)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(array != null, ArgumentMustBeNonNull);
+
+
+            // Returns true if Count is zero, otherwise false
+            Ensures(Result<bool>() != array.Any());
+
+            #endregion
+
+            return array.Length == 0;
         }
 
         /// <summary>
@@ -337,7 +372,9 @@ namespace C6
 
             #endregion
 
-            comparer = comparer ?? SCG.Comparer<T>.Default;
+            if (comparer == null) {
+                comparer = SCG.Comparer<T>.Default;
+            }
 
             return enumerable.AllConsecutiveElements((x, y) => comparer.Compare(x, y) <= 0);
         }
@@ -408,7 +445,7 @@ namespace C6
 
         // TODO: Test
         /// <summary>
-        ///     Shuffles the items in the array according to the specified random source.
+        ///     Shuffles the elements in the array according to the specified random source.
         /// </summary>
         /// <param name="array">The array to shuffle.</param>
         /// <param name="random">The random source.</param>
@@ -419,13 +456,40 @@ namespace C6
             // Argument must be non-null
             Requires(array != null, ArgumentMustBeNonNull);
 
+            // The elements are the same
+            Ensures(array.HasSameAs(OldValue(array.ToList())));
+
             #endregion
 
-            random = random ?? new Random(); // TODO: Use C5.Random?
-            var n = array.Length;
+            array.Shuffle(0, array.Length, random);
+        }
+
+        public static void Shuffle<T>(this T[] array, int startIndex, int count, Random random = null)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(array != null, ArgumentMustBeNonNull);
+
+
+            // The elements are the same
+            Ensures(array.HasSameAs(OldValue(array.ToList())));
+
+            // The elements before do not change order
+            Ensures(array.Take(startIndex).IsSameSequenceAs(OldValue(array.Take(startIndex).ToList())));
+
+            // The elements after do not change order
+            Ensures(array.Skip(startIndex + count).IsSameSequenceAs(OldValue(array.Skip(startIndex + count).ToList())));
+
+            #endregion
+
+            if (random == null) {
+                random = new Random(); // TODO: Use C5.Random?
+            }
+            var n = count;
 
             while (--n > 0) {
-                array.Swap(random.Next(n + 1), n);
+                array.Swap(startIndex + random.Next(n + 1), startIndex + n);
             }
         }
 
@@ -445,11 +509,16 @@ namespace C6
             // List must be non-read-only
             Requires(!list.IsReadOnly, CollectionMustBeNonReadOnly);
 
+            // The elements are the same
+            Ensures(list.HasSameAs(OldValue(list.ToList())));
+
             #endregion
 
-            random = random ?? new Random(); // TODO: Use C5.Random?
-            var n = list.Count;
+            if (random == null) {
+                random = new Random(); // TODO: Use C5.Random?
+            }
 
+            var n = list.Count;
             while (--n > 0) {
                 list.Swap(random.Next(n + 1), n);
             }

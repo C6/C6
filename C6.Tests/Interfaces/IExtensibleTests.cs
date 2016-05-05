@@ -376,6 +376,20 @@ namespace C6.Tests
         }
 
         [Test]
+        public void AddRange_EmptyEnumerableAndCollection_Nothing()
+        {
+            // Arrange
+            var collection = GetEmptyExtensible<string>();
+            var empty = NoStrings;
+
+            // Act
+            collection.AddRange(empty);
+
+            // Assert
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
         public void AddRange_AddEmptyEnumerable_Nothing()
         {
             // Arrange

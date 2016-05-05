@@ -460,7 +460,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var sequence = GetSequence(items);
-            var otherItems = items.SelectMany(item => item.Repeat(Random.Next(1, 4)));
+            var otherItems = items.SelectMany(item => item.Repeat(Random.Next(2, 4)));
             var otherSequence = GetSequence(otherItems);
 
             // Act

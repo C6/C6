@@ -214,6 +214,20 @@ namespace C6.Tests
         }
 
         [Test]
+        public void Contains_AllowNullContainsNoNull_False()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = GetCollection(items, allowsNull: true);
+
+            // Act
+            var contains = collection.Contains(null);
+
+            // Assert
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
         public void Contains_EmptyCollection_False()
         {
             // Arrange
@@ -388,6 +402,20 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyCollection<string>();
             var items = GetStrings(Random);
+
+            // Act
+            var containsRange = collection.ContainsRange(items);
+
+            // Assert
+            Assert.That(containsRange, Is.False);
+        }
+
+        [Test]
+        public void ContainsRange_LargerRangeThanCollection_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var items = collection.Append(collection.Choose()).ShuffledCopy(Random);
 
             // Act
             var containsRange = collection.ContainsRange(items);
@@ -1111,12 +1139,14 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
+            var expected = collection.Where(item => item != null).ToList();
 
             // Act
             var remove = collection.Remove(null);
 
             // Assert
             Assert.That(remove, Is.True);
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -1160,6 +1190,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(remove, Is.False);
+            Assert.That(collection, Is.Empty);
         }
 
         [Test]
@@ -1184,12 +1215,14 @@ namespace C6.Tests
             var items = GetUppercaseStrings(Random);
             var item = GetLowercaseString(Random);
             var collection = GetCollection(items);
+            var expected = collection.ToArray();
 
             // Act
             var remove = collection.Remove(item);
 
             // Assert
             Assert.That(remove, Is.False);
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
         }
 
         [Test]

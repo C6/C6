@@ -196,13 +196,14 @@ namespace C6
         ///     <c>true</c> if item is found in the collection; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        ///     The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///     If the collection contains duplicates, i The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to
+        ///     determine item equality.
         /// </remarks>
         /// <seealso cref="Contains"/>
         [Pure]
         bool Find(ref T item);
 
-        // TODO: Return an ICollectionValue<T>?
+        // TODO: Return an ICollectionValue<T>
         /// <summary>
         ///     Returns all items in the collection that are equal to the specified item.
         /// </summary>
@@ -388,9 +389,8 @@ namespace C6
         ///         determine item equality.
         ///     </para>
         ///     <para>
-        ///         If any items are removed, and the collection has bag semantics and
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If any items are removed, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -406,9 +406,8 @@ namespace C6
         ///         </list>
         ///     </para>
         ///     <para>
-        ///         If any items are removed, and the collection has set semantics or
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If any items are removed, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -559,15 +558,14 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
-        ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         item updated is the one that is most efficiently updated. The collection's
-        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         If <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then all copies of the old item are
+        ///         updated; otherwise, only one copy of <paramref name="item"/> is updated. The item updated is the one that is
+        ///         most efficiently updated. The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
+        ///         item equality.
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has bag semantics and
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -588,9 +586,8 @@ namespace C6
         ///         </list>
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has set semantics or
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -620,21 +617,20 @@ namespace C6
         ///     The item to update in the collection. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
         ///     <c>true</c>.
         /// </param>
-        /// <param name="oldItem">The removed item if any.</param>
+        /// <param name="oldItem">The item removed, if any.</param>
         /// <returns>
         ///     <c>true</c> if the item was found and hence updated; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
-        ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         item updated is the one that is most efficiently updated. The collection's
-        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         If <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then all copies of the old item are
+        ///         updated; otherwise, only one copy of <paramref name="item"/> is updated. The item updated is the one that is
+        ///         most efficiently updated. The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
+        ///         item equality.
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has bag semantics and
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -655,9 +651,8 @@ namespace C6
         ///         </list>
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has set semantics or
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -692,15 +687,14 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
-        ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         item updated is the one that is most efficiently updated. The collection's
-        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         If <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then all copies of the old item are
+        ///         updated; otherwise, only one copy of <paramref name="item"/> is updated. The item updated is the one that is
+        ///         most efficiently updated. The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
+        ///         item equality.
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has bag semantics and
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -721,9 +715,8 @@ namespace C6
         ///         </list>
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has set semantics or
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -774,15 +767,14 @@ namespace C6
         /// </returns>
         /// <remarks>
         ///     <para>
-        ///         If the collection has bag semantics and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then
-        ///         all copies of the old item are updated; otherwise, only one copy of <paramref name="item"/> is updated. The
-        ///         item updated is the one that is most efficiently updated. The collection's
-        ///         <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///         If <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, then all copies of the old item are
+        ///         updated; otherwise, only one copy of <paramref name="item"/> is updated. The item updated is the one that is
+        ///         most efficiently updated. The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine
+        ///         item equality.
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has bag semantics and
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>true</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
@@ -803,9 +795,8 @@ namespace C6
         ///         </list>
         ///     </para>
         ///     <para>
-        ///         If the item is updated, and the collection has set semantics or
-        ///         <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the following events (in that
-        ///         order) with the collection as sender:
+        ///         If the item is updated, and <see cref="IExtensible{T}.DuplicatesByCounting"/> is <c>false</c>, it raises the
+        ///         following events (in that order) with the collection as sender:
         ///         <list type="bullet">
         ///             <item>
         ///                 <description>
