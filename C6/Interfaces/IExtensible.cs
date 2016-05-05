@@ -304,8 +304,8 @@ namespace C6
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
 
-            // The collection becomes non-empty
-            Ensures(!IsEmpty);
+            // The collection becomes non-empty, if items are non-empty
+            Ensures(items.IsEmpty() || !IsEmpty);
 
             // The collection will contain the items added
             Ensures(ForAll(items, item => this.Contains(item, EqualityComparer)));

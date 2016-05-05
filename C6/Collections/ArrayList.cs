@@ -120,10 +120,27 @@ namespace C6
 
             #endregion
 
-            _items = items.ToArray();
-            Count = Capacity;
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
             AllowsNull = allowsNull;
+
+            var collectionValue = items as ICollectionValue<T>;
+            var collection = items as SCG.ICollection<T>;
+
+            // Use ToArray() for ICollectionValue<T>
+            if (collectionValue != null) {
+                _items = collectionValue.IsEmpty ? EmptyArray : collectionValue.ToArray();
+                Count = Capacity;
+            }
+            // Use CopyTo() for ICollection<T>
+            else if (collection != null) {
+                Count = collection.Count;
+                _items = Count == 0 ? EmptyArray : new T[Count];
+                collection.CopyTo(_items, 0);
+            }
+            else {
+                _items = EmptyArray;
+                AddRange(items);
+            }
         }
 
         public ArrayList(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
@@ -228,6 +245,9 @@ namespace C6
 
             #endregion
 
+            // TODO: Handle ICollectionValue<T> and ICollection<T>
+
+            // TODO: Avoid creating an array? Requires a lot of extra code, since we need to properly handle items already added from a bad enumerable
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
 
@@ -289,8 +309,9 @@ namespace C6
         }
 
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
-
-        public int CountDuplicates(T item) => this.Count(x => Equals(x, item));
+        
+        // Explicitly check against null to avoid using the (slower) equality comparer
+        public int CountDuplicates(T item) => item == null ? this.Count(x => x == null) : this.Count(x => Equals(x, item));
 
         public bool Find(ref T item)
         {
@@ -305,7 +326,8 @@ namespace C6
         }
 
         // TODO: Implement with an ICollectionValue<T>
-        public SCG.IEnumerable<T> FindDuplicates(T item) => this.Where(x => Equals(x, item));
+        // Explicitly check against null to avoid using the (slower) equality comparer
+        public SCG.IEnumerable<T> FindDuplicates(T item) => item == null ? this.Where(x => x == null) : this.Where(x => Equals(x, item));
 
         public bool FindOrAdd(ref T item)
         {
@@ -381,10 +403,20 @@ namespace C6
             Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
 
             #endregion
-
-            for (var i = 0; i < Count; i++) {
-                if (Equals(item, _items[i])) {
-                    return i;
+            
+            if (item == null) {
+                for (var i = 0; i < Count; i++) {
+                    // Explicitly check against null to avoid using the (slower) equality comparer
+                    if (_items[i] == null) {
+                        return i;
+                    }
+                }
+            }
+            else {
+                for (var i = 0; i < Count; i++) {
+                    if (Equals(item, _items[i])) {
+                        return i;
+                    }
                 }
             }
 
@@ -417,6 +449,9 @@ namespace C6
 
             #endregion
 
+            // TODO: Handle ICollectionValue<T> and ICollection<T>
+
+            // TODO: Avoid creating an array? Requires a lot of extra code, since we need to properly handle items already added from a bad enumerable
             // A bad enumerator will throw an exception here
             var array = items.ToArray();
 
@@ -487,9 +522,19 @@ namespace C6
 
             #endregion
 
-            for (var i = Count - 1; i >= 0; i--) {
-                if (Equals(item, _items[i])) {
-                    return i;
+            if (item == null) {
+                for (var i = Count - 1; i >= 0; i--) {
+                    // Explicitly check against null to avoid using the (slower) equality comparer
+                    if (_items[i] == null) {
+                        return i;
+                    }
+                }
+            }
+            else {
+                for (var i = Count - 1; i >= 0; i--) {
+                    if (Equals(item, _items[i])) {
+                        return i;
+                    }
                 }
             }
 
@@ -518,6 +563,7 @@ namespace C6
 
             #endregion
 
+            // Remove last instance of item, since this moves the fewest items
             var index = LastIndexOf(item);
 
             if (index >= 0) {
@@ -544,7 +590,8 @@ namespace C6
             return item;
         }
 
-        public bool RemoveDuplicates(T item) => RemoveAllWhere(x => Equals(item, x));
+        // Explicitly check against null to avoid using the (slower) equality comparer
+        public bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
         public T RemoveFirst() => RemoveAt(0);
 
@@ -879,27 +926,63 @@ namespace C6
         object SC.IList.this[int index]
         {
             get { return this[index]; }
-            set { this[index] = (T) value; }
+            set {
+                try {
+                    this[index] = (T) value;
+                }
+                catch (InvalidCastException) {
+                    throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+                }
+            }
         }
 
-        int SC.IList.Add(object value) => Add((T) value) ? Count - 1 : -1;
+        int SC.IList.Add(object value)
+        {
+            try {
+                return Add((T) value) ? Count - 1 : -1;
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
 
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
-        bool SC.IList.Contains(object value) => Contains((T) value);
+        bool SC.IList.Contains(object value) => IsCompatibleObject(value) && Contains((T) value);
 
-        void SC.ICollection.CopyTo(Array array, int index) => Array.Copy(_items, 0, array, index, Count);
+        void SC.ICollection.CopyTo(Array array, int index)
+        {
+            try {
+                Array.Copy(_items, 0, array, index, Count);
+            }
+            catch (ArrayTypeMismatchException) {
+                throw new ArgumentException("Target array type is not compatible with the type of items in the collection.");
+            }
+        }
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
-        int SC.IList.IndexOf(object value) => Math.Max(-1, IndexOf((T) value));
+        int SC.IList.IndexOf(object value) => IsCompatibleObject(value) ? Math.Max(-1, IndexOf((T) value)) : -1;
 
         // Explicit implementation is needed, since C6.IList<T>.IndexOf(T) breaks SCG.IList<T>.IndexOf(T)'s precondition: Result<T>() >= -1
         int SCG.IList<T>.IndexOf(T item) => Math.Max(-1, IndexOf(item));
 
-        void SC.IList.Insert(int index, object value) => Insert(index, (T) value);
+        void SC.IList.Insert(int index, object value)
+        {
+            try {
+                Insert(index, (T) value);
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
 
-        void SC.IList.Remove(object value) => Remove((T) value);
+        void SC.IList.Remove(object value)
+        {
+            if (IsCompatibleObject(value)) {
+                Remove((T) value);
+            }
+        }
 
         void SC.IList.RemoveAt(int index) => RemoveAt(index);
 
@@ -1011,6 +1094,7 @@ namespace C6
             // Only update version if items are actually added
             UpdateVersion();
 
+            // TODO: Check if Count == Capacity?
             EnsureCapacity(Count + 1);
 
             // Move items one to the right
@@ -1046,6 +1130,8 @@ namespace C6
             Array.Copy(items, 0, _items, index, count);
             Count += count;
         }
+
+        private static bool IsCompatibleObject(object value) => value is T || value == null && default(T) == null;
 
         private bool RemoveAllWhere(Func<T, bool> predicate)
         {
