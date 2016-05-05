@@ -244,6 +244,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ArrayList.cs" />
+    <Compile Include="Collections\CollectionValueDebugView.cs" />
     <Compile Include="ComparerFactory.cs" />
     <Compile Include="Contracts\ContractMessage.cs" />
     <Compile Include="Contracts\ContractHelperExtensions.cs" />

@@ -2,6 +2,7 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -42,6 +43,7 @@ namespace C6.Collections
     ///     </para>
     /// </remarks>
     [Serializable]
+    [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
     public class ArrayList<T> : IList<T>, IStack<T>
     {
         #region Fields
@@ -1339,6 +1341,8 @@ namespace C6.Collections
         ///     Represents a range of an <see cref="ArrayList{T}"/>.
         /// </summary>
         [Serializable]
+        [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
+        [DebuggerDisplay("{DebuggerDisplay}")]
         private class Range : IDirectedCollectionValue<T>
         {
             #region Fields
@@ -1510,6 +1514,8 @@ namespace C6.Collections
             #endregion
 
             #region Private Members
+
+            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired range; original collection was modified since range was created.";
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
