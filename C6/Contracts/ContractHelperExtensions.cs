@@ -6,12 +6,11 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 
 using static System.Reflection.BindingFlags;
-
-using SCG = System.Collections.Generic;
-
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Contracts

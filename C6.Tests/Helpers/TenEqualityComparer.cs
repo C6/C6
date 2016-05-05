@@ -4,7 +4,7 @@
 using SCG = System.Collections.Generic;
 
 
-namespace C6.Tests
+namespace C6.Tests.Helpers
 {
     public class TenEqualityComparer : SCG.IEqualityComparer<int>, SCG.IComparer<int>
     {

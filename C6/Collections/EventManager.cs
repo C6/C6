@@ -10,7 +10,7 @@ using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 
 
-namespace C6
+namespace C6.Collections
 {
     // TODO: Merge into CollectionValueBase
     /// <summary>
@@ -40,7 +40,7 @@ namespace C6
                 (_itemsRemoved != null ? Removed : None) |
                 (_itemInserted != null ? Inserted : None) |
                 (_itemRemovedAt != null ? RemovedAt : None)
-                ));
+            ));
 
             // ReSharper enable InvocationIsSkipped
         }

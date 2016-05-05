@@ -10,16 +10,16 @@ using C6.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Collections.ExceptionMessages;
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
-using static C6.ExceptionMessages;
 using static C6.Speed;
 
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
-namespace C6
+namespace C6.Collections
 {
     /// <summary>
     ///     Represents a generic list whose items that can be accessed efficiently by index.
@@ -309,7 +309,7 @@ namespace C6
         }
 
         public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
-        
+
         // Explicitly check against null to avoid using the (slower) equality comparer
         public int CountDuplicates(T item) => item == null ? this.Count(x => x == null) : this.Count(x => Equals(x, item));
 
@@ -403,7 +403,7 @@ namespace C6
             Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
 
             #endregion
-            
+
             if (item == null) {
                 for (var i = 0; i < Count; i++) {
                     // Explicitly check against null to avoid using the (slower) equality comparer

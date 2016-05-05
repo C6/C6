@@ -3,6 +3,7 @@
 
 using System.Linq;
 
+using C6.Collections;
 using C6.Tests.Contracts;
 using C6.Tests.Helpers;
 
@@ -14,7 +15,7 @@ using static C6.Tests.Helpers.TestHelper;
 using SCG = System.Collections.Generic;
 
 
-namespace C6.Tests
+namespace C6.Tests.Collections
 {
     [TestFixture]
     public class ArrayListTests : IListTests

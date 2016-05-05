@@ -5,8 +5,7 @@ using NUnit.Framework;
 
 using static C6.Speed;
 
-
-namespace C6.Tests.Enums
+namespace C6.Tests
 {
     [TestFixture]
     public class SpeedTests

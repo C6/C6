@@ -3,6 +3,8 @@
 
 using System;
 
+using C6.Tests.Helpers;
+
 using NUnit.Framework;
 
 

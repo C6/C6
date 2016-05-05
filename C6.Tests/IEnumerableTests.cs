@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 
+using C6.Tests.Helpers;
+
 using NUnit.Framework;
 
 using static C6.Tests.Helpers.TestHelper;

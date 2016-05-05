@@ -1,6 +1,7 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
+using C6.Contracts;
 using C6.Tests.Contracts;
 
 using NUnit.Framework;
@@ -8,8 +9,7 @@ using NUnit.Framework;
 using static C6.Contracts.ContractMessage;
 using static C6.EnumerationDirection;
 
-
-namespace C6.Tests.Enums
+namespace C6.Tests
 {
     [TestFixture]
     public class EnumerationDirectionExtensionTests
