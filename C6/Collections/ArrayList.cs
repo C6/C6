@@ -715,7 +715,7 @@ namespace C6
         public void Sort() => Sort((SCG.IComparer<T>) null);
 
         // TODO: It seems that Array.Sort(T[], Comparison<T>) is the only method that takes an Comparison<T>, not allowing us to set bounds on the sorting
-        public void Sort(Comparison<T> comparison) => Sort(comparison.AsComparer());
+        public void Sort(Comparison<T> comparison) => Sort(comparison.ToComparer());
 
         public void Sort(SCG.IComparer<T> comparer)
         {

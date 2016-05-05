@@ -5028,7 +5028,7 @@ namespace C6.Tests
 
         private readonly Comparison<NonComparable> _nonComparableComparison = (x, y) => x.Value.CompareTo(y.Value);
 
-        private SCG.IComparer<NonComparable> NonComparableComparer => _nonComparableComparison.AsComparer();
+        private SCG.IComparer<NonComparable> NonComparableComparer => _nonComparableComparison.ToComparer();
 
         #endregion
     }

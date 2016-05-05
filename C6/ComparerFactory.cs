@@ -56,7 +56,7 @@ namespace C6
         ///     An <see cref="SCG.IComparer{T}"/> that uses the specified comparison delegate.
         /// </returns>
         [Pure]
-        public static SCG.IComparer<T> AsComparer<T>(this Comparison<T> comparison)
+        public static SCG.IComparer<T> ToComparer<T>(this Comparison<T> comparison)
         {
             #region Code Contracts
 
