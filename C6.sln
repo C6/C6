@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C6", "C6\C6.csproj", "{AF8B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C6.Tests", "C6.Tests\C6.Tests.csproj", "{067456C0-086C-46A8-B37F-1405717B7BFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C6.UserGuideExamples", "C6.UserGuideExamples\C6.UserGuideExamples.csproj", "{578F1302-76F1-4669-A44A-EC4E3883A27D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug with Static Contract Checking|Any CPU = Debug with Static Contract Checking|Any CPU
@@ -31,6 +33,14 @@ Global
 		{067456C0-086C-46A8-B37F-1405717B7BFC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{067456C0-086C-46A8-B37F-1405717B7BFC}.ReleaseCC|Any CPU.ActiveCfg = Release|Any CPU
 		{067456C0-086C-46A8-B37F-1405717B7BFC}.ReleaseCC|Any CPU.Build.0 = Release|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.Debug with Static Contract Checking|Any CPU.ActiveCfg = Debug|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.Debug with Static Contract Checking|Any CPU.Build.0 = Debug|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.ReleaseCC|Any CPU.ActiveCfg = Release|Any CPU
+		{578F1302-76F1-4669-A44A-EC4E3883A27D}.ReleaseCC|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
