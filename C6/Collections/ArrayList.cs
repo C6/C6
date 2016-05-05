@@ -42,7 +42,7 @@ namespace C6.Collections
     ///     </para>
     /// </remarks>
     [Serializable]
-    public class ArrayList<T> : IList<T>
+    public class ArrayList<T> : IList<T>, IStack<T>
     {
         #region Fields
 
@@ -541,6 +541,10 @@ namespace C6.Collections
             return ~Count;
         }
 
+        public T Pop() => RemoveLast();
+
+        public void Push(T item) => InsertLast(item);
+
         public bool Remove(T item)
         {
             #region Code Contracts
@@ -553,7 +557,7 @@ namespace C6.Collections
             T removedItem;
             return Remove(item, out removedItem);
         }
-
+        
         public bool Remove(T item, out T removedItem)
         {
             #region Code Contracts

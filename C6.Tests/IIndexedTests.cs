@@ -133,9 +133,10 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringIndexed(Random);
             var first = collection.First();
+            var index = 0;
 
             // Act
-            var item = collection[0];
+            var item = collection[index];
 
             // Assert
             Assert.That(item, Is.SameAs(first));
@@ -147,10 +148,10 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringIndexed(Random);
             var last = collection.Last();
-            var count = collection.Count;
+            var index = collection.Count - 1;
 
             // Act
-            var item = collection[count - 1];
+            var item = collection[index];
 
             // Assert
             Assert.That(item, Is.SameAs(last));
@@ -169,6 +170,24 @@ namespace C6.Tests
 
             // Assert
             Assert.That(item, Is.SameAs(array[index]));
+        }
+
+        [Test]
+        public void ItemGet_GetItemDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = GetIndex(collection, Random);
+            var expected = collection.ElementAt(index);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            var item = collection[index];
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+            Assert.That(item, Is.EqualTo(expected));
         }
 
         #endregion
