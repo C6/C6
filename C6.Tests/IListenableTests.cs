@@ -42,33 +42,33 @@ namespace C6.Tests
         protected abstract EventTypes ListenableEvents { get; }
 
         /// <summary>
-        ///     Creates an empty collection value.
+        ///     Creates an empty <see cref="IQueue{T}"/>.
         /// </summary>
         /// <param name="allowsNull">
         ///     A value indicating whether the collection allows <c>null</c> items.
         /// </param>
         /// <typeparam name="T">
-        ///     The type of the items in the collection value.
+        ///     The type of the items in the <see cref="IQueue{T}"/>.
         /// </typeparam>
         /// <returns>
-        ///     An empty collection value.
+        ///     An empty <see cref="IQueue{T}"/>.
         /// </returns>
         protected abstract IListenable<T> GetEmptyListenable<T>(bool allowsNull = false);
 
         /// <summary>
-        ///     Creates a collection value containing the items in the enumerable.
+        ///     Creates a <see cref="IQueue{T}"/> containing the items in the enumerable.
         /// </summary>
         /// <typeparam name="T">
-        ///     The type of the items in the collection value.
+        ///     The type of the items in the <see cref="IQueue{T}"/>.
         /// </typeparam>
         /// <param name="enumerable">
-        ///     The collection whose items are copied to the new collection value.
+        ///     The collection whose items are copied to the new <see cref="IQueue{T}"/>.
         /// </param>
         /// <param name="allowsNull">
         ///     A value indicating whether the collection allows <c>null</c> items.
         /// </param>
         /// <returns>
-        ///     A collection value containing the items in the enumerable.
+        ///     A <see cref="IQueue{T}"/> containing the items in the enumerable.
         /// </returns>
         protected abstract IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 

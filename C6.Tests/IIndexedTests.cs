@@ -133,9 +133,10 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringIndexed(Random);
             var first = collection.First();
+            var index = 0;
 
             // Act
-            var item = collection[0];
+            var item = collection[index];
 
             // Assert
             Assert.That(item, Is.SameAs(first));
@@ -147,10 +148,10 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringIndexed(Random);
             var last = collection.Last();
-            var count = collection.Count;
+            var index = collection.Count - 1;
 
             // Act
-            var item = collection[count - 1];
+            var item = collection[index];
 
             // Assert
             Assert.That(item, Is.SameAs(last));
