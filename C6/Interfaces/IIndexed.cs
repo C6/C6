@@ -1,14 +1,16 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
-// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -17,126 +19,143 @@ using SCG = System.Collections.Generic;
 namespace C6
 {
     /// <summary>
-    /// Represents a sequenced generic collection whose items are accessible by
-    /// index.
+    ///     Represents a sequenced generic collection whose items are accessible by index.
     /// </summary>
     [ContractClass(typeof(IIndexedContract<>))]
-    public interface IIndexed<T> : ISequenced<T>, SCG.IReadOnlyList<T>
+    public interface IIndexed<T> : ISequenced<T>
     {
         /// <summary>
-        /// Gets the number of items contained in the collection.
+        ///     Gets a value characterizing the asymptotic complexity of <see cref="this"/> proportional to collection size
+        ///     (worst-case or amortized as relevant).
         /// </summary>
-        /// <value>The number of items contained in the collection.</value>
-        [Pure]
-        new int Count { get; }
-
-        /// <summary>
-        /// Gets a value characterizing the asymptotic complexity of
-        /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
-        /// size (worst-case or amortized as relevant).
-        /// </summary>
-        /// <value>A characterization of the asymptotic speed of
-        /// <see cref="SCG.IReadOnlyList{T}.this"/> proportional to collection
-        /// size.</value>
+        /// <value>
+        ///     A characterization of the asymptotic speed of <see cref="this"/> proportional to collection size.
+        /// </value>
         [Pure]
         Speed IndexingSpeed { get; }
 
         /// <summary>
-        /// Returns an <see cref="IDirectedCollectionValue{T}"/> containing 
-        /// the items in the specified index range of this collection.
+        ///     Gets the item at the specified index.
         /// </summary>
-        /// <param name="startIndex">The index of the first item in the
-        /// <see cref="IDirectedCollectionValue{T}"/>.</param>
-        /// <param name="count">The number of items in the
-        ///     <see cref="IDirectedCollectionValue{T}"/>.</param>
-        /// <returns>An <see cref="IDirectedCollectionValue{T}"/> containing 
-        /// the items in the specified index range of this collection.
+        /// <param name="index">
+        ///     The zero-based index of the item to get.
+        /// </param>
+        /// <value>
+        ///     The item at the specified index. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
+        /// </value>
+        [IndexerName("Item")]
+        [Pure]
+        T this[int index] { get; }
+
+        /// <summary>
+        ///     Returns an <see cref="IDirectedCollectionValue{T}"/> containing the items in the specified index range of this
+        ///     collection.
+        /// </summary>
+        /// <param name="startIndex">
+        ///     The index of the first item in the <see cref="IDirectedCollectionValue{T}"/>.
+        /// </param>
+        /// <param name="count">
+        ///     The number of items in the <see cref="IDirectedCollectionValue{T}"/>.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IDirectedCollectionValue{T}"/> containing the items in the specified index range of this collection.
         /// </returns>
         /// <remarks>
-        /// This is useful for enumerating an index range, either forwards or 
-        /// backwards. Often used together with <see cref="IndexOf"/>. The
-        /// forwards enumerator is equal to
-        /// <c>coll.Skip(startIndex).Take(count)</c>, but potentially much
-        /// faster.
+        ///     This is useful for enumerating an index range, either forwards or backwards. Often used together with
+        ///     <see cref="IndexOf"/>. The forwards enumerator is equal to <c>
+        ///         coll.Skip(startIndex).Take(count)
+        ///     </c>, but potentially much faster.
         /// </remarks>
-        /// <seealso cref="IList{T}.View"/>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
 
         /// <summary>
-        /// Searches from the beginning of the collection for the specified
-        /// item and returns the zero-based index of the first occurrence
-        /// within the collection. 
+        ///     Searches from the beginning of the collection for the specified item and returns the zero-based index of the first
+        ///     occurrence within the collection.
         /// </summary>
-        /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="item">
+        ///     The item to locate in the collection. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
         /// </param>
-        /// <returns>The zero-based index of the first occurrence of item
-        /// within the entire collection, if found; otherwise, the one's
-        /// complement of the index at which <see cref="ICollection{T}.Add"/>
-        /// would put the item.</returns>
+        /// <returns>
+        ///     The zero-based index of the first occurrence of item within the entire collection, if found; otherwise, the one's
+        ///     complement of the index at which <see cref="ICollection{T}.Add"/> would put the item.
+        /// </returns>
         [Pure]
         int IndexOf(T item);
 
         /// <summary>
-        /// Searches from the end of the collection for the specified
-        /// item and returns the zero-based index of the first occurrence
-        /// within the collection.
+        ///     Searches from the end of the collection for the specified item and returns the zero-based index of the first
+        ///     occurrence within the collection.
         /// </summary>
-        /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="item">
+        ///     The item to locate in the collection. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
         /// </param>
-        /// <returns>The zero-based index of the last occurrence of item within
-        /// the entire collection, if found; otherwise, the one's complement of
-        /// the index at which <see cref="ICollection{T}.Add"/> would put the
-        /// item.</returns>
+        /// <returns>
+        ///     The zero-based index of the last occurrence of item within the entire collection, if found; otherwise, the one's
+        ///     complement of the index at which <see cref="ICollection{T}.Add"/> would put the item.
+        /// </returns>
         [Pure]
         int LastIndexOf(T item);
 
         /// <summary>
-        /// Removes the item at the specified index of the collection.
+        ///     Removes the item at the specified index of the collection.
         /// </summary>
-        /// <param name="index">The zero-based index of the item to remove.</param>
-        /// <returns>The item removed from the collection.</returns>
+        /// <param name="index">
+        ///     The zero-based index of the item to remove.
+        /// </param>
+        /// <returns>
+        ///     The item removed from the collection.
+        /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the removed 
-        /// item and the index.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the removed item and the index.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T RemoveAt(int index);
 
         /// <summary>
-        /// Remove all items in the specified index range.
+        ///     Remove all items in the specified index range.
         /// </summary>
-        /// <param name="startIndex">The index of the first item to remove.
+        /// <param name="startIndex">
+        ///     The index of the first item to remove.
         /// </param>
-        /// <param name="count">The number of items to remove.</param>
+        /// <param name="count">
+        ///     The number of items to remove.
+        /// </param>
         /// <remarks>
-        /// If the cleared index range is non-empty, it raises the following
-        /// events (in that order) with the collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionCleared"/> as non-full and 
-        /// with count equal to <paramref name="count"/>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     If the cleared index range is non-empty, it raises the following events (in that order) with the collection as
+        ///     sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionCleared"/> as non-full and with count equal to
+        ///                 <paramref name="count"/>.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         void RemoveIndexRange(int startIndex, int count);
     }
@@ -147,30 +166,9 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        // Contracts are copied from ICollection<T>.Count. Keep both updated!
-        // Contracts are copied to IList<T>.Count. Keep both updated!
-        public int Count
-        {
-            get
-            {
-                // No preconditions
-
-
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
-
-
-                return default(int);
-            }
-        }
-
         public Speed IndexingSpeed
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -179,6 +177,22 @@ namespace C6
 
 
                 return default(Speed);
+            }
+        }
+
+        public T this[int index]
+        {
+            get {
+                // Argument must be within bounds (collection must be non-empty)
+                Requires(0 <= index, ArgumentMustBeWithinBounds);
+                Requires(index < Count, ArgumentMustBeWithinBounds);
+
+
+                // Result is item at index
+                Ensures(Result<T>().IsSameAs(this.ElementAt(index)));
+
+
+                return default(T);
             }
         }
 
@@ -192,17 +206,34 @@ namespace C6
             Requires(0 <= count, ArgumentMustBeNonNegative);
 
 
+            // Result is non-null
+            Ensures(Result<IDirectedCollectionValue<T>>() != null);
+
+            // Result equals subrange
+            Ensures(Result<IDirectedCollectionValue<T>>().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
+
             // Result has the same count
             Ensures(Result<IDirectedCollectionValue<T>>().Count == count);
 
-            // Result equals subrange
-            Ensures(Result<IDirectedCollectionValue<T>>().SequenceEqual(this.Skip(startIndex).Take(count)));
+            // Result allows null if this does
+            Ensures(Result<IDirectedCollectionValue<T>>().AllowsNull == AllowsNull);
+
+            // Result count speed is constant
+            Ensures(Result<IDirectedCollectionValue<T>>().CountSpeed == Speed.Constant); // TODO: Is this always constant? We would at least like that, right?
+
+            // Result direction is opposite
+            Ensures(Result<IDirectedCollectionValue<T>>().Direction == EnumerationDirection.Forwards);
+
+            // Result is empty if this is
+            Ensures(Result<IDirectedCollectionValue<T>>().IsEmpty == (count == 0));
+
+            // Result array is backwards
+            Ensures(Result<IDirectedCollectionValue<T>>().ToArray().IsSameSequenceAs(this.Skip(startIndex).Take(count)));
 
 
             return default(IDirectedCollectionValue<T>);
         }
 
-        // Contracts are copied to IList<T>.IndexOf. Keep both updated!
         public int IndexOf(T item)
         {
             // Argument must be non-null if collection disallows null values
@@ -245,7 +276,6 @@ namespace C6
             return default(int);
         }
 
-        // Contracts are copied to IList<T>.RemoveAt. Keep both updated!
         public T RemoveAt(int index)
         {
             // Collection must be non-read-only
@@ -260,10 +290,10 @@ namespace C6
 
 
             // Result is the item previously at the specified index
-            Ensures(Result<T>().Equals(OldValue(this[index])));
+            Ensures(Result<T>().IsSameAs(OldValue(this[index])));
 
             // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.SkipRange(index, 1).ToList())));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
@@ -285,14 +315,14 @@ namespace C6
 
             // Argument must be within bounds (collection must be non-empty)
             Requires(0 <= startIndex, ArgumentMustBeWithinBounds);
-            Requires(startIndex + count < Count, ArgumentMustBeWithinBounds);
+            Requires(startIndex + count <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-negative
             Requires(0 <= count, ArgumentMustBeNonNegative);
 
 
             // Only the items in the index range are removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(startIndex, count).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.SkipRange(startIndex, count).ToList())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - count);
@@ -300,26 +330,6 @@ namespace C6
 
             return;
         }
-
-        #region Hardened Postconditions
-
-        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public T this[int index]
-        {
-            get
-            {
-                // No additional preconditions allowed
-
-
-                // Result is item at index
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
-
-
-                return default(T);
-            }
-        }
-
-        #endregion
 
         // ReSharper restore InvocationIsSkipped
 
@@ -341,13 +351,18 @@ namespace C6
 
         #region ICollectionValue<T>
 
-        public abstract EventTypes ActiveEvents { get; }
         public abstract bool AllowsNull { get; }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
-        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract T[] ToArray();
+
+        #endregion
+
+        #region IListenable<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
@@ -357,15 +372,9 @@ namespace C6
 
         #endregion
 
-        #region IDirectedEnumerable<T>
-
-        public abstract EnumerationDirection Direction { get; }
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => default(IDirectedEnumerable<T>);
-
-        #endregion
-
         #region IDirectedCollectionValue<T>
 
+        public abstract EnumerationDirection Direction { get; }
         public abstract IDirectedCollectionValue<T> Backwards();
 
         #endregion
@@ -376,7 +385,7 @@ namespace C6
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool IsFixedSize { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddRange(SCG.IEnumerable<T> items);
 
         #endregion
 
@@ -388,23 +397,25 @@ namespace C6
 
         #region ICollection<T>
 
+        public abstract int Count { get; }
         public abstract Speed ContainsSpeed { get; }
         public abstract bool IsReadOnly { get; }
         public abstract bool Add(T item);
         public abstract void Clear();
         public abstract bool Contains(T item);
-        public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
+        public abstract bool ContainsRange(SCG.IEnumerable<T> items);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
+        public abstract SCG.IEnumerable<T> FindDuplicates(T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
         public abstract bool Remove(T item);
         public abstract bool Remove(T item, out T removedItem);
-        public abstract bool RemoveAll(T item);
-        public abstract void RemoveAll(SCG.IEnumerable<T> items);
-        public abstract void RetainAll(SCG.IEnumerable<T> items);
+        public abstract bool RemoveDuplicates(T item);
+        public abstract bool RemoveRange(SCG.IEnumerable<T> items);
+        public abstract bool RetainRange(SCG.IEnumerable<T> items);
         public abstract ICollectionValue<T> UniqueItems();
         public abstract bool UnsequencedEquals(ICollection<T> otherCollection);
         public abstract bool Update(T item);

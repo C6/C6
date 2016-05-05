@@ -120,38 +120,58 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>../C6/C6.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>C6.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit3TestAdapter.3.0.8-ctp-8\lib\Mono.Cecil.dll</HintPath>
+      <HintPath>..\packages\NUnit3TestAdapter.3.0.10\lib\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.engine, Version=3.0.5813.39036, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit3TestAdapter.3.0.8-ctp-8\lib\nunit.engine.dll</HintPath>
+      <HintPath>..\packages\NUnit3TestAdapter.3.0.10\lib\nunit.engine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.engine.api, Version=3.0.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit3TestAdapter.3.0.8-ctp-8\lib\nunit.engine.api.dll</HintPath>
+      <HintPath>..\packages\NUnit3TestAdapter.3.0.10\lib\nunit.engine.api.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.2.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.2.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nunit.framework, Version=3.3.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NUnit.3.3.patched\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="NUnit3.TestAdapter, Version=3.0.8.0, Culture=neutral, PublicKeyToken=4cb40d35494691ac, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit3TestAdapter.3.0.8-ctp-8\lib\NUnit3.TestAdapter.dll</HintPath>
+    <Reference Include="NUnit3.TestAdapter, Version=3.0.10.0, Culture=neutral, PublicKeyToken=4cb40d35494691ac, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.0.10\lib\NUnit3.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ArrayListTests.cs" />
+    <Compile Include="ComparerFactoryTests.cs" />
+    <Compile Include="Helpers\BadEnumerable.cs" />
+    <Compile Include="Helpers\ExpectedDirectedCollectionValue.cs" />
+    <Compile Include="Helpers\Run.cs" />
+    <Compile Include="Helpers\TenEqualityComparer.cs" />
+    <Compile Include="Interfaces\IListTests.cs" />
+    <Compile Include="Interfaces\IIndexedTests.cs" />
+    <Compile Include="Interfaces\IListenableTests.cs" />
+    <Compile Include="Interfaces\ISequencedTests.cs" />
+    <Compile Include="Interfaces\ICollectionValueTests.cs" />
+    <Compile Include="Interfaces\IEnumerableTests.cs" />
+    <Compile Include="Interfaces\IExtensibleTests.cs" />
+    <Compile Include="Helpers\TestBase.cs" />
     <Compile Include="Contracts\ContractHelperExtensionsTests.cs" />
     <Compile Include="Contracts\ViolatesTests.cs" />
     <Compile Include="Enums\EnumerationDirectionExtensionTests.cs" />
     <Compile Include="Enums\SpeedTests.cs" />
     <Compile Include="Contracts\PreconditionException.cs" />
     <Compile Include="ExtensionsTests.cs" />
+    <Compile Include="Helpers\CaseInsensitiveStringComparer.cs" />
+    <Compile Include="Helpers\CollectionEvent.cs" />
+    <Compile Include="Helpers\CollectionEventConstraint.cs" />
+    <Compile Include="Helpers\CollectionEventHolder.cs" />
+    <Compile Include="Helpers\TestHelper.cs" />
+    <Compile Include="Interfaces\ICollectionTests.cs" />
     <Compile Include="Structs\KeyValuePairTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Contracts\TestFailureMethods.cs" />
@@ -164,6 +184,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="C6.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

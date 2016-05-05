@@ -1,5 +1,5 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
-// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
 using System.Collections;
@@ -10,6 +10,7 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -19,111 +20,111 @@ namespace C6
 {
     // TODO: Setup contracts to avoid exceptions?
     /// <summary>
-    /// Represents an indexed, sequenced generic collection where item order is
-    /// determined by insertion and removal order.
+    ///     Represents an indexed, sequenced generic collection where item order is determined by insertion and removal order.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
     [ContractClass(typeof(IListContract<>))]
     public interface IList<T> : IIndexed<T>, SCG.IList<T>, IList
     {
         /// <summary>
-        /// Gets the number of items contained in the collection.
+        ///     Gets the number of items contained in the collection.
         /// </summary>
-        /// <value>The number of items contained in the collection.</value>
+        /// <value>
+        ///     The number of items contained in the collection.
+        /// </value>
         [Pure]
         new int Count { get; }
 
         /// <summary>
-        /// Gets the first item in the list.
+        ///     Gets the first item in the list.
         /// </summary>
-        /// <value>The first item in this list.</value>
+        /// <value>
+        ///     The first item in this list.
+        /// </value>
         [Pure]
         T First { get; }
 
-        // TODO: Better name?
         /// <summary>
-        /// Gets or sets a value indicating whether <see cref="Remove"/>
-        /// removes an item from the beginning or from the end of the list.
+        ///     Gets a value indicating whether the list has a fixed size.
         /// </summary>
-        /// <value><c>true</c> if <see cref="Remove"/> removes an item from the
-        /// beginning of the list; <c>false</c> if it removes an item from the
-        /// end.</value>
+        /// <value>
+        ///     <c>true</c> if the list has a fixed size; otherwise, <c>false</c>.
+        /// </value>
         /// <remarks>
-        /// <see cref="ICollection{T}.Add"/> always adds items to the end of
-        /// the list.
-        /// </remarks>
-        /// <seealso cref="Remove"/>
-        [Pure]
-        bool IsFifo { get; set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the list has a fixed size.
-        /// </summary>
-        /// <value><c>true</c> if the list has a fixed size;
-        /// otherwise, <c>false</c>.</value>
-        /// <remarks>
-        /// <para>
-        /// A list with a fixed size does not allow operations that changes the
-        /// list's size.
-        /// </para>
-        /// <para>
-        /// Any list that is read-only (<see cref="IsReadOnly"/> is
-        /// <c>true</c>), has a fixed size; the opposite need not be true.
-        /// </para>
+        ///     <para>
+        ///         A list with a fixed size does not allow operations that changes the list's size.
+        ///     </para>
+        ///     <para>
+        ///         Any list that is read-only (<see cref="IsReadOnly"/> is <c>true</c>), has a fixed size; the opposite need not
+        ///         be true.
+        ///     </para>
         /// </remarks>
         [Pure]
         new bool IsFixedSize { get; }
 
         /// <summary>
-        /// Gets a value indicating whether the collection is read-only.
+        ///     Gets a value indicating whether the collection is read-only.
         /// </summary>
-        /// <value><c>true</c> if the collection is read-only;
-        /// otherwise, <c>false</c>.</value>
-        /// <remarks>A collection that is read-only does not allow the addition
-        /// or removal of items after the collection is created. Note that 
-        /// read-only in this context does not indicate whether individual 
-        /// items of the collection can be modified.</remarks>
+        /// <value>
+        ///     <c>true</c> if the collection is read-only; otherwise, <c>false</c>.
+        /// </value>
+        /// <remarks>
+        ///     A collection that is read-only does not allow the addition or removal of items after the collection is created.
+        ///     Note that read-only in this context does not indicate whether individual items of the collection can be modified.
+        /// </remarks>
         [Pure]
         new bool IsReadOnly { get; }
 
         /// <summary>
-        /// Gets the last item in the list.
+        ///     Gets the last item in the list.
         /// </summary>
-        /// <value>The last item in the list.</value>
+        /// <value>
+        ///     The last item in the list.
+        /// </value>
         [Pure]
         T Last { get; }
 
         /// <summary>
-        /// Gets or sets the item at the specified index.
+        ///     Gets or sets the item at the specified index.
         /// </summary>
-        /// <param name="index">The zero-based index of the item to get or set.</param>
-        /// <value>The item at the specified index. <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="index">
+        ///     The zero-based index of the item to get or set.
+        /// </param>
+        /// <value>
+        ///     The item at the specified index. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
         /// </value>
         /// <remarks>
-        /// The setter raises the following events (in that order) with the
-        /// collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the removed 
-        /// item and the index.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the inserted 
-        /// item and the index.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the inserted item
-        /// and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     The setter raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the removed item and the index.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the inserted item and the index.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the inserted item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         [IndexerName("Item")]
         new T this[int index]
@@ -134,491 +135,423 @@ namespace C6
         }
 
         /// <summary>
-        /// Removes all items from the collection.
+        ///     Removes all items from the collection.
         /// </summary>
         /// <remarks>
-        /// If the collection is non-empty, it raises the following events (in
-        /// that order) with the collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionCleared"/> as full and 
-        /// with count equal to the collection count.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     If the collection is non-empty, it raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionCleared"/> as full and with count equal to the collection count.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         new void Clear();
 
-        // TODO: Include index in predicate?
-        // TODO: Should this be deprecated?
-        // TODO: Copy docs from Enumerable.Where?
         /// <summary>
-        /// Creates a new list consisting of the items in this list satisfying
-        /// a specified predicate.
+        ///     Searches from the beginning of the collection for the specified item and returns the zero-based index of the first
+        ///     occurrence within the collection.
         /// </summary>
-        /// <param name="predicate">A delegate that returns <c>true</c> for the
-        /// items that should be included in the new list.</param>
-        /// <returns>A new list containing the items that satisfy the
-        /// predicate.</returns>
-        [Pure]
-        IList<T> FindAll(Func<T, bool> predicate);
-
-        /// <summary>
-        /// Searches from the beginning of the collection for the specified
-        /// item and returns the zero-based index of the first occurrence
-        /// within the collection. 
-        /// </summary>
-        /// <param name="item">The item to locate in the collection.
-        /// <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="item">
+        ///     The item to locate in the collection. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
         /// </param>
-        /// <returns>The zero-based index of the first occurrence of item
-        /// within the entire collection, if found; otherwise, a negative
-        /// number that is the bitwise complement of the index at which
-        /// <see cref="ICollection{T}.Add"/> would put the item.</returns>
+        /// <returns>
+        ///     The zero-based index of the first occurrence of item within the entire collection, if found; otherwise, a negative
+        ///     number that is the bitwise complement of the index at which <see cref="ICollection{T}.Add"/> would put the item.
+        /// </returns>
         [Pure]
         new int IndexOf(T item);
 
         /// <summary>
-        /// Inserts an item to the list at the specified index.
+        ///     Inserts an item into the list at the specified index.
         /// </summary>
-        /// <param name="index">The zero-based index at which value should be
-        /// inserted.</param>
-        /// <param name="item">The item to insert into the list. <c>null</c> is
-        /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
-        /// <c>true</c>.</param>
-        /// <returns><c>true</c> if item was added;
-        /// otherwise, <c>false</c>.</returns>
-        /// <remarks>
-        /// <para>
-        /// If <paramref name="index"/> equals the number of items in the list,
-        /// then value is appended to the end of the list. This has the same
-        /// effect as calling <see cref="ICollection{T}.Add"/>, though the
-        /// events raised are different.
-        /// </para>
-        /// <para>
-        /// When inserting, the items that follow the insertion point move down
-        /// to accommodate the new item. The indices of the items that are
-        /// moved are also updated.
-        /// </para>
-        /// <para>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the inserted 
-        /// item and the index.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
-        /// </para>
-        /// </remarks>
-        new bool Insert(int index, T item);
-
-        /// <summary>
-        /// Inserts the items of a collection into the list starting at the
-        /// specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index at which the new items
-        /// should be inserted.</param>
-        /// <param name="items">The enumerable whose items should be inserted
-        /// into the list. The enumerable itself cannot be <c>null</c>, but its
-        /// items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is
-        /// <c>true</c>.</param>
-        /// <remarks>
-        /// If any items are added, it raises the following events (in 
-        /// that order) with the collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> once for each item
-        /// and the index at which is was inserted.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> once for each item 
-        /// added (using a count of one).
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/> once at the
-        /// end.
-        /// </description></item>
-        /// </list>
-        /// </remarks>
-        void InsertAll(int index, SCG.IEnumerable<T> items);
-
-        /// <summary>
-        /// Inserts an item at the beginning of the list.
-        /// </summary>
-        /// <param name="item">The item to insert at the beginning of the list.
-        /// <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="index">
+        ///     The zero-based index at which value should be inserted.
         /// </param>
-        /// <returns><c>true</c> if item was inserted;
-        /// otherwise, <c>false</c>.</returns>
-        /// <remarks>
-        /// If the item is inserted, it raises the following events (in that
-        /// order) with the collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
-        /// index of <c>0</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
-        /// </remarks>
-        bool InsertFirst(T item);
-
-        /// <summary>
-        /// Inserts an item at the end of the list.
-        /// </summary>
-        /// <param name="item">The item to insert at the end of the list.
-        /// <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="item">
+        ///     The item to insert into the list. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
         /// </param>
-        /// <returns><c>true</c> if item was inserted;
-        /// otherwise, <c>false</c>.</returns>
         /// <remarks>
-        /// If the item is inserted, it raises the following events (in that
-        /// order) with the collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
-        /// index of <c>Count</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     <para>
+        ///         If <paramref name="index"/> equals the number of items in the list, then the value is appended to the end of
+        ///         the list. This has the same effect as calling <see cref="ICollection{T}.Add"/>, though the events raised are
+        ///         different.
+        ///     </para>
+        ///     <para>
+        ///         When inserting, the items that follow the insertion point move down to accommodate the new item. The indices of
+        ///         the items that are moved are also updated.
+        ///     </para>
+        ///     <para>
+        ///         Raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemInserted"/> with the inserted item and the index.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
         /// </remarks>
-        bool InsertLast(T item);
+        new void Insert(int index, T item);
 
         /// <summary>
-        /// Determines whether the list is sorted in non-descending order
-        /// according to the default comparer.
+        ///     Inserts an item at the beginning of the list.
         /// </summary>
-        /// <exception cref="InvalidOperationException">The default comparer
-        /// <see cref="SCG.Comparer{T}.Default"/> cannot find an implementation
-        /// of the <see cref="IComparable{T}"/> generic interface or the
-        /// <see cref="IComparable"/> interface for type
-        /// <typeparamref name="T"/>.</exception>
-        /// <returns><c>true</c> if the list is sorted in non-descending order;
-        /// otherwise, <c>false</c>.</returns>
+        /// <param name="item">
+        ///     The item to insert at the beginning of the list. <c>null</c> is allowed, if
+        ///     <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
+        /// <remarks>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the item and an index of zero.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
+        /// </remarks>
+        void InsertFirst(T item);
+
+        /// <summary>
+        ///     Inserts an item at the end of the list.
+        /// </summary>
+        /// <param name="item">
+        ///     The item to insert at the end of the list. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/>
+        ///     is <c>true</c>.
+        /// </param>
+        /// <remarks>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the item and an index of <c>Count</c>.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
+        /// </remarks>
+        void InsertLast(T item);
+
+        // TODO: Document that events are raise pairwise for each item!
+        /// <summary>
+        ///     Inserts the items into the list starting at the specified index.
+        /// </summary>
+        /// <param name="index">
+        ///     The zero-based index at which the new items should be inserted.
+        /// </param>
+        /// <param name="items">
+        ///     The enumerable whose items should be inserted into the list. The enumerable itself cannot be <c>null</c>, but its
+        ///     items can, if <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// </param>
+        /// <remarks>
+        ///     <para>
+        ///         If the enumerable throws an exception during enumeration, the collection remains unchanged.
+        ///     </para>
+        ///     <para>
+        ///         Raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemInserted"/> once for each item and the index at which is was
+        ///                     inserted.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> once for each item added (using a count of one).
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/> once at the end.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
+        void InsertRange(int index, SCG.IEnumerable<T> items);
+
+        /// <summary>
+        ///     Determines whether the list is sorted in non-descending order according to the default comparer.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        ///     The default comparer <see cref="SCG.Comparer{T}.Default"/> cannot find an implementation of the
+        ///     <see cref="IComparable{T}"/> generic interface or the <see cref="IComparable"/> interface for type
+        ///     <typeparamref name="T"/>.
+        /// </exception>
+        /// <returns>
+        ///     <c>true</c> if the list is sorted in non-descending order; otherwise, <c>false</c>.
+        /// </returns>
         [Pure]
         bool IsSorted();
 
         /// <summary>
-        /// Determines whether the list is sorted in non-descending order
-        /// according to the specified comparer.
+        ///     Determines whether the list is sorted in non-descending order according to the specified comparer.
         /// </summary>
-        /// <param name="comparer">The <see cref="SCG.IComparer{T}"/>
-        /// implementation to use when comparing items, or <c>null</c> to use
-        /// the default comparer <see cref="SCG.Comparer{T}.Default"/>.</param>
+        /// <param name="comparer">
+        ///     The <see cref="SCG.IComparer{T}"/> implementation to use when comparing items, or <c>null</c> to use the default
+        ///     comparer <see cref="SCG.Comparer{T}.Default"/>.
+        /// </param>
         /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is <c>null</c>, and the default
-        /// comparer <see cref="SCG.Comparer{T}.Default"/> cannot find an
-        /// implementation of the <see cref="IComparable{T}"/> generic
-        /// interface or the <see cref="IComparable"/> interface for type
-        /// <typeparamref name="T"/>.</exception>
-        /// <exception cref="ArgumentException">The implementation of
-        /// <paramref name="comparer"/> caused an error during the sort. For
-        /// example, <paramref name="comparer"/> might not return 0 when
-        /// comparing an item with itself.</exception>
-        /// <returns><c>true</c> if the list is sorted in non-descending order;
-        /// otherwise, <c>false</c>.</returns>
+        ///     <paramref name="comparer"/> is <c>null</c>, and the default comparer <see cref="SCG.Comparer{T}.Default"/> cannot
+        ///     find an implementation of the <see cref="IComparable{T}"/> generic interface or the <see cref="IComparable"/>
+        ///     interface for type <typeparamref name="T"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///     The implementation of <paramref name="comparer"/> caused an error during the sort. For example,
+        ///     <paramref name="comparer"/> might not return zero when comparing an item with itself.
+        /// </exception>
+        /// <returns>
+        ///     <c>true</c> if the list is sorted in non-descending order; otherwise, <c>false</c>.
+        /// </returns>
         [Pure]
         bool IsSorted(SCG.IComparer<T> comparer);
 
         /// <summary>
-        /// Determines whether the list is sorted in non-descending order
-        /// according to the specified <see cref="Comparison{T}"/>.
+        ///     Determines whether the list is sorted in non-descending order according to the specified
+        ///     <see cref="Comparison{T}"/>.
         /// </summary>
-        /// <param name="comparison">The <see cref="Comparison{T}"/> to use
-        /// when comparing elements.</param>
-        /// <exception cref="ArgumentException">The implementation of 
-        /// <paramref name="comparison"/> caused an error during the sort. For
-        /// example, <paramref name="comparison"/> might not return 0 when
-        /// comparing an item with itself.</exception>
-        /// <returns><c>true</c> if the list is sorted in non-descending order;
-        /// otherwise, <c>false</c>.</returns>
+        /// <param name="comparison">
+        ///     The <see cref="Comparison{T}"/> to use when comparing elements.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        ///     The implementation of <paramref name="comparison"/> caused an error during the sort. For example,
+        ///     <paramref name="comparison"/> might not return zero when comparing an item with itself.
+        /// </exception>
+        /// <returns>
+        ///     <c>true</c> if the list is sorted in non-descending order; otherwise, <c>false</c>.
+        /// </returns>
         [Pure]
         bool IsSorted(Comparison<T> comparison);
 
-        // TODO: Deprecate?
         /// <summary>
-        /// Creates a new list consisting of the results of mapping all items
-        /// in this list using the specified mapper. The new list will use the
-        /// default equality comparer for type <typeparamref name="V"/>.
+        ///     Removes and returns the item at the specified index of the collection.
         /// </summary>
-        /// <typeparam name="V">The type of the items in the new list.
-        /// </typeparam>
-        /// <param name="mapper">A function that maps each item in this list to
-        /// an item in the new list.
+        /// <param name="index">
+        ///     The zero-based index of the item to remove.
         /// </param>
-        /// <returns>An new list whose items are the results of mapping all
-        /// items in this list.</returns>
-        [Pure]
-        IList<V> Map<V>(Func<T, V> mapper);
-
-        // TODO: Deprecate?
-        /// <summary>
-        /// Creates a new list consisting of the results of mapping all items
-        /// in this list using the specified mapper. The new list will use the
-        /// specified equality comparer.
-        /// </summary>
-        /// <typeparam name="V">The type of the items in the new list.
-        /// </typeparam>
-        /// <param name="mapper">A function that maps each item in this list to
-        /// an item in the new list.
-        /// </param>
-        /// <param name="equalityComparer">The
-        /// <see cref="SCG.IEqualityComparer{T}"/> to use for the new list.</param>
-        /// <returns>An new list whose items are the results of mapping all
-        /// items in this list.</returns>
-        [Pure]
-        IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer);
-
-        /// <summary>
-        /// Removes and returns an item from either the beginning or the end of
-        /// the list, depending on the value of <see cref="IsFifo"/>.
-        /// </summary>
-        /// <returns>The item removed from the list.</returns>
+        /// <returns>
+        ///     The item removed from the collection.
+        /// </returns>
         /// <remarks>
-        /// <para>
-        /// If <see cref="IsFifo"/> is <c>true</c>, this methods removes an 
-        /// item from the beginning of the list; if <see cref="IsFifo"/> is
-        /// <c>false</c>, it removes an item from the end of the list.
-        /// </para>
-        /// <para>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and
-        /// an index of either <c>0</c> if <see cref="IsFifo"/> is <c>true</c>,
-        /// or <c>Count - 1</c> if <see cref="IsFifo"/> is <c>false</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
-        /// </para>
-        /// </remarks>
-        /// <seealso cref="IsFifo"/>
-        T Remove();
-
-        /// <summary>
-        /// Removes and returns the item at the specified index of the collection.
-        /// </summary>
-        /// <param name="index">The zero-based index of the item to remove.</param>
-        /// <returns>The item removed from the collection.</returns>
-        /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the removed 
-        /// item and the index.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the removed item and the index.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         new T RemoveAt(int index);
 
         /// <summary>
-        /// Removes and returns an item from the beginning of the list.
+        ///     Removes and returns an item from the beginning of the list.
         /// </summary>
-        /// <returns>The item removed from the beginning of the list.</returns>
+        /// <returns>
+        ///     The item removed from the beginning of the list.
+        /// </returns>
         /// <remarks>
-        /// <para>
-        /// The methods <see cref="ICollection{T}.Add"/> and
-        /// <see cref="RemoveFirst"/> together behave like a first-in-first-out
-        /// queue.
-        /// </para>
-        /// <para>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and
-        /// an index of zero.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
-        /// </para>
+        ///     <para>
+        ///         The methods <see cref="ICollection{T}.Add"/> and <see cref="RemoveFirst"/> together behave like a
+        ///         first-in-first-out queue.
+        ///     </para>
+        ///     <para>
+        ///         Raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of zero.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
         /// </remarks>
         T RemoveFirst();
 
         /// <summary>
-        /// Removes and returns an item from the end of the list.
+        ///     Removes and returns an item from the end of the list.
         /// </summary>
-        /// <returns>The item removed from the end of the list.</returns>
+        /// <returns>
+        ///     The item removed from the end of the list.
+        /// </returns>
         /// <remarks>
-        /// <para>
-        /// The methods <see cref="ICollection{T}.Add"/> and
-        /// <see cref="RemoveLast"/> together behave like a last-in-first-out
-        /// stack. 
-        /// </para>
-        /// <para>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and
-        /// an index of <c>Count - 1</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
-        /// </para>
+        ///     <para>
+        ///         The methods <see cref="ICollection{T}.Add"/> and <see cref="RemoveLast"/> together behave like a
+        ///         last-in-first-out stack.
+        ///     </para>
+        ///     <para>
+        ///         Raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of <c>Count</c> - 1.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
         /// </remarks>
         T RemoveLast();
 
         /// <summary>
-        /// Reverses the sequence order of the items in the list.
+        ///     Reverses the sequence order of the items in the list.
         /// </summary>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
         /// </remarks>
         void Reverse();
 
         /// <summary>
-        /// Randomly shuffles the items in the list.
+        ///     Randomly shuffles the items in the list.
         /// </summary>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>, even
+        ///     if the item order was not changed by the shuffle.
         /// </remarks>
         void Shuffle();
 
         /// <summary>
-        /// Shuffles the items in the list according to the specified random
-        /// source.
+        ///     Shuffles the items in the list according to the specified random source.
         /// </summary>
         /// <param name="random">The random source.</param>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     If the collection contains more than one item, it raises the <see cref="IListenable{T}.CollectionChanged"/>, even
+        ///     if the item order was not changed by the shuffle.
         /// </remarks>
         void Shuffle(Random random);
 
         /// <summary>
-        /// Sorts the items in the list using the default comparer.
+        ///     Sorts the items in the list using the default comparer.
         /// </summary>
-        /// <exception cref="InvalidOperationException">The default comparer
-        /// <see cref="SCG.Comparer{T}.Default"/> cannot find an implementation
-        /// of the <see cref="IComparable{T}"/> generic interface or the
-        /// <see cref="IComparable"/> interface for type
-        /// <typeparamref name="T"/>.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The default comparer <see cref="SCG.Comparer{T}.Default"/> cannot find an implementation of the
+        ///     <see cref="IComparable{T}"/> generic interface or the <see cref="IComparable"/> interface for type
+        ///     <typeparamref name="T"/>.
+        /// </exception>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort();
 
         /// <summary>
-        /// Sorts the items in the list using the specified comparer.
+        ///     Sorts the items in the list using the specified comparer.
         /// </summary>
-        /// <param name="comparer">The <see cref="SCG.IComparer{T}"/>
-        /// implementation to use when comparing items, or <c>null</c> to use
-        /// the default comparer <see cref="SCG.Comparer{T}.Default"/>.</param>
+        /// <param name="comparer">
+        ///     The <see cref="SCG.IComparer{T}"/> implementation to use when comparing items, or <c>null</c> to use the default
+        ///     comparer <see cref="SCG.Comparer{T}.Default"/>.
+        /// </param>
         /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is <c>null</c>, and the default
-        /// comparer <see cref="SCG.Comparer{T}.Default"/> cannot find an
-        /// implementation of the <see cref="IComparable{T}"/> generic
-        /// interface or the <see cref="IComparable"/> interface for type
-        /// <typeparamref name="T"/>.</exception>
-        /// <exception cref="ArgumentException">The implementation of
-        /// <paramref name="comparer"/> caused an error during the sort. For
-        /// example, <paramref name="comparer"/> might not return 0 when
-        /// comparing an item with itself.</exception>
+        ///     <paramref name="comparer"/> is <c>null</c>, and the default comparer <see cref="SCG.Comparer{T}.Default"/> cannot
+        ///     find an implementation of the <see cref="IComparable{T}"/> generic interface or the <see cref="IComparable"/>
+        ///     interface for type <typeparamref name="T"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///     The implementation of <paramref name="comparer"/> caused an error during the sort. For example,
+        ///     <paramref name="comparer"/> might not return zero when comparing an item with itself.
+        /// </exception>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort(SCG.IComparer<T> comparer);
 
         /// <summary>
-        /// Sorts the items in the list using the specified
-        /// <see cref="Comparison{T}"/>.
+        ///     Sorts the items in the list using the specified <see cref="Comparison{T}"/>.
         /// </summary>
-        /// <param name="comparison">The <see cref="Comparison{T}"/> to use
-        /// when comparing elements.</param>
-        /// <exception cref="ArgumentException">The implementation of 
-        /// <paramref name="comparison"/> caused an error during the sort. For
-        /// example, <paramref name="comparison"/> might not return 0 when
-        /// comparing an item with itself.</exception>
+        /// <param name="comparison">
+        ///     The <see cref="Comparison{T}"/> to use when comparing elements.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        ///     The implementation of <paramref name="comparison"/> caused an error during the sort. For example,
+        ///     <paramref name="comparison"/> might not return zero when comparing an item with itself.
+        /// </exception>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     <para>
+        ///         There is no requirement as to whether an implementation performs a stable or unstable sort; that is, if two
+        ///         elements are equal, their order might or might not be preserved.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is not already sorted, it raises the <see cref="IListenable{T}.CollectionChanged"/>.
+        ///     </para>
         /// </remarks>
         void Sort(Comparison<T> comparison);
     }
@@ -629,19 +562,13 @@ namespace C6
     {
         // ReSharper disable InvocationIsSkipped
 
-        // Contracts are copied from IIndexed<T>.Count. Keep both updated!
         public int Count
         {
-            get
-            {
-                // No preconditions
+            get {
+                // No additional preconditions allowed
 
 
-                // Returns a non-negative number
-                Ensures(Result<int>() >= 0);
-
-                // Returns the same as the number of items in the enumerator
-                Ensures(Result<int>() == this.Count());
+                // No postconditions
 
 
                 return default(int);
@@ -650,71 +577,56 @@ namespace C6
 
         public T First
         {
-            get
-            {
+            get {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
                 // Equals first item
-                Ensures(Result<T>().Equals(this[0]));
-                Ensures(Result<T>().Equals(this.First()));
+                Ensures(Result<T>().IsSameAs(this[0]));
+                Ensures(Result<T>().IsSameAs(this.First()));
 
 
                 return default(T);
             }
         }
 
-        public bool IsFifo
-        {
-            get { return default(bool); }
-            set
-            {
-                // Collection must be non-read-only
-                Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-
-                // Value is updated
-                Ensures(IsFifo == value);
-
-
-                return;
-            }
-        }
-
-        // Contracts are copied from IExtensible<T>.IsReadOnly. Keep both updated!
         public bool IsFixedSize
         {
-            get
-            {
-                // No preconditions
+            get {
+                // No additional preconditions allowed
 
 
-                // Read-only list has fixed size
-                Ensures(!IsReadOnly || Result<bool>());
+                // No postconditions
 
 
                 return default(bool);
             }
         }
 
-        // Contracts are copied from ICollection<T>.IsReadOnly. Keep both updated!
         public bool IsReadOnly
         {
-            get { return default(bool); }
+            get {
+                // No additional preconditions allowed
+
+
+                // No postconditions
+
+
+                return default(bool);
+            }
         }
 
         public T Last
         {
-            get
-            {
+            get {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
 
                 // Equals first item
-                Ensures(Result<T>().Equals(this[Count - 1]));
-                Ensures(Result<T>().Equals(this.Last()));
+                Ensures(Result<T>().IsSameAs(this[Count - 1]));
+                Ensures(Result<T>().IsSameAs(this.Last()));
 
 
                 return default(T);
@@ -723,98 +635,67 @@ namespace C6
 
         public T this[int index]
         {
-            get
-            {
+            get {
                 // Argument must be within bounds
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);
 
 
                 // Result is the same as skipping the first index items
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.ElementAt(index)));
 
 
                 return default(T);
             }
-            set
-            {
+            set {
                 // Collection must be non-read-only
                 Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
 
                 // Argument must be non-null if collection disallows null values
-                Requires(AllowsNull || value != null, ArgumentMustBeNonNull);
+                Requires(AllowsNull || value != null, ItemMustBeNonNull);
 
                 // Argument must be within bounds
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);
 
                 // Collection must not already contain item if collection disallows duplicate values
-                Requires(AllowsDuplicates || !Contains(value), CollectionMustAllowDuplicates); // TODO: Behavior mismatch with Insert methods
+                Requires(AllowsDuplicates || !Contains(value), CollectionMustAllowDuplicates);
 
 
                 // Value is the same as skipping the first index items
-                Ensures(value.Equals(this.Skip(index).First()));
+                Ensures(value.IsSameAs(this[index]));
 
 
                 return;
             }
         }
 
-        // Contracts are copied from ICollection<T>.Clear. Keep both updated!
         public void Clear()
         {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+            // No additional preconditions allowed
 
 
-            // The collection becomes empty
-            Ensures(IsEmpty);
-            Ensures(Count == 0);
-            Ensures(!this.Any());
+            // No postconditions
 
 
             return;
         }
 
-        public IList<T> FindAll(Func<T, bool> predicate)
-        {
-            // Argument must be non-null
-            Requires(predicate != null, ArgumentMustBeNonNull);
-
-
-            // The result is equal to filtering this list based on the predicate
-            Ensures(Result<IList<T>>().SequenceEqual(this.Where(predicate)));
-
-
-            return default(IList<T>);
-        }
-
-        // Contracts are copied from IIndexed<T>.IndexOf. Keep both updated!
         public int IndexOf(T item)
         {
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+            // No additional preconditions allowed
 
 
             // Result is a valid index
             Ensures(Contains(item)
                 ? 0 <= Result<int>() && Result<int>() < Count
-                : 0 <= ~Result<int>() && ~Result<int>() <= Count);
-
-            // Item at index equals item
-            Ensures(Result<int>() < 0 || EqualityComparer.Equals(item, this[Result<int>()]));
-
-            // No item before index equals item
-            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer));
+                : ~Result<int>() == Count);
 
 
             return default(int);
         }
 
-        public bool Insert(int index, T item)
+        public void Insert(int index, T item)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -829,21 +710,95 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
 
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : !OldValue(this.Contains(item, EqualityComparer)));
 
             // Item is inserted at index
-            Ensures(item.Equals(this[index]));
+            Ensures(item.IsSameAs(this[index]));
 
             // The item is inserted into the list without replacing other items
-            Ensures(this.SequenceEqual(OldValue(this.Take(index).Append(item).Concat(this.Skip(index)).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Append(item).Concat(this.Skip(index)).ToList())));
 
 
-            return default(bool);
+            return;
         }
 
-        public void InsertAll(int index, SCG.IEnumerable<T> items)
+        public void InsertFirst(T item)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
+
+
+            // The collection becomes non-empty
+            Ensures(!IsEmpty);
+
+            // Adding an item increases the count by one
+            Ensures(Count == OldValue(Count) + 1);
+
+            // The collection will contain the item added
+            Ensures(Contains(item));
+
+            // The number of equal items increase by one
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
+
+            // The number of same items increase by one
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
+
+            // The item is added to the beginning
+            Ensures(item.IsSameAs(First));
+
+
+            return;
+        }
+
+        public void InsertLast(T item)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+            // Collection must be non-fixed-sized
+            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+
+            // Argument must be non-null if collection disallows null values
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+            // Collection must not already contain item if collection disallows duplicate values
+            Requires(AllowsDuplicates || !Contains(item), CollectionMustAllowDuplicates);
+
+
+            // The collection becomes non-empty
+            Ensures(!IsEmpty);
+
+            // Adding an item increases the count by one
+            Ensures(Count == OldValue(Count) + 1);
+
+            // The collection will contain the item added
+            Ensures(Contains(item));
+
+            // The number of equal items increase by one
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
+
+            // The number of same items increase by one
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
+
+            // The item is added to the end
+            Ensures(item.IsSameAs(Last));
+
+
+            return;
+        }
+
+        public void InsertRange(int index, SCG.IEnumerable<T> items)
         {
             // Collection must be non-read-only
             Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
@@ -853,7 +808,7 @@ namespace C6
 
             // Argument must be within bounds
             Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
 
             // Argument must be non-null
             Requires(items != null, ArgumentMustBeNonNull);
@@ -861,79 +816,18 @@ namespace C6
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
+            // Collection must not already contain the items if collection disallows duplicate values
+            Requires(AllowsDuplicates || ForAll(this, item => !Contains(item)), CollectionMustAllowDuplicates);
 
-            // TODO: Ensures
+
+            // The items are inserted into the list without replacing other items
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(index).Concat(items).Concat(this.Skip(index)).ToList())));
+
+            // Collection doesn't change if enumerator throws an exception
+            EnsuresOnThrow<Exception>(this.IsSameSequenceAs(OldValue(ToArray())));
 
 
             return;
-        }
-
-        public bool InsertFirst(T item)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
-
-
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
-
-            // The collection becomes non-empty
-            Ensures(!IsEmpty);
-
-            // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + 1);
-
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
-
-            // The collection will contain the item added
-            Ensures(Contains(item));
-
-            // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
-
-            // The item is added to the beginning
-            Ensures(item.Equals(First));
-
-
-            return default(bool);
-        }
-
-        public bool InsertLast(T item)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Argument must be non-null if collection disallows null values
-            Requires(AllowsNull || item != null, ItemMustBeNonNull);
-
-
-            // Returns true if bag semantic, otherwise the opposite of whether the collection already contained the item
-            Ensures(AllowsDuplicates ? Result<bool>() : OldValue(!this.Contains(item, EqualityComparer)));
-
-            // The collection becomes non-empty
-            Ensures(!IsEmpty);
-
-            // Adding an item increases the count by one
-            Ensures(Count == OldValue(Count) + 1);
-
-            // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
-
-            // The collection will contain the item added
-            Ensures(Contains(item));
-
-            // The number of equal items increase by one
-            Ensures(ContainsCount(item) == OldValue(ContainsCount(item)) + 1);
-
-            // The item is added to the end
-            Ensures(item.Equals(Last));
-
-
-            return default(bool);
         }
 
         public bool IsSorted()
@@ -973,89 +867,12 @@ namespace C6
             return default(bool);
         }
 
-        public IList<V> Map<V>(Func<T, V> mapper)
-        {
-            // Argument must be non-null
-            Requires(mapper != null, ArgumentMustBeNonNull);
-
-
-            // Result is equal to mapping each item
-            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper)));
-
-
-            return default(IList<V>);
-        }
-
-        public IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> equalityComparer)
-        {
-            // Argument must be non-null
-            Requires(mapper != null, ArgumentMustBeNonNull);
-
-
-            // Result is equal to mapping each item
-            Ensures(Result<IList<V>>().SequenceEqual(this.Select(mapper), equalityComparer)); // TODO: Does this always work? What if unique objects are created?
-
-            // Result uses equality comparer
-            Ensures(Result<IList<V>>().EqualityComparer == (equalityComparer ?? SCG.EqualityComparer<V>.Default));
-
-
-            return default(IList<V>);
-        }
-
-        public T Remove()
-        {
-            // Collection must be non-empty
-            Requires(!IsEmpty, CollectionMustBeNonEmpty);
-
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
-
-
-            // Result is the item previously first/last
-            Ensures(Result<T>().Equals(OldValue(IsFifo ? First : Last)));
-
-            // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue((IsFifo ? this.Skip(1) : this.Take(Count - 1)).ToList())));
-
-            // Result is non-null
-            Ensures(AllowsNull || Result<T>() != null);
-
-            // Removing an item decreases the count by one
-            Ensures(Count == OldValue(Count) - 1);
-
-
-            return default(T);
-        }
-
-
-        // Contracts are copied from IIndexed<T>.RemoveAt. Keep both updated!
         public T RemoveAt(int index)
         {
-            // Argument must be within bounds (collection must be non-empty)
-            Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
-
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-            // Collection must be non-fixed-sized
-            Requires(!IsFixedSize, CollectionMustBeNonFixedSize);
+            // No additional preconditions allowed
 
 
-            // Result is the item previously at the specified index
-            Ensures(Result<T>().Equals(OldValue(this[index])));
-
-            // Only the item at index is removed
-            Ensures(this.SequenceEqual(OldValue(this.SkipRange(index, 1).ToList())));
-
-            // Result is non-null
-            Ensures(AllowsNull || Result<T>() != null);
-
-            // Removing an item decreases the count by one
-            Ensures(Count == OldValue(Count) - 1);
+            // No postconditions
 
 
             return default(T);
@@ -1080,10 +897,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(First)));
+            Ensures(Result<T>().IsSameAs(OldValue(First)));
 
             // Only the first item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Skip(1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Skip(1).ToList())));
 
 
             return default(T);
@@ -1108,10 +925,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(Last)));
+            Ensures(Result<T>().IsSameAs(OldValue(Last)));
 
             // Only the last item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Take(Count - 1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Take(Count - 1).ToList())));
 
 
             return default(T);
@@ -1124,7 +941,7 @@ namespace C6
 
 
             // The collection is reversed
-            Ensures(this.SequenceEqual(OldValue(Enumerable.Reverse(this).ToList()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.IsSameSequenceAs(OldValue(Enumerable.Reverse(this).ToList())));
 
 
             return;
@@ -1137,7 +954,7 @@ namespace C6
 
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1153,7 +970,7 @@ namespace C6
 
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1169,23 +986,7 @@ namespace C6
             Ensures(IsSorted());
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
-
-
-            return;
-        }
-
-        public void Sort(SCG.IComparer<T> comparer)
-        {
-            // Collection must be non-read-only
-            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
-
-
-            // List becomes sorted
-            Ensures(IsSorted(comparer));
-
-            // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1204,7 +1005,23 @@ namespace C6
             Ensures(IsSorted(comparison));
 
             // The collection remains the same
-            Ensures(this.UnsequenceEqual(OldValue(ToArray()))); // Uses the items' equality comparer and not the collection's
+            Ensures(this.HasSameAs(OldValue(ToArray())));
+
+
+            return;
+        }
+
+        public void Sort(SCG.IComparer<T> comparer)
+        {
+            // Collection must be non-read-only
+            Requires(!IsReadOnly, CollectionMustBeNonReadOnly);
+
+
+            // List becomes sorted
+            Ensures(IsSorted(comparer));
+
+            // The collection remains the same
+            Ensures(this.HasSameAs(OldValue(ToArray())));
 
 
             return;
@@ -1213,26 +1030,22 @@ namespace C6
         #region Hardened Postconditions
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public bool AllowsDuplicates
+        public bool Add(T item)
         {
-            get
-            {
-                // No additional preconditions allowed
+            // No additional preconditions allowed
 
 
-                // Always true for lists
-                Ensures(Result<bool>());
+            // Item is placed at the end
+            Ensures(Last.IsSameAs(item));
 
 
-                return default(bool);
-            }
+            return default(bool);
         }
 
         // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
         public bool IsSynchronized
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -1242,6 +1055,140 @@ namespace C6
 
                 return default(bool);
             }
+        }
+
+        public int LastIndexOf(T item)
+        {
+            // No additional preconditions allowed
+
+
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+
+            return default(int);
+        }
+
+        public bool Remove(T item)
+        {
+            // No extra preconditions allowed
+
+
+            // Removes the last occurrence of the item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+
+
+            return default(bool);
+        }
+
+        public bool Remove(T item, out T removedItem)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is removed, it is the last equal to item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+
+            // The item removed is the last equal to item
+            Ensures(!Result<bool>() || ValueAtReturn(out removedItem).IsSameAs(OldValue(this[LastIndexOf(item)])));
+
+
+            removedItem = default(T);
+            return default(bool);
+        }
+
+        public bool RemoveDuplicates(T item)
+        {
+            // No extra preconditions allowed
+
+
+            // The list is the same as the old collection without item
+            Ensures(this.IsSameSequenceAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToList())));
+
+
+            return default(bool);
+        }
+
+        public bool RemoveRange(SCG.IEnumerable<T> items)
+        {
+            // No extra preconditions allowed
+
+
+            //  
+            Ensures(false); // TODO: Write contract
+
+
+            return default(bool);
+        }
+
+        public bool RetainRange(SCG.IEnumerable<T> items)
+        {
+            // No extra preconditions allowed
+
+
+            //  
+            Ensures(false); // TODO: Write contracts
+
+
+            return default(bool);
+        }
+
+        public bool Update(T item)
+        {
+            // No extra preconditions allowed
+
+
+            // Updates the last occurrence of the item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)).ToList()))); // TODO: Is ToList needed?
+
+
+            return default(bool);
+        }
+
+        public bool Update(T item, out T oldItem)
+        {
+            // No extra preconditions allowed
+
+
+            // Updates the last occurrence of the item
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)).ToList()))); // TODO: Is ToList needed?
+
+            // The item removed is the last equal to item
+            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[LastIndexOf(item)])));
+
+
+            oldItem = default(T);
+            return default(bool);
+        }
+
+        public bool UpdateOrAdd(T item)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is updated, it is the last occurrence
+            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
+
+
+            return default(bool);
+        }
+
+        public bool UpdateOrAdd(T item, out T oldItem)
+        {
+            // No extra preconditions allowed
+
+
+            // If an item is updated, it is the last occurrence
+            Ensures(this.IsSameSequenceAs(OldValue((Result<bool>() ? this.Take(LastIndexOf(item)).Append(item).Concat(this.Skip(LastIndexOf(item) + 1)) : this.Append(item)).ToList()))); // TODO: Is ToList needed?
+
+            // The item removed is the last equal to item
+            Ensures(!Result<bool>() || ValueAtReturn(out oldItem).IsSameAs(OldValue(this[LastIndexOf(item)])));
+
+
+            oldItem = default(T);
+            return default(bool);
         }
 
         #endregion
@@ -1266,13 +1213,18 @@ namespace C6
 
         #region ICollectionValue<T>
 
-        public abstract EventTypes ActiveEvents { get; }
         public abstract bool AllowsNull { get; }
         public abstract Speed CountSpeed { get; }
         public abstract bool IsEmpty { get; }
-        public abstract EventTypes ListenableEvents { get; }
         public abstract T Choose();
         public abstract T[] ToArray();
+
+        #endregion
+
+        #region IListenable<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
@@ -1282,24 +1234,19 @@ namespace C6
 
         #endregion
 
-        #region IDirectedEnumerable<T>
-
-        public abstract EnumerationDirection Direction { get; }
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => default(IDirectedEnumerable<T>);
-
-        #endregion
-
         #region IDirectedCollectionValue<T>
 
+        public abstract EnumerationDirection Direction { get; }
         public abstract IDirectedCollectionValue<T> Backwards();
 
         #endregion
 
         #region IExtensible
 
+        public abstract bool AllowsDuplicates { get; }
         public abstract bool DuplicatesByCounting { get; }
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddRange(SCG.IEnumerable<T> items);
 
         #endregion
 
@@ -1320,26 +1267,17 @@ namespace C6
         #region ICollection<T>
 
         public abstract Speed ContainsSpeed { get; }
-        public abstract bool Add(T item);
         public abstract bool Contains(T item);
-        public abstract bool ContainsAll(SCG.IEnumerable<T> items);
-        public abstract int ContainsCount(T item);
+        public abstract bool ContainsRange(SCG.IEnumerable<T> items);
         public abstract void CopyTo(T[] array, int arrayIndex);
+        public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
+        public abstract SCG.IEnumerable<T> FindDuplicates(T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
-        public abstract bool Remove(T item);
-        public abstract bool Remove(T item, out T removedItem);
-        public abstract bool RemoveAll(T item);
-        public abstract void RemoveAll(SCG.IEnumerable<T> items);
-        public abstract void RetainAll(SCG.IEnumerable<T> items);
         public abstract ICollectionValue<T> UniqueItems();
         public abstract bool UnsequencedEquals(ICollection<T> otherCollection);
-        public abstract bool Update(T item);
-        public abstract bool Update(T item, out T oldItem);
-        public abstract bool UpdateOrAdd(T item);
-        public abstract bool UpdateOrAdd(T item, out T oldItem);
 
         #endregion
 
@@ -1354,16 +1292,15 @@ namespace C6
 
         public abstract Speed IndexingSpeed { get; }
         public abstract IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
-        public abstract int LastIndexOf(T item);
         public abstract void RemoveIndexRange(int startIndex, int count);
 
         #endregion
 
-        /*#region IDisposable
+        #region IDisposable
 
         public abstract void Dispose();
 
-        #endregion*/
+        #endregion
 
         #region SC.IList
 

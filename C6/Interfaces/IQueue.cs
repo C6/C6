@@ -1,5 +1,5 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
-// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
 using System.Collections;
@@ -9,81 +9,91 @@ using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
-
-using static C6.EventTypes;
 
 
 namespace C6
 {
     // TODO: decide if this should extend ICollection/IExtensible - it at least needs IsReadOnly
     /// <summary>
-    /// Represents a generic first-in-first-out (FIFO) queue that also supports
-    /// indexing.
+    ///     Represents a generic first-in-first-out (FIFO) queue that also supports indexing.
     /// </summary>
-    /// <typeparam name="T">The type of items in the stack.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of items in the stack.
+    /// </typeparam>
     [ContractClass(typeof(IQueueContract<>))]
-    public interface IQueue<T> : IDirectedCollectionValue<T>
+    public interface IQueue<T> : IDirectedCollectionValue<T>, IListenable<T>
     {
         // Also found in IStack<T>
         /// <summary>
-        /// Gets the item at the specified index in the queue.
-        /// The beginning of the queue has index <c>0</c>.
+        ///     Gets the item at the specified index in the queue. The beginning of the queue has index zero.
         /// </summary>
-        /// <param name="index">The zero-based index of the item to get.</param>
-        /// <returns>The item at the specified index.</returns>
+        /// <param name="index">
+        ///     The zero-based index of the item to get.
+        /// </param>
+        /// <returns>
+        ///     The item at the specified index.
+        /// </returns>
         [Pure]
         T this[int index] { get; }
 
         /// <summary>
-        /// Removes and returns the item at the beginning of the queue.
+        ///     Removes and returns the item at the beginning of the queue.
         /// </summary>
         /// <returns>
-        /// The item that is removed from the beginning of the queue.
+        ///     The item that is removed from the beginning of the queue.
         /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemRemovedAt"/> with the item and
-        /// an index of <c>0</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemRemovedAt"/> with the item and an index of zero.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T Dequeue();
 
         /// <summary>
-        /// Adds an item to the end of the queue.
+        ///     Adds an item to the end of the queue.
         /// </summary>
-        /// <param name="item">The item to add to the queue. <c>null</c> is
-        /// allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
-        /// <c>true</c>.</param>
+        /// <param name="item">
+        ///     The item to add to the queue. <c>null</c> is allowed, if <see cref="ICollectionValue{T}.AllowsNull"/> is
+        ///     <c>true</c>.
+        /// </param>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemInserted"/> with the item and an 
-        /// index of <c>Count - 1</c>.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemInserted"/> with the item and an index of <c>Count</c> - 1.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         void Enqueue(T item);
 
@@ -98,8 +108,7 @@ namespace C6
 
         public T this[int index]
         {
-            get
-            {
+            get {
                 // Argument must be within bounds (collection must be non-empty)
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);
@@ -109,7 +118,7 @@ namespace C6
                 Ensures(AllowsNull || Result<T>() != null);
 
                 // Result is the same as skipping the first index items
-                Ensures(Result<T>().Equals(this.Skip(index).First()));
+                Ensures(Result<T>().IsSameAs(this.ElementAt(index)));
 
 
                 return default(T);
@@ -132,10 +141,10 @@ namespace C6
             Ensures(AllowsNull || Result<T>() != null);
 
             // Result is the same the first items
-            Ensures(Result<T>().Equals(OldValue(this.First())));
+            Ensures(Result<T>().IsSameAs(OldValue(this.First())));
 
             // Only the first item in the queue is removed
-            Ensures(this.SequenceEqual(OldValue(this.Skip(1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.Skip(1).ToList())));
 
 
             return default(T);
@@ -150,47 +159,27 @@ namespace C6
             Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true, CollectionMustBeNonReadOnly); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
 
 
+            // The added item is at the end of the queue
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray()).Append(item)));
+
             // The collection becomes non-empty
             Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Ensures(this.Contains(item)); // TODO: Use EqualityComparer?
+            Ensures(this.ContainsSame(item));
 
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => x.Equals(item)) == OldValue(this.Count(x => x.Equals(item))) + 1); // TODO: Use EqualityComparer?
-
-            // The added item is at the end of the queue
-            Ensures(this.SequenceEqual(OldValue(this.ToList()).Append(item)));
+            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
             // The item is added to the end
-            Ensures(item.Equals(this.Last()));
+            Ensures(item.IsSameAs(this.Last()));
 
 
             return;
         }
-
-        #region Hardened Postconditions
-
-        // Static checker shortcoming: https://github.com/Microsoft/CodeContracts/issues/331
-        public EventTypes ListenableEvents
-        {
-            get
-            {
-                // No additional preconditions allowed
-
-
-                // The events raised by the collection must be listenable
-                Ensures(Result<EventTypes>().HasFlag(Changed | Added | Removed | Inserted | RemovedAt));
-
-
-                return default(EventTypes);
-            }
-        }
-
-        #endregion
 
         // ReSharper restore InvocationIsSkipped
 
@@ -212,7 +201,6 @@ namespace C6
 
         #region ICollectionValue<T>
 
-        public abstract EventTypes ActiveEvents { get; }
         public abstract bool AllowsNull { get; }
         public abstract int Count { get; }
         public abstract Speed CountSpeed { get; }
@@ -220,6 +208,13 @@ namespace C6
         public abstract T Choose();
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract T[] ToArray();
+
+        #endregion
+
+        #region IListenable<T>
+
+        public abstract EventTypes ActiveEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
         public abstract event EventHandler CollectionChanged;
         public abstract event EventHandler<ClearedEventArgs> CollectionCleared;
         public abstract event EventHandler<ItemAtEventArgs<T>> ItemInserted;
@@ -229,15 +224,9 @@ namespace C6
 
         #endregion
 
-        #region IDirectedEnumerable<T>
-
-        public abstract EnumerationDirection Direction { get; }
-        IDirectedEnumerable<T> IDirectedEnumerable<T>.Backwards() => default(IDirectedEnumerable<T>);
-
-        #endregion
-
         #region IDirectedCollectionValue<T>
-
+        
+        public abstract EnumerationDirection Direction { get; }
         public abstract IDirectedCollectionValue<T> Backwards();
 
         #endregion

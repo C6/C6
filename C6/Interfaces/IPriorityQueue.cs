@@ -1,14 +1,14 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
-// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -19,68 +19,73 @@ namespace C6
     // TODO: How does Add handle duplicates?
     // TODO: Break into Min and Max priority queues?
     /// <summary>
-    /// Represents an extensible generic collection that supports reporting
-    /// and removing extremal items efficiently based on a comparison (order)
-    /// relation.
+    ///     Represents an extensible generic collection that supports reporting and removing extremal items efficiently based
+    ///     on a comparison (order) relation.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
     /// <remarks>
-    /// <para>
-    /// The priority queue makes it possible to allocate an
-    /// <see cref="IPriorityQueueHandle{T}"/> for an item, when adding the item
-    /// to the queue. The resulting handle may be used for deleting the item
-    /// efficiently even if not extremal, and for replacing the item.
-    /// </para>
-    /// <para>
-    /// A priority queue typically only holds numeric priorities associated
-    /// with some objects maintained separately in other collection objects.
-    /// </para>
+    ///     <para>
+    ///         The priority queue makes it possible to allocate an <see cref="IPriorityQueueHandle{T}"/> for an item, when
+    ///         adding the item to the queue. The resulting handle may be used for deleting the item efficiently even if not
+    ///         extremal, and for replacing the item.
+    ///     </para>
+    ///     <para>
+    ///         A priority queue typically only holds numeric priorities associated with some objects maintained separately in
+    ///         other collection objects.
+    ///     </para>
     /// </remarks>
     [ContractClass(typeof(IPriorityQueueContract<>))]
     public interface IPriorityQueue<T> : IExtensible<T>
     {
         /// <summary>
-        /// Gets the <see cref="SCG.IComparer{T}"/> used by the priority queue.
+        ///     Gets the <see cref="SCG.IComparer{T}"/> used by the priority queue.
         /// </summary>
-        /// <value>The <see cref="SCG.IComparer{T}"/> used by the priority
-        /// queue.</value>
+        /// <value>
+        ///     The <see cref="SCG.IComparer{T}"/> used by the priority queue.
+        /// </value>
         [Pure]
         SCG.IComparer<T> Comparer { get; }
 
         // TODO: Exception: what if the handle is of the wrong type?
         /// <summary>
-        /// Gets or sets the item with which the specified handle is
-        /// associated.
+        ///     Gets or sets the item with which the specified handle is associated.
         /// </summary>
-        /// <value>The item with which the specified handle is/should be
-        /// associated with. <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <value>
+        ///     The item with which the specified handle is/should be associated with. <c>null</c> is allowed, if
+        ///     <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </value>
         /// <param name="handle">
-        /// The handle associated with the item to get or set. The handle must
-        /// be associated with an item in the priority queue.
+        ///     The handle associated with the item to get or set. The handle must be associated with an item in the priority
+        ///     queue.
         /// </param>
-        /// <returns>The specified handle's associated item.</returns>
+        /// <returns>
+        ///     The specified handle's associated item.
+        /// </returns>
         /// <exception cref="InvalidPriorityQueueHandleException">
-        /// The handle is not associated with an item in this priority queue,
-        /// or the handle is associated with an item in another priority queue.
+        ///     The handle is not associated with an item in this priority queue, or the handle is associated with an item in
+        ///     another priority queue.
         /// </exception>
         /// <remarks>
-        /// The setter raises the following events (in that order) with the
-        /// collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the old item
-        /// and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the new item and
-        /// a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     The setter raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the old item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsAdded"/> with the new item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         /// <seealso cref="Contains(IPriorityQueueHandle{T})"/>
         /// <seealso cref="Contains(IPriorityQueueHandle{T}, out T)"/>
@@ -95,60 +100,65 @@ namespace C6
         // TODO: Reorder parameters?
         // TODO: Review handle documentation
         /// <summary>
-        /// Add an item to the priority queue, receiving a handle for the item 
-        /// in the queue, or reusing an existing unused handle.
+        ///     Add an item to the priority queue, receiving a handle for the item in the queue, or reusing an existing unused
+        ///     handle.
         /// </summary>
-        /// <param name="handle">On output: a handle for the added item. 
-        /// On input: <c>null</c> for allocating a new handle, or a currently
-        /// unused handle for reuse. A handle for reuse must be compatible with
-        /// this priority queue, by being created by a priority queue of the 
-        /// same runtime type, but not necessarily the same priority queue
-        /// object.</param>
-        /// <param name="item">The item with which the handle should be 
-        /// associated. <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="handle">
+        ///     On output: a handle for the added item. On input: <c>null</c> for allocating a new handle, or a currently unused
+        ///     handle for reuse. A handle for reuse must be compatible with this priority queue, by being created by a priority
+        ///     queue of the same runtime type, but not necessarily the same priority queue object.
+        /// </param>
+        /// <param name="item">
+        ///     The item with which the handle should be associated. <c>null</c> is allowed, if
+        ///     <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <returns><c>true</c>.</returns>
         /// <remarks>
-        /// <para>If the item is added, it raises the following events (in that 
-        /// order) with the collection as sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the item and a 
-        /// count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
-        /// </para>
+        ///     <para>
+        ///         If the item is added, it raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the item and a count of one.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
         /// </remarks>
         bool Add(ref IPriorityQueueHandle<T> handle, T item);
 
         /// <summary>
-        /// Checks if the specified handle is associated with an item in the
-        /// priority queue.
+        ///     Checks if the specified handle is associated with an item in the priority queue.
         /// </summary>
-        /// <param name="handle">The handle associated with the item to find in
-        /// the priority queue.</param>
-        /// <returns><c>true</c> if the handle is associated with an item in
-        /// the priority queue; otherwise, <c>false</c>.</returns>
+        /// <param name="handle">
+        ///     The handle associated with the item to find in the priority queue.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the handle is associated with an item in the priority queue; otherwise, <c>false</c>.
+        /// </returns>
         /// <seealso cref="Contains(IPriorityQueueHandle{T}, out T)"/>
         /// <seealso cref="this[IPriorityQueueHandle{T}]"/>
         [Pure]
         bool Contains(IPriorityQueueHandle<T> handle);
 
         /// <summary>
-        /// Checks if the specified handle is associated with an item in the
-        /// priority queue.
+        ///     Checks if the specified handle is associated with an item in the priority queue.
         /// </summary>
-        /// <param name="handle">The handle associated with the item to find in
-        /// the priority queue.</param>
-        /// <param name="item">The item with which the specified handle is
-        /// associated, if the item is in the priority queue;
-        /// otherwise, <c>default(T)</c>.</param>
-        /// <returns><c>true</c> if the handle is associated with an item in
-        /// the priority queue; otherwise, <c>false</c>.</returns>
+        /// <param name="handle">
+        ///     The handle associated with the item to find in the priority queue.
+        /// </param>
+        /// <param name="item">
+        ///     The item with which the specified handle is associated, if the item is in the priority queue; otherwise,
+        ///     <c>default(T)</c>.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the handle is associated with an item in the priority queue; otherwise, <c>false</c>.
+        /// </returns>
         /// <seealso cref="Contains(IPriorityQueueHandle{T})"/>
         /// <seealso cref="this[IPriorityQueueHandle{T}]"/>
         [Pure]
@@ -156,165 +166,201 @@ namespace C6
 
         // TODO: Rename to Max
         /// <summary>
-        /// Returns the current largest item in the priority queue.
+        ///     Returns the current largest item in the priority queue.
         /// </summary>
-        /// <returns>The current largest item in the priority queue.</returns>
+        /// <returns>
+        ///     The current largest item in the priority queue.
+        /// </returns>
         [Pure]
         T FindMax();
 
         // TODO: Rename to Max
         /// <summary>
-        /// Returns the current largest item in the priority queue.
+        ///     Returns the current largest item in the priority queue.
         /// </summary>
-        /// <param name="handle">The handle associated with the largest item.</param>
-        /// <returns>The current largest item in the priority queue.</returns>
+        /// <param name="handle">
+        ///     The handle associated with the largest item.
+        /// </param>
+        /// <returns>
+        ///     The current largest item in the priority queue.
+        /// </returns>
         [Pure]
         T FindMax(out IPriorityQueueHandle<T> handle);
 
         // TODO: Rename to Min
         /// <summary>
-        /// Returns the current least item in the priority queue.
+        ///     Returns the current least item in the priority queue.
         /// </summary>
-        /// <returns>The least item in the priority queue.</returns>
+        /// <returns>
+        ///     The least item in the priority queue.
+        /// </returns>
         [Pure]
         T FindMin();
 
         // TODO: Rename to Min
         /// <summary>
-        /// Returns the current least item in the priority queue.
+        ///     Returns the current least item in the priority queue.
         /// </summary>
-        /// <param name="handle">The handle associated with the least item.</param>
-        /// <returns>The least item in the priority queue.</returns>
+        /// <param name="handle">
+        ///     The handle associated with the least item.
+        /// </param>
+        /// <returns>
+        ///     The least item in the priority queue.
+        /// </returns>
         [Pure]
         T FindMin(out IPriorityQueueHandle<T> handle);
 
         /// <summary>
-        /// Removes the item, with which the specified handle is associated,
-        /// from the priority queue.
+        ///     Removes the item, with which the specified handle is associated, from the priority queue.
         /// </summary>
-        /// <param name="handle">The specified handle, which will be
-        /// invalidated, but reusable.</param>
-        /// <returns>The item that the handle was previously associated with.
+        /// <param name="handle">
+        ///     The specified handle, which will be invalidated, but reusable.
+        /// </param>
+        /// <returns>
+        ///     The item that the handle was previously associated with.
         /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the removed 
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the removed item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T Remove(IPriorityQueueHandle<T> handle);
 
         /// <summary>
-        /// Removes and returns the least item in the priority queue.
+        ///     Removes and returns the least item in the priority queue.
         /// </summary>
-        /// <returns>The least item in the priority queue.</returns>
+        /// <returns>
+        ///     The least item in the priority queue.
+        /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the least item
-        /// and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the least item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T RemoveMin();
 
         /// <summary>
-        /// Removes and returns the least item in the priority queue.
+        ///     Removes and returns the least item in the priority queue.
         /// </summary>
-        /// <param name="handle">The handle associated with the least item.</param>
-        /// <returns>The least item in the priority queue.</returns>
+        /// <param name="handle">
+        ///     The handle associated with the least item.
+        /// </param>
+        /// <returns>
+        ///     The least item in the priority queue.
+        /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the least item
-        /// and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the least item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T RemoveMin(out IPriorityQueueHandle<T> handle);
 
         /// <summary>
-        /// Removes and returns the largest item in the priority queue.
+        ///     Removes and returns the largest item in the priority queue.
         /// </summary>
-        /// <returns>The largest item in the priority queue.</returns>
+        /// <returns>
+        ///     The largest item in the priority queue.
+        /// </returns>
         /// <remarks>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the largest
-        /// item and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
+        ///     Raises the following events (in that order) with the collection as sender:
+        ///     <list type="bullet">
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.ItemsRemoved"/> with the largest item and a count of one.
+        ///             </description>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///                 <see cref="IListenable{T}.CollectionChanged"/>.
+        ///             </description>
+        ///         </item>
+        ///     </list>
         /// </remarks>
         T RemoveMax();
 
         /// <summary>
-        /// Removes and returns the largest item in the priority queue.
+        ///     Removes and returns the largest item in the priority queue.
         /// </summary>
-        /// <param name="handle">The handle associated with the largest item.
+        /// <param name="handle">
+        ///     The handle associated with the largest item.
         /// </param>
-        /// <returns>The largest item in the priority queue.</returns>
+        /// <returns>
+        ///     The largest item in the priority queue.
+        /// </returns>
         T RemoveMax(out IPriorityQueueHandle<T> handle);
 
         // TODO: Exception: what if the handle is of the wrong type?
         // TODO: Rename to Update?
         // TODO: Remove if this is the same as this[handle] = item?
         /// <summary>
-        /// Replaces the item with which the specified handle is associated.
+        ///     Replaces the item with which the specified handle is associated.
         /// </summary>
         /// <param name="handle">The specified handle.</param>
-        /// <param name="item">The new item with which the handle should be 
-        /// associated. <c>null</c> is allowed, if
-        /// <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
+        /// <param name="item">
+        ///     The new item with which the handle should be associated. <c>null</c> is allowed, if
+        ///     <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
-        /// <returns>The item that the handle was previously associated with.
+        /// <returns>
+        ///     The item that the handle was previously associated with.
         /// </returns>
         /// <exception cref="InvalidPriorityQueueHandleException">
-        /// The handle is not associated with an item in this priority queue,
-        /// or the handle is associated with an item in another priority queue.
+        ///     The handle is not associated with an item in this priority queue, or the handle is associated with an item in
+        ///     another priority queue.
         /// </exception>
         /// <remarks>
-        /// <para>
-        /// This is typically used for changing the priority of a queued item.
-        /// </para>
-        /// <para>
-        /// Raises the following events (in that order) with the collection as
-        /// sender:
-        /// <list type="bullet">
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsRemoved"/> with the old item
-        /// and a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.ItemsAdded"/> with the new item and
-        /// a count of one.
-        /// </description></item>
-        /// <item><description>
-        /// <see cref="ICollectionValue{T}.CollectionChanged"/>.
-        /// </description></item>
-        /// </list>
-        /// </para>
+        ///     <para>
+        ///         This is typically used for changing the priority of a queued item.
+        ///     </para>
+        ///     <para>
+        ///         Raises the following events (in that order) with the collection as sender:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsRemoved"/> with the old item and a count of one.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.ItemsAdded"/> with the new item and a count of one.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     <see cref="IListenable{T}.CollectionChanged"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
         /// </remarks>
         /// <seealso cref="this[IPriorityQueueHandle{T}]"/>
         T Replace(IPriorityQueueHandle<T> handle, T item);
@@ -329,8 +375,7 @@ namespace C6
 
         public SCG.IComparer<T> Comparer
         {
-            get
-            {
+            get {
                 // No preconditions
 
 
@@ -358,7 +403,7 @@ namespace C6
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -377,16 +422,16 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Ensures(Result<T>().Equals(FindMin()));
+            Ensures(Result<T>().IsSameAs(FindMin()));
 
             // The handle is associated with the result
-            Ensures(this[ValueAtReturn(out handle)].Equals(Result<T>()));
+            Ensures(this[ValueAtReturn(out handle)].IsSameAs(Result<T>()));
 
             // The count remains the same
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -409,13 +454,13 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Ensures(Result<T>().Equals(OldValue(FindMin())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMin())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -437,7 +482,7 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) >= 0));
 
             // Result is same as FindMin
-            Ensures(Result<T>().Equals(OldValue(FindMin())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMin())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
@@ -446,7 +491,7 @@ namespace C6
             Ensures(!Contains(ValueAtReturn(out handle)));
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -469,7 +514,7 @@ namespace C6
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
             return default(T);
         }
@@ -487,16 +532,16 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Ensures(Result<T>().Equals(FindMax()));
+            Ensures(Result<T>().IsSameAs(FindMax()));
 
             // The handle is associated with the result
-            Ensures(this[ValueAtReturn(out handle)].Equals(Result<T>()));
+            Ensures(this[ValueAtReturn(out handle)].IsSameAs(Result<T>()));
 
             // The count remains the same
             Ensures(Count == OldValue(Count));
 
             // Return value is from the collection
-            Ensures(this.Contains(Result<T>()));
+            Ensures(this.ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -519,13 +564,13 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Ensures(Result<T>().Equals(OldValue(FindMax())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMax())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -547,7 +592,7 @@ namespace C6
             Ensures(ForAll(this, item => Comparer.Compare(item, Result<T>()) <= 0));
 
             // Result is same as FindMax
-            Ensures(Result<T>().Equals(OldValue(FindMax())));
+            Ensures(Result<T>().IsSameAs(OldValue(FindMax())));
 
             // Removing an item decreases the count by one
             Ensures(Count == OldValue(Count) - 1);
@@ -556,7 +601,7 @@ namespace C6
             Ensures(!Contains(ValueAtReturn(out handle)));
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             handle = null;
@@ -565,8 +610,7 @@ namespace C6
 
         public T this[IPriorityQueueHandle<T> handle]
         {
-            get
-            {
+            get {
                 // Handle must be non-null
                 Requires(handle != null, ArgumentMustBeNonNull);
 
@@ -578,14 +622,13 @@ namespace C6
                 Ensures(AllowsNull || Result<T>() != null);
 
                 // Return value is from the collection
-                Ensures(this.Contains(Result<T>()));
+                Ensures(this.ContainsSame(Result<T>()));
 
 
                 return default(T);
             }
 
-            set
-            {
+            set {
                 // Collection must be non-empty
                 Requires(!IsEmpty, CollectionMustBeNonEmpty);
 
@@ -603,13 +646,13 @@ namespace C6
 
 
                 // The handle is associated with the result
-                Ensures(this[handle].Equals(value));
+                Ensures(this[handle].IsSameAs(value));
 
                 // Replacing an item does not change the count
                 Ensures(Count == OldValue(Count));
 
                 // Return value is from the collection
-                Ensures(this.Contains(value));
+                Ensures(this.ContainsSame(value));
 
 
                 return;
@@ -669,16 +712,16 @@ namespace C6
             Ensures(!IsEmpty);
 
             // Handle is associated with new item
-            Ensures(EqualityComparer.Equals(this[handle], item));
+            Ensures(this[handle].IsSameAs(item));
 
             // Result is the old item with which the handle was associated
-            Ensures(EqualityComparer.Equals(OldValue(this[handle]), Result<T>()));
+            Ensures(OldValue(this[handle]).IsSameAs(Result<T>()));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -703,19 +746,19 @@ namespace C6
             Ensures(!IsEmpty);
 
             // The collection will contain the item added
-            Ensures(this.Contains(item, EqualityComparer));
+            Ensures(this.ContainsSame(item));
 
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + 1);
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.Count(x => EqualityComparer.Equals(x, item)) == OldValue(this.Count(x => EqualityComparer.Equals(x, item))) + 1);
+            Ensures(this.CountDuplicates(item, EqualityComparer) == OldValue(this.CountDuplicates(item, EqualityComparer)) + 1);
 
             // Returned handle is non-null
             Ensures(ValueAtReturn(out handle) != null);
 
             // Returned handle is associated with item
-            Ensures(EqualityComparer.Equals(this[ValueAtReturn(out handle)], item));
+            Ensures(this[ValueAtReturn(out handle)].IsSameAs(item));
 
 
             return default(bool);
@@ -745,10 +788,10 @@ namespace C6
             EnsuresOnThrow<InvalidPriorityQueueHandleException>(Count == OldValue(Count));
 
             // Collection does not change on exception
-            EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.SequenceEqual(OldValue(this.ToList())));
+            EnsuresOnThrow<InvalidPriorityQueueHandleException>(this.IsSameSequenceAs(OldValue(ToArray())));
 
             // Return value is from the collection
-            Ensures(OldValue(this.Contains(Result<T>()))); // TODO: Does this work?
+            Ensures(OldValue(ToArray()).ContainsSame(Result<T>()));
 
 
             return default(T);
@@ -816,7 +859,7 @@ namespace C6
         public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
         public abstract bool IsFixedSize { get; }
         public abstract bool IsReadOnly { get; }
-        public abstract void AddAll(SCG.IEnumerable<T> items);
+        public abstract bool AddRange(SCG.IEnumerable<T> items);
 
         #endregion
 

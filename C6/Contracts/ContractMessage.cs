@@ -1,5 +1,5 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
-// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 namespace C6.Contracts
 {
@@ -13,9 +13,12 @@ namespace C6.Contracts
         public static string CollectionMustAllowDuplicates => "Duplicates are not allowed";
         public static string CollectionMustContainItem => "Collection must contain item";
         public static string CollectionMustContainArgument => "Collection must contain argument";
+        public static string AllowsNullMustBeFalseForValueTypes => "Value types cannot be null";
+        public static string TypeMustBeStruct => "Generic type must be a struct.";
 
         // Events
         public static string EventMustBeListenable => "Event must be listenable";
+        public static string EventMustBeActive => "Event must be active";
 
         // Parameter validation
         public static string ArgumentMustBeNonNull => "Argument must be non-null";

@@ -1,5 +1,5 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
-// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
 using System.Collections;
@@ -93,7 +93,7 @@ namespace C6.Tests
         {
             // Arrange
             SCG.IEnumerable<int> enumerable = null;
-            var comparer = ComparerFactory.CreateComparer((int x, int y) => x.CompareTo(y));
+            var comparer = ComparerFactory.CreateComparer<int>((x, y) => x.CompareTo(y));
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
@@ -135,7 +135,7 @@ namespace C6.Tests
         public void IsSorted_CustomComparer_IsSorted(int[] array)
         {
             // Arrange
-            var comparer = ComparerFactory.CreateComparer((int x, int y) => x.CompareTo(y));
+            var comparer = ComparerFactory.CreateComparer<int>((x, y) => x.CompareTo(y));
 
             // Act
             var isSorted = array.IsSorted(comparer);
@@ -149,7 +149,7 @@ namespace C6.Tests
         public void IsSorted_CustomComparer_IsNotSorted(int[] array)
         {
             // Arrange
-            var comparer = ComparerFactory.CreateComparer((int x, int y) => x.CompareTo(y));
+            var comparer = ComparerFactory.CreateComparer<int>((x, y) => x.CompareTo(y));
 
             // Act
             var isSorted = array.IsSorted(comparer);
@@ -163,7 +163,7 @@ namespace C6.Tests
         public void IsSorted_ReversedComparer_IsSortedInReverse(int[] array)
         {
             // Arrange
-            var comparer = ComparerFactory.CreateComparer((int x, int y) => y.CompareTo(x));
+            var comparer = ComparerFactory.CreateComparer<int>((x, y) => y.CompareTo(x));
 
             // Act
             var isSorted = array.IsSorted(comparer);

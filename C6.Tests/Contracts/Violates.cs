@@ -1,5 +1,5 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
-// See https://github.com/lundmikkel/C6/blob/master/LICENSE.md for licensing details.
+// See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
 
@@ -27,8 +27,7 @@ namespace C6.Tests.Contracts
         /// <code>Assert.That(code, Violates.Precondition);</code></remarks>
         public static TypeConstraint Precondition
         {
-            get
-            {
+            get {
 #if (!DEBUG)
                 Assert.Ignore("Ignore preconditions in release.");
 #endif
@@ -53,6 +52,10 @@ namespace C6.Tests.Contracts
 
             return Throws.TypeOf<PreconditionException>().With.Property("UserMessage").EqualTo(userMessage);
         }
+
+        // TODO: Remove this once the issue is solved: https://github.com/Microsoft/CodeContracts/issues/392
+        // TODO: Add one assessing the user message
+        public static StartsWithConstraint UncaughtPrecondition => Throws.InstanceOf<Exception>().With.Message.StartsWith("Precondition failed");
 
         /// <summary>
         /// Returns an <see cref="EqualConstraint"/> that checks if a typed
