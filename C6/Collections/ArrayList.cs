@@ -543,10 +543,7 @@ namespace C6.Collections
 
         public T Pop() => RemoveLast();
 
-        public void Push(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public void Push(T item) => InsertLast(item);
 
         public bool Remove(T item)
         {
@@ -560,7 +557,7 @@ namespace C6.Collections
             T removedItem;
             return Remove(item, out removedItem);
         }
-
+        
         public bool Remove(T item, out T removedItem)
         {
             #region Code Contracts

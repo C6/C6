@@ -327,6 +327,132 @@ namespace C6.Tests
 
         #region Push(T)
 
+        [Test]
+        public void Push_DisallowsNullPushNull_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringStack(Random, allowsNull: false);
+
+            // Act & Assert
+            Assert.That(() => collection.Push(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+        
+        [Test]
+        public void Push_AllowsNull_Null()
+        {
+            // Arrange
+            var collection = GetStringStack(Random, allowsNull: true);
+            var array = collection.Append(null).ToArray();
+
+            // Act
+            collection.Push(null);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void Push_EmptyCollection_SingleItemCollection()
+        {
+            // Arrange
+            var collection = GetEmptyStack<string>();
+            var item = Random.GetString();
+            var array = new[] { item };
+
+            // Act
+            collection.Push(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void Push_RandomCollectionInsertExistingLast_InsertedLast()
+        {
+            // Arrange
+            var collection = GetStringStack(Random);
+            var item = collection.ToArray().Choose(Random);
+            var array = collection.Append(item).ToArray();
+
+            // Act
+            collection.Push(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void Push_RandomCollectionPush_InsertedLast()
+        {
+            // Arrange
+            var collection = GetStringStack(Random);
+            var item = Random.GetString();
+            var array = collection.Append(item).ToArray();
+
+            // Act
+            collection.Push(item);
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+        }
+
+        [Test]
+        public void Push_ManyItems_Equal()
+        {
+            // Arrange
+            var collection = GetEmptyStack<string>();
+            var items = GetStrings(Random, Random.Next(100, 250));
+
+            // Act
+            foreach (var item in items) {
+                collection.Push(item);
+            }
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+        }
+        
+        [Test]
+        public void Push_RandomCollectionPush_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringStack(Random);
+            var item = Random.GetString();
+            var expectedEvents = new[] {
+                Inserted(item, collection.Count, collection),
+                Added(item, 1, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Push(item), Raises(expectedEvents).For(collection));
+        }
+
+        [Test]
+        public void Push_PushItemDuringEnumeration_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringStack(Random);
+            var item = Random.GetString();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Push(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        [Category("Unfinished")]
+        public void Push_ReadOnlyCollection_Fail()
+        {
+            Run.If(IsReadOnly);
+
+            Assert.Fail("Tests have not been written yet");
+        }
+
         #endregion
 
         #endregion
