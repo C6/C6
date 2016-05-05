@@ -172,6 +172,24 @@ namespace C6.Tests
             Assert.That(item, Is.SameAs(array[index]));
         }
 
+        [Test]
+        public void ItemGet_GetItemDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random);
+            var index = GetIndex(collection, Random);
+            var expected = collection.ElementAt(index);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            var item = collection[index];
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+            Assert.That(item, Is.EqualTo(expected));
+        }
+
         #endregion
 
         #endregion

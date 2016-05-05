@@ -378,6 +378,7 @@ namespace C6.Tests.Collections
     public class ArrayListStackTests : IStackTests
     {
         protected override EventTypes ListenableEvents => All;
+        protected override bool IsReadOnly => false;
         protected override IStack<T> GetEmptyStack<T>(bool allowsNull = false) => new ArrayList<T>(allowsNull: allowsNull);
         protected override IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new ArrayList<T>(enumerable, allowsNull: allowsNull);
     }

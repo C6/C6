@@ -541,10 +541,7 @@ namespace C6.Collections
             return ~Count;
         }
 
-        public T Pop()
-        {
-            throw new NotImplementedException();
-        }
+        public T Pop() => RemoveLast();
 
         public void Push(T item)
         {
