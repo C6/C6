@@ -188,15 +188,14 @@ namespace C6.Tests
         public void GetIndexRange_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetSequence(items);
+            var collection = GetStringSequence(Random);
             var array = new string[collection.Count];
             var stringBuilder = new StringBuilder();
             var rest = 0;
 
             // Act
             var backwards = collection.Backwards();
-            collection.Add(GetLowercaseString(Random));
+            collection.UpdateOrAdd(Random.GetString());
 
             // TODO: Refactor into separate DirectCollectionValueConstraint
             // Assert

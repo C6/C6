@@ -23,12 +23,13 @@ namespace C6.Tests.Helpers
 
         private readonly Func<T> _chooseFunction;
         private readonly T[] _items;
+        private readonly bool _sequenced;
 
         #endregion
 
         #region Constructors
 
-        public ExpectedCollectionValue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer, bool allowsNull, Func<T> chooseFunction = null)
+        public ExpectedCollectionValue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer, bool allowsNull, Func<T> chooseFunction = null, bool sequenced = true)
         {
             #region Code Contracts
 
@@ -49,6 +50,7 @@ namespace C6.Tests.Helpers
             EqualityComparer = equalityComparer;
             AllowsNull = allowsNull;
             _chooseFunction = chooseFunction;
+            _sequenced = sequenced;
         }
 
         #endregion
@@ -97,11 +99,11 @@ namespace C6.Tests.Helpers
 
                 // Pure methods
                 && (!HasChoose || Choose().IsSameAs(other.Choose()))
-                && expectedArray.SequenceEqual(actualArray, EqualityComparer)
-                && this.SequenceEqual(other, EqualityComparer)
+                && (_sequenced ? expectedArray.SequenceEqual(actualArray, EqualityComparer) : expectedArray.UnsequenceEqual(actualArray, EqualityComparer))
+                && (_sequenced ? this.SequenceEqual(other, EqualityComparer) : this.UnsequenceEqual(other, EqualityComparer))
                 // Show() is tested with ToString()
-                && ToArray().SequenceEqual(other.ToArray(), EqualityComparer)
-                && ToString().Equals(other.ToString()); // TODO: Should they always return the same result? Couldn't this differ between collection types?
+                && (_sequenced ? ToArray().SequenceEqual(other.ToArray(), EqualityComparer) : ToArray().UnsequenceEqual(other.ToArray(), EqualityComparer))
+                && (!_sequenced || ToString().Equals(other.ToString())); // TODO: Should they always return the same result? Couldn't this differ between collection types?
         }
 
         public override bool Equals(object obj)

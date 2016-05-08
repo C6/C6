@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 
 using C6.Tests.Contracts;
 using C6.Tests.Helpers;
@@ -2165,16 +2166,43 @@ namespace C6.Tests
         #region UniqueItems
 
         [Test]
-        public void UniqueItems_EmptyCollection_Empty()
+        public void UniqueItems_RandomCollectionWithNull_ResultContainsNull()
         {
             // Arrange
-            var collection = GetEmptyCollection<string>();
+            var count = GetCount(Random);
+            var items = GetStrings(Random).WithNull(Random);
+            var duplicateItems = items.ShuffledCopy(Random).Take(count).Concat(items);
+            var collection = GetCollection(duplicateItems, allowsNull: true);
+            var expected = new ExpectedCollectionValue<string>(
+                items,
+                collection.EqualityComparer,
+                collection.AllowsNull,
+                sequenced: false
+            );
 
             // Act
             var uniqueItems = collection.UniqueItems();
 
             // Assert
-            Assert.That(uniqueItems, Is.Empty);
+            Assert.That(uniqueItems, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void UniqueItems_EmptyCollection_Empty()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+            var expected = new ExpectedCollectionValue<string>(
+                NoStrings,
+                collection.EqualityComparer,
+                collection.AllowsNull
+            );
+
+            // Act
+            var uniqueItems = collection.UniqueItems();
+
+            // Assert
+            Assert.That(uniqueItems, Is.EqualTo(expected));
         }
 
         [Test]
@@ -2182,12 +2210,18 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringCollection(Random, ReferenceEqualityComparer);
+            var expected = new ExpectedCollectionValue<string>(
+                collection,
+                collection.EqualityComparer,
+                collection.AllowsNull,
+                sequenced: false
+            );
 
             // Act
             var uniqueItems = collection.UniqueItems();
 
             // Assert
-            Assert.That(uniqueItems, Is.EquivalentTo(collection).Using(ReferenceEqualityComparer));
+            Assert.That(uniqueItems, Is.EqualTo(expected));
         }
 
         [Test]
@@ -2196,15 +2230,20 @@ namespace C6.Tests
             // Arrange
             var count = GetCount(Random);
             var item = Random.GetString();
-            var itemArray = new[] { item };
             var items = item.Repeat(count);
             var collection = GetCollection(items);
+            var expected = new ExpectedCollectionValue<string>(
+                new[] { item },
+                collection.EqualityComparer,
+                collection.AllowsNull,
+                sequenced: false
+            );
 
             // Act
             var uniqueItems = collection.UniqueItems();
 
             // Assert
-            Assert.That(uniqueItems, Is.EquivalentTo(itemArray));
+            Assert.That(uniqueItems, Is.EqualTo(expected));
         }
 
         [Test]
@@ -2214,12 +2253,75 @@ namespace C6.Tests
             var originalItems = GetStrings(Random);
             var items = originalItems.SelectMany(item => item.Repeat(Random.Next(1, 4)));
             var collection = GetCollection(items);
+            var expected = new ExpectedCollectionValue<string>(
+                originalItems,
+                collection.EqualityComparer,
+                collection.AllowsNull,
+                sequenced:false
+            );
 
             // Act
             var uniqueItems = collection.UniqueItems();
 
             // Assert
-            Assert.That(uniqueItems, Is.EquivalentTo(originalItems));
+            Assert.That(uniqueItems, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void UniqueItems_RandomCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.UniqueItems(), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void UniqueItems_UniqueItemsDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.UniqueItems();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
+        public void UniqueItems_ChangeCollectionInvalidatesCollectionValue_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var array = new string[collection.Count];
+            var stringBuilder = new StringBuilder();
+            var rest = 0;
+
+            // Act
+            var uniqueItems = collection.UniqueItems();
+            collection.UpdateOrAdd(Random.GetString());
+
+            // TODO: Refactor into separate CollectionValueConstraint
+            // Assert
+            Assert.That(() => uniqueItems.AllowsNull, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.Count, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.CountSpeed, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.IsEmpty, Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => uniqueItems.Choose(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.CopyTo(array, 0), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.GetEnumerator().MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.ToArray(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.Show(stringBuilder, ref rest, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.ToString(null, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => uniqueItems.Equals(null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.GetHashCode(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => uniqueItems.ToString(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         #endregion
