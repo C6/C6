@@ -685,7 +685,7 @@ namespace C6.Collections
             // Only update version if the collection is actually reversed
             UpdateVersion();
 
-            Array.Reverse(_items);
+            Array.Reverse(_items, 0, Count);
             RaiseForReverse();
         }
 

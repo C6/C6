@@ -345,6 +345,26 @@ namespace C6.Tests.Collections
 
         #endregion
 
+        #region Reverse
+
+        [Test]
+        public void Reverse_ReverseHalfFullCollection_Reversed()
+        {
+            // Arrange
+            var items = GetStrings(Random);
+            var collection = new ArrayList<string>(items);
+            collection.RemoveIndexRange(0, collection.Count / 2);
+            var expected = collection.ToArray().Reverse();
+
+            // Act
+            collection.Reverse();
+
+            // Assert
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+        }
+
+        #endregion
+
         #endregion
     }
 
