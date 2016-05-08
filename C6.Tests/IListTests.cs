@@ -5031,5 +5031,39 @@ namespace C6.Tests
         private SCG.IComparer<NonComparable> NonComparableComparer => _nonComparableComparison.ToComparer();
 
         #endregion
+
+
+
+        [Test]
+        public void _RemoveAt_EmptyCollection_ViolatesPrecondtion()
+        {
+            // Arrange
+            var collection = GetEmptyList<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(0), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void _RemoveAt_NegativeIndex_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = Random.Next(int.MinValue, 0);
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
+
+        [Test]
+        public void _RemoveAt_IndexOfCount_ViolatesPrecondition()
+        {
+            // Arrange
+            var collection = GetStringList(Random);
+            var index = collection.Count;
+
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+        }
     }
 }

@@ -556,7 +556,7 @@ namespace C6.Collections
             T removedItem;
             return Remove(item, out removedItem);
         }
-        
+
         public bool Remove(T item, out T removedItem)
         {
             #region Code Contracts
@@ -939,6 +939,19 @@ namespace C6.Collections
             }
         }
 
+        // Explicit implementation is needed to avoid warning CC1035
+        T SCG.IList<T>.this[int index]
+        {
+            get { return this[index]; }
+            set { this[index] = value; }
+        }
+
+        // Explicit implementation is needed to avoid warning CC1035
+        T IIndexed<T>.this[int index] => this[index];
+
+        // Explicit implementation is needed to avoid warning CC1035
+        T IStack<T>.this[int index] => this[index];
+
         int SC.IList.Add(object value)
         {
             try {
@@ -949,9 +962,24 @@ namespace C6.Collections
             }
         }
 
+        // Explicit implementation is needed to avoid warning CC1035
+        bool IExtensible<T>.Add(T item) => Add(item);
+
         void SCG.ICollection<T>.Add(T item) => Add(item);
 
         bool SC.IList.Contains(object value) => IsCompatibleObject(value) && Contains((T) value);
+
+        // Explicit implementation is needed to avoid warning CC1035
+        void ICollection<T>.Clear() => Clear();
+
+        // Explicit implementation is needed to avoid warning CC1035
+        bool SCG.ICollection<T>.Contains(T item) => Contains(item);
+
+        // Explicit implementation is needed to avoid warning CC1035
+        void ICollectionValue<T>.CopyTo(T[] array, int arrayIndex) => CopyTo(array, arrayIndex);
+
+        // Explicit implementation is needed to avoid warning CC1035
+        void SCG.ICollection<T>.CopyTo(T[] array, int arrayIndex) => CopyTo(array, arrayIndex);
 
         void SC.ICollection.CopyTo(Array array, int index)
         {
@@ -967,8 +995,14 @@ namespace C6.Collections
 
         int SC.IList.IndexOf(object value) => IsCompatibleObject(value) ? Math.Max(-1, IndexOf((T) value)) : -1;
 
-        // Explicit implementation is needed, since C6.IList<T>.IndexOf(T) breaks SCG.IList<T>.IndexOf(T)'s precondition: Result<T>() >= -1
+        // Explicit implementation is needed to avoid warning CC1035
+        int IIndexed<T>.IndexOf(T item) => IndexOf(item);
+
+        // Explicit implementation is needed, because C6.IList<T>.IndexOf(T) breaks SCG.IList<T>.IndexOf(T)'s precondition: Result<T>() >= -1
         int SCG.IList<T>.IndexOf(T item) => Math.Max(-1, IndexOf(item));
+        
+        // Explicit implementation is needed to avoid warning CC1035
+        void SCG.IList<T>.Insert(int index, T item) => Insert(index, item);
 
         void SC.IList.Insert(int index, object value)
         {
@@ -980,12 +1014,18 @@ namespace C6.Collections
             }
         }
 
+        // Explicit implementation is needed to avoid warning CC1035
+        bool SCG.ICollection<T>.Remove(T item) => Remove(item);
+
         void SC.IList.Remove(object value)
         {
             if (IsCompatibleObject(value)) {
                 Remove((T) value);
             }
         }
+
+        // Explicit implementation is needed to avoid warning CC1035
+        T IIndexed<T>.RemoveAt(int index) => RemoveAt(index);
 
         void SC.IList.RemoveAt(int index) => RemoveAt(index);
 
