@@ -3,42 +3,39 @@
 
 using System;
 using System.Linq;
-using System.Text;
-
-using C6.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
-using static C6.Speed;
+using static C6.Contracts.ContractMessage;
 
-using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests.Helpers
 {
-    public class ExpectedDirectedCollectionValue<T> : IDirectedCollectionValue<T>, IEquatable<IDirectedCollectionValue<T>>
+    public class ExpectedDirectedCollectionValue<T> : ExpectedCollectionValue<T>, IDirectedCollectionValue<T>, IEquatable<IDirectedCollectionValue<T>>
     {
-        #region Fields
-
-        private readonly SCG.IEqualityComparer<T> _equalityComparer;
-        private readonly Func<T> _chooseFunction;
-        private readonly T[] _items;
-        private readonly IExtensible<T> _originalCollection;
-
-        #endregion
-
         #region Constructors
 
-        public ExpectedDirectedCollectionValue(IExtensible<T> originalCollection, SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, EnumerationDirection direction = EnumerationDirection.Forwards, Func<T> chooseFunction = null)
+        public ExpectedDirectedCollectionValue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer, bool allowsNull, Func<T> chooseFunction = null, EnumerationDirection direction = EnumerationDirection.Forwards)
+            : base(items, equalityComparer, allowsNull, chooseFunction)
         {
-            _equalityComparer = equalityComparer ?? originalCollection.EqualityComparer;
-            _chooseFunction = chooseFunction;
-            // Copy the array instead of referencing it
-            _items = items.ToArray();
-            _originalCollection = originalCollection;
+            #region Code Contracts
 
-            AllowsNull = originalCollection.AllowsNull;
+            // Argument must be non-null
+            Requires(items != null, ArgumentMustBeNonNull);
+
+            // Argument must be non-null
+            Requires(equalityComparer != null, ArgumentMustBeNonNull);
+
+            // All items must be non-null if collection disallows null values
+            Requires(allowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
+
+            // Argument must be valid enum constant
+            Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
+
+            #endregion
+
             Direction = direction;
         }
 
@@ -46,39 +43,23 @@ namespace C6.Tests.Helpers
 
         #region Properties
 
-        public bool AllowsNull { get; }
-
-        public int Count => _items.Length;
-
-        public Speed CountSpeed => Constant;
-
         public EnumerationDirection Direction { get; }
-        public bool HasChoose => _chooseFunction != null;
-
-        public bool IsEmpty => Count == 0;
 
         #endregion
 
         #region Methods
 
         public IDirectedCollectionValue<T> Backwards() => new ExpectedDirectedCollectionValue<T>(
-            _originalCollection,
-            _items.Reverse(),
-            _equalityComparer,
+            this.Reverse(),
+            EqualityComparer,
+            AllowsNull,
+            HasChoose ? Choose : (Func<T>) null,
             Direction.Opposite()
-        );
+            );
 
-        public T Choose()
-        {
-            if (HasChoose) {
-                return _chooseFunction();
-            }
-            throw new NotImplementedException($"Use the {nameof(_chooseFunction)} to define the value of {nameof(Choose)}.");
-        }
-
-        public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
-
-        public bool Equals(IDirectedCollectionValue<T> other) => Equals(this, other, _equalityComparer) && Equals((ExpectedDirectedCollectionValue<T>) Backwards(), other.Backwards(), _equalityComparer);
+        public bool Equals(IDirectedCollectionValue<T> other)
+            => Equals(this, other)
+               && Equals((ExpectedDirectedCollectionValue<T>) Backwards(), other.Backwards());
 
         public override bool Equals(object obj)
         {
@@ -92,62 +73,15 @@ namespace C6.Tests.Helpers
             return that != null && Equals(that);
         }
 
-        public SCG.IEnumerator<T> GetEnumerator() => ((SCG.IEnumerable<T>) _items).GetEnumerator();
-
-        public override int GetHashCode()
-        {
-            throw new NotImplementedException($"{nameof(ExpectedDirectedCollectionValue<T>)} should only be used in tests and compared directly. Hash code is not supported.");
-        }
-
-        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
-
-        public T[] ToArray()
-        {
-            var array = new T[Count];
-            Array.Copy(_items, array, Count);
-            return array;
-        }
-
-        public override string ToString() => ToString(null, null);
-
-        public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
-
-        #endregion
-
-        #region Explicit Implementations
-
-        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
+        public override int GetHashCode() => base.GetHashCode();
 
         #endregion
 
         #region Private Members
 
-        private static bool Equals(ExpectedDirectedCollectionValue<T> expected, IDirectedCollectionValue<T> actual, SCG.IEqualityComparer<T> equalityComparer)
-        {
-            // Prepare CopyTo()
-            var padding = 2;
-            var expectedArray = new T[expected.Count + 2 * padding];
-            expected.CopyTo(expectedArray, padding);
-            var actualArray = new T[actual.Count + 2 * padding];
-            actual.CopyTo(actualArray, padding);
-
-            return
-                // Properties
-                expected.AllowsNull == actual.AllowsNull
-                && expected.Count == actual.Count
-                && expected.CountSpeed == actual.CountSpeed // TODO: Is this always constant? We would at least like that, right?
-                && expected.Direction == actual.Direction
-                && expected.IsEmpty == actual.IsEmpty
-
-                // Pure methods
-                && (!expected.HasChoose || expected.Choose().IsSameAs(actual.Choose()))
-                && expectedArray.SequenceEqual(actualArray, equalityComparer)
-                && expected.SequenceEqual(actual, equalityComparer)
-                // Show() is tested with ToString()
-                && expected.ToArray().SequenceEqual(actual.ToArray(), equalityComparer)
-                && expected.ToString().Equals(actual.ToString()) // TODO: Should they always return the same result? Couldn't this differ between collection types?
-                ;
-        }
+        private static bool Equals(ExpectedDirectedCollectionValue<T> expected, IDirectedCollectionValue<T> actual)
+            => ((ExpectedCollectionValue<T>) expected).Equals(actual)
+               && expected.Direction == actual.Direction;
 
         #endregion
     }

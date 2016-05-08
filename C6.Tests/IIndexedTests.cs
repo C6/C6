@@ -265,10 +265,10 @@ namespace C6.Tests
             var collection = GetStringIndexed(Random);
             var count = collection.Count;
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 collection.ToArray(),
-                ReferenceEqualityComparer
-                );
+                ReferenceEqualityComparer,
+                collection.AllowsNull
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(0, count);
@@ -285,9 +285,9 @@ namespace C6.Tests
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 collection.Skip(startIndex).Take(count),
-                ReferenceEqualityComparer
+                ReferenceEqualityComparer,
+                collection.AllowsNull
             );
 
             // Act
@@ -303,10 +303,10 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyIndexed<string>();
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 NoStrings,
-                ReferenceEqualityComparer
-                );
+                ReferenceEqualityComparer,
+                collection.AllowsNull
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(0, 0);
@@ -322,10 +322,10 @@ namespace C6.Tests
             var collection = GetStringIndexed(Random);
             var startIndex = Random.Next(0, collection.Count);
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 NoStrings,
-                ReferenceEqualityComparer
-                );
+                ReferenceEqualityComparer,
+                collection.AllowsNull
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, 0);
