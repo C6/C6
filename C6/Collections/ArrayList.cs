@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
 
 using C6.Contracts;
 
@@ -44,7 +43,7 @@ namespace C6.Collections
     /// </remarks>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class ArrayList<T> : IList<T>, IStack<T>
+    public class ArrayList<T> : CollectionValueBase<T>, IList<T>, IStack<T>
     {
         #region Fields
 
@@ -97,7 +96,7 @@ namespace C6.Collections
 
         #region Constructors
 
-        public ArrayList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        public ArrayList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : base(allowsNull)
         {
             #region Code Contracts
 
@@ -120,7 +119,6 @@ namespace C6.Collections
             #endregion
 
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
-            AllowsNull = allowsNull;
 
             var collectionValue = items as ICollectionValue<T>;
             var collection = items as SCG.ICollection<T>;
@@ -142,7 +140,7 @@ namespace C6.Collections
             }
         }
 
-        public ArrayList(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        public ArrayList(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : base(allowsNull)
         {
             #region Code Contracts
 
@@ -160,18 +158,15 @@ namespace C6.Collections
 
             Capacity = capacity;
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
-            AllowsNull = allowsNull;
         }
 
         #endregion
 
         #region Properties
 
-        public EventTypes ActiveEvents { get; private set; }
+        public virtual EventTypes ActiveEvents { get; private set; }
 
-        public bool AllowsDuplicates => true;
-
-        public bool AllowsNull { get; }
+        public virtual bool AllowsDuplicates => true;
 
         /// <summary>
         ///     Gets or sets the total number of items the internal data structure can hold without resizing.
@@ -222,33 +217,29 @@ namespace C6.Collections
             }
         }
 
-        public Speed ContainsSpeed => Linear;
+        public virtual Speed ContainsSpeed => Linear;
 
-        public int Count { get; private set; }
+        public override Speed CountSpeed => Constant;
 
-        public Speed CountSpeed => Constant;
+        public virtual EnumerationDirection Direction => EnumerationDirection.Forwards;
 
-        public EnumerationDirection Direction => EnumerationDirection.Forwards;
+        public virtual bool DuplicatesByCounting => false;
 
-        public bool DuplicatesByCounting => false;
+        public virtual SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public virtual T First => _items[0];
 
-        public T First => _items[0];
+        public virtual Speed IndexingSpeed => Constant;
 
-        public Speed IndexingSpeed => Constant;
+        public virtual bool IsFixedSize => false;
 
-        public bool IsEmpty => Count == 0;
+        public virtual bool IsReadOnly => false;
 
-        public bool IsFixedSize => false;
+        public virtual T Last => _items[Count - 1];
 
-        public bool IsReadOnly => false;
+        public virtual EventTypes ListenableEvents => All;
 
-        public T Last => _items[Count - 1];
-
-        public EventTypes ListenableEvents => All;
-
-        public T this[int index]
+        public virtual T this[int index]
         {
             get { return _items[index]; }
             set {
@@ -270,7 +261,7 @@ namespace C6.Collections
 
         #region Public Methods
 
-        public bool Add(T item)
+        public virtual bool Add(T item)
         {
             #region Code Contracts
 
@@ -284,7 +275,7 @@ namespace C6.Collections
             return true;
         }
 
-        public bool AddRange(SCG.IEnumerable<T> items)
+        public virtual bool AddRange(SCG.IEnumerable<T> items)
         {
             #region Code Contracts
 
@@ -309,11 +300,11 @@ namespace C6.Collections
         }
 
         // Only creates one Range instead of two as with GetIndexRange(0, Count).Backwards()
-        public IDirectedCollectionValue<T> Backwards() => new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
+        public virtual IDirectedCollectionValue<T> Backwards() => new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
 
-        public T Choose() => _items[Count - 1];
+        public override T Choose() => _items[Count - 1];
 
-        public void Clear()
+        public virtual void Clear()
         {
             #region Code Contracts
 
@@ -334,9 +325,9 @@ namespace C6.Collections
             RaiseForClear(oldCount);
         }
 
-        public bool Contains(T item) => IndexOf(item) >= 0;
+        public virtual bool Contains(T item) => IndexOf(item) >= 0;
 
-        public bool ContainsRange(SCG.IEnumerable<T> items)
+        public virtual bool ContainsRange(SCG.IEnumerable<T> items)
         {
             if (items.IsEmpty()) {
                 return true;
@@ -356,12 +347,12 @@ namespace C6.Collections
             return this.Any(item => itemsToContain.Remove(item) && itemsToContain.IsEmpty);
         }
 
-        public void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
+        public override void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
         // Explicitly check against null to avoid using the (slower) equality comparer
-        public int CountDuplicates(T item) => item == null ? this.Count(x => x == null) : this.Count(x => Equals(x, item));
+        public virtual int CountDuplicates(T item) => item == null ? this.Count(x => x == null) : this.Count(x => Equals(x, item));
 
-        public bool Find(ref T item)
+        public virtual bool Find(ref T item)
         {
             var index = IndexOf(item);
 
@@ -375,9 +366,9 @@ namespace C6.Collections
 
         // TODO: Implement with an ICollectionValue<T>
         // Explicitly check against null to avoid using the (slower) equality comparer
-        public SCG.IEnumerable<T> FindDuplicates(T item) => item == null ? this.Where(x => x == null) : this.Where(x => Equals(x, item));
+        public virtual SCG.IEnumerable<T> FindDuplicates(T item) => item == null ? this.Where(x => x == null) : this.Where(x => Equals(x, item));
 
-        public bool FindOrAdd(ref T item)
+        public virtual bool FindOrAdd(ref T item)
         {
             #region Code Contracts
 
@@ -396,7 +387,7 @@ namespace C6.Collections
             return false;
         }
 
-        public SCG.IEnumerator<T> GetEnumerator()
+        public override SCG.IEnumerator<T> GetEnumerator()
         {
             #region Code Contracts
 
@@ -412,10 +403,10 @@ namespace C6.Collections
             }
         }
 
-        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, EnumerationDirection.Forwards);
+        public virtual IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, EnumerationDirection.Forwards);
 
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
-        public int GetSequencedHashCode()
+        public virtual int GetSequencedHashCode()
         {
             if (_sequencedHashCodeVersion != _version) {
                 _sequencedHashCodeVersion = _version;
@@ -426,7 +417,7 @@ namespace C6.Collections
         }
 
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
-        public int GetUnsequencedHashCode()
+        public virtual int GetUnsequencedHashCode()
         {
             if (_unsequencedHashCodeVersion != _version) {
                 _unsequencedHashCodeVersion = _version;
@@ -437,7 +428,7 @@ namespace C6.Collections
         }
 
         [Pure]
-        public int IndexOf(T item)
+        public virtual int IndexOf(T item)
         {
             #region Code Contracts
 
@@ -471,7 +462,7 @@ namespace C6.Collections
             return ~Count;
         }
 
-        public void Insert(int index, T item)
+        public virtual void Insert(int index, T item)
         {
             #region Code Contracts
 
@@ -484,11 +475,11 @@ namespace C6.Collections
             RaiseForInsert(index, item);
         }
 
-        public void InsertFirst(T item) => Insert(0, item);
+        public virtual void InsertFirst(T item) => Insert(0, item);
 
-        public void InsertLast(T item) => Insert(Count, item);
+        public virtual void InsertLast(T item) => Insert(Count, item);
 
-        public void InsertRange(int index, SCG.IEnumerable<T> items)
+        public virtual void InsertRange(int index, SCG.IEnumerable<T> items)
         {
             #region Code Contracts
 
@@ -511,9 +502,9 @@ namespace C6.Collections
             RaiseForInsertRange(index, array);
         }
 
-        public bool IsSorted() => IsSorted(SCG.Comparer<T>.Default.Compare);
+        public virtual bool IsSorted() => IsSorted(SCG.Comparer<T>.Default.Compare);
 
-        public bool IsSorted(Comparison<T> comparison)
+        public virtual bool IsSorted(Comparison<T> comparison)
         {
             // TODO: Can we check that comparison doesn't alter the collection?
             for (var i = 1; i < Count; i++) {
@@ -525,15 +516,15 @@ namespace C6.Collections
             return true;
         }
 
-        public bool IsSorted(SCG.IComparer<T> comparer) => IsSorted((comparer ?? SCG.Comparer<T>.Default).Compare);
-
+        public virtual bool IsSorted(SCG.IComparer<T> comparer) => IsSorted((comparer ?? SCG.Comparer<T>.Default).Compare);
+        
         // TODO: Defer execution
-        public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
+        public virtual ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
             throw new NotImplementedException();
         }
 
-        public int LastIndexOf(T item)
+        public virtual int LastIndexOf(T item)
         {
             #region Code Contracts
 
@@ -567,11 +558,11 @@ namespace C6.Collections
             return ~Count;
         }
 
-        public T Pop() => RemoveLast();
+        public virtual T Pop() => RemoveLast();
 
-        public void Push(T item) => InsertLast(item);
+        public virtual void Push(T item) => InsertLast(item);
 
-        public bool Remove(T item)
+        public virtual bool Remove(T item)
         {
             #region Code Contracts
 
@@ -584,7 +575,7 @@ namespace C6.Collections
             return Remove(item, out removedItem);
         }
 
-        public bool Remove(T item, out T removedItem)
+        public virtual bool Remove(T item, out T removedItem)
         {
             #region Code Contracts
 
@@ -606,7 +597,7 @@ namespace C6.Collections
             return false;
         }
 
-        public T RemoveAt(int index)
+        public virtual T RemoveAt(int index)
         {
             #region Code Contracts
 
@@ -621,11 +612,11 @@ namespace C6.Collections
         }
 
         // Explicitly check against null to avoid using the (slower) equality comparer
-        public bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
+        public virtual bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
-        public T RemoveFirst() => RemoveAt(0);
+        public virtual T RemoveFirst() => RemoveAt(0);
 
-        public void RemoveIndexRange(int startIndex, int count)
+        public virtual void RemoveIndexRange(int startIndex, int count)
         {
             #region Code Contracts
 
@@ -649,9 +640,9 @@ namespace C6.Collections
             RaiseForRemoveIndexRange(startIndex, count);
         }
 
-        public T RemoveLast() => RemoveAt(Count - 1);
+        public virtual T RemoveLast() => RemoveAt(Count - 1);
 
-        public bool RemoveRange(SCG.IEnumerable<T> items)
+        public virtual bool RemoveRange(SCG.IEnumerable<T> items)
         {
             #region Code Contracts
 
@@ -669,7 +660,7 @@ namespace C6.Collections
             return RemoveAllWhere(item => itemsToRemove.Remove(item));
         }
 
-        public bool RetainRange(SCG.IEnumerable<T> items)
+        public virtual bool RetainRange(SCG.IEnumerable<T> items)
         {
             #region Code Contracts
 
@@ -696,7 +687,7 @@ namespace C6.Collections
             return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
-        public void Reverse()
+        public virtual void Reverse()
         {
             #region Code Contracts
 
@@ -716,13 +707,11 @@ namespace C6.Collections
             RaiseForReverse();
         }
 
-        public bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
+        public virtual bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
 
-        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
+        public virtual void Shuffle() => Shuffle(new Random());
 
-        public void Shuffle() => Shuffle(new Random());
-
-        public void Shuffle(Random random)
+        public virtual void Shuffle(Random random)
         {
             #region Code Contracts
 
@@ -742,12 +731,12 @@ namespace C6.Collections
             RaiseForShuffle();
         }
 
-        public void Sort() => Sort((SCG.IComparer<T>) null);
+        public virtual void Sort() => Sort((SCG.IComparer<T>) null);
 
         // TODO: It seems that Array.Sort(T[], Comparison<T>) is the only method that takes an Comparison<T>, not allowing us to set bounds on the sorting
-        public void Sort(Comparison<T> comparison) => Sort(comparison.ToComparer());
+        public virtual void Sort(Comparison<T> comparison) => Sort(comparison.ToComparer());
 
-        public void Sort(SCG.IComparer<T> comparer)
+        public virtual void Sort(SCG.IComparer<T> comparer)
         {
             #region Code Contracts
 
@@ -770,7 +759,7 @@ namespace C6.Collections
             RaiseForSort();
         }
 
-        public T[] ToArray()
+        public virtual T[] ToArray()
         {
             var array = new T[Count];
             Array.Copy(_items, array, Count);
@@ -779,7 +768,7 @@ namespace C6.Collections
 
         public override string ToString() => ToString(null, null);
 
-        public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
+        public virtual string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
 
         /// <summary>
         ///     Sets the capacity to the actual number of items in the <see cref="ArrayList{T}"/>, if that number is less than a
@@ -792,7 +781,7 @@ namespace C6.Collections
         ///     percent of capacity. This avoids incurring a large reallocation cost for a relatively small gain. The current
         ///     threshold of 90 percent might change in future releases.
         /// </remarks>
-        public void TrimExcess()
+        public virtual void TrimExcess()
         {
             if (Capacity * 0.9 <= Count) {
                 return;
@@ -800,11 +789,11 @@ namespace C6.Collections
             Capacity = Count;
         }
         
-        public ICollectionValue<T> UniqueItems() => new ItemSet(this);
+        public virtual ICollectionValue<T> UniqueItems() => new ItemSet(this);
 
-        public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
+        public virtual bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
 
-        public bool Update(T item)
+        public virtual bool Update(T item)
         {
             #region Code Contracts
 
@@ -817,7 +806,7 @@ namespace C6.Collections
             return Update(item, out oldItem);
         }
 
-        public bool Update(T item, out T oldItem)
+        public virtual bool Update(T item, out T oldItem)
         {
             #region Code Contracts
 
@@ -844,7 +833,7 @@ namespace C6.Collections
             return false;
         }
 
-        public bool UpdateOrAdd(T item)
+        public virtual bool UpdateOrAdd(T item)
         {
             #region Code Contracts
 
@@ -857,7 +846,7 @@ namespace C6.Collections
             return UpdateOrAdd(item, out oldItem);
         }
 
-        public bool UpdateOrAdd(T item, out T oldItem)
+        public virtual bool UpdateOrAdd(T item, out T oldItem)
         {
             #region Code Contracts
 
@@ -878,7 +867,7 @@ namespace C6.Collections
 
         #region Events
 
-        public event EventHandler CollectionChanged
+        public virtual event EventHandler CollectionChanged
         {
             add {
                 _collectionChanged += value;
@@ -892,7 +881,7 @@ namespace C6.Collections
             }
         }
 
-        public event EventHandler<ClearedEventArgs> CollectionCleared
+        public virtual event EventHandler<ClearedEventArgs> CollectionCleared
         {
             add {
                 _collectionCleared += value;
@@ -906,7 +895,7 @@ namespace C6.Collections
             }
         }
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
+        public virtual event EventHandler<ItemAtEventArgs<T>> ItemInserted
         {
             add {
                 _itemInserted += value;
@@ -920,7 +909,7 @@ namespace C6.Collections
             }
         }
 
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
+        public virtual event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
         {
             add {
                 _itemRemovedAt += value;
@@ -934,7 +923,7 @@ namespace C6.Collections
             }
         }
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
+        public virtual event EventHandler<ItemCountEventArgs<T>> ItemsAdded
         {
             add {
                 _itemsAdded += value;
@@ -948,7 +937,7 @@ namespace C6.Collections
             }
         }
 
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
+        public virtual event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
         {
             add {
                 _itemsRemoved += value;
@@ -1352,7 +1341,7 @@ namespace C6.Collections
         [Serializable]
         [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
         [DebuggerDisplay("{DebuggerDisplay}")]
-        private class ItemSet : ICollectionValue<T>
+        private sealed class ItemSet : CollectionValueBase<T>, ICollectionValue<T>
         {
             #region Fields
 
@@ -1383,9 +1372,9 @@ namespace C6.Collections
 
             #region Properties
 
-            public bool AllowsNull => CheckVersion() & _base.AllowsNull;
+            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
 
-            public int Count
+            public override int Count
             {
                 get {
                     CheckVersion();
@@ -1393,7 +1382,7 @@ namespace C6.Collections
                 }
             }
 
-            public Speed CountSpeed
+            public override Speed CountSpeed
             {
                 get {
                     CheckVersion();
@@ -1402,19 +1391,19 @@ namespace C6.Collections
                 }
             }
 
-            public bool IsEmpty => CheckVersion() & _base.IsEmpty;
+            public override bool IsEmpty => CheckVersion() & _base.IsEmpty;
 
             #endregion
 
             #region Public Methods
 
-            public T Choose()
+            public override T Choose()
             {
                 CheckVersion();
                 return _base.Choose();
             }
 
-            public void CopyTo(T[] array, int arrayIndex)
+            public override void CopyTo(T[] array, int arrayIndex)
             {
                 CheckVersion();
                 // TODO: 
@@ -1423,7 +1412,7 @@ namespace C6.Collections
 
             public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
 
-            public SCG.IEnumerator<T> GetEnumerator()
+            public override SCG.IEnumerator<T> GetEnumerator()
             {
                 // If a set already exists, enumerate that
                 if (_set != null) {
@@ -1454,24 +1443,12 @@ namespace C6.Collections
                 CheckVersion();
                 return base.GetHashCode();
             }
-
-            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
-
-            public T[] ToArray()
+            
+            public override T[] ToArray()
             {
                 CheckVersion();
                 return Set.ToArray();
             }
-
-            public override string ToString() => ToString(null, null);
-
-            public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
-
-            #endregion
-
-            #region Explicit Implementations
-
-            SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
             #endregion
 
@@ -1494,7 +1471,7 @@ namespace C6.Collections
         [Serializable]
         [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
         [DebuggerDisplay("{DebuggerDisplay}")]
-        private class Range : IDirectedCollectionValue<T>
+        private sealed class Range : CollectionValueBase<T>, IDirectedCollectionValue<T>
         {
             #region Fields
 
@@ -1563,9 +1540,9 @@ namespace C6.Collections
 
             #region Properties
 
-            public bool AllowsNull => CheckVersion() & _base.AllowsNull;
+            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
 
-            public int Count
+            public override int Count
             {
                 get {
                     CheckVersion();
@@ -1573,7 +1550,7 @@ namespace C6.Collections
                 }
             }
 
-            public Speed CountSpeed
+            public override Speed CountSpeed
             {
                 get {
                     CheckVersion();
@@ -1589,8 +1566,6 @@ namespace C6.Collections
                 }
             }
 
-            public bool IsEmpty => CheckVersion() & _count == 0;
-
             #endregion
 
             #region Public Methods
@@ -1603,7 +1578,7 @@ namespace C6.Collections
                 return new Range(_base, startIndex, _count, direction);
             }
 
-            public T Choose()
+            public override T Choose()
             {
                 CheckVersion();
                 // Select the highest index in the range
@@ -1611,7 +1586,7 @@ namespace C6.Collections
                 return _base._items[index];
             }
 
-            public void CopyTo(T[] array, int arrayIndex)
+            public override void CopyTo(T[] array, int arrayIndex)
             {
                 CheckVersion();
                 if (_direction.IsForward()) {
@@ -1620,15 +1595,13 @@ namespace C6.Collections
                 }
                 else {
                     // Use enumerator instead of copying and then reversing
-                    foreach (var item in this) {
-                        array[arrayIndex++] = item;
-                    }
+                    base.CopyTo(array, arrayIndex);
                 }
             }
 
             public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
 
-            public SCG.IEnumerator<T> GetEnumerator()
+            public override SCG.IEnumerator<T> GetEnumerator()
             {
                 var items = _base._items;
                 for (var i = 0; i < Count; i++) {
@@ -1641,29 +1614,15 @@ namespace C6.Collections
                 CheckVersion();
                 return base.GetHashCode();
             }
-
-            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
-
-            public T[] ToArray()
+            
+            public override T[] ToArray()
             {
                 CheckVersion();
-                var array = new T[_count];
-                CopyTo(array, 0);
-                return array;
+                return base.ToArray();
             }
-
-            public override string ToString() => ToString(null, null);
-
-            public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
-
+            
             #endregion
-
-            #region Explicit Implementations
-
-            SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
-
-            #endregion
-
+            
             #region Private Members
 
             private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired range; original collection was modified since range was created.";
