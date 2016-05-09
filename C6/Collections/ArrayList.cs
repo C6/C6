@@ -799,10 +799,8 @@ namespace C6.Collections
             }
             Capacity = Count;
         }
-
-        // TODO: Test that changing the collection breaks the collection value!
-        // TODO: Defer execution
-        public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: new HashBag<T>(this);
+        
+        public ICollectionValue<T> UniqueItems() => new ItemSet(this);
 
         public bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
 
@@ -1349,6 +1347,146 @@ namespace C6.Collections
         #endregion
 
         #region Nested Types
+        
+        // TODO: Introduce base class?
+        [Serializable]
+        [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
+        [DebuggerDisplay("{DebuggerDisplay}")]
+        private class ItemSet : ICollectionValue<T>
+        {
+            #region Fields
+
+            private readonly ArrayList<T> _base;
+            private readonly int _version;
+            // TODO: Replace with HashedArrayList<T>
+            private SCG.HashSet<T> _set;
+
+            #endregion
+
+            #region Constructors
+
+            // TODO: Document
+            public ItemSet(ArrayList<T> list)
+            {
+                #region Code Contracts
+
+                // Argument must be non-null
+                Requires(list != null, ArgumentMustBeNonNull);
+
+                #endregion
+
+                _base = list;
+                _version = _base._version;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public bool AllowsNull => CheckVersion() & _base.AllowsNull;
+
+            public int Count
+            {
+                get {
+                    CheckVersion();
+                    return Set.Count;
+                }
+            }
+
+            public Speed CountSpeed
+            {
+                get {
+                    CheckVersion();
+                    // TODO: Always use Linear?
+                    return _set == null ? Linear : Constant;
+                }
+            }
+
+            public bool IsEmpty => CheckVersion() & _base.IsEmpty;
+
+            #endregion
+
+            #region Public Methods
+
+            public T Choose()
+            {
+                CheckVersion();
+                return _base.Choose();
+            }
+
+            public void CopyTo(T[] array, int arrayIndex)
+            {
+                CheckVersion();
+                // TODO: 
+                Set.CopyTo(array, arrayIndex);
+            }
+
+            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
+
+            public SCG.IEnumerator<T> GetEnumerator()
+            {
+                // If a set already exists, enumerate that
+                if (_set != null) {
+                    var enumerator = Set.GetEnumerator();
+                    while (CheckVersion() & enumerator.MoveNext()) {
+                        yield return enumerator.Current;
+                    }
+                }
+                // Otherwise, evaluate lazily
+                else {
+                    var set = new SCG.HashSet<T>(_base.EqualityComparer);
+
+                    var enumerator = _base.GetEnumerator();
+                    while (CheckVersion() & enumerator.MoveNext()) {
+                        // Only return new items
+                        if (set.Add(enumerator.Current)) {
+                            yield return enumerator.Current;
+                        }
+                    }
+
+                    // Save set for later (re)user
+                    _set = set;
+                }
+            }
+
+            public override int GetHashCode()
+            {
+                CheckVersion();
+                return base.GetHashCode();
+            }
+
+            public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
+
+            public T[] ToArray()
+            {
+                CheckVersion();
+                return Set.ToArray();
+            }
+
+            public override string ToString() => ToString(null, null);
+
+            public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
+
+            #endregion
+
+            #region Explicit Implementations
+
+            SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
+
+            #endregion
+
+            #region Private Members
+
+            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired range; original collection was modified since range was created.";
+
+            private bool CheckVersion() => _base.CheckVersion(_version);
+
+            // TODO: Replace with HashedArrayList<T>!
+            private SCG.ISet<T> Set => _set ?? (_set = new SCG.HashSet<T>(_base, _base.EqualityComparer));
+
+            #endregion
+        }
+
 
         /// <summary>
         ///     Represents a range of an <see cref="ArrayList{T}"/>.
