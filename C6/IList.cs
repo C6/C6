@@ -836,7 +836,7 @@ namespace C6
 
 
             // True if sorted
-            Ensures(Result<bool>() == Extensions.IsSorted(this));
+            Ensures(Result<bool>() == CollectionExtensions.IsSorted(this));
 
 
             return default(bool);
@@ -848,7 +848,7 @@ namespace C6
 
 
             // True if sorted
-            Ensures(Result<bool>() == Extensions.IsSorted(this, comparer));
+            Ensures(Result<bool>() == CollectionExtensions.IsSorted(this, comparer));
 
 
             return default(bool);
@@ -861,7 +861,7 @@ namespace C6
 
 
             // True if sorted
-            Ensures(Result<bool>() == Extensions.IsSorted(this, comparison));
+            Ensures(Result<bool>() == CollectionExtensions.IsSorted(this, comparison));
 
 
             return default(bool);

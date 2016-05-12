@@ -256,7 +256,7 @@
     <Compile Include="ItemCountEventArgs.cs" />
     <Compile Include="Collections\EventManager.cs" />
     <Compile Include="Collections\ExceptionMessages.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="CollectionExtensions.cs" />
     <Compile Include="IListenable.cs" />
     <Compile Include="SequencedEqualityComparer.cs" />
     <Compile Include="Showing.cs" />

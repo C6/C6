@@ -16,7 +16,7 @@ using SCG = System.Collections.Generic;
 
 namespace C6
 {
-    public static class Extensions
+    public static class CollectionExtensions
     {
         /// <summary>
         ///     Appends the specified element at the end of the <see cref="SCG.IEnumerable{T}"/>.
