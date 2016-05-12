@@ -69,6 +69,11 @@ namespace C6
         /// <value>
         ///     A characterization of the asymptotic speed of <see cref="Count"/> proportional to collection size.
         /// </value>
+        /// <remarks>
+        ///     If the <see cref="ICollectionValue{T}"/> is a return value from a collection query, e.g.
+        ///     <see cref="ICollection{T}.UniqueItems"/>, then <see cref="CountSpeed"/> is proportional to the original collection
+        ///     size, not the result size.
+        /// </remarks>
         [Pure]
         Speed CountSpeed { get; }
 
