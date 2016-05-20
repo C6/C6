@@ -15,7 +15,6 @@ using SCG = System.Collections.Generic;
 
 namespace C6.Contracts
 {
-    // TODO: Should this be internal like the contract classes?
     public static class ContractHelperExtensions
     {
         /// <summary>
