@@ -517,7 +517,7 @@ namespace C6.Collections
         }
 
         public virtual bool IsSorted(SCG.IComparer<T> comparer) => IsSorted((comparer ?? SCG.Comparer<T>.Default).Compare);
-        
+
         // TODO: Defer execution
         public virtual ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
@@ -788,7 +788,7 @@ namespace C6.Collections
             }
             Capacity = Count;
         }
-        
+
         public virtual ICollectionValue<T> UniqueItems() => new ItemSet(this);
 
         public virtual bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
@@ -1336,7 +1336,7 @@ namespace C6.Collections
         #endregion
 
         #region Nested Types
-        
+
         // TODO: Introduce base class?
         [Serializable]
         [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
@@ -1349,6 +1349,24 @@ namespace C6.Collections
             private readonly int _version;
             // TODO: Replace with HashedArrayList<T>
             private SCG.HashSet<T> _set;
+
+            #endregion
+
+            #region Code Contracts
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                // ReSharper disable InvocationIsSkipped
+
+                // Base list is never null
+                Invariant(_base != null);
+
+                // Either the set has not been created, or it contains the same as the base list's distinct items
+                Invariant(_set == null || _set.UnsequenceEqual(_base.Distinct(_base.EqualityComparer), _base.EqualityComparer));
+
+                // ReSharper restore InvocationIsSkipped
+            }
 
             #endregion
 
@@ -1414,6 +1432,8 @@ namespace C6.Collections
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
+                Ensures(_set != null);
+
                 // If a set already exists, enumerate that
                 if (_set != null) {
                     var enumerator = Set.GetEnumerator();
@@ -1443,7 +1463,7 @@ namespace C6.Collections
                 CheckVersion();
                 return base.GetHashCode();
             }
-            
+
             public override T[] ToArray()
             {
                 CheckVersion();
@@ -1614,15 +1634,15 @@ namespace C6.Collections
                 CheckVersion();
                 return base.GetHashCode();
             }
-            
+
             public override T[] ToArray()
             {
                 CheckVersion();
                 return base.ToArray();
             }
-            
+
             #endregion
-            
+
             #region Private Members
 
             private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired range; original collection was modified since range was created.";
