@@ -4,11 +4,11 @@
 using System;
 using System.Diagnostics.Contracts;
 
-using SCG = System.Collections.Generic;
-
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6

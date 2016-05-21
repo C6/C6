@@ -6,9 +6,9 @@ using System;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
-using SCG = System.Collections.Generic;
-
 using static C6.EventTypes;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests.Helpers

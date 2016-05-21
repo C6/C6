@@ -2,9 +2,10 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
+
+using SC = System.Collections;
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Collections
@@ -44,7 +45,7 @@ namespace C6.Collections
             }
         }
 
-        public abstract IEnumerator<T> GetEnumerator();
+        public abstract SCG.IEnumerator<T> GetEnumerator();
 
         public virtual bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider) => Showing.Show(this, stringBuilder, ref rest, formatProvider);
 
@@ -63,7 +64,7 @@ namespace C6.Collections
 
         #region Explicit Implementations
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

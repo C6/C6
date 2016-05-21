@@ -2,7 +2,6 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Text;
 
@@ -11,6 +10,7 @@ using static System.Diagnostics.Contracts.Contract;
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 
+using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
@@ -90,7 +90,7 @@ namespace C6
         /// <seealso cref="IList{T}.Shuffle()"/>
         /// <seealso cref="IList{T}.Shuffle(Random)"/>
         /// <seealso cref="IList{T}.Sort()"/>
-        /// <seealso cref="IList{T}.Sort(System.Collections.Generic.IComparer{T})"/>
+        /// <seealso cref="IList{T}.Sort(SCG.IComparer{T})"/>
         /// <seealso cref="IList{T}.Sort(Comparison{T})"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax()"/>
         /// <seealso cref="IPriorityQueue{T}.RemoveMax(out IPriorityQueueHandle{T})"/>
@@ -466,7 +466,7 @@ namespace C6
         #region SCG.IEnumerable<T>
 
         public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 

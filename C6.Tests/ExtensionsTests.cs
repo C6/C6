@@ -2,7 +2,6 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
 
 using C6.Tests.Contracts;
 
@@ -10,6 +9,7 @@ using NUnit.Framework;
 
 using static C6.Contracts.ContractMessage;
 
+using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
@@ -20,7 +20,7 @@ namespace C6.Tests
     {
         #region IsSorted TestCases
 
-        private static IEnumerable SortedTestCases => new[] {
+        private static SC.IEnumerable SortedTestCases => new[] {
             new TestCaseData(new int[] { }),
             new TestCaseData(new[] { 1 }),
             new TestCaseData(new[] { 0, 0, 0 }),
@@ -30,7 +30,7 @@ namespace C6.Tests
             new TestCaseData(new[] { int.MinValue, 0, int.MaxValue }),
         };
 
-        private static IEnumerable NotSortedTestCases => new[] {
+        private static SC.IEnumerable NotSortedTestCases => new[] {
             new TestCaseData(new[] { 1, 0 }),
             new TestCaseData(new[] { 3, 2, 1, 0 }),
             new TestCaseData(new[] { 3, 5, 5, 6, 5 }),
@@ -38,7 +38,7 @@ namespace C6.Tests
             new TestCaseData(new[] { int.MaxValue, int.MinValue }),
         };
 
-        private static IEnumerable ReverseSortedTestCases => new[] {
+        private static SC.IEnumerable ReverseSortedTestCases => new[] {
             new TestCaseData(new int[] { }),
             new TestCaseData(new[] { 1 }),
             new TestCaseData(new[] { 0, 0, 0 }),

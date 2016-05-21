@@ -7,6 +7,7 @@ using C6.Tests.Helpers;
 
 using NUnit.Framework;
 
+using SCG = System.Collections.Generic;
 
 namespace C6.Tests
 {
@@ -155,7 +156,7 @@ namespace C6.Tests
             var key = Random.Next();
             var value = Random.GetString(10);
             var c6Kvp = new KeyValuePair<int, string>(key, value);
-            var scgKvp = new System.Collections.Generic.KeyValuePair<int, string>(key, value);
+            var scgKvp = new SCG.KeyValuePair<int, string>(key, value);
 
             // Act
             // ReSharper disable once SuspiciousTypeConversion.Global

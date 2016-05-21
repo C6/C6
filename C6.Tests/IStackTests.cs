@@ -11,11 +11,11 @@ using NUnit.Framework.Internal;
 
 using static C6.Collections.ExceptionMessages;
 
-using SCG = System.Collections.Generic;
-
 using static C6.Contracts.ContractMessage;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests

@@ -8,8 +8,6 @@ using C6.Contracts;
 
 using static C6.Contracts.ContractMessage;
 
-using SCG = System.Collections.Generic;
-
 using static C6.EventTypes;
 
 

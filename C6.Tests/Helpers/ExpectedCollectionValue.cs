@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using System.Text;
 
 using C6.Collections;
 using C6.Contracts;
@@ -12,13 +11,12 @@ using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
 
-using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests.Helpers
 {
-    public class ExpectedCollectionValue<T> : CollectionValueBase<T>, ICollectionValue<T>, IEquatable<ICollectionValue<T>>
+    public class ExpectedCollectionValue<T> : CollectionValueBase<T>, IEquatable<ICollectionValue<T>>
     {
         #region Fields
 

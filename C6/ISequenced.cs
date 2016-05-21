@@ -2,13 +2,13 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
@@ -127,7 +127,7 @@ namespace C6
         #region SCG.IEnumerable<T>
 
         public abstract SCG.IEnumerator<T> GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 

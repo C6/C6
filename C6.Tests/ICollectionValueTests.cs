@@ -6,16 +6,15 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-using C6.Contracts;
 using C6.Tests.Contracts;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
-using SCG = System.Collections.Generic;
-
 using static C6.Contracts.ContractMessage;
 using static C6.Tests.Helpers.TestHelper;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests

@@ -8,10 +8,10 @@ using C6.Tests.Helpers;
 
 using NUnit.Framework;
 
-using SCG = System.Collections.Generic;
-
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
+
+using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests

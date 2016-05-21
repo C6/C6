@@ -1,7 +1,7 @@
 ﻿// This file is part of the C6 Generic Collection Library for C# and CLI
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
-using System.Collections.Generic;
+using SCG = System.Collections.Generic;
 
 using C6.Tests.Helpers;
 
@@ -22,7 +22,7 @@ namespace C6.Tests
         /// </summary>
         /// <typeparam name="T">The type of the items in the enumerable.</typeparam>
         /// <returns>An empty enumerable.</returns>
-        protected abstract IEnumerable<T> GetEmptyEnumerable<T>();
+        protected abstract SCG.IEnumerable<T> GetEmptyEnumerable<T>();
 
         /// <summary>
         /// Creates a enumerable containing the items in another enumerable.
@@ -33,7 +33,7 @@ namespace C6.Tests
         /// the new enumerable.</param>
         /// <returns>A enumerable containing the items in another enumerable.
         /// </returns>
-        protected abstract IEnumerable<T> GetEnumerable<T>(IEnumerable<T> enumerable);
+        protected abstract SCG.IEnumerable<T> GetEnumerable<T>(SCG.IEnumerable<T> enumerable);
 
         #endregion
 

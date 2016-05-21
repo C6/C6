@@ -2,8 +2,8 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections;
 
+using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 
@@ -28,7 +28,7 @@ namespace C6.Tests.Helpers
             throw _exception;
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
 
