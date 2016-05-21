@@ -309,10 +309,11 @@ namespace C6.Tests.Collections
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 collection.Skip(startIndex).Take(count),
-                chooseFunction: () => collection[startIndex + count - 1]
-                );
+                collection.EqualityComparer,
+                collection.AllowsNull,
+                () => collection[startIndex + count - 1]
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count);
@@ -330,11 +331,12 @@ namespace C6.Tests.Collections
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 collection.Skip(startIndex).Take(count).Reverse(),
-                direction: EnumerationDirection.Backwards,
-                chooseFunction: () => collection[startIndex + count - 1]
-                );
+                collection.EqualityComparer,
+                collection.AllowsNull,
+                () => collection[startIndex + count - 1],
+                EnumerationDirection.Backwards
+            );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count).Backwards();

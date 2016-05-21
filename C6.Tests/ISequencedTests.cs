@@ -114,11 +114,11 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptySequence<string>();
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 NoStrings,
                 ReferenceEqualityComparer,
-                Backwards
-                );
+                collection.AllowsNull,
+                direction: Backwards
+            );
 
             // Act
             var backwards = collection.Backwards();
@@ -133,11 +133,11 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringSequence(Random);
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 collection.Reverse(),
                 ReferenceEqualityComparer,
-                Backwards
-                );
+                collection.AllowsNull,
+                direction: Backwards
+            );
 
             // Act
             var backwards = collection.Backwards();
@@ -153,11 +153,11 @@ namespace C6.Tests
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetSequence(items, allowsNull: true);
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 collection.Reverse(),
                 ReferenceEqualityComparer,
-                Backwards
-                );
+                collection.AllowsNull,
+                direction: Backwards
+            );
 
             // Act
             var backwards = collection.Backwards();
@@ -172,10 +172,10 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringSequence(Random);
             var expected = new ExpectedDirectedCollectionValue<string>(
-                collection,
                 collection.ToArray(),
-                ReferenceEqualityComparer
-                );
+                ReferenceEqualityComparer,
+                collection.AllowsNull
+            );
 
             // Act
             var backwardsBackwards = collection.Backwards().Backwards();
@@ -188,15 +188,14 @@ namespace C6.Tests
         public void GetIndexRange_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetSequence(items);
+            var collection = GetStringSequence(Random);
             var array = new string[collection.Count];
             var stringBuilder = new StringBuilder();
             var rest = 0;
 
             // Act
             var backwards = collection.Backwards();
-            collection.Add(GetLowercaseString(Random));
+            collection.UpdateOrAdd(Random.GetString());
 
             // TODO: Refactor into separate DirectCollectionValueConstraint
             // Assert

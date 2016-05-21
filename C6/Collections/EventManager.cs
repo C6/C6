@@ -12,7 +12,7 @@ using static C6.EventTypes;
 
 namespace C6.Collections
 {
-    // TODO: Merge into CollectionValueBase
+    // TODO: Merge into ListenableBase
     /// <summary>
     ///     Manages events for an <see cref="ICollectionValue{T}"/>.
     /// </summary>
