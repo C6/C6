@@ -1295,13 +1295,7 @@ namespace C6
         public abstract void RemoveIndexRange(int startIndex, int count);
 
         #endregion
-
-        #region IDisposable
-
-        public abstract void Dispose();
-
-        #endregion
-
+        
         #region SC.IList
 
         object IList.this[int index]
