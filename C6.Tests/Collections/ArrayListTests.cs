@@ -313,7 +313,7 @@ namespace C6.Tests.Collections
                 collection.EqualityComparer,
                 collection.AllowsNull,
                 () => collection[startIndex + count - 1]
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count);
@@ -336,7 +336,7 @@ namespace C6.Tests.Collections
                 collection.AllowsNull,
                 () => collection[startIndex + count - 1],
                 EnumerationDirection.Backwards
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count).Backwards();

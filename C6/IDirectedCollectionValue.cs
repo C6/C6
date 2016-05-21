@@ -79,7 +79,7 @@ namespace C6
                 return default(EnumerationDirection);
             }
         }
-        
+
         public IDirectedCollectionValue<T> Backwards()
         {
             // No preconditions

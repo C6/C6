@@ -11,11 +11,10 @@ using System;
 namespace C6.Tests.Contracts
 {
     /// <summary>
-    /// Provides custom exception throwing for contract tests.
+    ///     Provides custom exception throwing for contract tests.
     /// </summary>
     /// <remarks>
-    /// The class is used by Code Contracts in the assembly properties. See the
-    /// Code Contracts User Manual section 7.7.
+    ///     The class is used by Code Contracts in the assembly properties. See the Code Contracts User Manual section 7.7.
     /// </remarks>
     public static class TestFailureMethods
     {

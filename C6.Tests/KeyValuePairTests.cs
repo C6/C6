@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 using SCG = System.Collections.Generic;
 
+
 namespace C6.Tests
 {
     [TestFixture]

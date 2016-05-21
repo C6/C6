@@ -55,7 +55,7 @@ namespace C6.Tests.Helpers
             AllowsNull,
             HasChoose ? Choose : (Func<T>) null,
             Direction.Opposite()
-        );
+            );
 
         public bool Equals(IDirectedCollectionValue<T> other)
             => Equals(this, other)

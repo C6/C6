@@ -40,7 +40,7 @@ namespace C6.Collections
                 (_itemsRemoved != null ? Removed : None) |
                 (_itemInserted != null ? Inserted : None) |
                 (_itemRemovedAt != null ? RemovedAt : None)
-            ));
+                ));
 
             // ReSharper enable InvocationIsSkipped
         }

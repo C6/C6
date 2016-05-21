@@ -79,6 +79,7 @@ namespace C6.Tests.Contracts
             Assert.That(containsRange, Is.True);
         }
 
+
         [DebuggerDisplay("{Letter} ({HashCode})")]
         private struct ContainsStruct
         {

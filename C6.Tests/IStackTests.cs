@@ -10,7 +10,6 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Collections.ExceptionMessages;
-
 using static C6.Contracts.ContractMessage;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
@@ -202,7 +201,7 @@ namespace C6.Tests
             Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
             Assert.That(item, Is.EqualTo(expected));
         }
-        
+
         #endregion
 
         #endregion
@@ -304,7 +303,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringStack(Random);
             var count = collection.Count;
-            
+
             // Act
             for (var i = 0; i < count; i++) {
                 collection.Pop();
@@ -336,7 +335,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.Push(null), Violates.PreconditionSaying(ItemMustBeNonNull));
         }
-        
+
         [Test]
         public void Push_AllowsNull_Null()
         {
@@ -411,7 +410,7 @@ namespace C6.Tests
             // Assert
             Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
         }
-        
+
         [Test]
         public void Push_RandomCollectionPush_RaisesExpectedEvents()
         {

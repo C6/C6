@@ -84,7 +84,7 @@ namespace C6
         ///     The item added or removed from the collection.
         /// </value>
         public T Item { get; }
-        
+
         public override string ToString() => $"'{Item}' {Count} {(Count == 1 ? "time" : "times")}"; // $"(ItemCountEventArgs {Count} '{Item}')"
     }
 }

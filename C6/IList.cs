@@ -1295,7 +1295,7 @@ namespace C6
         public abstract void RemoveIndexRange(int startIndex, int count);
 
         #endregion
-        
+
         #region SC.IList
 
         object SC.IList.this[int index]

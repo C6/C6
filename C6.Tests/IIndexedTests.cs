@@ -268,7 +268,7 @@ namespace C6.Tests
                 collection.ToArray(),
                 ReferenceEqualityComparer,
                 collection.AllowsNull
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(0, count);
@@ -288,7 +288,7 @@ namespace C6.Tests
                 collection.Skip(startIndex).Take(count),
                 ReferenceEqualityComparer,
                 collection.AllowsNull
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, count);
@@ -306,7 +306,7 @@ namespace C6.Tests
                 NoStrings,
                 ReferenceEqualityComparer,
                 collection.AllowsNull
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(0, 0);
@@ -325,7 +325,7 @@ namespace C6.Tests
                 NoStrings,
                 ReferenceEqualityComparer,
                 collection.AllowsNull
-            );
+                );
 
             // Act
             var getIndexRange = collection.GetIndexRange(startIndex, 0);

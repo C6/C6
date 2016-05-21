@@ -118,7 +118,7 @@ namespace C6.Tests
                 ReferenceEqualityComparer,
                 collection.AllowsNull,
                 direction: Backwards
-            );
+                );
 
             // Act
             var backwards = collection.Backwards();
@@ -137,7 +137,7 @@ namespace C6.Tests
                 ReferenceEqualityComparer,
                 collection.AllowsNull,
                 direction: Backwards
-            );
+                );
 
             // Act
             var backwards = collection.Backwards();
@@ -157,7 +157,7 @@ namespace C6.Tests
                 ReferenceEqualityComparer,
                 collection.AllowsNull,
                 direction: Backwards
-            );
+                );
 
             // Act
             var backwards = collection.Backwards();
@@ -175,7 +175,7 @@ namespace C6.Tests
                 collection.ToArray(),
                 ReferenceEqualityComparer,
                 collection.AllowsNull
-            );
+                );
 
             // Act
             var backwardsBackwards = collection.Backwards().Backwards();

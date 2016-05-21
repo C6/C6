@@ -91,11 +91,11 @@ namespace C6.Tests.Helpers
                 && CountSpeed == other.CountSpeed // TODO: Is this always constant? We would at least like that, right?
                 && IsEmpty == other.IsEmpty
 
-                // Pure methods
+                    // Pure methods
                 && (!HasChoose || Choose().IsSameAs(other.Choose()))
                 && (_sequenced ? expectedArray.SequenceEqual(actualArray, EqualityComparer) : expectedArray.UnsequenceEqual(actualArray, EqualityComparer))
                 && (_sequenced ? this.SequenceEqual(other, EqualityComparer) : this.UnsequenceEqual(other, EqualityComparer))
-                // Show() is tested with ToString()
+                    // Show() is tested with ToString()
                 && (_sequenced ? ToArray().SequenceEqual(other.ToArray(), EqualityComparer) : ToArray().UnsequenceEqual(other.ToArray(), EqualityComparer))
                 && (!_sequenced || ToString().Equals(other.ToString())); // TODO: Should they always return the same result? Couldn't this differ between collection types?
         }
@@ -118,7 +118,7 @@ namespace C6.Tests.Helpers
         {
             throw new NotImplementedException($"{nameof(ExpectedCollectionValue<T>)} should only be used in tests and compared directly. Hash code is not supported.");
         }
-        
+
         #endregion
 
         #region Protected Members
@@ -126,6 +126,5 @@ namespace C6.Tests.Helpers
         protected SCG.IEqualityComparer<T> EqualityComparer { get; }
 
         #endregion
-
     }
 }

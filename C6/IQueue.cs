@@ -225,7 +225,7 @@ namespace C6
         #endregion
 
         #region IDirectedCollectionValue<T>
-        
+
         public abstract EnumerationDirection Direction { get; }
         public abstract IDirectedCollectionValue<T> Backwards();
 

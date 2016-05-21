@@ -7,7 +7,6 @@ using System.Diagnostics.Contracts;
 using C6.Contracts;
 
 using static C6.Contracts.ContractMessage;
-
 using static C6.EventTypes;
 
 

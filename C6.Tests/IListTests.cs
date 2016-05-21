@@ -282,7 +282,7 @@ namespace C6.Tests
             // Assert
             Assert.That(item, Is.SameAs(array[index]));
         }
-        
+
         [Test]
         public void SCIListItemSet_InvalidType_ThrowsArgumentException()
         {
@@ -841,6 +841,7 @@ namespace C6.Tests
         #endregion
 
         // TODO: Should we rather cast the collection than the object?
+
         #region IndexOf(T)
 
         [Test]
@@ -981,6 +982,7 @@ namespace C6.Tests
         #endregion
 
         // TODO: Should we rather cast the collection than the object?
+
         #region Insert(int, object)
 
         [Test]
@@ -4582,7 +4584,7 @@ namespace C6.Tests
             // Assert
             Assert.That(collection, Is.Ordered);
         }
-        
+
         [Test]
         public void SortComparison_NonDescendingRandomCollection_Nothing()
         {
@@ -4592,7 +4594,7 @@ namespace C6.Tests
             var maxGap = 5;
             var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count);
             var collection = GetList(items);
-            
+
 
             // Act & Assert
             Assert.That(() => collection.Sort(_nonComparableComparison), RaisesNoEventsFor(collection));
@@ -4852,7 +4854,7 @@ namespace C6.Tests
             // Assert
             Assert.That(collection, Is.Ordered);
         }
-        
+
         [Test]
         public void SortIComparer_NonDescendingRandomCollection_Nothing()
         {
@@ -4862,7 +4864,7 @@ namespace C6.Tests
             var maxGap = 5;
             var items = TestHelper.Repeat(() => new Comparable(previousItem = Random.Next(previousItem, previousItem + maxGap)), count);
             var collection = GetList(items);
-            
+
 
             // Act & Assert
             Assert.That(() => collection.Sort(NonComparableComparer), RaisesNoEventsFor(collection));

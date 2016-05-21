@@ -2178,7 +2178,7 @@ namespace C6.Tests
                 collection.EqualityComparer,
                 collection.AllowsNull,
                 sequenced: false
-            );
+                );
 
             // Act
             var uniqueItems = collection.UniqueItems();
@@ -2196,7 +2196,7 @@ namespace C6.Tests
                 NoStrings,
                 collection.EqualityComparer,
                 collection.AllowsNull
-            );
+                );
 
             // Act
             var uniqueItems = collection.UniqueItems();
@@ -2215,7 +2215,7 @@ namespace C6.Tests
                 collection.EqualityComparer,
                 collection.AllowsNull,
                 sequenced: false
-            );
+                );
 
             // Act
             var uniqueItems = collection.UniqueItems();
@@ -2237,7 +2237,7 @@ namespace C6.Tests
                 collection.EqualityComparer,
                 collection.AllowsNull,
                 sequenced: false
-            );
+                );
 
             // Act
             var uniqueItems = collection.UniqueItems();
@@ -2257,8 +2257,8 @@ namespace C6.Tests
                 originalItems,
                 collection.EqualityComparer,
                 collection.AllowsNull,
-                sequenced:false
-            );
+                sequenced: false
+                );
 
             // Act
             var uniqueItems = collection.UniqueItems();
