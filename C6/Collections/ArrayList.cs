@@ -173,6 +173,55 @@ namespace C6.Collections
 
         public bool AllowsNull { get; }
 
+        /// <summary>
+        ///     Gets or sets the total number of items the internal data structure can hold without resizing.
+        /// </summary>
+        /// <value>
+        ///     The number of items that the <see cref="ArrayList{T}"/> can contain before resizing is required.
+        /// </value>
+        /// <remarks>
+        ///     <para>
+        ///         <see cref="Capacity"/> is the number of items that the <see cref="ArrayList{T}"/> can store before resizing is
+        ///         required, whereas <see cref="Count"/> is the number of items that are actually in the
+        ///         <see cref="ArrayList{T}"/>.
+        ///     </para>
+        ///     <para>
+        ///         If the capacity is significantly larger than the count and you want to reduce the memory used by the
+        ///         <see cref="ArrayList{T}"/>, you can decrease capacity by calling the <see cref="TrimExcess"/> method or by
+        ///         setting the <see cref="Capacity"/> property explicitly to a lower value. When the value of
+        ///         <see cref="Capacity"/> is set explicitly, the internal data structure is also reallocated to accommodate the
+        ///         specified capacity, and all the items are copied.
+        ///     </para>
+        /// </remarks>
+        public int Capacity
+        {
+            get { return _items.Length; }
+            set {
+                #region Code Contracts
+
+                // Capacity must be at least as big as the number of items
+                Requires(value >= Count);
+
+                // Capacity is at least as big as the number of items
+                Ensures(value >= Count);
+
+                Ensures(Capacity == value);
+
+                #endregion
+
+                if (value > 0) {
+                    if (value == _items.Length) {
+                        return;
+                    }
+
+                    Array.Resize(ref _items, value);
+                }
+                else {
+                    _items = EmptyArray;
+                }
+            }
+        }
+
         public Speed ContainsSpeed => Linear;
 
         public int Count { get; private set; }
@@ -754,6 +803,25 @@ namespace C6.Collections
 
         public string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
 
+        /// <summary>
+        ///     Sets the capacity to the actual number of items in the <see cref="ArrayList{T}"/>, if that number is less than a
+        ///     threshold value.
+        /// </summary>
+        /// <remarks>
+        ///     This method can be used to minimize a collection's memory overhead if no new items will be added to the collection.
+        ///     The cost of reallocating and copying a large <see cref="ArrayList{T}"/>
+        ///     can be considerable, however, so the <see cref="TrimExcess"/> method does nothing if the list is at more than 90
+        ///     percent of capacity. This avoids incurring a large reallocation cost for a relatively small gain. The current
+        ///     threshold of 90 percent might change in future releases.
+        /// </remarks>
+        public void TrimExcess()
+        {
+            if (Capacity * 0.9 <= Count) {
+                return;
+            }
+            Capacity = Count;
+        }
+
         // TODO: Test that changing the collection breaks the collection value!
         // TODO: Defer execution
         public ICollectionValue<T> UniqueItems() => new ArrayList<T>(this.Distinct(EqualityComparer)); // TODO: new HashBag<T>(this);
@@ -994,36 +1062,6 @@ namespace C6.Collections
         #endregion
 
         #region Private Members
-
-        // TODO: Make public?
-        private int Capacity
-        {
-            get { return _items.Length; }
-            set {
-                #region Code Contracts
-
-                // Capacity must be at least as big as the number of items
-                Requires(value >= Count);
-
-                // Capacity is at least as big as the number of items
-                Ensures(value >= Count);
-
-                Ensures(Capacity == value);
-
-                #endregion
-
-                if (value > 0) {
-                    if (value == _items.Length) {
-                        return;
-                    }
-
-                    Array.Resize(ref _items, value);
-                }
-                else {
-                    _items = EmptyArray;
-                }
-            }
-        }
 
         private bool CheckVersion(int version)
         {
@@ -1363,7 +1401,7 @@ namespace C6.Collections
             ///     The zero-based <see cref="ArrayList{T}"/> index at which the range starts.
             /// </param>
             /// <param name="count">
-            ///     The number of elements in the range.
+            ///     The number of items in the range.
             /// </param>
             /// <param name="direction">
             ///     The direction of the range.
