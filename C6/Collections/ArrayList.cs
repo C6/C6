@@ -527,32 +527,10 @@ namespace C6.Collections
 
         public bool IsSorted(SCG.IComparer<T> comparer) => IsSorted((comparer ?? SCG.Comparer<T>.Default).Compare);
 
+        // TODO: Defer execution
         public ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
-            // TODO: Defer execution
-
             throw new NotImplementedException();
-
-            var dictionary = new SCG.Dictionary<T, int>(EqualityComparer); // TODO: Use C6 version (HashBag<T>)
-
-            foreach (var item in this) {
-                int count;
-                if (dictionary.TryGetValue(item, out count)) {
-                    // Dictionary already contained item, so we increment count with one
-                    dictionary[item] = count + 1;
-                }
-                else {
-                    dictionary.Add(item, 1);
-                }
-            }
-
-            // TODO: save in a field
-            var equalityComparer = ComparerFactory.CreateEqualityComparer<KeyValuePair<T, int>>(
-                (p1, p2) => Equals(p1.Key, p2.Key) & p1.Value == p2.Value,
-                p => GetHashCode(p.Key) * 37 + p.Value.GetHashCode()
-                );
-            // TODO: Return a more sensible data structure
-            return new ArrayList<KeyValuePair<T, int>>(dictionary.Select(kvp => new KeyValuePair<T, int>(kvp.Key, kvp.Value)), equalityComparer);
         }
 
         public int LastIndexOf(T item)
@@ -605,7 +583,7 @@ namespace C6.Collections
             T removedItem;
             return Remove(item, out removedItem);
         }
-        
+
         public bool Remove(T item, out T removedItem)
         {
             #region Code Contracts
