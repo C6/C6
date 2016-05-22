@@ -1156,7 +1156,7 @@ namespace C6.Collections
 
                 if (predicate(item)) {
                     if (shouldRememberItems) {
-                        (itemsRemoved ?? (itemsRemoved = new ArrayList<T>())).Add(item);
+                        (itemsRemoved ?? (itemsRemoved = new ArrayList<T>(allowsNull: AllowsNull))).Add(item); // TODO: Test allows null
                     }
                 }
                 else {
