@@ -1416,13 +1416,12 @@ namespace C6.Collections
             public override T Choose()
             {
                 CheckVersion();
-                return _base.Choose();
+                return _base.Choose(); // TODO: Is this necessarily an item in the collection value?!
             }
 
             public override void CopyTo(T[] array, int arrayIndex)
             {
                 CheckVersion();
-                // TODO: 
                 Set.CopyTo(array, arrayIndex);
             }
 
@@ -1430,8 +1429,6 @@ namespace C6.Collections
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
-                Ensures(_set != null);
-
                 // If a set already exists, enumerate that
                 if (_set != null) {
                     var enumerator = Set.GetEnumerator();
@@ -1472,7 +1469,7 @@ namespace C6.Collections
 
             #region Private Members
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired range; original collection was modified since range was created.";
+            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
@@ -1643,7 +1640,7 @@ namespace C6.Collections
 
             #region Private Members
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired range; original collection was modified since range was created.";
+            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
