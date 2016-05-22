@@ -51,10 +51,34 @@ namespace C6
         ///     The <see cref="IDirectedCollectionValue{T}"/> whose enumerator will enumerate the items backwards.
         /// </returns>
         /// <remarks>
-        ///     The <see cref="IDirectedCollectionValue{T}"/> becomes invalid, if the original is modified. The method is typically
-        ///     used as in <c>
-        ///         foreach (var item in Backwards()) {...}
-        ///     </c>.
+        ///     <para>
+        ///         The method is used to most efficiently enumerate the collection's items backwards, for instance in a
+        ///         <c>foreach</c> loop.
+        ///     </para>
+        ///     <para>
+        ///         The returned <see cref="IDirectedCollectionValue{T}"/> has the same status as an enumerator of the collection:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     You can use the <see cref="IDirectedCollectionValue{T}"/> to read the relevant data from the
+        ///                     collection, but not to modify the collection.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     The <see cref="IDirectedCollectionValue{T}"/> does not have exclusive access to the collection so
+        ///                     the <see cref="IDirectedCollectionValue{T}"/> remains valid as long as the collection remains
+        ///                     unchanged. If changes are made to the collection, such as adding, modifying, or deleting items, the
+        ///                     <see cref="IDirectedCollectionValue{T}"/> is invalidated and any call to its members will throw an
+        ///                     <see cref="InvalidOperationException"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///         The <see cref="IDirectedCollectionValue{T}"/> is lazy and will defer execution as much as possible. The return
+        ///         value of one call can profitably be shared, as the result is cached. The directed collection value's
+        ///         <see cref="ICollectionValue{T}.CountSpeed"/> can be used to indicate whether the full result has already been
+        ///         computed.
+        ///     </para>
         /// </remarks>
         [Pure]
         IDirectedCollectionValue<T> Backwards();

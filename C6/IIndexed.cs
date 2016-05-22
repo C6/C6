@@ -62,10 +62,36 @@ namespace C6
         ///     An <see cref="IDirectedCollectionValue{T}"/> containing the items in the specified index range of this collection.
         /// </returns>
         /// <remarks>
-        ///     This is useful for enumerating an index range, either forwards or backwards. Often used together with
-        ///     <see cref="IndexOf"/>. The forwards enumerator is equal to <c>
-        ///         coll.Skip(startIndex).Take(count)
-        ///     </c>, but potentially much faster.
+        ///     <para>
+        ///         The <see cref="IDirectedCollectionValue{T}"/> is useful for enumerating an index range, either forwards or
+        ///         backwards. Often used together with <see cref="IndexOf"/>. The forwards enumerator is equal to <c>
+        ///             coll.Skip(startIndex).Take(count)
+        ///         </c>, but potentially much faster.
+        ///     </para>
+        ///     <para>
+        ///         The returned <see cref="IDirectedCollectionValue{T}"/> has the same status as an enumerator of the collection:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     You can use the <see cref="IDirectedCollectionValue{T}"/> to read the relevant data from the
+        ///                     collection, but not to modify the collection.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     The <see cref="IDirectedCollectionValue{T}"/> does not have exclusive access to the collection so
+        ///                     the <see cref="IDirectedCollectionValue{T}"/> remains valid as long as the collection remains
+        ///                     unchanged. If changes are made to the collection, such as adding, modifying, or deleting items, the
+        ///                     <see cref="IDirectedCollectionValue{T}"/> is invalidated and any call to its members will throw an
+        ///                     <see cref="InvalidOperationException"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///         The <see cref="IDirectedCollectionValue{T}"/> is lazy and will defer execution as much as possible. The return
+        ///         value of one call can profitably be shared, as the result is cached. The directed collection value's
+        ///         <see cref="ICollectionValue{T}.CountSpeed"/> can be used to indicate whether the full result has already been
+        ///         computed.
+        ///     </para>
         /// </remarks>
         [Pure]
         IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count);
