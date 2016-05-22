@@ -75,6 +75,8 @@ namespace C6.Tests.Helpers
 
         public override void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
+        public static ExpectedCollectionValue<T> Empty() => new ExpectedCollectionValue<T>(new T[0], SCG.EqualityComparer<T>.Default, false);
+
         public virtual bool Equals(ICollectionValue<T> other)
         {
             // Prepare CopyTo()

@@ -1272,7 +1272,7 @@ namespace C6
         public abstract void CopyTo(T[] array, int arrayIndex);
         public abstract int CountDuplicates(T item);
         public abstract bool Find(ref T item);
-        public abstract SCG.IEnumerable<T> FindDuplicates(T item);
+        public abstract ICollectionValue<T> FindDuplicates(T item);
         public abstract bool FindOrAdd(ref T item);
         public abstract int GetUnsequencedHashCode();
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();

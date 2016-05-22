@@ -746,16 +746,21 @@ namespace C6.Tests
         public void FindDuplicates_AllowsNull_Nulls()
         {
             // Arrange
-            var items = GetStrings(Random).WithNull(Random);
+            var count = GetCount(Random);
+            var items = GetStrings(Random).WithRepeatedItem(() => null, count, Random);
             var collection = GetCollection(items, allowsNull: true);
-            var count = collection.Add(null) ? 2 : 1;
-            var nulls = ((string) null).Repeat(count);
+            var expected = new ExpectedCollectionValue<string>(
+                ((string) null).Repeat(AllowsDuplicates ? count : 1),
+                collection.EqualityComparer,
+                true,
+                () => null
+            );
 
             // Act
             var findDuplicates = collection.FindDuplicates(null);
 
             // Assert
-            Assert.That(findDuplicates, Is.EqualTo(nulls));
+            Assert.That(findDuplicates, Is.EqualTo(expected));
         }
 
         [Test]
@@ -763,13 +768,14 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
+            var expected = ExpectedCollectionValue<string>.Empty();
             var item = Random.GetString();
 
             // Act
             var findDuplicates = collection.FindDuplicates(item);
 
             // Assert
-            Assert.That(findDuplicates, Is.Empty);
+            Assert.That(findDuplicates, Is.EqualTo(expected));
         }
 
         [Test]
@@ -780,12 +786,17 @@ namespace C6.Tests
             var count = AllowsDuplicates ? GetCount(Random) : 1;
             var items = ((Func<string>) (() => string.Copy(item))).Repeat(count);
             var collection = GetCollection(items);
+            var expected = new ExpectedCollectionValue<string>(
+                items,
+                collection.EqualityComparer,
+                collection.AllowsNull
+            );
 
             // Act
             var findDuplicates = collection.FindDuplicates(item);
 
             // Assert
-            Assert.That(findDuplicates, Is.EqualTo(items));
+            Assert.That(findDuplicates, Is.EqualTo(expected));
         }
 
         [Test]
@@ -794,18 +805,21 @@ namespace C6.Tests
             // Arrange
             var item = GetLowercaseString(Random);
             var count = GetCount(Random);
-            var duplicateItems = item.Repeat(count);
-            var items = GetUppercaseStrings(Random).Concat(duplicateItems).ShuffledCopy(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetCollection(items);
+            var expected = new ExpectedCollectionValue<string>(
+                item.Repeat(AllowsDuplicates ? count : 1),
+                collection.EqualityComparer,
+                collection.AllowsNull
+            );
 
             // Act
             var findDuplicates = collection.FindDuplicates(item);
 
             // Assert
-            Assert.That(findDuplicates, Is.EqualTo(duplicateItems));
+            Assert.That(findDuplicates, Is.EqualTo(expected));
         }
-
-        // TODO: This test would change if result is a ICollectionValue<T>
+        
         [Test]
         public void FindDuplicates_AlterDuringResultEnumeration_ThrowsInvalidOperationException()
         {
@@ -822,6 +836,41 @@ namespace C6.Tests
 
             // Assert
             Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+        }
+
+        [Test]
+        public void FindDuplicates_ChangeCollectionInvalidatesCollectionValue_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var item = Random.GetString();
+            var count = GetCount(Random);
+            var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var collection = GetCollection(items);
+            var array = new string[collection.Count];
+            var stringBuilder = new StringBuilder();
+            var rest = 0;
+
+            // Act
+            var findDuplicates = collection.FindDuplicates(item);
+            collection.UpdateOrAdd(Random.GetString());
+
+            // TODO: Refactor into separate CollectionValueConstraint
+            // Assert
+            Assert.That(() => findDuplicates.AllowsNull, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.Count, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.CountSpeed, Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.IsEmpty, Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => findDuplicates.Choose(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.CopyTo(array, 0), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.GetEnumerator().MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.ToArray(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.Show(stringBuilder, ref rest, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.ToString(null, null), Throws.InvalidOperationException.Because(CollectionWasModified));
+
+            Assert.That(() => findDuplicates.Equals(null), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.GetHashCode(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            Assert.That(() => findDuplicates.ToString(), Throws.InvalidOperationException.Because(CollectionWasModified));
         }
 
         [Test]

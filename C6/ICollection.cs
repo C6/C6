@@ -6,10 +6,9 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
-using C6.Contracts;
-
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SC = System.Collections;
@@ -202,23 +201,47 @@ namespace C6
         /// <seealso cref="Contains"/>
         [Pure]
         bool Find(ref T item);
-
-        // TODO: Return an ICollectionValue<T>
+        
         /// <summary>
-        ///     Returns all items in the collection that are equal to the specified item.
+        ///     Returns a <see cref="ICollectionValue{T}"/> with all items in the collection that are equal to the specified item.
         /// </summary>
         /// <param name="item">
         ///     The item whose duplicates to locate in the collection. <c>null</c> is allowed, if
         ///     <see cref="ICollectionValue{T}.AllowsNull"/> is <c>true</c>.
         /// </param>
         /// <returns>
-        ///     All items in the collection that are equal to the specified item.
+        ///     A <see cref="ICollectionValue{T}"/> with all items in the collection that are equal to the specified item.
         /// </returns>
         /// <remarks>
+        ///     <para>
         ///     The collection's <see cref="IExtensible{T}.EqualityComparer"/> is used to determine item equality.
+        ///     </para>
+        ///     <para>
+        ///         The returned <see cref="ICollectionValue{T}"/> has the same status an enumerator of the collection:
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                     You can use the <see cref="ICollectionValue{T}"/> to read the relevant data from the collection,
+        ///                     but not to modify the collection.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     The <see cref="ICollectionValue{T}"/> does not have exclusive access to the collection so the
+        ///                     <see cref="ICollectionValue{T}"/> remains valid as long as the collection remains unchanged. If
+        ///                     changes are made to the collection, such as adding, modifying, or deleting items, the
+        ///                     <see cref="ICollectionValue{T}"/> is invalidated and any call to its members will throw an
+        ///                     <see cref="InvalidOperationException"/>.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///         The <see cref="ICollectionValue{T}"/> is lazy and will defer execution as much as possible. The return value of
+        ///         one call can profitably be shared, as the result is cached. <see cref="ICollectionValue{T}.CountSpeed"/> can be
+        ///         used to indicate whether the full result has already been computed.
+        ///     </para>
         /// </remarks>
         [Pure]
-        SCG.IEnumerable<T> FindDuplicates(T item);
+        ICollectionValue<T> FindDuplicates(T item);
 
         /// <summary>
         ///     Determines whether the collection contains a specific item and assigns it to <paramref name="item"/> if so;
@@ -501,7 +524,7 @@ namespace C6
         ///     </para>
         /// </remarks>
         bool RetainRange(SCG.IEnumerable<T> items);
-
+        
         // TODO: Consider returning a read-only collection instead
         /// <summary>
         ///     Returns a <see cref="ICollectionValue{T}"/> equal to this collection without duplicates.
@@ -997,32 +1020,46 @@ namespace C6
             return default(bool);
         }
 
-        public SCG.IEnumerable<T> FindDuplicates(T item)
+        public ICollectionValue<T> FindDuplicates(T item)
         {
             // Argument must be non-null if collection disallows null values
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
 
 
             // Result is non-null
-            Ensures(Result<SCG.IEnumerable<T>>() != null);
+            Ensures(Result<ICollectionValue<T>>() != null);
 
-            // The result is all items in the collection equal to item
-            Ensures(Result<SCG.IEnumerable<T>>().HasSameAs(this.Where(x => EqualityComparer.Equals(item, x))));
+            // Result is the duplicates
+            Ensures(Result<ICollectionValue<T>>().IsSameSequenceAs(this.Where(x => EqualityComparer.Equals(x, item))));
 
-            // If collection is empty, so is the result
-            Ensures(!IsEmpty || Result<SCG.IEnumerable<T>>().IsEmpty());
+            // Result has the same count as the number of duplicates
+            Ensures(Result<ICollectionValue<T>>().Count == CountDuplicates(item));
 
-            // Result size equals CountDuplicates
-            Ensures(Result<SCG.IEnumerable<T>>().Count() == CountDuplicates(item));
+            // Result allows null if this does
+            Ensures(Result<ICollectionValue<T>>().AllowsNull == AllowsNull);
+
+            // Result count speed is equal to the contains speed
+            Ensures(Result<ICollectionValue<T>>().CountSpeed <= ContainsSpeed);
+
+            // Result is empty if this is
+            Ensures(Result<ICollectionValue<T>>().IsEmpty != Contains(item));
+
+            // Result array contains the distinct items
+            Ensures(Result<ICollectionValue<T>>().ToArray().IsSameSequenceAs(this.Where(x => EqualityComparer.Equals(x, item))));
+            
+            // Result copy to contains the distinct items
+            Ensures(Invoke(() => {
+                var result = Result<ICollectionValue<T>>();
+                var array = new T[result.Count];
+                result.CopyTo(array, 0);
+                return array.IsSameSequenceAs(this.Where(x => EqualityComparer.Equals(x, item)));
+            }));
 
             // If collection counts duplicates, all items in result are the same
-            Ensures(!DuplicatesByCounting || Result<SCG.IEnumerable<T>>().IsEmpty() || ForAll(Result<SCG.IEnumerable<T>>(), x => Result<SCG.IEnumerable<T>>().First().IsSameAs(x)));
-
-            // If collection doesn't allow duplicates, the result is 1 if collection contains item, otherwise 0
-            Ensures(AllowsDuplicates || Result<SCG.IEnumerable<T>>().Count() == (Contains(item) ? 1 : 0));
+            Ensures(!DuplicatesByCounting || Result<ICollectionValue<T>>().AllConsecutiveElements((x, y) => x.IsSameAs(y)));
 
 
-            return default(SCG.IEnumerable<T>);
+            return default(ICollectionValue<T>);
         }
 
         public bool FindOrAdd(ref T item)
@@ -1280,7 +1317,7 @@ namespace C6
         public ICollectionValue<T> UniqueItems()
         {
             // No preconditions
-
+            
 
             // The result size must be equal to the number of distinct items
             Ensures(Result<ICollectionValue<T>>().Count == this.Distinct(EqualityComparer).Count());

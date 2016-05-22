@@ -363,10 +363,8 @@ namespace C6.Collections
 
             return false;
         }
-
-        // TODO: Implement with an ICollectionValue<T>
-        // Explicitly check against null to avoid using the (slower) equality comparer
-        public virtual SCG.IEnumerable<T> FindDuplicates(T item) => item == null ? this.Where(x => x == null) : this.Where(x => Equals(x, item));
+        
+        public virtual ICollectionValue<T> FindDuplicates(T item) => null;
 
         public virtual bool FindOrAdd(ref T item)
         {
