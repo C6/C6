@@ -364,7 +364,7 @@ namespace C6.Collections
             return false;
         }
         
-        public virtual ICollectionValue<T> FindDuplicates(T item) => null;
+        public virtual ICollectionValue<T> FindDuplicates(T item) => new Duplicates(this, item);
 
         public virtual bool FindOrAdd(ref T item)
         {
@@ -1334,6 +1334,155 @@ namespace C6.Collections
         #endregion
 
         #region Nested Types
+
+        // TODO: Explicitly check against null to avoid using the (slower) equality comparer
+        [Serializable]
+        [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
+        [DebuggerDisplay("{DebuggerDisplay}")]
+        private sealed class Duplicates : CollectionValueBase<T>, ICollectionValue<T>
+        {
+            #region Fields
+
+            private readonly ArrayList<T> _base;
+            private readonly int _version;
+            private readonly T _item;
+            private ArrayList<T> _list;
+
+            #endregion
+
+            #region Code Contracts
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                // ReSharper disable InvocationIsSkipped
+
+                // All items in the list are equal to the item
+                Invariant(_list == null || ForAll(_list, x => _base.EqualityComparer.Equals(x, _item)));
+
+                // All items in the list are equal to the item
+                Invariant(_list == null || _list.Count == _base.CountDuplicates(_item));
+
+                // ReSharper restore InvocationIsSkipped
+            }
+
+            #endregion
+
+            #region Constructors
+
+            // TODO: Document
+            public Duplicates(ArrayList<T> list, T item)
+            {
+                #region Code Contracts
+
+                // Argument must be non-null
+                Requires(list != null, ArgumentMustBeNonNull);
+
+                #endregion
+
+                _base = list;
+                _version = _base._version;
+                _item = item;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
+
+            public override int Count
+            {
+                get {
+                    CheckVersion();
+                    return List.Count;
+                }
+            }
+
+            public override Speed CountSpeed
+            {
+                get {
+                    CheckVersion();
+                    // TODO: Always use Linear?
+                    return _list == null ? Linear : Constant;
+                }
+            }
+
+            public override bool IsEmpty => CheckVersion() & List.IsEmpty;
+
+            #endregion
+
+            #region Public Methods
+
+            public override T Choose()
+            {
+                CheckVersion();
+                return _base.Choose(); // TODO: Is this necessarily an item in the collection value?!
+            }
+
+            public override void CopyTo(T[] array, int arrayIndex)
+            {
+                CheckVersion();
+                List.CopyTo(array, arrayIndex);
+            }
+
+            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
+
+            public override SCG.IEnumerator<T> GetEnumerator()
+            {
+                // If a list already exists, enumerate that
+                if (_list != null) {
+                    var enumerator = _list.GetEnumerator();
+                    while (CheckVersion() & enumerator.MoveNext()) {
+                        yield return enumerator.Current;
+                    }
+                }
+                // Otherwise, evaluate lazily
+                else {
+                    var list = new ArrayList<T>(allowsNull: AllowsNull);
+                    Func<T, T, bool> equals = _base.Equals;
+
+                    var enumerator = _base.GetEnumerator();
+
+
+                    T item;
+                    while (CheckVersion() & enumerator.MoveNext()) {
+                        // Only return duplicate items
+                        if (equals(item = enumerator.Current, _item)) {
+                            list.Add(item);
+                            yield return item;
+                        }
+                    }
+                    
+                    // Save list for later (re)user
+                    _list = list;
+                }
+            }
+
+            public override int GetHashCode()
+            {
+                CheckVersion();
+                return base.GetHashCode();
+            }
+
+            public override T[] ToArray()
+            {
+                CheckVersion();
+                return List.ToArray();
+            }
+
+            #endregion
+
+            #region Private Members
+
+            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+
+            private bool CheckVersion() => _base.CheckVersion(_version);
+            
+            private ArrayList<T> List => _list != null ? _list : (_list = new ArrayList<T>(_base.Where(x => _base.Equals(x, _item)), allowsNull: AllowsNull));
+
+            #endregion
+        }
 
         // TODO: Introduce base class?
         [Serializable]
