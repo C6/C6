@@ -752,8 +752,8 @@ namespace C6.Tests
             var expected = new ExpectedCollectionValue<string>(
                 ((string) null).Repeat(AllowsDuplicates ? count : 1),
                 collection.EqualityComparer,
-                true,
-                () => null
+                collection.AllowsNull
+                //() => null
             );
 
             // Act
@@ -768,7 +768,11 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var expected = ExpectedCollectionValue<string>.Empty();
+            var expected = new ExpectedCollectionValue<string>(
+                NoStrings,
+                collection.EqualityComparer,
+                collection.AllowsNull
+            );
             var item = Random.GetString();
 
             // Act
