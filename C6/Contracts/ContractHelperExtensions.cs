@@ -269,6 +269,9 @@ namespace C6.Contracts
         }
 
         [Pure]
+        public static bool Invoke(Func<bool> function) => function.Invoke();
+
+        [Pure]
         public static bool IsSameAs<T>(this T item, T otherItem) => GetSameEqualityComparer<T>().Equals(item, otherItem);
 
         [Pure]

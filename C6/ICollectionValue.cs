@@ -23,10 +23,6 @@ namespace C6
     /// <typeparam name="T">
     ///     The type of the items in the collection.
     /// </typeparam>
-    /// <remarks>
-    ///     Like <see cref="SCG.IEnumerable{T}"/>, the interface does not prescribe any operations to initialize or update the
-    ///     collection. Its main usage is to be the return type of query operations on generic collection.
-    /// </remarks>
     [ContractClass(typeof(ICollectionValueContract<>))]
     public interface ICollectionValue<T> : SCG.IEnumerable<T>, IShowable
     {
