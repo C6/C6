@@ -244,6 +244,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ArrayList.cs" />
+    <Compile Include="Collections\CheckedCollectionValueBase.cs" />
+    <Compile Include="Collections\CheckedDirectedCollectionValueBase.cs" />
     <Compile Include="Collections\CollectionValueBase.cs" />
     <Compile Include="Collections\CollectionValueDebugView.cs" />
     <Compile Include="ComparerFactory.cs" />

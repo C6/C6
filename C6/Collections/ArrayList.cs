@@ -363,7 +363,7 @@ namespace C6.Collections
 
             return false;
         }
-        
+
         public virtual ICollectionValue<T> FindDuplicates(T item) => new Duplicates(this, item);
 
         public virtual bool FindOrAdd(ref T item)
@@ -1338,8 +1338,7 @@ namespace C6.Collections
         // TODO: Explicitly check against null to avoid using the (slower) equality comparer
         [Serializable]
         [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-        [DebuggerDisplay("{DebuggerDisplay}")]
-        private sealed class Duplicates : CollectionValueBase<T>, ICollectionValue<T>
+        private sealed class Duplicates : CheckedCollectionValueBase<T>
         {
             #region Fields
 
@@ -1389,44 +1388,23 @@ namespace C6.Collections
 
             #region Properties
 
-            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
+            protected override bool AllowsNullProtected => _base.AllowsNull;
 
-            public override int Count
-            {
-                get {
-                    CheckVersion();
-                    return List.Count;
-                }
-            }
+            protected override int CountProtected => List.Count;
 
-            public override Speed CountSpeed
-            {
-                get {
-                    CheckVersion();
-                    // TODO: Always use Linear?
-                    return _list == null ? Linear : Constant;
-                }
-            }
+            protected override Speed CountSpeedProtected => _list == null ? Linear : Constant; // TODO: Always use Linear?
 
-            public override bool IsEmpty => CheckVersion() & List.IsEmpty;
+            protected override bool IsEmptyProtected => List.IsEmpty;
+
+            protected override bool IsValid => _version == _base._version;
 
             #endregion
 
             #region Public Methods
 
-            public override T Choose()
-            {
-                CheckVersion();
-                return _base.Choose(); // TODO: Is this necessarily an item in the collection value?!
-            }
+            protected override T ChooseProtected() => _base.Choose();
 
-            public override void CopyTo(T[] array, int arrayIndex)
-            {
-                CheckVersion();
-                List.CopyTo(array, arrayIndex);
-            }
-
-            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
+            protected override void CopyToProtected(T[] array, int arrayIndex) => List.CopyTo(array, arrayIndex);
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
@@ -1453,47 +1431,32 @@ namespace C6.Collections
                             yield return item;
                         }
                     }
-                    
+
                     // Save list for later (re)user
                     _list = list;
                 }
             }
 
-            public override int GetHashCode()
-            {
-                CheckVersion();
-                return base.GetHashCode();
-            }
-
-            public override T[] ToArray()
-            {
-                CheckVersion();
-                return List.ToArray();
-            }
+            protected override T[] ToArrayProtected() => List.ToArray();
 
             #endregion
 
             #region Private Members
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
-
-            private bool CheckVersion() => _base.CheckVersion(_version);
-            
-            private ArrayList<T> List => _list != null ? _list : (_list = new ArrayList<T>(_base.Where(x => _base.Equals(x, _item)), allowsNull: AllowsNull));
+            private ArrayList<T> List => _list ?? (_list = new ArrayList<T>(_base.Where(x => _base.Equals(x, _item)), allowsNull: AllowsNull));
 
             #endregion
         }
 
-        // TODO: Introduce base class?
+
         [Serializable]
         [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-        [DebuggerDisplay("{DebuggerDisplay}")]
-        private sealed class ItemSet : CollectionValueBase<T>, ICollectionValue<T>
+        private sealed class ItemSet : CheckedCollectionValueBase<T>
         {
             #region Fields
 
-            private readonly ArrayList<T> _base;
             private readonly int _version;
+            private readonly ArrayList<T> _base;
             // TODO: Replace with HashedArrayList<T>
             private SCG.HashSet<T> _set;
 
@@ -1537,44 +1500,23 @@ namespace C6.Collections
 
             #region Properties
 
-            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
+            protected override bool AllowsNullProtected => _base.AllowsNull;
 
-            public override int Count
-            {
-                get {
-                    CheckVersion();
-                    return Set.Count;
-                }
-            }
+            protected override int CountProtected => Set.Count;
 
-            public override Speed CountSpeed
-            {
-                get {
-                    CheckVersion();
-                    // TODO: Always use Linear?
-                    return _set == null ? Linear : Constant;
-                }
-            }
+            protected override Speed CountSpeedProtected => _set == null ? Linear : Constant;
 
-            public override bool IsEmpty => CheckVersion() & _base.IsEmpty;
+            protected override bool IsEmptyProtected => _base.IsEmpty;
+
+            protected override bool IsValid => _version == _base._version;
 
             #endregion
 
             #region Public Methods
 
-            public override T Choose()
-            {
-                CheckVersion();
-                return _base.Choose(); // TODO: Is this necessarily an item in the collection value?!
-            }
+            protected override T ChooseProtected() => _base.Choose(); // TODO: Is this necessarily an item in the collection value?!
 
-            public override void CopyTo(T[] array, int arrayIndex)
-            {
-                CheckVersion();
-                Set.CopyTo(array, arrayIndex);
-            }
-
-            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
+            protected override void CopyToProtected(T[] array, int arrayIndex) => Set.CopyTo(array, arrayIndex);
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
@@ -1602,25 +1544,11 @@ namespace C6.Collections
                 }
             }
 
-            public override int GetHashCode()
-            {
-                CheckVersion();
-                return base.GetHashCode();
-            }
-
-            public override T[] ToArray()
-            {
-                CheckVersion();
-                return Set.ToArray();
-            }
+            protected override T[] ToArrayProtected() => Set.ToArray();
 
             #endregion
 
             #region Private Members
-
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
-
-            private bool CheckVersion() => _base.CheckVersion(_version);
 
             // TODO: Replace with HashedArrayList<T>!
             private SCG.ISet<T> Set => _set ?? (_set = new SCG.HashSet<T>(_base, _base.EqualityComparer));
@@ -1634,8 +1562,7 @@ namespace C6.Collections
         /// </summary>
         [Serializable]
         [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-        [DebuggerDisplay("{DebuggerDisplay}")]
-        private sealed class Range : CollectionValueBase<T>, IDirectedCollectionValue<T>
+        private sealed class Range : CheckedDirectedCollectionValueBase<T>
         {
             #region Fields
 
@@ -1704,53 +1631,37 @@ namespace C6.Collections
 
             #region Properties
 
-            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
+            protected override bool AllowsNullProtected => _base.AllowsNull;
 
-            public override int Count
-            {
-                get {
-                    CheckVersion();
-                    return _count;
-                }
-            }
+            protected override int CountProtected => _count;
 
-            public override Speed CountSpeed
-            {
-                get {
-                    CheckVersion();
-                    return Constant;
-                }
-            }
+            protected override Speed CountSpeedProtected => Constant;
 
-            public EnumerationDirection Direction
-            {
-                get {
-                    CheckVersion();
-                    return _direction;
-                }
-            }
+            protected override EnumerationDirection DirectionProtected => _direction;
+
+            protected override bool IsEmptyProtected => CountProtected == 0;
+
+            protected override bool IsValid => _version == _base._version;
 
             #endregion
 
             #region Public Methods
 
-            public IDirectedCollectionValue<T> Backwards()
+            protected override IDirectedCollectionValue<T> BackwardsProtected()
             {
-                CheckVersion();
                 var startIndex = _startIndex + (_count - 1) * _sign;
                 var direction = Direction.Opposite();
                 return new Range(_base, startIndex, _count, direction);
             }
 
-            public override T Choose()
+            protected override T ChooseProtected()
             {
-                CheckVersion();
                 // Select the highest index in the range
                 var index = _direction.IsForward() ? _startIndex + _count - 1 : _startIndex;
                 return _base._items[index];
             }
 
-            public override void CopyTo(T[] array, int arrayIndex)
+            protected override void CopyToProtected(T[] array, int arrayIndex)
             {
                 CheckVersion();
                 if (_direction.IsForward()) {
@@ -1759,11 +1670,11 @@ namespace C6.Collections
                 }
                 else {
                     // Use enumerator instead of copying and then reversing
-                    base.CopyTo(array, arrayIndex);
+                    foreach (var item in this) {
+                        array[arrayIndex++] = item;
+                    }
                 }
             }
-
-            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
@@ -1773,25 +1684,12 @@ namespace C6.Collections
                 }
             }
 
-            public override int GetHashCode()
+            protected override T[] ToArrayProtected()
             {
-                CheckVersion();
-                return base.GetHashCode();
+                var array = new T[Count];
+                CopyToProtected(array, 0);
+                return array;
             }
-
-            public override T[] ToArray()
-            {
-                CheckVersion();
-                return base.ToArray();
-            }
-
-            #endregion
-
-            #region Private Members
-
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
-
-            private bool CheckVersion() => _base.CheckVersion(_version);
 
             #endregion
         }
