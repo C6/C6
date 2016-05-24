@@ -78,26 +78,7 @@ namespace C6.Contracts
             return enumerable.Take(startIndex).Concat(enumerable.Skip(startIndex + count));
             // ReSharper enable PossibleMultipleEnumeration
         }
-
-        /// <summary>
-        ///     Determines whether two enumerables contain the same elements in regards to multiplicity, but not sequence order,
-        ///     using the default equality comparer for their type.
-        /// </summary>
-        /// <typeparam name="T">
-        ///     The type of the elements of the input sequences.
-        /// </typeparam>
-        /// <param name="first">
-        ///     An <see cref="SCG.IEnumerable{T}"/> to compare to <paramref name="second"/>.
-        /// </param>
-        /// <param name="second">
-        ///     An <see cref="SCG.IEnumerable{T}"/> to compare to <paramref name="first"/>.
-        /// </param>
-        /// <returns>
-        ///     <c>true</c> if the enumerables contain equal items; otherwise, <c>false</c>.
-        /// </returns>
-        [Pure]
-        public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second) => UnsequenceEqual(first, second, SCG.EqualityComparer<T>.Default);
-
+        
         /// <summary>
         ///     Determines whether two enumerables contain the same elements in regards to multiplicity, but not sequence order,
         ///     using a specified <see cref="SCG.IEqualityComparer{T}"/>.
@@ -118,7 +99,7 @@ namespace C6.Contracts
         ///     <c>true</c> if the enumerables contain equal items; otherwise, <c>false</c>.
         /// </returns>
         [Pure]
-        public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second, SCG.IEqualityComparer<T> comparer)
+        public static bool UnsequenceEqual<T>(this SCG.IEnumerable<T> first, SCG.IEnumerable<T> second, SCG.IEqualityComparer<T> comparer = null)
         {
             #region Code Contracts
 
