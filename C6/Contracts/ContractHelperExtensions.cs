@@ -180,12 +180,12 @@ namespace C6.Contracts
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);
 
-            return enumerable.Contains(item, GetSameEqualityComparer<T>());
+            return enumerable.Contains(item, GetIdenticalityComparer<T>());
         }
 
         [Pure]
         public static bool ContainsSameRange<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
-            => enumerable.ContainsRange(otherEnumerable, GetSameEqualityComparer<T>());
+            => enumerable.ContainsRange(otherEnumerable, GetIdenticalityComparer<T>());
 
         // TODO: Should work, but could still use some attention
         [Pure]
@@ -265,22 +265,22 @@ namespace C6.Contracts
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);
 
-            return enumerable.CountDuplicates(item, GetSameEqualityComparer<T>());
+            return enumerable.CountDuplicates(item, GetIdenticalityComparer<T>());
         }
 
         [Pure]
         public static bool Invoke(Func<bool> function) => function.Invoke();
 
         [Pure]
-        public static bool IsSameAs<T>(this T item, T otherItem) => GetSameEqualityComparer<T>().Equals(item, otherItem);
+        public static bool IsSameAs<T>(this T item, T otherItem) => GetIdenticalityComparer<T>().Equals(item, otherItem);
 
         [Pure]
         public static bool IsSameSequenceAs<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
-            => enumerable.SequenceEqual(otherEnumerable, GetSameEqualityComparer<T>());
+            => enumerable.SequenceEqual(otherEnumerable, GetIdenticalityComparer<T>());
 
         [Pure]
         public static bool HasSameAs<T>(this SCG.IEnumerable<T> enumerable, SCG.IEnumerable<T> otherEnumerable)
-            => enumerable.UnsequenceEqual(otherEnumerable, GetSameEqualityComparer<T>());
+            => enumerable.UnsequenceEqual(otherEnumerable, GetIdenticalityComparer<T>());
 
         /// <summary>
         ///     Returns an <see cref="SCG.IEqualityComparer{T}"/> that checks if the objects are the same, possibly bypassing the
@@ -295,12 +295,16 @@ namespace C6.Contracts
         ///     reflection to compare each field. Objects are compared using reference equality.
         /// </remarks>
         [Pure]
-        private static SCG.IEqualityComparer<T> GetSameEqualityComparer<T>()
-            => typeof(T).IsValueType
-                ? (typeof(T).IsPrimitive
-                    ? SCG.EqualityComparer<T>.Default
-                    : CreateStructComparer<T>())
-                : ComparerFactory.CreateReferenceEqualityComparer<T>();
+        private static SCG.IEqualityComparer<T> GetIdenticalityComparer<T>()
+        {
+            if (!typeof(T).IsValueType) {
+                return ComparerFactory.CreateReferenceEqualityComparer<T>();
+            }
+            if (typeof(T).IsPrimitive) {
+                return SCG.EqualityComparer<T>.Default;
+            }
+            return CreateStructComparer<T>();
+        }
 
 
         [Pure]
@@ -322,28 +326,12 @@ namespace C6.Contracts
 
             #endregion
 
-            var type = typeof(T);
-
-            // If the structs don't consider themselves equal, just return false
-            if (!x.Equals(y)) {
-                return false;
-            }
-
-            var thisFieldsInfos = type.GetFields(Instance | Public | NonPublic);
-
-            foreach (var fieldInfo in thisFieldsInfos) {
+            foreach (var fieldInfo in typeof(T).GetFields(Instance | Public | NonPublic)) {
                 // Get field values
-                var thisObject = fieldInfo.GetValue(x);
-                var thatObject = fieldInfo.GetValue(y);
-
+                object thisObject = fieldInfo.GetValue(x), thatObject = fieldInfo.GetValue(y);
                 var fieldType = fieldInfo.FieldType;
 
-                if (thisObject == null) {
-                    if (thatObject != null) {
-                        return false;
-                    }
-                }
-                else if (fieldType.IsClass) {
+                if (fieldType.IsClass) {
                     // Compare reference equality for objects
                     if (!ReferenceEquals(thisObject, thatObject)) {
                         return false;
@@ -356,7 +344,8 @@ namespace C6.Contracts
                     }
                 }
                 else {
-                    // Call method recursively for structs - we invoke a generic method, as variables are objects and therefore not typed properly
+                    // Call method recursively for structs 
+                    // We make generic method, because variables are non-typed objects
                     var methodInfo = typeof(ContractHelperExtensions).GetMethod(nameof(StructEquals), Static | NonPublic);
                     var genericMethod = methodInfo.MakeGenericMethod(fieldType);
                     var structEquals = (bool) genericMethod.Invoke(null, new[] { thisObject, thatObject });
@@ -365,7 +354,6 @@ namespace C6.Contracts
                     }
                 }
             }
-
             return true;
         }
     }
