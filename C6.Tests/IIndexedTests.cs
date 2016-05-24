@@ -708,7 +708,7 @@ namespace C6.Tests
             var collection = GetStringIndexed(Random);
             var index = Random.Next(0, collection.Count);
             var expectedItem = collection[index];
-            var array = collection.SkipRange(index, 1).ToArray();
+            var array = collection.SkipIndex(index).ToArray();
 
             // Act
             var item = collection.RemoveAt(index);
@@ -725,7 +725,7 @@ namespace C6.Tests
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetIndexed(items, allowsNull: true);
             var index = collection.IndexOf(null);
-            var array = collection.SkipRange(index, 1).ToArray();
+            var array = collection.SkipIndex(index).ToArray();
 
             // Act
             var removeAt = collection.RemoveAt(index);

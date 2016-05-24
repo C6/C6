@@ -1307,7 +1307,7 @@ namespace C6.Tests
             var items = GetUppercaseStrings(Random);
             var item = items.Choose(Random).ToLower(); // TODO: Could potentially fail, if there are duplicates
             var collection = GetList(items, CaseInsensitiveStringComparer.Default);
-            var expected = collection.SkipRange(collection.IndexOf(item), 1).ToList();
+            var expected = collection.SkipIndex(collection.IndexOf(item)).ToList();
 
             // Act
             ((SC.IList) collection).Remove(item);
@@ -1481,7 +1481,7 @@ namespace C6.Tests
             var collection = GetStringList(Random);
             var index = Random.Next(0, collection.Count);
             var expectedItem = collection[index];
-            var array = collection.SkipRange(index, 1).ToArray();
+            var array = collection.SkipIndex(index).ToArray();
 
             // Act
             ((SC.IList) collection).RemoveAt(index);
@@ -1497,7 +1497,7 @@ namespace C6.Tests
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetList(items, allowsNull: true);
             var index = collection.IndexOf(null);
-            var array = collection.SkipRange(index, 1).ToArray();
+            var array = collection.SkipIndex(index).ToArray();
 
             // Act
             ((SC.IList) collection).RemoveAt(index);
@@ -1789,7 +1789,7 @@ namespace C6.Tests
             var collection = GetStringList(Random);
             var index = Random.Next(0, collection.Count);
             var expectedItem = collection[index];
-            var array = collection.SkipRange(index, 1).ToArray();
+            var array = collection.SkipIndex(index).ToArray();
 
             // Act
             ((SCG.IList<string>) collection).RemoveAt(index);
@@ -1805,7 +1805,7 @@ namespace C6.Tests
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetList(items, allowsNull: true);
             var index = collection.IndexOf(null);
-            var array = collection.SkipRange(index, 1).ToArray();
+            var array = collection.SkipIndex(index).ToArray();
 
             // Act
             ((SCG.IList<string>) collection).RemoveAt(index);

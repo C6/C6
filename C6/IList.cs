@@ -1077,7 +1077,7 @@ namespace C6
 
 
             // Removes the last occurrence of the item
-            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipIndex(LastIndexOf(item)).ToList()))); // TODO: Is ToList needed?
 
 
             return default(bool);
@@ -1089,7 +1089,7 @@ namespace C6
 
 
             // If an item is removed, it is the last equal to item
-            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipRange(LastIndexOf(item), 1).ToList()))); // TODO: Is ToList needed?
+            Ensures(!Result<bool>() || this.IsSameSequenceAs(OldValue(this.SkipIndex(LastIndexOf(item)).ToList()))); // TODO: Is ToList needed?
 
             // The item removed is the last equal to item
             Ensures(!Result<bool>() || ValueAtReturn(out removedItem).IsSameAs(OldValue(this[LastIndexOf(item)])));

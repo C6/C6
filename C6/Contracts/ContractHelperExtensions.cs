@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection;
 
 using static System.Reflection.BindingFlags;
 using static System.Diagnostics.Contracts.Contract;
@@ -17,6 +18,28 @@ namespace C6.Contracts
 {
     public static class ContractHelperExtensions
     {
+        /// <summary>
+        ///     Returns all elements in an enumerable, except the element at the specified index.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the elements of <paramref name="enumerable"/>.
+        /// </typeparam>
+        /// <param name="enumerable">
+        ///     An <see cref="SCG.IEnumerable{T}"/> to return elements from.
+        /// </param>
+        /// <param name="index">
+        ///     The zero-based index of the element that is skipped.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="SCG.IEnumerable{T}"/> containing the elements from the specified <see cref="SCG.IEnumerable{T}"/>,
+        ///     but without the element at the specified index.
+        /// </returns>
+        /// <remarks>
+        ///     This is only intended for code contracts, and is not optimal in any sense.
+        /// </remarks>
+        [Pure]
+        public static SCG.IEnumerable<T> SkipIndex<T>(this SCG.IEnumerable<T> enumerable, int index) => enumerable.SkipRange(index, 1);
+
         /// <summary>
         ///     Returns a specified number of contiguous elements from the start of a sequence until index
         ///     <paramref name="startIndex"/>, then bypasses the next <paramref name="count"/> elements in the sequence and then

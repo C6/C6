@@ -319,7 +319,7 @@ namespace C6
             Ensures(Result<T>().IsSameAs(OldValue(this[index])));
 
             // Only the item at index is removed
-            Ensures(this.IsSameSequenceAs(OldValue(this.SkipRange(index, 1).ToList())));
+            Ensures(this.IsSameSequenceAs(OldValue(this.SkipIndex(index).ToList())));
 
             // Result is non-null
             Ensures(AllowsNull || Result<T>() != null);

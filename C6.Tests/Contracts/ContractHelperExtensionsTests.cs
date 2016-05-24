@@ -102,6 +102,37 @@ namespace C6.Tests.Contracts
         #region GetStructComparer<T>
 
         [Test]
+        public void GetStructComparer_TwoNullObjects_Equal()
+        {
+            var comparer = CreateStructComparer<string>();
+            Assert.That(null, Is.EqualTo(null).Using(comparer));
+        }
+
+        [Test]
+        public void GetStructComparer_OneNullObject_NotEqual()
+        {
+            var s = Random.GetString();
+            var comparer = CreateStructComparer<string>();
+            Assert.That(s, Is.Not.EqualTo(null).Using(comparer));
+            Assert.That(null, Is.Not.EqualTo(s).Using(comparer));
+            Assert.That(s, Is.EqualTo(s).Using(comparer));
+        }
+
+        [Test]
+        public void GetStructComparer_PairsWithNull_Equal()
+        {
+            var x = "X";
+
+            var p1 = new Pair<string>(x, x);
+            var p2 = new Pair<string>(x, null);
+
+            var comparer = CreateStructComparer<Pair<string>>();
+            Assert.That(p1, Is.EqualTo(p2));
+            Assert.That(p1, Is.Not.EqualTo(p2).Using(comparer));
+            Assert.That(p2, Is.Not.EqualTo(p1).Using(comparer));
+        }
+
+        [Test]
         public void GetStructComparer_EqualPairOfEqualIntegerPairs_NotEqualUsingComparer()
         {
             var x = new Pair<int>(10, 1);
@@ -175,7 +206,7 @@ namespace C6.Tests.Contracts
         public void GetStructComparer_EqualPairOfEqualStringPairs_NotEqualUsingComparer()
         {
             var x = "X";
-            var y = (x + "Y").Substring(0, 1);
+            var y = string.Copy(x);
 
             var p1 = new Pair<string>(x, x);
             var p2 = new Pair<string>(x, y);
