@@ -8,8 +8,6 @@ using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
 
-using SCG = System.Collections.Generic;
-
 
 namespace C6
 {

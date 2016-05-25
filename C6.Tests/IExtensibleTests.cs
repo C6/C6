@@ -395,7 +395,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetExtensible(items, ReferenceEqualityComparer);
-            var empty = Enumerable.Empty<string>();
+            var empty = NoStrings;
 
             // Act
             var addRange = collection.AddRange(empty);
@@ -410,7 +410,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
-            var empty = Enumerable.Empty<string>();
+            var empty = NoStrings;
 
             // Act & Assert
             Assert.That(() => collection.AddRange(empty), RaisesNoEventsFor(collection));

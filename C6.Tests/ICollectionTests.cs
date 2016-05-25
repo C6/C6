@@ -141,9 +141,8 @@ namespace C6.Tests
         public void Clear_RandomCollection_RaisesExpectedEvents()
         {
             // Arrange
-            var count = GetCount(Random);
-            var items = GetStrings(Random, count);
-            var collection = GetCollection(items);
+            var collection = GetStringCollection(Random);
+            var count = collection.Count;
             var expectedEvents = new[] {
                 Cleared(true, count, null, collection),
                 Changed(collection),
