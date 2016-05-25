@@ -159,23 +159,23 @@ namespace C6
             Requires(!(this as IExtensible<T>)?.IsReadOnly ?? true, CollectionMustBeNonReadOnly); // TODO: IsReadOnly is a IExtensible<T> property, which IQueue doesn't inherit from!
 
 
-            // The added item is at the end of the queue
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray()).Append(item)));
-
             // The collection becomes non-empty
             Ensures(!IsEmpty);
 
-            // The collection will contain the item added
-            Ensures(this.ContainsSame(item));
-
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + 1);
+
+            // The collection will contain the item added
+            Ensures(this.ContainsSame(item));
 
             // Adding the item increases the number of equal items by one
             Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
 
             // The item is added to the end
             Ensures(item.IsSameAs(this.Last()));
+
+            // The added item is at the end of the queue
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray()).Append(item)));
 
 
             return;

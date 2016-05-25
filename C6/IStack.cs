@@ -108,7 +108,7 @@ namespace C6
         public T this[int index]
         {
             get {
-                // Argument must be within bounds (collection must be non-empty)
+                // Argument must be within bounds
                 Requires(0 <= index, ArgumentMustBeWithinBounds);
                 Requires(index < Count, ArgumentMustBeWithinBounds);
 
@@ -175,7 +175,7 @@ namespace C6
 
             // The item is added to the end
             Ensures(item.IsSameAs(this.Last()));
-
+            
 
             return;
         }
