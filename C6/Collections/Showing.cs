@@ -10,7 +10,7 @@ using static C6.Speed;
 using SCG = System.Collections.Generic;
 
 
-namespace C6
+namespace C6.Collections
 {
     public static class Showing
     {

@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
+using C6.Collections;
 using C6.Tests.Contracts;
 
 using NUnit.Framework;

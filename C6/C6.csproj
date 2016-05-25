@@ -260,7 +260,7 @@
     <Compile Include="CollectionExtensions.cs" />
     <Compile Include="IListenable.cs" />
     <Compile Include="SequencedEqualityComparer.cs" />
-    <Compile Include="Showing.cs" />
+    <Compile Include="Collections\Showing.cs" />
     <Compile Include="UnsequencedEqualityComparer.cs" />
     <Compile Include="ICollection.cs" />
     <Compile Include="ICollectionValue.cs" />
