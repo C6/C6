@@ -264,7 +264,7 @@ namespace C6.Contracts
         }
 
         [Pure]
-        public static int ContainsSameCount<T>(this SCG.IEnumerable<T> enumerable, T item)
+        public static int CountSame<T>(this SCG.IEnumerable<T> enumerable, T item)
         {
             // Argument must be non-null
             Requires(enumerable != null, ArgumentMustBeNonNull);

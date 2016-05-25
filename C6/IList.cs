@@ -752,7 +752,7 @@ namespace C6
             Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
 
             // The number of same items increase by one
-            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
+            Ensures(this.CountSame(item) == OldValue(this.CountSame(item)) + 1);
 
             // The item is added to the beginning
             Ensures(item.IsSameAs(First));
@@ -789,7 +789,7 @@ namespace C6
             Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)) + 1);
 
             // The number of same items increase by one
-            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
+            Ensures(this.CountSame(item) == OldValue(this.CountSame(item)) + 1);
 
             // The item is added to the end
             Ensures(item.IsSameAs(Last));

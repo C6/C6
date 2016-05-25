@@ -169,7 +169,7 @@ namespace C6
             Ensures(this.ContainsSame(item));
 
             // Adding the item increases the number of equal items by one
-            Ensures(this.ContainsSameCount(item) == OldValue(this.ContainsSameCount(item)) + 1);
+            Ensures(this.CountSame(item) == OldValue(this.CountSame(item)) + 1);
 
             // The item is added to the end
             Ensures(item.IsSameAs(this.Last()));
