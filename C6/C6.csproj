@@ -185,10 +185,10 @@
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>3</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseCC|AnyCPU' ">
-    <OutputPath>bin\ReleaseCC\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release with Contract Reference Assembly|AnyCPU' ">
+    <OutputPath>bin\Release with Contract Reference Assembly\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\C6.xml</DocumentationFile>
+    <DocumentationFile>bin\Release with Contract Reference Assembly\C6.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
