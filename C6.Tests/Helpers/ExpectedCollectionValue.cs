@@ -57,7 +57,7 @@ namespace C6.Tests.Helpers
 
         public override int Count => _items.Length;
 
-        public override Speed CountSpeed => Speed.Constant;
+        public override Speed CountSpeed => Speed.Constant; // TODO: Is this always constant? We would at least like that, right?
 
         public virtual bool HasChoose => _chooseFunction != null;
 
@@ -66,7 +66,7 @@ namespace C6.Tests.Helpers
             if (HasChoose) {
                 return _chooseFunction();
             }
-            throw new NotImplementedException($"Use the {nameof(_chooseFunction)} to define the value of {nameof(Choose)}.");
+            throw new NotSupportedException($"Use the {nameof(_chooseFunction)} to define the value of {nameof(Choose)}.");
         }
 
         #endregion
@@ -88,7 +88,7 @@ namespace C6.Tests.Helpers
                 // Properties
                 AllowsNull == other.AllowsNull
                 && Count == other.Count
-                && CountSpeed == other.CountSpeed // TODO: Is this always constant? We would at least like that, right?
+                && CountSpeed == other.CountSpeed
                 && IsEmpty == other.IsEmpty
 
                     // Pure methods
@@ -116,7 +116,7 @@ namespace C6.Tests.Helpers
 
         public override int GetHashCode()
         {
-            throw new NotImplementedException($"{nameof(ExpectedCollectionValue<T>)} should only be used in tests and compared directly. Hash code is not supported.");
+            throw new NotSupportedException($"{nameof(ExpectedCollectionValue<T>)} should only be used in tests and compared directly. Hash code is not supported.");
         }
 
         #endregion
