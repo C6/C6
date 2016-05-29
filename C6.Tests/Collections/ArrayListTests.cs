@@ -274,7 +274,7 @@ namespace C6.Tests.Collections
             list.Add(item);
 
             // Assert
-            Assert.That(list.Last(), Is.SameAs(item)); // TODO: Update to Last
+            Assert.That(list.Last, Is.SameAs(item));
         }
 
         #endregion
