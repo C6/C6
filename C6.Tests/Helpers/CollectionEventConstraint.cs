@@ -3,6 +3,8 @@
 
 using System;
 
+using C6.Collections;
+
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
@@ -17,14 +19,14 @@ namespace C6.Tests.Helpers
     {
         private readonly IListenable<T> _collection;
         private readonly SCG.IEnumerable<CollectionEvent<T>> _expectedEvents;
-        private readonly SCG.IList<CollectionEvent<T>> _actualEvents; // TODO: Change to C5.IList<T>
+        private readonly IList<CollectionEvent<T>> _actualEvents;
 
         public CollectionEventConstraint(IListenable<T> collection, CollectionEvent<T>[] expectedEvents)
         {
             _collection = collection;
             _expectedEvents = expectedEvents;
 
-            _actualEvents = new SCG.List<CollectionEvent<T>>(); // TODO: Change to C5.ArrayList<T>
+            _actualEvents = new ArrayList<CollectionEvent<T>>();
 
             RegisterEventHandlers();
         }
