@@ -16,6 +16,7 @@ namespace C6.Contracts
         // Events
         public static string EventMustBeListenable => "Event must be listenable";
         public static string EventMustBeActive => "Event must be active";
+        public static string EventArgumentMustMatchEventType => "Event arguments must match event type";
 
         // Parameter validation
         public static string ArgumentMustBeNonNull => "Argument must be non-null";

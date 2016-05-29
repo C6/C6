@@ -39,7 +39,7 @@ namespace C6.Tests.Helpers
                 (eventType == Removed && eventArgs is ItemCountEventArgs<T>) ||
                 (eventType == Inserted && eventArgs is ItemAtEventArgs<T>) ||
                 (eventType == RemovedAt && eventArgs is ItemAtEventArgs<T>),
-                "Event arguments must match event type" // TODO: Use string?
+                EventArgumentMustMatchEventType
                 );
 
             #endregion
