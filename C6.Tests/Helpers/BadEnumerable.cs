@@ -30,8 +30,4 @@ namespace C6.Tests.Helpers
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
     }
-
-
-    // TODO: Move to separate file?
-    public class BadEnumerableException : Exception {}
 }
