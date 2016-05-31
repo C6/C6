@@ -157,7 +157,6 @@ namespace C6
         /// </returns>
         /// <seealso cref="Contains(IPriorityQueueHandle{T})"/>
         /// <seealso cref="this[IPriorityQueueHandle{T}]"/>
-        [Pure]
         bool Contains(IPriorityQueueHandle<T> handle, out T item);
 
         // TODO: Rename to Max
@@ -180,7 +179,6 @@ namespace C6
         /// <returns>
         ///     The current largest item in the priority queue.
         /// </returns>
-        [Pure]
         T FindMax(out IPriorityQueueHandle<T> handle);
 
         // TODO: Rename to Min
@@ -203,7 +201,6 @@ namespace C6
         /// <returns>
         ///     The least item in the priority queue.
         /// </returns>
-        [Pure]
         T FindMin(out IPriorityQueueHandle<T> handle);
 
         /// <summary>

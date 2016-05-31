@@ -105,7 +105,6 @@ namespace C6
         /// <param name="arrayIndex">
         ///     The zero-based arrayIndex in array at which copying begins.
         /// </param>
-        [Pure]
         void CopyTo(T[] array, int arrayIndex);
 
         /// <summary>

@@ -44,7 +44,6 @@ namespace C6
         ///     If the instance cannot not be formatted within <paramref name="rest"/> characters, then ellipses "..." are used to
         ///     indicate missing pieces in the resulting output.
         /// </remarks>
-        [Pure]
         bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider);
     }
 

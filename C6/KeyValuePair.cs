@@ -160,8 +160,7 @@ namespace C6
         #endregion
 
         #region IShowable Members
-
-        [Pure] // TODO: Is [Pure] necessary?
+        
         public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
         {
             throw new NotImplementedException();
@@ -195,7 +194,6 @@ namespace C6
         /// <returns>
         ///     The value of the current instance in the specified format.
         /// </returns>
-        [Pure] // TODO: Is [Pure] necessary?
         public string ToString(string format, IFormatProvider formatProvider)
         {
             throw new NotImplementedException();

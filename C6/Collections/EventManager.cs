@@ -45,8 +45,10 @@ namespace C6.Collections
             // ReSharper enable InvocationIsSkipped
         }
 
-        [Pure]
-        public EventTypes ActiveEvents { get; private set; }
+        public EventTypes ActiveEvents {
+            [Pure] get;
+            private set;
+        }
 
         public event EventHandler CollectionChanged
         {

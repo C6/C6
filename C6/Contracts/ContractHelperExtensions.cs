@@ -271,10 +271,7 @@ namespace C6.Contracts
 
             return enumerable.CountDuplicates(item, GetIdenticalityComparer<T>());
         }
-
-        [Pure]
-        public static bool Invoke(Func<bool> function) => function.Invoke();
-
+        
         [Pure]
         public static bool IsSameAs<T>(this T item, T otherItem) => GetIdenticalityComparer<T>().Equals(item, otherItem);
 
