@@ -790,19 +790,15 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void RemoveAt_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void RemoveAt_DuplicatesByCounting_Fail()
         {
-            Run.If(DuplicatesByCounting);
-
             // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(DuplicatesByCounting, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -1038,18 +1034,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void RemoveIndexRange_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void RemoveIndexRange_DuplicatesByCounting_Fail()
         {
-            Run.If(DuplicatesByCounting);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(DuplicatesByCounting, Is.False, "Tests have not been written yet");
         }
 
         #endregion

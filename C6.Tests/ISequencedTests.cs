@@ -492,9 +492,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SequencedEquals_Set_Fail()
         {
-            Run.If(!AllowsDuplicates);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
 
         #endregion

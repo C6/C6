@@ -496,9 +496,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SCIListItemSet_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -644,27 +642,21 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SCIListAdd_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void SCIListAdd_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void SCIListAdd_Set_Fail()
         {
-            Run.If(!AllowsDuplicates);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -833,9 +825,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SCIListContains_Set_Fail()
         {
-            Run.If(!AllowsDuplicates);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -1199,18 +1189,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SCIListInsert_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void SCIListInsert_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -1370,28 +1356,22 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SCIListRemove_ReadOnlyList_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void SCIListRemove_DuplicatesByCounting_Fail()
         {
-            Run.If(DuplicatesByCounting);
-
             // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(DuplicatesByCounting, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void SCIListRemove_Set_Fail()
         {
-            Run.If(!AllowsDuplicates);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -1558,19 +1538,15 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SCIListRemoveAt_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void SCIListRemoveAt_DuplicatesByCounting_Fail()
         {
-            Run.If(DuplicatesByCounting);
-
             // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(DuplicatesByCounting, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -1866,19 +1842,15 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SCGIListRemoveAt_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void SCGIListRemoveAt_DuplicatesByCounting_Fail()
         {
-            Run.If(DuplicatesByCounting);
-
             // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(DuplicatesByCounting, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -2203,9 +2175,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void ItemSet_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -2415,18 +2385,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void Insert_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void Insert_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -2553,18 +2519,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void InsertFirst_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void InsertFirst_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -2691,18 +2653,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void InsertLast_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void InsertLast_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -3012,18 +2970,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void InsertRange_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void InsertRange_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -3637,18 +3591,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void RemoveFirst_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void RemoveFirst_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -3746,18 +3696,14 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void RemoveLast_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void RemoveLast_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -3908,9 +3854,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void Reverse_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -4037,9 +3981,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void Shuffle_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -4194,9 +4136,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void ShuffleRandom_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -4454,9 +4394,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void Sort_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -4724,9 +4662,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SortComparison_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -4995,9 +4931,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SortIComparer_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
