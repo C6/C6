@@ -177,7 +177,7 @@ namespace C6.Collections
         /// <remarks>
         ///     <para>
         ///         <see cref="Capacity"/> is the number of items that the <see cref="ArrayList{T}"/> can store before resizing is
-        ///         required, whereas <see cref="Count"/> is the number of items that are actually in the
+        ///         required, whereas <see cref="ICollectionValue{T}.Count"/> is the number of items that are actually in the
         ///         <see cref="ArrayList{T}"/>.
         ///     </para>
         ///     <para>
@@ -757,17 +757,8 @@ namespace C6.Collections
             RaiseForSort();
         }
 
-        public virtual T[] ToArray()
-        {
-            var array = new T[Count];
-            Array.Copy(_items, array, Count);
-            return array;
-        }
-
         public override string ToString() => ToString(null, null);
-
-        public virtual string ToString(string format, IFormatProvider formatProvider) => Showing.ShowString(this, format, formatProvider);
-
+        
         /// <summary>
         ///     Sets the capacity to the actual number of items in the <see cref="ArrayList{T}"/>, if that number is less than a
         ///     threshold value.

@@ -185,7 +185,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void GetIndexRange_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
+        public void Backwards_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
         {
             // Arrange
             var collection = GetStringSequence(Random);
