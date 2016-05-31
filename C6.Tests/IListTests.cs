@@ -2338,13 +2338,13 @@ namespace C6.Tests
             var collection = GetStringList(Random);
             var item = Random.GetString();
             var index = GetIndex(collection, Random, true);
-            var array = collection.ToArray().InsertItem(index, item);
+            var expected = collection.InsertItem(index, item);
 
             // Act
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
         }
 
         [Test]
