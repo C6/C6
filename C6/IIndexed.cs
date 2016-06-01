@@ -105,7 +105,7 @@ namespace C6
         ///     <c>true</c>.
         /// </param>
         /// <returns>
-        ///     The zero-based index of the first occurrence of item within the entire collection, if found; otherwise, the one's
+        ///     The zero-based index of the first occurrence of item within the entire collection, if found; otherwise, the ones'
         ///     complement of the index at which <see cref="ICollection{T}.Add"/> would put the item.
         /// </returns>
         [Pure]
@@ -120,7 +120,7 @@ namespace C6
         ///     <c>true</c>.
         /// </param>
         /// <returns>
-        ///     The zero-based index of the last occurrence of item within the entire collection, if found; otherwise, the one's
+        ///     The zero-based index of the last occurrence of item within the entire collection, if found; otherwise, the ones'
         ///     complement of the index at which <see cref="ICollection{T}.Add"/> would put the item.
         /// </returns>
         [Pure]

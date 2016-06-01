@@ -163,7 +163,6 @@ namespace C6
         /// <param name="arrayIndex">
         ///     The zero-based arrayIndex in array at which copying begins.
         /// </param>
-        [Pure]
         new void CopyTo(T[] array, int arrayIndex);
 
         /// <summary>
@@ -1096,15 +1095,7 @@ namespace C6
 
             // Result array contains the distinct items
             Ensures(Result<ICollectionValue<T>>().ToArray().IsSameSequenceAs(this.Where(x => EqualityComparer.Equals(x, item))));
-
-            // Result copy to contains the distinct items
-            Ensures(Invoke(() => {
-                var result = Result<ICollectionValue<T>>();
-                var array = new T[result.Count];
-                result.CopyTo(array, 0);
-                return array.IsSameSequenceAs(this.Where(x => EqualityComparer.Equals(x, item)));
-            }));
-
+            
             // If collection counts duplicates, all items in result are the same
             Ensures(!DuplicatesByCounting || Result<ICollectionValue<T>>().AllConsecutiveElements((x, y) => x.IsSameAs(y)));
 
@@ -1391,15 +1382,7 @@ namespace C6
 
             // Result array contains the distinct items
             Ensures(Result<ICollectionValue<T>>().ToArray().IsSameSequenceAs(AllowsDuplicates ? this.Distinct(EqualityComparer) : this));
-
-            // Result copy to contains the distinct items
-            Ensures(Invoke(() => {
-                var result = Result<ICollectionValue<T>>();
-                var array = new T[result.Count];
-                result.CopyTo(array, 0);
-                return array.IsSameSequenceAs(AllowsDuplicates ? this.Distinct(EqualityComparer) : this);
-            }));
-
+            
 
             return default(ICollectionValue<T>);
         }

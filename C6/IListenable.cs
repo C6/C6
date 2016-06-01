@@ -82,7 +82,7 @@ namespace C6
         /// <seealso cref="IList{T}.InsertRange"/>
         /// <seealso cref="IList{T}.InsertFirst"/>
         /// <seealso cref="IList{T}.InsertLast"/>
-        /// <seealso cref="IList{T}.Remove(T)"/>
+        /// <seealso cref="o:IList{T}.Remove(T)"/>
         /// <seealso cref="IList{T}.RemoveAt"/>
         /// <seealso cref="IList{T}.RemoveFirst"/>
         /// <seealso cref="IList{T}.RemoveLast"/>
@@ -145,7 +145,7 @@ namespace C6
         /// <seealso cref="EventTypes.RemovedAt"/>
         /// <seealso cref="IIndexed{T}.RemoveAt"/>
         /// <seealso cref="IList{T}.this "/>
-        /// <seealso cref="IList{T}.Remove(T)"/>
+        /// <seealso cref="o:IList{T}.Remove(T)"/>
         /// <seealso cref="IList{T}.RemoveAt"/>
         /// <seealso cref="IList{T}.RemoveFirst"/>
         /// <seealso cref="IList{T}.RemoveLast"/>
@@ -199,7 +199,7 @@ namespace C6
         /// <seealso cref="ICollection{T}.UpdateOrAdd(T, out T)"/>
         /// <seealso cref="IIndexed{T}.RemoveAt"/>
         /// <seealso cref="IList{T}.this "/>
-        /// <seealso cref="IList{T}.Remove(T)"/>
+        /// <seealso cref="o:IList{T}.Remove(T)"/>
         /// <seealso cref="IList{T}.RemoveAt"/>
         /// <seealso cref="IList{T}.RemoveFirst"/>
         /// <seealso cref="IList{T}.RemoveLast"/>

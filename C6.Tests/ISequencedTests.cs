@@ -185,7 +185,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void GetIndexRange_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
+        public void Backwards_ChangeCollectionInvalidatesDirectedCollectionValue_ThrowsInvalidOperationException()
         {
             // Arrange
             var collection = GetStringSequence(Random);
@@ -492,9 +492,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void SequencedEquals_Set_Fail()
         {
-            Run.If(!AllowsDuplicates);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
 
         #endregion

@@ -308,27 +308,21 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void Add_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void Add_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void Add_Set_Fail()
         {
-            Run.If(!AllowsDuplicates);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -507,27 +501,21 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void AddRange_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void AddRange_FixedSizeCollection_Fail()
         {
-            Run.If(IsFixedSize);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsFixedSize, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
         public void AddRange_Set_Fail()
         {
-            Run.If(!AllowsDuplicates);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
 
         #endregion

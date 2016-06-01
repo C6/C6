@@ -317,9 +317,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void Pop_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
@@ -447,9 +445,7 @@ namespace C6.Tests
         [Category("Unfinished")]
         public void Push_ReadOnlyCollection_Fail()
         {
-            Run.If(IsReadOnly);
-
-            Assert.Fail("Tests have not been written yet");
+            Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
