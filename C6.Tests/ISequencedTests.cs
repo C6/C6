@@ -316,7 +316,7 @@ namespace C6.Tests
             // Arrange
             var sequence = GetStringSequence(Random, ReferenceEqualityComparer);
             var items = GetStrings(Random);
-            var expected = GetSequence(items).GetSequencedHashCode();
+            var expected = GetSequence(items, ReferenceEqualityComparer).GetSequencedHashCode();
 
             // Act
             var hashCode = sequence.GetSequencedHashCode();

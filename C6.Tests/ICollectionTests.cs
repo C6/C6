@@ -1140,7 +1140,7 @@ namespace C6.Tests
             // Arrange
             var sequence = GetStringCollection(Random, ReferenceEqualityComparer);
             var items = GetStrings(Random);
-            var expected = GetCollection(items).GetUnsequencedHashCode();
+            var expected = GetCollection(items, ReferenceEqualityComparer).GetUnsequencedHashCode();
 
             // Act
             var hashCode = sequence.GetUnsequencedHashCode();

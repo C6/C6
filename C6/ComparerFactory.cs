@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 using static System.Diagnostics.Contracts.Contract;
 
@@ -97,7 +98,6 @@ namespace C6
             return new EqualityComparer<T>(equals, getHashCode);
         }
 
-        // TODO: Overload with a custom hash function
         /// <summary>
         ///     Creates a new reference equality comparer that compares equality based on reference equality and uses the type's
         ///     default hash function.
@@ -115,7 +115,7 @@ namespace C6
 
             #endregion
 
-            return new EqualityComparer<T>((x, y) => ReferenceEquals(x, y), SCG.EqualityComparer<T>.Default.GetHashCode);
+            return ReferenceEqualityComparer<T>.Default;
         }
 
         #region Nested Types
@@ -199,6 +199,17 @@ namespace C6
             public bool Equals(T x, T y) => _equals(x, y);
 
             public int GetHashCode(T obj) => _getHashCode(obj);
+        }
+
+
+        [Serializable]
+        private sealed class ReferenceEqualityComparer<T> : SCG.IEqualityComparer<T>
+        {
+            public new static SCG.IEqualityComparer<T> Default { get; } = new ReferenceEqualityComparer<T>();
+
+            public bool Equals(T x, T y) => ReferenceEquals(x, y);
+
+            public int GetHashCode(T obj) => RuntimeHelpers.GetHashCode(obj);
         }
 
         #endregion
