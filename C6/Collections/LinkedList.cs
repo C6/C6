@@ -122,7 +122,9 @@ namespace C6.Collections
 
         public T[] ToArray()
         {
-            throw new NotImplementedException();
+            var array = new T[Count];
+            CopyTo(array, 0);
+            return array;
         }
 
         public string ToString(string format, IFormatProvider formatProvider)

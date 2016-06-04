@@ -373,33 +373,21 @@ namespace C6.Tests
         public void ToArray_EmptyCollection_Empty()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
-
-            // Act
-            var array = collection.ToArray();
-
-            // Assert
-            Assert.That(array, Is.Empty);
-        }
-
-        [Test]
-        public void ToArray_EmptyCollection_NotNull()
-        {
-            // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act
             var array = collection.ToArray();
 
             // Assert
             Assert.That(array, Is.Not.Null);
+            Assert.That(array, Is.Empty);
         }
         
         [Test]
-        public void ToArray_SingleItemCollection_SingleItemArray()
+        public void ToArray_SingleItemCollection_SameAsItem()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var collection = GetCollectionValue(item);
             var itemArray = new[] { item };
 
@@ -411,7 +399,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ToArray_RandomNonValueTypeCollection_Equal()
+        public void ToArray_RandomCollection_SameAsItems()
         {
             // Arrange
             var items = GetStrings(Random);
