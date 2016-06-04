@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ArrayListTests.cs" />
+    <Compile Include="Collections\LinkedListTests.cs" />
     <Compile Include="ComparerFactoryTests.cs" />
     <Compile Include="Helpers\BadEnumerable.cs" />
     <Compile Include="Helpers\BadEnumerableException.cs" />

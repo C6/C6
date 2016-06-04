@@ -41,13 +41,13 @@ namespace C6.Tests
         /// </returns>
         protected abstract SCG.IEnumerable<T> GetEnumerable<T>(SCG.IEnumerable<T> enumerable);
 
-        #endregion
-
         #region Helpers
 
         private SC.IEnumerable GetEmptySCEnumerable<T>() => GetEmptyEnumerable<T>();
 
         private SC.IEnumerable GetSCEnumerable<T>(SCG.IEnumerable<T> enumerable) => GetEnumerable(enumerable);
+
+        #endregion
 
         #endregion
 

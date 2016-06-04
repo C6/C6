@@ -9,9 +9,12 @@ using C6.Tests.Helpers;
 
 using NUnit.Framework;
 
+using static System.Diagnostics.Contracts.Contract;
+
 using static C6.EventTypes;
 using static C6.Tests.Helpers.TestHelper;
 
+using Assert = NUnit.Framework.Assert;
 using SCG = System.Collections.Generic;
 
 
@@ -384,6 +387,14 @@ namespace C6.Tests.Collections
 
         protected override IList<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
         protected override IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
+        protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
+        {
+            Requires(collection is ArrayList<T>);
+
+            var arrayList = (ArrayList<T>) collection;
+
+            yield return arrayList.Last;
+        }
     }
 
 
@@ -395,5 +406,13 @@ namespace C6.Tests.Collections
 
         protected override IStack<T> GetEmptyStack<T>(bool allowsNull = false) => new ArrayList<T>(allowsNull: allowsNull);
         protected override IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new ArrayList<T>(enumerable, allowsNull: allowsNull);
+        protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
+        {
+            Requires(collection is ArrayList<T>);
+
+            var arrayList = (ArrayList<T>) collection;
+
+            yield return arrayList.Last;
+        }
     }
 }
