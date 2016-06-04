@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 
 using C6.Contracts;
 
@@ -22,7 +23,7 @@ namespace C6.Collections
     ///     Represents a generic doubly linked list.
     /// </summary>
     [Serializable]
-    public class LinkedList<T> : SCG.IEnumerable<T>
+    public class LinkedList<T> : ICollectionValue<T>
     {
         #region Fields
 
@@ -61,7 +62,7 @@ namespace C6.Collections
 
         #region Constructors
 
-        public LinkedList()
+        public LinkedList(bool allowsNull)
         {
             _first = new Node(default(T));
             _last = new Node(default(T));
@@ -70,7 +71,7 @@ namespace C6.Collections
             _last.Previous = _first;
         }
 
-        public LinkedList(SCG.IEnumerable<T> items) : this()
+        public LinkedList(SCG.IEnumerable<T> items, bool allowsNull) : this(allowsNull)
         {
             var previous = _first;
             foreach (var item in items) {
@@ -80,9 +81,58 @@ namespace C6.Collections
 
         #endregion
 
+        #region Properties
+
+        public bool AllowsNull
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public int Count
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public Speed CountSpeed
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsEmpty
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        #endregion
+
         #region Methods
 
+        public T Choose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
         public SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
+
+        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T[] ToArray()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 

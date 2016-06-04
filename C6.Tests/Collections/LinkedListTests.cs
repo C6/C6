@@ -11,10 +11,10 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class LinkedListTests : IEnumerableTests
+    public class LinkedListTests : ICollectionValueTests
     {
-        protected override SCG.IEnumerable<T> GetEmptyEnumerable<T>() => new LinkedList<T>();
+        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull);
 
-        protected override SCG.IEnumerable<T> GetEnumerable<T>(SCG.IEnumerable<T> enumerable) => new LinkedList<T>(enumerable);
+        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull);
     }
 }
