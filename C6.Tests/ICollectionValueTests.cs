@@ -85,8 +85,6 @@ namespace C6.Tests
 
         private ICollectionValue<int> GetIntCollectionValue(Random random) => GetCollectionValue(GetIntegers(random, GetCount(random)), false);
 
-        private ICollectionValue<int> GetIntCollectionValue(Random random, int count) => GetCollectionValue(GetIntegers(random, count), false);
-
         private ICollectionValue<string> GetStringCollectionValue(Randomizer random, bool allowsNull = false)
             => GetCollectionValue(GetStrings(random, GetCount(random)), allowsNull);
 
@@ -421,6 +419,8 @@ namespace C6.Tests
         #region IShowable
 
         #region Methods
+
+        // TODO: Review IShowable tests
 
         #region Show
 

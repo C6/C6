@@ -2,9 +2,9 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
 
 using C6.Contracts;
 
@@ -20,7 +20,6 @@ using static C6.Speed;
 
 namespace C6.Collections
 {
-    // TODO: Inherit from CollectionValueBase<T>
     /// <summary>
     ///     Represents a generic doubly linked list.
     /// </summary>
@@ -28,7 +27,8 @@ namespace C6.Collections
     ///     The type of the items in the collection.
     /// </typeparam>
     [Serializable]
-    public class LinkedList<T> : ICollectionValue<T>
+    [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
+    public class LinkedList<T> : CollectionValueBase<T>, ICollectionValue<T>
     {
         #region Fields
 
@@ -70,21 +70,20 @@ namespace C6.Collections
 
         #region Constructors
 
-        public LinkedList(bool allowsNull)
+        public LinkedList(bool allowsNull) : base(allowsNull)
         {
             _first = new Node(default(T));
             _last = new Node(default(T), _first);
             _first.Next = _last;
-
-            AllowsNull = allowsNull;
         }
 
         public LinkedList(SCG.IEnumerable<T> items, bool allowsNull) : this(allowsNull)
         {
             var previous = _first;
             foreach (var item in items) {
+                // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
+                ++base.Count;
                 previous = new Node(item, previous, _last);
-                ++Count;
             }
         }
 
@@ -92,51 +91,15 @@ namespace C6.Collections
 
         #region Properties
 
-        public bool AllowsNull { get; }
-
-        public int Count { get; private set; }
-
-        public Speed CountSpeed => Constant;
-
-        public bool IsEmpty => Count == 0;
+        public override Speed CountSpeed => Constant;
 
         #endregion
 
         #region Methods
 
-        public T Choose() => _last.Previous.Item;
+        public override T Choose() => _last.Previous.Item;
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            foreach (var item in this) {
-                array[arrayIndex++] = item;
-            }
-        }
-
-        public SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
-
-        public bool Show(StringBuilder stringBuilder, ref int rest, IFormatProvider formatProvider)
-        {
-            throw new NotImplementedException();
-        }
-
-        public T[] ToArray()
-        {
-            var array = new T[Count];
-            CopyTo(array, 0);
-            return array;
-        }
-
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region Explicit Implementations
-
-        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
+        public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
         #endregion
 
