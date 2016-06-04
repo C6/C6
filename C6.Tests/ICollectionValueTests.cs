@@ -56,29 +56,27 @@ namespace C6.Tests
         /// </returns>
         protected abstract ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 
+        #region Inherited
+
+        protected override SCG.IEnumerable<T> GetEmptyEnumerable<T>() => GetEmptyCollectionValue<T>();
+
+        protected override SCG.IEnumerable<T> GetEnumerable<T>(SCG.IEnumerable<T> enumerable) => GetCollectionValue(enumerable);
+
+        #endregion
+
         #region Helpers
 
         private ICollectionValue<T> GetCollectionValue<T>(params T[] items) => GetCollectionValue((SCG.IEnumerable<T>) items);
 
-        private ICollectionValue<int> GetIntCollectionValue(Random random, bool allowsNull = false)
-            => GetCollectionValue(GetIntegers(random, GetCount(random)), allowsNull);
+        private ICollectionValue<int> GetIntCollectionValue(Random random) => GetCollectionValue(GetIntegers(random, GetCount(random)), false);
 
-        private ICollectionValue<int> GetIntCollectionValue(Random random, int count, bool allowsNull = false)
-            => GetCollectionValue(GetIntegers(random, count), allowsNull);
+        private ICollectionValue<int> GetIntCollectionValue(Random random, int count) => GetCollectionValue(GetIntegers(random, count), false);
 
         private ICollectionValue<string> GetStringCollectionValue(Randomizer random, bool allowsNull = false)
             => GetCollectionValue(GetStrings(random, GetCount(random)), allowsNull);
 
         private ICollectionValue<string> GetStringCollectionValue(Randomizer random, int count, bool allowsNull = false)
             => GetCollectionValue(GetStrings(random, count), allowsNull);
-
-        #endregion
-
-        #region Inherited
-
-        protected override SCG.IEnumerable<T> GetEmptyEnumerable<T>() => GetEmptyCollectionValue<T>();
-
-        protected override SCG.IEnumerable<T> GetEnumerable<T>(SCG.IEnumerable<T> enumerable) => GetCollectionValue(enumerable);
 
         #endregion
 
@@ -91,9 +89,7 @@ namespace C6.Tests
         #region Properties
 
         #region AllowsNull
-
-        // TODO: Are there better tests to perform here?
-
+        
         [Test]
         public void AllowsNull_EmptyCollectionAllowsNull_True()
         {
@@ -108,7 +104,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AllowsNull_EmptyCollectionAllowsNull_False()
+        public void AllowsNull_EmptyCollectionDisallowsNull_False()
         {
             // Arrange
             var collection = GetEmptyCollectionValue<string>(allowsNull: false);
@@ -121,7 +117,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AllowsNull_AllowsNull_True()
+        public void AllowsNull_RandomCollectionAllowsNull_True()
         {
             // Arrange
             var collection = GetCollectionValue(Enumerable.Empty<string>(), allowsNull: true);
@@ -134,7 +130,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AllowsNull_AllowsNull_False()
+        public void AllowsNull_RandomCollectionDisallowsNull_False()
         {
             // Arrange
             var collection = GetCollectionValue(Enumerable.Empty<string>(), allowsNull: false);

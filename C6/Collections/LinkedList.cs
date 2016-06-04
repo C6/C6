@@ -55,6 +55,9 @@ namespace C6.Collections
             // List is equal forwards and backwards
             Invariant(EnumerateFrom(_first.Next).IsSameSequenceAs(EnumerateBackwardsFrom(_last.Previous).Reverse()));
 
+            // All items must be non-null if collection disallows null values
+            Invariant(AllowsNull || ForAll(this, item => item != null));
+
             // ReSharper restore InvocationIsSkipped
         }
 
@@ -65,10 +68,10 @@ namespace C6.Collections
         public LinkedList(bool allowsNull)
         {
             _first = new Node(default(T));
-            _last = new Node(default(T));
-
+            _last = new Node(default(T), _first);
             _first.Next = _last;
-            _last.Previous = _first;
+
+            AllowsNull = allowsNull;
         }
 
         public LinkedList(SCG.IEnumerable<T> items, bool allowsNull) : this(allowsNull)
@@ -83,10 +86,7 @@ namespace C6.Collections
 
         #region Properties
 
-        public bool AllowsNull
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool AllowsNull { get; }
 
         public int Count
         {
