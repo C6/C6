@@ -13,6 +13,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
+using static C6.Speed;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -178,16 +179,16 @@ namespace C6.Tests
         #region CountSpeed
 
         [Test]
-        public void CountSpeed_EmptyCollection_Constant()
+        public void CountSpeed_RandomCollection_Constant()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetStringCollectionValue(Random);
 
             // Act
-            var speed = collection.CountSpeed;
+            var countSpeed = collection.CountSpeed;
 
             // Assert
-            Assert.That(speed, Is.EqualTo(Speed.Constant));
+            Assert.That(countSpeed, Is.EqualTo(Constant));
         }
 
         #endregion

@@ -15,6 +15,7 @@ using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Collections.ExceptionMessages;
 using static C6.Contracts.ContractMessage;
+using static C6.Speed;
 
 
 namespace C6.Collections
@@ -91,10 +92,7 @@ namespace C6.Collections
 
         public int Count { get; private set; }
 
-        public Speed CountSpeed
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Speed CountSpeed => Constant;
 
         public bool IsEmpty
         {
