@@ -18,6 +18,9 @@ namespace C6.Tests.Helpers
         public static int GetCount(Random random)
             => random.Next(10, 20);
 
+        public static String GetString(Randomizer random)
+            => random.GetString();
+
         public static int[] GetIntegers(Random random)
             => GetIntegers(random, GetCount(random));
 

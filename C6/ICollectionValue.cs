@@ -82,6 +82,7 @@ namespace C6
         [Pure]
         bool IsEmpty { get; }
 
+        // TODO: Should we keep this and rather add it to IStack<T>/IQueue<T>?
         /// <summary>
         ///     Returns some item from the collection.
         /// </summary>

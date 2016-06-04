@@ -57,6 +57,20 @@ namespace C6.Tests
         /// </returns>
         protected abstract ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 
+        /// <summary>
+        ///     Returns an enumerable containing all the possible items that <see cref="ICollectionValue{T}.Choose"/> can return.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the collection.
+        /// </typeparam>
+        /// <param name="collection">
+        ///     The collection from which an item is chosen.
+        /// </param>
+        /// <returns>
+        ///     the possible items that <paramref name="collection"/>'s <see cref="ICollectionValue{T}.Choose"/> can return.
+        /// </returns>
+        protected abstract SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection);
+
         #region Inherited
 
         protected override SCG.IEnumerable<T> GetEmptyEnumerable<T>() => GetEmptyCollectionValue<T>();
@@ -90,7 +104,7 @@ namespace C6.Tests
         #region Properties
 
         #region AllowsNull
-        
+
         [Test]
         public void AllowsNull_EmptyCollectionAllowsNull_True()
         {
@@ -233,17 +247,17 @@ namespace C6.Tests
         public void Choose_EmptyCollection_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act & Assert
             Assert.That(() => collection.Choose(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
         }
 
         [Test]
-        public void Choose_SingleItemCollection_Item()
+        public void Choose_SingleItemCollection_SameItem()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var collection = GetCollectionValue(item);
 
             // Act
@@ -254,7 +268,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Choose_SingleValueTypeCollection_Item()
+        public void Choose_SingleValueTypeCollection_SameItem()
         {
             // Arrange
             var item = Random.Next();
@@ -277,7 +291,7 @@ namespace C6.Tests
             var choose = collection.Choose();
 
             // Assert
-            Assert.That(collection, Has.Some.SameAs(choose));
+            Assert.That(ChooseItems(collection), Has.Some.SameAs(choose));
         }
 
         #endregion

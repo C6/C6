@@ -23,6 +23,9 @@ namespace C6.Collections
     /// <summary>
     ///     Represents a generic doubly linked list.
     /// </summary>
+    /// <typeparam name="T">
+    ///     The type of the items in the collection.
+    /// </typeparam>
     [Serializable]
     public class LinkedList<T> : ICollectionValue<T>
     {
@@ -100,10 +103,7 @@ namespace C6.Collections
 
         #region Methods
 
-        public T Choose()
-        {
-            throw new NotImplementedException();
-        }
+        public T Choose() => _last.Previous.Item;
 
         public void CopyTo(T[] array, int arrayIndex)
         {
