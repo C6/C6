@@ -31,6 +31,37 @@ namespace C6.Tests
         #region Factories
 
         /// <summary>
+        ///     Creates an empty <see cref="IListenable{T}"/>.
+        /// </summary>
+        /// <param name="allowsNull">
+        ///     A value indicating whether the collection allows <c>null</c> items.
+        /// </param>
+        /// <typeparam name="T">
+        ///     The type of the items in the <see cref="IListenable{T}"/>.
+        /// </typeparam>
+        /// <returns>
+        ///     An empty <see cref="IListenable{T}"/>.
+        /// </returns>
+        protected abstract IListenable<T> GetEmptyListenable<T>(bool allowsNull = false);
+
+        /// <summary>
+        ///     Creates an <see cref="IListenable{T}"/> containing the items in the enumerable.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the <see cref="IListenable{T}"/>.
+        /// </typeparam>
+        /// <param name="enumerable">
+        ///     The collection whose items are copied to the new <see cref="IListenable{T}"/>.
+        /// </param>
+        /// <param name="allowsNull">
+        ///     A value indicating whether the collection allows <c>null</c> items.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IListenable{T}"/> containing the items in the enumerable.
+        /// </returns>
+        protected abstract IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
+
+        /// <summary>
         ///     Gets a bit flag indicating the expected value for the collection's
         ///     <see cref="IListenable{T}.ListenableEvents"/>.
         /// </summary>
@@ -41,36 +72,13 @@ namespace C6.Tests
         /// <seealso cref="IListenable{T}.ListenableEvents"/>
         protected abstract EventTypes ListenableEvents { get; }
 
-        /// <summary>
-        ///     Creates an empty <see cref="IQueue{T}"/>.
-        /// </summary>
-        /// <param name="allowsNull">
-        ///     A value indicating whether the collection allows <c>null</c> items.
-        /// </param>
-        /// <typeparam name="T">
-        ///     The type of the items in the <see cref="IQueue{T}"/>.
-        /// </typeparam>
-        /// <returns>
-        ///     An empty <see cref="IQueue{T}"/>.
-        /// </returns>
-        protected abstract IListenable<T> GetEmptyListenable<T>(bool allowsNull = false);
+        #region Inherited
 
-        /// <summary>
-        ///     Creates a <see cref="IQueue{T}"/> containing the items in the enumerable.
-        /// </summary>
-        /// <typeparam name="T">
-        ///     The type of the items in the <see cref="IQueue{T}"/>.
-        /// </typeparam>
-        /// <param name="enumerable">
-        ///     The collection whose items are copied to the new <see cref="IQueue{T}"/>.
-        /// </param>
-        /// <param name="allowsNull">
-        ///     A value indicating whether the collection allows <c>null</c> items.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="IQueue{T}"/> containing the items in the enumerable.
-        /// </returns>
-        protected abstract IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
+        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => GetEmptyListenable<T>(allowsNull);
+
+        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => GetListenable(enumerable, allowsNull);
+
+        #endregion
 
         #region Helpers
 
@@ -117,14 +125,6 @@ namespace C6.Tests
                 collection.ItemRemovedAt -= _removedAt;
             }
         }
-
-        #endregion
-
-        #region Inherited
-
-        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => GetEmptyListenable<T>(allowsNull);
-
-        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => GetListenable(enumerable, allowsNull);
 
         #endregion
 

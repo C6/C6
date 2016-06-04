@@ -19,16 +19,18 @@ namespace C6.Tests
         #region Factories
 
         /// <summary>
-        ///     Creates an empty enumerable.
+        ///     Creates an empty <see cref="SCG.IEnumerable{T}"/>.
         /// </summary>
         /// <typeparam name="T">
         ///     The type of the items in the enumerable.
         /// </typeparam>
-        /// <returns>An empty enumerable.</returns>
+        /// <returns>
+        ///     An empty <see cref="SCG.IEnumerable{T}"/>.
+        /// </returns>
         protected abstract SCG.IEnumerable<T> GetEmptyEnumerable<T>();
 
         /// <summary>
-        ///     Creates an enumerable containing the items in another enumerable.
+        ///     Creates an <see cref="SCG.IEnumerable{T}"/> containing the items in another enumerable.
         /// </summary>
         /// <typeparam name="T">
         ///     The type of the items in the enumerable.
@@ -37,7 +39,7 @@ namespace C6.Tests
         ///     The collection whose items are copied to the new enumerable.
         /// </param>
         /// <returns>
-        ///     An enumerable containing the items in another enumerable.
+        ///     An <see cref="SCG.IEnumerable{T}"/> containing the items in another enumerable.
         /// </returns>
         protected abstract SCG.IEnumerable<T> GetEnumerable<T>(SCG.IEnumerable<T> enumerable);
 
