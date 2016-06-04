@@ -302,7 +302,7 @@ namespace C6.Tests
         public void CopyTo_NullArray_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
+            var collection = GetStringCollectionValue(Random);
 
             // Act & Assert
             Assert.That(() => collection.CopyTo(null, 0), Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -312,45 +312,49 @@ namespace C6.Tests
         public void CopyTo_NegativeIndex_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = new int[collection.Count];
+            var collection = GetStringCollectionValue(Random);
+            var array = new string[collection.Count];
+            var arrayIndex = GetNegative(Random);
 
             // Act & Assert
-            Assert.That(() => collection.CopyTo(array, -1), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+            Assert.That(() => collection.CopyTo(array, arrayIndex), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
-
+        
         [Test]
         public void CopyTo_IndexOutOfBound_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = new int[collection.Count];
-            var index = Random.Next(1, collection.Count);
+            var collection = GetStringCollectionValue(Random);
+            var padding = GetCount(Random);
+            var array = new string[collection.Count + padding];
+            var arrayIndex = Random.Next(1, collection.Count) + padding;
 
             // Act & Assert
-            Assert.That(() => collection.CopyTo(array, index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+            Assert.That(() => collection.CopyTo(array, arrayIndex), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
 
         [Test]
         public void CopyTo_EqualSizeArray_Equals()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = new int[collection.Count];
+            var collection = GetStringCollectionValue(Random);
+            var array = new string[collection.Count];
+            var arrayIndex = 0;
 
             // Act
-            collection.CopyTo(array, 0);
+            collection.CopyTo(array, arrayIndex);
 
             // Assert
-            Assert.That(array, Is.EqualTo(collection));
+            Assert.That(array, Is.EqualTo(collection).ByReference<string>());
         }
 
         [Test]
-        public void CopyTo_CopyToRandomIndex_SectionEquals()
+        public void CopyTo_RandomIndex_SectionEquals()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = GetIntegers(Random, (int) (collection.Count * 1.7));
+            var collection = GetStringCollectionValue(Random);
+            var padding = GetCount(Random);
+            var array = GetStrings(Random, collection.Count + padding);
             var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act
@@ -358,7 +362,7 @@ namespace C6.Tests
             var section = array.Skip(arrayIndex).Take(collection.Count);
 
             // Assert
-            Assert.That(section, Is.EqualTo(collection));
+            Assert.That(section, Is.EqualTo(collection).ByReference<string>());
         }
 
         #endregion
@@ -403,7 +407,7 @@ namespace C6.Tests
             var array = collection.ToArray();
 
             // Assert
-            Assert.That(array, Is.EqualTo(itemArray));
+            Assert.That(array, Is.EqualTo(itemArray).ByReference<string>());
         }
 
         [Test]
@@ -417,7 +421,7 @@ namespace C6.Tests
             var array = collection.ToArray();
 
             // Assert
-            Assert.That(array, Is.EqualTo(items));
+            Assert.That(array, Is.EqualTo(items).ByReference<string>());
         }
 
         #endregion
@@ -504,7 +508,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(show, Is.True);
-            Assert.That(rest, Is.EqualTo(int.MaxValue - length));
+            Assert.That(rest, Is.EqualTo(int.MaxValue - length).ByReference<string>());
         }
 
         [Test]
@@ -524,7 +528,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(show, Is.False);
-            Assert.That(length, Is.EqualTo(rest - refRest));
+            Assert.That(length, Is.EqualTo(rest - refRest).ByReference<string>());
             Assert.That(result, Contains.Substring(Showing.Ellipses));
         }
 

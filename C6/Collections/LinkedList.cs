@@ -20,6 +20,7 @@ using static C6.Speed;
 
 namespace C6.Collections
 {
+    // TODO: Inherit from CollectionValueBase<T>
     /// <summary>
     ///     Represents a generic doubly linked list.
     /// </summary>
@@ -107,7 +108,9 @@ namespace C6.Collections
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            foreach (var item in this) {
+                array[arrayIndex++] = item;
+            }
         }
 
         public SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
