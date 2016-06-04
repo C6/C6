@@ -79,6 +79,7 @@ namespace C6.Collections
             var previous = _first;
             foreach (var item in items) {
                 previous = new Node(item, previous, _last);
+                ++Count;
             }
         }
 
@@ -88,10 +89,7 @@ namespace C6.Collections
 
         public bool AllowsNull { get; }
 
-        public int Count
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public int Count { get; private set; }
 
         public Speed CountSpeed
         {

@@ -150,7 +150,7 @@ namespace C6.Tests
         public void Count_EmptyCollection_Zero()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act
             var count = collection.Count;
@@ -164,7 +164,7 @@ namespace C6.Tests
         {
             // Arrange
             var size = GetCount(Random);
-            var collection = GetIntCollectionValue(Random, size);
+            var collection = GetStringCollectionValue(Random, size);
 
             // Act
             var count = collection.Count;
