@@ -282,7 +282,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Choose_RandomCollection_ItemFromCollection()
+        public void Choose_RandomCollection_SameAsItemFromCollection()
         {
             // Arrange
             var collection = GetStringCollectionValue(Random);
@@ -334,7 +334,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void CopyTo_EqualSizeArray_Equals()
+        public void CopyTo_EqualSizeArray_EqualsCollection()
         {
             // Arrange
             var collection = GetStringCollectionValue(Random);
@@ -349,7 +349,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void CopyTo_RandomIndex_SectionEquals()
+        public void CopyTo_RandomIndex_EqualsSection()
         {
             // Arrange
             var collection = GetStringCollectionValue(Random);
@@ -394,7 +394,7 @@ namespace C6.Tests
             // Assert
             Assert.That(array, Is.Not.Null);
         }
-
+        
         [Test]
         public void ToArray_SingleItemCollection_SingleItemArray()
         {
