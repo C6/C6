@@ -94,10 +94,7 @@ namespace C6.Collections
 
         public Speed CountSpeed => Constant;
 
-        public bool IsEmpty
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsEmpty => Count == 0;
 
         #endregion
 

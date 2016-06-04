@@ -199,7 +199,7 @@ namespace C6.Tests
         public void IsEmpty_EmptyCollection_True()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act
             var isEmpty = collection.IsEmpty;
@@ -209,11 +209,10 @@ namespace C6.Tests
         }
 
         [Test]
-        public void IsEmpty_RandomCollection_False()
+        public void IsEmpty_NonEmptyCollection_False()
         {
             // Arrange
-            var size = GetCount(Random);
-            var collection = GetIntCollectionValue(Random, size);
+            var collection = GetStringCollectionValue(Random);
 
             // Act
             var isEmpty = collection.IsEmpty;
