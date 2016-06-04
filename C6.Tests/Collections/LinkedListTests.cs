@@ -15,11 +15,12 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class LinkedListTests : ICollectionValueTests
+    public class LinkedListTests : IListenableTests
     {
-        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull);
+        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull);
 
-        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull);
+        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull);
+        protected override EventTypes ListenableEvents => EventTypes.All;
 
         protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
         {
