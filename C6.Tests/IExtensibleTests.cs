@@ -34,6 +34,16 @@ namespace C6.Tests
 
         protected abstract IExtensible<T> GetExtensible<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false);
 
+        #region Inherited
+
+        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false)
+            => GetEmptyExtensible<T>(allowsNull: allowsNull);
+
+        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false)
+            => GetExtensible(enumerable, allowsNull: allowsNull);
+
+        #endregion
+
         #region Helpers
 
         private IExtensible<int> GetIntExtensible(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
@@ -47,16 +57,6 @@ namespace C6.Tests
 
         private IExtensible<string> GetStringExtensible(Randomizer random, int count, SCG.IEqualityComparer<string> equalityComparer = null, bool allowsNull = false)
             => GetExtensible(GetStrings(random, count), equalityComparer, allowsNull);
-
-        #endregion
-
-        #region Inherited
-
-        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false)
-            => GetEmptyExtensible<T>(allowsNull: allowsNull);
-
-        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false)
-            => GetExtensible(enumerable, allowsNull: allowsNull);
 
         #endregion
 
@@ -103,20 +103,21 @@ namespace C6.Tests
         #region EqualityComparer
 
         [Test]
-        public void EqualityComparer_DefaultComparer_NotNull()
+        public void EqualityComparer_NoSpecifiedComparer_SameAsDefaultComparer()
         {
             // Arrange
-            var collection = GetStringExtensible(Random);
+            var collection = GetStringExtensible(Random, equalityComparer: null);
 
             // Act
             var equalityComparer = collection.EqualityComparer;
 
             // Assert
             Assert.That(equalityComparer, Is.Not.Null);
+            Assert.That(equalityComparer, Is.SameAs(SCG.EqualityComparer<string>.Default));
         }
 
         [Test]
-        public void EqualityComparer_CustomEqualityComparer_Equal()
+        public void EqualityComparer_CustomEqualityComparer_SameAsCustomEqualityComparer()
         {
             // Arrange
             var customEqualityComparer = ComparerFactory.CreateEqualityComparer<int>((i, j) => i == j, i => i);
@@ -127,20 +128,6 @@ namespace C6.Tests
 
             // Assert
             Assert.That(equalityComparer, Is.SameAs(customEqualityComparer));
-        }
-
-        [Test]
-        public void EqualityComparer_DefaultEqualityComparer_Equal()
-        {
-            // Arrange
-            var defaultEqualityComparer = SCG.EqualityComparer<int>.Default;
-            var collection = GetEmptyExtensible<int>();
-
-            // Act
-            var equalityComparer = collection.EqualityComparer;
-
-            // Assert
-            Assert.That(equalityComparer, Is.SameAs(defaultEqualityComparer));
         }
 
         #endregion

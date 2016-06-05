@@ -75,6 +75,8 @@ namespace C6.Collections
             _first = new Node(default(T));
             _last = new Node(default(T), _first);
             _first.Next = _last;
+
+            EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
         }
 
         public LinkedList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
@@ -97,10 +99,7 @@ namespace C6.Collections
 
         public bool DuplicatesByCounting => false;
 
-        public SCG.IEqualityComparer<T> EqualityComparer
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public SCG.IEqualityComparer<T> EqualityComparer { get; }
 
         public bool IsFixedSize => false;
 
