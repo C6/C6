@@ -91,32 +91,20 @@ namespace C6.Collections
 
         #region Properties
 
-        public bool AllowsDuplicates
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool AllowsDuplicates => true;
 
         public override Speed CountSpeed => Constant;
 
-        public bool DuplicatesByCounting
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool DuplicatesByCounting => false;
 
         public SCG.IEqualityComparer<T> EqualityComparer
         {
             get { throw new NotImplementedException(); }
         }
 
-        public bool IsFixedSize
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsFixedSize => false;
 
-        public bool IsReadOnly
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsReadOnly => false;
 
         #endregion
 
