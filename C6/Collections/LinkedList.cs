@@ -28,7 +28,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : ListenableBase<T>, IListenable<T>
+    public class LinkedList<T> : ListenableBase<T>, IExtensible<T>
     {
         #region Fields
 
@@ -70,14 +70,14 @@ namespace C6.Collections
 
         #region Constructors
 
-        public LinkedList(bool allowsNull) : base(allowsNull)
+        public LinkedList(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : base(allowsNull)
         {
             _first = new Node(default(T));
             _last = new Node(default(T), _first);
             _first.Next = _last;
         }
 
-        public LinkedList(SCG.IEnumerable<T> items, bool allowsNull) : this(allowsNull)
+        public LinkedList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
         {
             var previous = _first;
             foreach (var item in items) {
@@ -90,19 +90,54 @@ namespace C6.Collections
         #endregion
 
         #region Properties
-        
+
+        public bool AllowsDuplicates
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public override Speed CountSpeed => Constant;
-        
+
+        public bool DuplicatesByCounting
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public SCG.IEqualityComparer<T> EqualityComparer
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsFixedSize
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsReadOnly
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         #endregion
 
         #region Methods
+
+        public bool Add(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddRange(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
 
         public override T Choose() => _last.Previous.Item;
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
         #endregion
-        
+
         #region Private Methods
 
         [Pure]
