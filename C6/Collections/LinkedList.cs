@@ -28,7 +28,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : CollectionValueBase<T>, IListenable<T>
+    public class LinkedList<T> : ListenableBase<T>, IListenable<T>
     {
         #region Fields
 
@@ -90,19 +90,9 @@ namespace C6.Collections
         #endregion
 
         #region Properties
-
-        public EventTypes ActiveEvents
-        {
-            get { throw new NotImplementedException(); }
-        }
-
+        
         public override Speed CountSpeed => Constant;
-
-        public EventTypes ListenableEvents
-        {
-            get { throw new NotImplementedException(); }
-        }
-
+        
         #endregion
 
         #region Methods
@@ -112,47 +102,7 @@ namespace C6.Collections
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
         #endregion
-
-        #region Events
-
-        public event EventHandler CollectionChanged
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        public event EventHandler<ClearedEventArgs> CollectionCleared
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        public event EventHandler<ItemAtEventArgs<T>> ItemInserted
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        public event EventHandler<ItemAtEventArgs<T>> ItemRemovedAt
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        public event EventHandler<ItemCountEventArgs<T>> ItemsAdded
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        public event EventHandler<ItemCountEventArgs<T>> ItemsRemoved
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        #endregion
-
+        
         #region Private Methods
 
         [Pure]
