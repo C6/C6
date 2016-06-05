@@ -27,33 +27,33 @@ namespace C6.Tests
         #region Factories
 
         /// <summary>
-        ///     Creates an empty collection value.
+        ///     Creates an empty <see cref="ICollectionValue{T}"/>.
         /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the <see cref="ICollectionValue{T}"/>.
+        /// </typeparam>
         /// <param name="allowsNull">
         ///     A value indicating whether the collection allows <c>null</c> items.
         /// </param>
-        /// <typeparam name="T">
-        ///     The type of the items in the collection value.
-        /// </typeparam>
         /// <returns>
-        ///     An empty collection value.
+        ///     An empty <see cref="ICollectionValue{T}"/>.
         /// </returns>
         protected abstract ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false);
 
         /// <summary>
-        ///     Creates a collection value containing the items in the enumerable.
+        ///     Creates an <see cref="ICollectionValue{T}"/> containing the items in the enumerable.
         /// </summary>
         /// <typeparam name="T">
-        ///     The type of the items in the collection value.
+        ///     The type of the items in the <see cref="ICollectionValue{T}"/>.
         /// </typeparam>
         /// <param name="enumerable">
-        ///     The collection whose items are copied to the new collection value.
+        ///     The collection whose items are copied to the new <see cref="ICollectionValue{T}"/>.
         /// </param>
         /// <param name="allowsNull">
         ///     A value indicating whether the collection allows <c>null</c> items.
         /// </param>
         /// <returns>
-        ///     A collection value containing the items in the enumerable.
+        ///     An <see cref="ICollectionValue{T}"/> containing the items in the enumerable.
         /// </returns>
         protected abstract ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 
@@ -67,7 +67,7 @@ namespace C6.Tests
         ///     The collection from which an item is chosen.
         /// </param>
         /// <returns>
-        ///     the possible items that <paramref name="collection"/>'s <see cref="ICollectionValue{T}.Choose"/> can return.
+        ///     The possible items that <paramref name="collection"/>'s <see cref="ICollectionValue{T}.Choose"/> can return.
         /// </returns>
         protected abstract SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection);
 

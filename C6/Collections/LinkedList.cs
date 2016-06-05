@@ -28,7 +28,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : CollectionValueBase<T>, ICollectionValue<T>
+    public class LinkedList<T> : ListenableBase<T>, IListenable<T>
     {
         #region Fields
 
@@ -82,7 +82,7 @@ namespace C6.Collections
             var previous = _first;
             foreach (var item in items) {
                 // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
-                ++base.Count;
+                ++Count;
                 previous = new Node(item, previous, _last);
             }
         }
@@ -90,9 +90,9 @@ namespace C6.Collections
         #endregion
 
         #region Properties
-
+        
         public override Speed CountSpeed => Constant;
-
+        
         #endregion
 
         #region Methods
@@ -102,7 +102,7 @@ namespace C6.Collections
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
         #endregion
-
+        
         #region Private Methods
 
         [Pure]
