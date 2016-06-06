@@ -124,7 +124,7 @@ namespace C6.Collections
 
         public override bool IsFixedSize => false;
 
-        public override Speed ContainsSpeed { get; }
+        public override Speed ContainsSpeed => Linear;
 
         public override bool IsReadOnly => false;
 
