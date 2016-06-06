@@ -112,6 +112,8 @@ namespace C6.Tests.Helpers
 
         public static EqualConstraint ByReference<T>(this EqualConstraint constraint) => constraint.Using(ComparerFactory.CreateReferenceEqualityComparer<T>());
 
+        public static CollectionItemsEqualConstraint ByReference<T>(this CollectionEquivalentConstraint constraint) => constraint.Using(ComparerFactory.CreateReferenceEqualityComparer<T>());
+
         public static SCG.IEqualityComparer<string> ReferenceEqualityComparer => ComparerFactory.CreateReferenceEqualityComparer<string>();
 
         public static SCG.IEqualityComparer<KeyValuePair<TKey, TValue>> KeyEqualityComparer<TKey, TValue>() => ComparerFactory.CreateEqualityComparer<KeyValuePair<TKey, TValue>>((x, y) => x.Key.Equals(y.Key), x => x.Key.GetHashCode());

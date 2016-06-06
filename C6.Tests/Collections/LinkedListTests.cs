@@ -15,12 +15,23 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class LinkedListTests : IListenableTests
+    public class LinkedListTests : IExtensibleTests
     {
-        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull);
+        #region Properties
 
-        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull);
+        protected override bool AllowsDuplicates => true;
+
+        protected override bool DuplicatesByCounting => false;
+
+        protected override bool IsFixedSize => false;
+
+        protected override bool IsReadOnly => false;
+
         protected override EventTypes ListenableEvents => EventTypes.All;
+
+        #endregion
+
+        #region Methods
 
         protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
         {
@@ -31,5 +42,11 @@ namespace C6.Tests.Collections
             // TODO: Use Last
             yield return linkedList.Last();
         }
+
+        protected override IExtensible<T> GetEmptyExtensible<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(equalityComparer, allowsNull);
+
+        protected override IExtensible<T> GetExtensible<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(enumerable, equalityComparer, allowsNull);
+
+        #endregion
     }
 }

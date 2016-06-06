@@ -28,7 +28,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : ListenableBase<T>, IListenable<T>
+    public class LinkedList<T> : ListenableBase<T>, IExtensible<T>
     {
         #region Fields
 
@@ -57,52 +57,126 @@ namespace C6.Collections
             // The node after the last is always null
             Invariant(_last.Next == null);
 
+            // If collection is empty, _first and _last point at each other
+            Invariant(!IsEmpty || _first.Next == _last && _first == _last.Previous);
+
             // List is equal forwards and backwards
             Invariant(EnumerateFrom(_first.Next).IsSameSequenceAs(EnumerateBackwardsFrom(_last.Previous).Reverse()));
 
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
+            // List links are correct
+            Invariant(ListLinksAreCorrect());
+
             // ReSharper restore InvocationIsSkipped
+        }
+
+        [Pure]
+        private bool ListLinksAreCorrect()
+        {
+            var cursor = _first.Next;
+
+            do {
+                if (cursor.Previous.Next != cursor) {
+                    return false;
+                }
+            } while ((cursor = cursor.Next) != null);
+
+            return true;
         }
 
         #endregion
 
         #region Constructors
 
-        public LinkedList(bool allowsNull) : base(allowsNull)
+        public LinkedList(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : base(allowsNull)
         {
-            _first = new Node(default(T));
+            _first = new Node();
             _last = new Node(default(T), _first);
             _first.Next = _last;
+
+            EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
         }
 
-        public LinkedList(SCG.IEnumerable<T> items, bool allowsNull) : this(allowsNull)
+        public LinkedList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
         {
-            var previous = _first;
             foreach (var item in items) {
-                // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
-                ++Count;
-                previous = new Node(item, previous, _last);
+                InsertBefore(item, _last);
             }
         }
 
         #endregion
 
         #region Properties
-        
+
+        public bool AllowsDuplicates => true;
+
         public override Speed CountSpeed => Constant;
-        
+
+        public bool DuplicatesByCounting => false;
+
+        public SCG.IEqualityComparer<T> EqualityComparer { get; }
+
+        public bool IsFixedSize => false;
+
+        public bool IsReadOnly => false;
+
         #endregion
 
         #region Methods
+
+        public bool Add(T item)
+        {
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(_version != OldValue(_version));
+
+            #endregion
+
+            UpdateVersion();
+            InsertBefore(item, _last);
+            RaiseForAdd(item);
+            return true;
+        }
+
+        public bool AddRange(SCG.IEnumerable<T> items)
+        {
+            // Create temporary list from items, which can be inserted at end
+            var enumerator = items.GetEnumerator();
+            if (!enumerator.MoveNext()) {
+                return false;
+            }
+            var count = Count + 1;
+            var first = new Node(enumerator.Current);
+            var last = first;
+            while (enumerator.MoveNext()) {
+                ++count;
+                last = new Node(enumerator.Current, last);
+            }
+            
+            UpdateVersion();
+            Count = count;
+
+            // Make last node in existing list and first in new list point to each other
+            first.Previous = _last.Previous;
+            first.Previous.Next = first;
+
+            // Make last node in new list and _last point to each other
+            last.Next = _last;
+            _last.Previous = last;
+
+            RaiseForAddRange(EnumerateFrom(first));
+            return true;
+        }
 
         public override T Choose() => _last.Previous.Item;
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
         #endregion
-        
+
         #region Private Methods
 
         [Pure]
@@ -166,6 +240,22 @@ namespace C6.Collections
             }
         }
 
+        Node InsertAfter(T item, Node previous)
+        {
+            // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
+            ++Count;
+            return new Node(item, previous, previous.Next);
+        }
+
+        Node InsertBefore(T item, Node next)
+        {
+            // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
+            ++Count;
+            return new Node(item, next.Previous, next);
+        }
+
+        private void UpdateVersion() => _version++;
+
         #endregion
 
         #region Nested Types
@@ -179,6 +269,8 @@ namespace C6.Collections
             public Node Previous, Next;
             public T Item;
 
+            public Node(){}
+
             public Node(T item)
             {
                 Item = item;
@@ -186,6 +278,8 @@ namespace C6.Collections
 
             public Node(T item, Node previous)
             {
+                Requires(previous != null, ItemMustBeNonNull);
+
                 Item = item;
 
                 // Set previous' pointers
@@ -195,6 +289,9 @@ namespace C6.Collections
 
             public Node(T item, Node previous, Node next)
             {
+                Requires(previous != null, ItemMustBeNonNull);
+                Requires(next != null, ItemMustBeNonNull);
+
                 Item = item;
 
                 // Set previous' pointers

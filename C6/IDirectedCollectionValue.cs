@@ -97,7 +97,7 @@ namespace C6
 
 
                 // Result is a valid enum constant
-                Ensures(Enum.IsDefined(typeof(EnumerationDirection), Result<EnumerationDirection>()));
+                Ensures(Result<EnumerationDirection>().IsDefined());
 
 
                 return default(EnumerationDirection);
