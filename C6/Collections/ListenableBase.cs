@@ -25,20 +25,11 @@ namespace C6.Collections
 
         #endregion
 
-        #region Constructor
-
-        protected ListenableBase(bool allowsNull = false, EventTypes listenableEvents = All) : base(allowsNull)
-        {
-            ListenableEvents = listenableEvents;
-        }
-
-        #endregion
-
         #region Properties
 
         public virtual EventTypes ActiveEvents { get; private set; }
 
-        public EventTypes ListenableEvents { get; }
+        public abstract EventTypes ListenableEvents { get; }
 
         #endregion
 

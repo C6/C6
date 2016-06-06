@@ -919,7 +919,7 @@ namespace C6
 
 
                 // Result is a valid enum constant
-                Ensures(Result<Speed>().IsDefined());
+                Ensures(Enum.IsDefined(typeof(Speed), Result<Speed>()));
 
 
                 return default(Speed);

@@ -244,6 +244,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ArrayList.cs" />
+    <Compile Include="Collections\CollectionBase.cs" />
+    <Compile Include="Collections\ExtensibleBase.cs" />
     <Compile Include="Collections\CollectionValueBase.cs" />
     <Compile Include="Collections\CollectionValueDebugView.cs" />
     <Compile Include="Collections\LinkedList.cs" />

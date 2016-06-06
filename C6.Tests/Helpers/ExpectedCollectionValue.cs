@@ -28,7 +28,7 @@ namespace C6.Tests.Helpers
 
         #region Constructors
 
-        public ExpectedCollectionValue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer, bool allowsNull, Func<T> chooseFunction = null, bool sequenced = true) : base(allowsNull)
+        public ExpectedCollectionValue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer, bool allowsNull, Func<T> chooseFunction = null, bool sequenced = true)
         {
             #region Code Contracts
 
@@ -46,6 +46,7 @@ namespace C6.Tests.Helpers
             // Copy the array instead of referencing it
             _items = items.ToArray();
 
+            AllowsNull = allowsNull;
             EqualityComparer = equalityComparer;
             _chooseFunction = chooseFunction;
             _sequenced = sequenced;
@@ -54,6 +55,8 @@ namespace C6.Tests.Helpers
         #endregion
 
         #region Properties
+
+        public override bool AllowsNull { get; }
 
         public override int Count => _items.Length;
 

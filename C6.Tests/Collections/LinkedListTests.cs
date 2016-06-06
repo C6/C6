@@ -9,17 +9,22 @@ using NUnit.Framework;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.EventTypes;
+using static C6.Speed;
+
 using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class LinkedListTests : IExtensibleTests
+    public class LinkedListTests : ICollectionTests
     {
         #region Properties
 
         protected override bool AllowsDuplicates => true;
+
+        protected override Speed ContainsSpeed => Linear;
 
         protected override bool DuplicatesByCounting => false;
 
@@ -27,7 +32,7 @@ namespace C6.Tests.Collections
 
         protected override bool IsReadOnly => false;
 
-        protected override EventTypes ListenableEvents => EventTypes.All;
+        protected override EventTypes ListenableEvents => All;
 
         #endregion
 
@@ -43,9 +48,9 @@ namespace C6.Tests.Collections
             yield return linkedList.Last();
         }
 
-        protected override IExtensible<T> GetEmptyExtensible<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(equalityComparer, allowsNull);
+        protected override ICollection<T> GetEmptyCollection<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(equalityComparer, allowsNull);
 
-        protected override IExtensible<T> GetExtensible<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(enumerable, equalityComparer, allowsNull);
+        protected override ICollection<T> GetCollection<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(enumerable, equalityComparer, allowsNull);
 
         #endregion
     }

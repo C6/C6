@@ -15,6 +15,7 @@ using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Collections.ExceptionMessages;
 using static C6.Contracts.ContractMessage;
+using static C6.EventTypes;
 using static C6.Speed;
 
 
@@ -28,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : ListenableBase<T>, IExtensible<T>
+    public class LinkedList<T> : CollectionBase<T>, ICollection<T>
     {
         #region Fields
 
@@ -90,12 +91,13 @@ namespace C6.Collections
 
         #region Constructors
 
-        public LinkedList(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : base(allowsNull)
+        public LinkedList(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             _first = new Node();
             _last = new Node(default(T), _first);
             _first.Next = _last;
 
+            AllowsNull = allowsNull;
             EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
         }
 
@@ -110,23 +112,29 @@ namespace C6.Collections
 
         #region Properties
 
-        public bool AllowsDuplicates => true;
+        public override bool AllowsDuplicates => true;
+
+        public override bool AllowsNull { get; }
 
         public override Speed CountSpeed => Constant;
 
-        public bool DuplicatesByCounting => false;
+        public override bool DuplicatesByCounting => false;
 
-        public SCG.IEqualityComparer<T> EqualityComparer { get; }
+        public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public bool IsFixedSize => false;
+        public override bool IsFixedSize => false;
 
-        public bool IsReadOnly => false;
+        public override Speed ContainsSpeed { get; }
+
+        public override bool IsReadOnly => false;
+
+        public override EventTypes ListenableEvents => All;
 
         #endregion
 
         #region Methods
 
-        public bool Add(T item)
+        public override bool Add(T item)
         {
             #region Code Contracts
 
@@ -141,7 +149,7 @@ namespace C6.Collections
             return true;
         }
 
-        public bool AddRange(SCG.IEnumerable<T> items)
+        public override bool AddRange(SCG.IEnumerable<T> items)
         {
             // Create temporary list from items, which can be inserted at end
             var enumerator = items.GetEnumerator();
@@ -155,7 +163,7 @@ namespace C6.Collections
                 ++count;
                 last = new Node(enumerator.Current, last);
             }
-            
+
             UpdateVersion();
             Count = count;
 
@@ -173,7 +181,82 @@ namespace C6.Collections
 
         public override T Choose() => _last.Previous.Item;
 
+        public override void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Contains(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ContainsRange(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int CountDuplicates(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Find(ref T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ICollectionValue<T> FindDuplicates(T item)
+        {
+            throw new NotImplementedException();
+        }
+
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
+
+        public override int GetUnsequencedHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Remove(T item, out T removedItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool RemoveDuplicates(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool RemoveRange(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool RetainRange(SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ICollectionValue<T> UniqueItems()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool UnsequencedEquals(ICollection<T> otherCollection)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Update(T item, out T oldItem)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 
@@ -240,14 +323,14 @@ namespace C6.Collections
             }
         }
 
-        Node InsertAfter(T item, Node previous)
+        private Node InsertAfter(T item, Node previous)
         {
             // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
             ++Count;
             return new Node(item, previous, previous.Next);
         }
 
-        Node InsertBefore(T item, Node next)
+        private Node InsertBefore(T item, Node next)
         {
             // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
             ++Count;
@@ -269,7 +352,7 @@ namespace C6.Collections
             public Node Previous, Next;
             public T Item;
 
-            public Node(){}
+            public Node() {}
 
             public Node(T item)
             {
