@@ -3,6 +3,11 @@
 
 using System;
 
+using SCG = System.Collections.Generic;
+
+using static System.Diagnostics.Contracts.Contract;
+
+using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 
 
@@ -34,6 +39,30 @@ namespace C6.Collections
         public virtual EventTypes ActiveEvents { get; private set; }
 
         public EventTypes ListenableEvents { get; }
+
+        #endregion
+
+        #region Methods
+
+        protected void RaiseForAdd(T item)
+        {
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
+        }
+
+        protected void RaiseForAddRange(SCG.IEnumerable<T> items)
+        {
+            Requires(items != null);
+
+            if (ActiveEvents.HasFlag(Added)) {
+                foreach (var item in items) {
+                    OnItemsAdded(item, 1);
+                }
+            }
+            OnCollectionChanged();
+        }
 
         #endregion
 

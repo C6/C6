@@ -111,7 +111,20 @@ namespace C6.Collections
 
         public bool Add(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(_version != OldValue(_version));
+
+            #endregion
+
+            UpdateVersion();
+
+            ++Count;
+            _last.Previous = new Node(item, _last.Previous, _last);
+
+            RaiseForAdd(item);
+            return true;
         }
 
         public bool AddRange(SCG.IEnumerable<T> items)
@@ -187,6 +200,8 @@ namespace C6.Collections
                 cursor = cursor.Next;
             }
         }
+
+        private void UpdateVersion() => _version++;
 
         #endregion
 

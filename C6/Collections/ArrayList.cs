@@ -1097,24 +1097,6 @@ namespace C6.Collections
 
         #region Event Helpers
 
-        private void RaiseForAdd(T item)
-        {
-            OnItemsAdded(item, 1);
-            OnCollectionChanged();
-        }
-
-        private void RaiseForAddRange(SCG.IEnumerable<T> items)
-        {
-            Requires(items != null);
-
-            if (ActiveEvents.HasFlag(Added)) {
-                foreach (var item in items) {
-                    OnItemsAdded(item, 1);
-                }
-            }
-            OnCollectionChanged();
-        }
-
         private void RaiseForClear(int count)
         {
             Requires(count >= 1);

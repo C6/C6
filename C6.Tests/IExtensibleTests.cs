@@ -183,32 +183,32 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Add_AllowsNullAddNull_ReturnsTrue()
+        public void Add_AllowsNullAddNull_True()
         {
             // Arrange
             var collection = GetStringExtensible(Random, allowsNull: true);
 
             // Act
-            var result = collection.Add(null);
+            var add = collection.Add(null);
 
             // Assert
-            Assert.That(result, Is.True);
+            Assert.That(add, Is.True);
         }
 
         [Test]
-        public void Add_EmptyCollectionAddItem_CollectionIsSingleItemCollection()
+        public void Add_EmptyCollection_CollectionIsSameAsItem()
         {
             // Arrange
             var collection = GetEmptyExtensible<string>();
-            var item = Random.GetString();
-            var itemArray = new[] { item };
+            var item = GetString(Random);
+            var array = new[] { item };
 
             // Act
-            var result = collection.Add(item);
+            var add = collection.Add(item);
 
             // Assert
-            Assert.That(result, Is.True);
-            Assert.That(collection, Is.EqualTo(itemArray));
+            Assert.That(add, Is.True);
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -220,10 +220,10 @@ namespace C6.Tests
             var duplicateItem = items.Choose(Random).ToLower();
 
             // Act
-            var result = collection.Add(duplicateItem);
+            var add = collection.Add(duplicateItem);
 
             // Assert
-            Assert.That(result, Is.EqualTo(AllowsDuplicates));
+            Assert.That(add, Is.EqualTo(AllowsDuplicates));
         }
 
         // TODO: Add test to IList<T>.Add ensuring that order is the same
@@ -237,11 +237,10 @@ namespace C6.Tests
             var items = GetStrings(Random, count);
 
             // Act
-            foreach (var item in items) {
-                collection.Add(item); // TODO: Verify that items were added?
-            }
+            var add = items.Aggregate(true, (current, item) => current & collection.Add(item));
 
             // Assert
+            Assert.That(add, Is.True);
             Assert.That(collection, Is.EquivalentTo(items));
         }
 
@@ -252,13 +251,16 @@ namespace C6.Tests
             var items = GetUppercaseStrings(Random);
             var collection = GetExtensible(items);
             var item = GetLowercaseString(Random);
+
             var expectedEvents = new[] {
                 Added(item, 1, collection),
                 Changed(collection)
             };
+            var add = false;
 
             // Act & Assert
-            Assert.That(() => collection.Add(item), Raises(expectedEvents).For(collection));
+            Assert.That(() => add = collection.Add(item), Raises(expectedEvents).For(collection));
+            Assert.That(add, Is.True);
         }
 
         [Test]
@@ -270,17 +272,19 @@ namespace C6.Tests
             var items = GetUppercaseStrings(Random);
             var collection = GetExtensible(items, CaseInsensitiveStringComparer.Default);
             var duplicateItem = items.Choose(Random).ToLower();
+            var add = true;
 
             // Act & Assert
-            Assert.That(() => collection.Add(duplicateItem), RaisesNoEventsFor(collection));
+            Assert.That(() => add = collection.Add(duplicateItem), RaisesNoEventsFor(collection));
+            Assert.That(add, Is.False);
         }
 
         [Test]
-        public void Add_AddItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void Add_AddDuringEnumeration_ThrowsInvalidOperationException()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var enumerator = collection.GetEnumerator();
