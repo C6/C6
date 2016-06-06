@@ -23,7 +23,7 @@ namespace C6.Tests.Helpers
             #region Code Contracts
 
             // Argument must be valid enum constant
-            Contract.Requires(Enum.IsDefined(typeof(EventTypes), eventType), EnumMustBeDefined);
+            Contract.Requires(eventType.IsDefined(), EnumMustBeDefined);
 
             // Argument must be non-null
             Contract.Requires(eventArgs != null, ArgumentMustBeNonNull);

@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Reflection;
 
 using static System.Reflection.BindingFlags;
 using static System.Diagnostics.Contracts.Contract;
@@ -78,7 +77,7 @@ namespace C6.Contracts
             return enumerable.Take(startIndex).Concat(enumerable.Skip(startIndex + count));
             // ReSharper enable PossibleMultipleEnumeration
         }
-        
+
         /// <summary>
         ///     Determines whether two enumerables contain the same elements in regards to multiplicity, but not sequence order,
         ///     using a specified <see cref="SCG.IEqualityComparer{T}"/>.
@@ -162,6 +161,25 @@ namespace C6.Contracts
             }
 
             return true;
+        }
+
+        /// <summary>
+        ///     Determines whether the given enumeration value is defined.
+        /// </summary>
+        /// <typeparam name="TEnum">
+        ///     The type of the enumeration value.
+        /// </typeparam>
+        /// <param name="value">
+        ///     The enumeration value whose validity should be determined.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if the value is defined; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsDefined<TEnum>(this TEnum value) where TEnum : struct, IComparable, IFormattable
+        {
+            Requires(typeof(TEnum).IsEnum);
+
+            return Enum.IsDefined(typeof(TEnum), value);
         }
 
         [Pure]
@@ -271,7 +289,7 @@ namespace C6.Contracts
 
             return enumerable.CountDuplicates(item, GetIdenticalityComparer<T>());
         }
-        
+
         [Pure]
         public static bool IsSameAs<T>(this T item, T otherItem) => GetIdenticalityComparer<T>().Equals(item, otherItem);
 

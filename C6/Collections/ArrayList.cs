@@ -1548,7 +1548,7 @@ namespace C6.Collections
                 Requires(direction.IsForward() ? startIndex + count <= list.Count : count <= startIndex + 1, ArgumentMustBeWithinBounds);
 
                 // Argument must be valid enum constant
-                Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
+                Requires(direction.IsDefined(), EnumMustBeDefined);
 
 
                 Ensures(_base != null);
