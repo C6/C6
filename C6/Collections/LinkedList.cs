@@ -81,11 +81,8 @@ namespace C6.Collections
 
         public LinkedList(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
         {
-            var previous = _first;
             foreach (var item in items) {
-                // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
-                ++Count;
-                previous = new Node(item, previous, _last);
+                InsertBefore(item, _last);
             }
         }
 
@@ -119,10 +116,7 @@ namespace C6.Collections
             #endregion
 
             UpdateVersion();
-
-            ++Count;
-            _last.Previous = new Node(item, _last.Previous, _last);
-
+            InsertBefore(item, _last);
             RaiseForAdd(item);
             return true;
         }
@@ -199,6 +193,20 @@ namespace C6.Collections
                 yield return cursor.Item;
                 cursor = cursor.Next;
             }
+        }
+
+        Node InsertAfter(T item, Node previous)
+        {
+            // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
+            ++Count;
+            return new Node(item, previous, previous.Next);
+        }
+
+        Node InsertBefore(T item, Node next)
+        {
+            // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
+            ++Count;
+            return new Node(item, next.Previous, next);
         }
 
         private void UpdateVersion() => _version++;
