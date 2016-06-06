@@ -57,13 +57,33 @@ namespace C6.Collections
             // The node after the last is always null
             Invariant(_last.Next == null);
 
+            // If collection is empty, _first and _last point at each other
+            Invariant(!IsEmpty || _first.Next == _last && _first == _last.Previous);
+
             // List is equal forwards and backwards
             Invariant(EnumerateFrom(_first.Next).IsSameSequenceAs(EnumerateBackwardsFrom(_last.Previous).Reverse()));
 
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
+            // List links are correct
+            Invariant(ListLinksAreCorrect());
+
             // ReSharper restore InvocationIsSkipped
+        }
+
+        [Pure]
+        private bool ListLinksAreCorrect()
+        {
+            var cursor = _first.Next;
+
+            do {
+                if (cursor.Previous.Next != cursor) {
+                    return false;
+                }
+            } while ((cursor = cursor.Next) != null);
+
+            return true;
         }
 
         #endregion
@@ -72,7 +92,7 @@ namespace C6.Collections
 
         public LinkedList(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : base(allowsNull)
         {
-            _first = new Node(default(T));
+            _first = new Node();
             _last = new Node(default(T), _first);
             _first.Next = _last;
 
@@ -224,6 +244,8 @@ namespace C6.Collections
             public Node Previous, Next;
             public T Item;
 
+            public Node(){}
+
             public Node(T item)
             {
                 Item = item;
@@ -231,6 +253,8 @@ namespace C6.Collections
 
             public Node(T item, Node previous)
             {
+                Requires(previous != null, ItemMustBeNonNull);
+
                 Item = item;
 
                 // Set previous' pointers
@@ -240,6 +264,9 @@ namespace C6.Collections
 
             public Node(T item, Node previous, Node next)
             {
+                Requires(previous != null, ItemMustBeNonNull);
+                Requires(next != null, ItemMustBeNonNull);
+
                 Item = item;
 
                 // Set previous' pointers
