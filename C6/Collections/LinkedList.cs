@@ -143,7 +143,32 @@ namespace C6.Collections
 
         public bool AddRange(SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            // Create temporary list from items, which can be inserted at end
+            var enumerator = items.GetEnumerator();
+            if (!enumerator.MoveNext()) {
+                return false;
+            }
+            var count = Count + 1;
+            var first = new Node(enumerator.Current);
+            var last = first;
+            while (enumerator.MoveNext()) {
+                ++count;
+                last = new Node(enumerator.Current, last);
+            }
+            
+            UpdateVersion();
+            Count = count;
+
+            // Make last node in existing list and first in new list point to each other
+            first.Previous = _last.Previous;
+            first.Previous.Next = first;
+
+            // Make last node in new list and _last point to each other
+            last.Next = _last;
+            _last.Previous = last;
+
+            RaiseForAddRange(EnumerateFrom(first));
+            return true;
         }
 
         public override T Choose() => _last.Previous.Item;

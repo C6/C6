@@ -347,39 +347,23 @@ namespace C6.Tests
         public void AddRange_AllowNullAddNull_True()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetExtensible(items, ReferenceEqualityComparer, allowsNull: true);
-            var newItems = GetStrings(Random).WithNull(Random);
-            var allItems = items.Union(newItems);
+            var collection = GetStringExtensible(Random, ReferenceEqualityComparer, allowsNull: true);
+            var items = GetStrings(Random).WithNull(Random);
+            var expected = collection.Union(items);
 
             // Act
-            var addRange = collection.AddRange(newItems);
+            var addRange = collection.AddRange(items);
 
             // Assert
             Assert.That(addRange, Is.True);
-            Assert.That(collection, Is.EquivalentTo(allItems));
+            Assert.That(collection, Is.EquivalentTo(expected).ByReference<string>());
         }
 
         [Test]
-        public void AddRange_EmptyEnumerableAndCollection_Nothing()
+        public void AddRange_AddEmptyEnumerableToEmptyCollection_Nothing()
         {
             // Arrange
             var collection = GetEmptyExtensible<string>();
-            var empty = NoStrings;
-
-            // Act
-            collection.AddRange(empty);
-
-            // Assert
-            Assert.That(collection, Is.Empty);
-        }
-
-        [Test]
-        public void AddRange_AddEmptyEnumerable_Nothing()
-        {
-            // Arrange
-            var items = GetStrings(Random);
-            var collection = GetExtensible(items, ReferenceEqualityComparer);
             var empty = NoStrings;
 
             // Act
@@ -387,7 +371,23 @@ namespace C6.Tests
 
             // Assert
             Assert.That(addRange, Is.False);
-            Assert.That(collection, Is.EquivalentTo(items));
+            Assert.That(collection, Is.Empty);
+        }
+
+        [Test]
+        public void AddRange_AddEmptyEnumerable_Nothing()
+        {
+            // Arrange
+            var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
+            var items = collection.ToArray();
+            var empty = NoStrings;
+
+            // Act
+            var addRange = collection.AddRange(empty);
+
+            // Assert
+            Assert.That(addRange, Is.False);
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -396,9 +396,11 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
             var empty = NoStrings;
+            var addRange = true;
 
             // Act & Assert
-            Assert.That(() => collection.AddRange(empty), RaisesNoEventsFor(collection));
+            Assert.That(() => addRange = collection.AddRange(empty), RaisesNoEventsFor(collection));
+            Assert.That(addRange, Is.False);
         }
 
         [Test]
@@ -407,12 +409,13 @@ namespace C6.Tests
             Run.If(!AllowsDuplicates);
 
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetExtensible(items, ReferenceEqualityComparer);
-            var shuffledItems = items.ShuffledCopy(Random);
+            var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
+            var shuffledItems = collection.ShuffledCopy(Random);
+            var addRange = true;
 
             // Act & Assert
-            Assert.That(() => collection.AddRange(shuffledItems), RaisesNoEventsFor(collection));
+            Assert.That(() => addRange = collection.AddRange(shuffledItems), RaisesNoEventsFor(collection));
+            Assert.That(addRange, Is.False);
         }
 
         [Test]
@@ -428,7 +431,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(addRange, Is.EqualTo(AllowsDuplicates));
-            Assert.That(collection, Is.EquivalentTo(expectedItems));
+            Assert.That(collection, Is.EquivalentTo(expectedItems).ByReference<string>());
         }
 
         [Test]
@@ -454,22 +457,29 @@ namespace C6.Tests
                     Added(item3, 1, collection),
                     Changed(collection)
                 };
+            var addRange = false;
 
             // Act & Assert
-            Assert.That(() => collection.AddRange(items), Raises(expectedEvents).For(collection));
+            Assert.That(() => addRange = collection.AddRange(items), Raises(expectedEvents).For(collection));
+            Assert.That(addRange, Is.True);
         }
 
         [Test]
         public void AddRange_BadEnumerable_ThrowsExceptionButCollectionDoesNotChange()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetExtensible(items, ReferenceEqualityComparer, allowsNull: true);
+            var collection = GetStringExtensible(Random, ReferenceEqualityComparer, allowsNull: true);
+            var items = collection.ToArray();
             var badEnumerable = GetStrings(Random).AsBadEnumerable();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
 
             // Act & Assert
             Assert.That(() => collection.AddRange(badEnumerable), Throws.TypeOf<BadEnumerableException>());
-            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
         }
 
         [Test]
