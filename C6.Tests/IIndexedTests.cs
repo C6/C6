@@ -669,19 +669,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveAt_RemoveDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveAt_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
             var index = Random.Next(0, collection.Count);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveAt(index);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveAt(index), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -998,20 +993,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveIndexRange_RemoveIndexRangeDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveIndexRange_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringIndexed(Random);
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveIndexRange(startIndex, count);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveIndexRange(startIndex, count), Breaks.EnumeratorFor(collection));
         }
 
         [Test]

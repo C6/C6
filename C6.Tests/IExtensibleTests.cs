@@ -11,7 +11,6 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
-using static C6.Collections.ExceptionMessages;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
@@ -280,19 +279,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Add_AddDuringEnumeration_ThrowsInvalidOperationException()
+        public void Add_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
             var item = GetString(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Add(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Add(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -483,19 +477,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AddRange_AddItemsDuringEnumeration_ThrowsInvalidOperationException()
+        public void AddRange_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
             var items = GetStrings(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.AddRange(items);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.AddRange(items), Breaks.EnumeratorFor(collection));
         }
 
         [Test]

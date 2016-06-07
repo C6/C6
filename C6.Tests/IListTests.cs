@@ -476,20 +476,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListItemSet_SetDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListItemSet_SetDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var item = Random.GetString();
             var index = GetIndex(collection, Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection)[index] = item;
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection)[index] = item, Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -623,19 +618,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListAdd_AddItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListAdd_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var item = Random.GetString();
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection).Add(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Add(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1169,20 +1159,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListInsert_InsertDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListInsert_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             object item = Random.GetString();
             var index = GetIndex(collection, Random, true);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Insert(index, item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1319,20 +1304,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListRemove_RemoveItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListRemove_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
             var item = items.Choose(Random).ToLower();
             var collection = GetList(items, CaseInsensitiveStringComparer.Default);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection).Remove(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Remove(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1422,19 +1402,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListRemoveAt_RemoveDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListRemoveAt_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(0, collection.Count);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection).RemoveAt(index);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).RemoveAt(index), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1726,19 +1701,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCGIListRemoveAt_RemoveDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCGIListRemoveAt_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(0, collection.Count);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SCG.IList<string>) collection).RemoveAt(index);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SCG.IList<string>) collection).RemoveAt(index), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2155,20 +2125,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ItemSet_SetDuringEnumeration_ThrowsInvalidOperationException()
+        public void ItemSet_SetDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var item = Random.GetString();
             var index = GetIndex(collection, Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection[index] = item;
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection[index] = item, Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2365,20 +2330,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Insert_InsertDuringEnumeration_ThrowsInvalidOperationException()
+        public void Insert_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var item = Random.GetString();
             var index = GetIndex(collection, Random, true);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Insert(index, item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2500,19 +2460,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void InsertFirst_InsertFirstDuringEnumeration_ThrowsInvalidOperationException()
+        public void InsertFirst_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var item = Random.GetString();
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.InsertFirst(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.InsertFirst(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2634,19 +2589,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void InsertLast_InsertLastDuringEnumeration_ThrowsInvalidOperationException()
+        public void InsertLast_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var item = Random.GetString();
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.InsertLast(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.InsertLast(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2950,20 +2900,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void InsertRange_InsertRangeDuringEnumeration_ThrowsInvalidOperationException()
+        public void InsertRange_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var items = GetStrings(Random);
             var index = GetIndex(collection, Random, true);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.InsertRange(index, items);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.InsertRange(index, items), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3511,18 +3456,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveFirst_RemoveFirstDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveFirst_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveFirst();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveFirst(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3616,18 +3556,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveLast_RemoveLastDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveLast_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveLast();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveLast(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3748,18 +3683,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Reverse_ReverseDuringEnumeration_ThrowsInvalidOperationException()
+        public void Reverse_ReverseDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Reverse();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Reverse(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3932,18 +3862,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Shuffle_ShuffleDuringEnumeration_ThrowsInvalidOperationException()
+        public void Shuffle_ShuffleDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Shuffle();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -4087,20 +4012,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ShuffleRandom_ShuffleDuringEnumeration_ThrowsInvalidOperationException()
+        public void ShuffleRandom_ShuffleDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Shuffle(Random);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(Random), Breaks.EnumeratorFor(collection));
         }
-
+        
         [Test]
         public void ShuffleRandom_ShuffleEmptyCollectionDuringEnumeration_ThrowsNothing()
         {
@@ -4376,18 +4296,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Sort_SortDuringEnumeration_ThrowsInvalidOperationException()
+        public void Sort_SortDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Sort();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Sort(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -4643,19 +4558,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SortComparison_SortDuringEnumeration_ThrowsInvalidOperationException()
+        public void SortComparison_SortDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             Comparison<string> comparison = string.Compare;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Sort(comparison);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Sort(comparison), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -4912,19 +4822,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SortIComparer_SortDuringEnumeration_ThrowsInvalidOperationException()
+        public void SortIComparer_SortDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var comparer = SCG.Comparer<string>.Default;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Sort(comparer);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Sort(comparer), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
