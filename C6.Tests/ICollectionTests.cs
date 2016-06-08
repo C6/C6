@@ -153,18 +153,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Clear_ClearDuringEnumeration_ThrowsInvalidOperationException()
+        public void Clear_ClearDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringCollection(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Clear();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Clear(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -814,21 +809,19 @@ namespace C6.Tests
         }
 
         [Test]
-        public void FindDuplicates_AlterDuringResultEnumeration_ThrowsInvalidOperationException()
+        public void FindDuplicates_AlterDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var item = GetLowercaseString(Random);
             var count = GetCount(Random);
             var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetCollection(items);
+            var enumerable = collection.FindDuplicates(item);
 
-            // Act
-            var enumerator = collection.FindDuplicates(item).GetEnumerator();
-            enumerator.MoveNext();
-            while (!collection.Add(GetLowercaseString(Random))) {}
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => {
+                while (!collection.Add(GetLowercaseString(Random))) {}
+            }, Breaks.EnumeratorFor(enumerable));
         }
 
         [Test]
@@ -1005,20 +998,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void FindOrAdd_AddItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void FindOrAdd_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
             var item = GetLowercaseString(Random);
             var collection = GetCollection(items);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.FindOrAdd(ref item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.FindOrAdd(ref item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1261,20 +1249,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveT_RemoveItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveT_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
             var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Remove(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Remove(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1430,7 +1413,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveTOut_RemoveItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveTTOut_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -1438,13 +1421,8 @@ namespace C6.Tests
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
             string removedItem;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Remove(item, out removedItem);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Remove(item, out removedItem), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1630,7 +1608,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveRange_RemoveSubsetDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveRange_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -1638,13 +1616,8 @@ namespace C6.Tests
             var count = GetCount(Random);
             var existingItems = items.Take(count).ShuffledCopy(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveRange(existingItems);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveRange(existingItems), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1839,20 +1812,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveDuplicates_RemoveDuplicatesDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveDuplicates_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetStrings(Random);
             var collection = GetCollection(items);
             var item = items.Choose(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveDuplicates(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveDuplicates(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2085,7 +2053,7 @@ namespace C6.Tests
         // TODO: Event version of above
 
         [Test]
-        public void RetainRange_RetainSubsetDuringEnumeration_ThrowsInvalidOperationException()
+        public void RetainRange_RetainRangeDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var count = GetCount(Random);
@@ -2093,13 +2061,8 @@ namespace C6.Tests
             var collection = GetCollection(items);
             var existingItems = items.Take(count / 2).ShuffledCopy(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RetainRange(existingItems);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RetainRange(existingItems), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2641,22 +2604,17 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_UpdateExistingItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void Update_UpdateExistingDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
             var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Update(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Update(item), Breaks.EnumeratorFor(collection));
         }
-
+        
         [Test]
         public void Update_UpdateNewItemDuringEnumeration_ThrowsNothing()
         {
@@ -2820,7 +2778,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOut_UpdateDuringEnumeration_ThrowsInvalidOperationException()
+        public void UpdateOut_UpdateDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2828,13 +2786,8 @@ namespace C6.Tests
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
             string oldItem;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Update(item, out oldItem);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Update(item, out oldItem), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3025,37 +2978,27 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAdd_UpdateOrAddItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void UpdateOrAdd_UpdateDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random).ToLower();
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.UpdateOrAdd(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item), Breaks.EnumeratorFor(collection));
         }
-
+        
         [Test]
-        public void UpdateOrAdd_AddNewItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void UpdateOrAdd_AddNewDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items);
+            var item = items.Choose(Random).ToLower();
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.UpdateOrAdd(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item), Breaks.EnumeratorFor(collection));
         }
 
         // TODO: Null
@@ -3249,39 +3192,29 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAddOut_UpdateOrAddItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void UpdateOrAddOut_UpdateDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random).ToLower();
             string oldItem;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.UpdateOrAdd(item, out oldItem);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item, out oldItem), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
-        public void UpdateOrAddOut_AddNewItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void UpdateOrAddOut_AddNewDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items);
+            var item = items.Choose(Random).ToLower();
             string oldItem;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.UpdateOrAdd(item, out oldItem);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.UpdateOrAdd(item, out oldItem), Breaks.EnumeratorFor(collection));
         }
 
         // TODO: Null

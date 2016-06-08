@@ -3,10 +3,10 @@
 
 using System;
 
-using C6.Collections;
-
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
+
+using static C6.Collections.ExceptionMessages;
 
 using SCG = System.Collections.Generic;
 
@@ -53,8 +53,8 @@ namespace C6.Tests.Helpers
             }
             catch (InvalidOperationException exception) {
                 // Correct exception, check message
-                Description = $"<System.InvalidOperationException> and property Message equal to \"{ExceptionMessages.CollectionWasModified}\"";
-                return new ConstraintResult(this, exception.Message, exception.Message.Equals(ExceptionMessages.CollectionWasModified));
+                Description = $"<System.InvalidOperationException> and property Message equal to \"{CollectionWasModified}\"";
+                return new ConstraintResult(this, exception.Message, exception.Message.Equals(CollectionWasModified));
             }
             catch (Exception ex) {
                 // Wrong exception thrown
