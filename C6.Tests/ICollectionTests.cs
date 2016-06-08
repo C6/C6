@@ -222,7 +222,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Contains_AllowNullContainsNull_True()
+        public void Contains_AllowsNullExistingNull_True()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -236,7 +236,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Contains_AllowNullContainsNoNull_False()
+        public void Contains_AllowsNullNewNull_False()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -264,59 +264,41 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Contains_SingleItemCollectionNonDuplicateItem_False()
+        public void Contains_SingleItemCollectionNewItem_False()
         {
             // Arrange
             var item = GetUppercaseString(Random);
-            var itemArray = new[] { item };
-            var collection = GetCollection(itemArray);
-            var nonDuplicateItem = item.ToLower();
+            var collection = GetCollection(item);
+            var newItem = item.ToLower();
 
             // Act
-            var contains = collection.Contains(nonDuplicateItem);
+            var contains = collection.Contains(newItem);
 
             // Assert
             Assert.That(contains, Is.False);
         }
 
         [Test]
-        public void Contains_SingleItemCollectionDuplicateItem_True()
+        public void Contains_SingleItemCollectionExistingItem_True()
         {
             // Arrange
             var item = GetUppercaseString(Random);
-            var itemArray = new[] { item };
-            var collection = GetCollection(itemArray, CaseInsensitiveStringComparer.Default);
-            var duplicateItem = item.ToLower();
+            var collection = GetCollection(new[] { item }, CaseInsensitiveStringComparer.Default);
+            var existingItem = item.ToLower();
 
             // Act
-            var contains = collection.Contains(duplicateItem);
+            var contains = collection.Contains(existingItem);
 
             // Assert
             Assert.That(contains, Is.True);
         }
 
         [Test]
-        public void Contains_SingleItemCollectionReferenceInequalItem_False()
-        {
-            // Arrange
-            var item = Random.GetString();
-            var itemArray = new[] { item };
-            var collection = GetCollection(itemArray, ReferenceEqualityComparer);
-            var nonDuplicateItem = string.Copy(item);
-
-            // Act
-            var contains = collection.Contains(nonDuplicateItem);
-
-            // Assert
-            Assert.That(contains, Is.False);
-        }
-
-        [Test]
         public void Contains_RandomCollectionNewItem_False()
         {
             // Arrange
-            var collection = GetStringCollection(Random, ReferenceEqualityComparer);
-            var item = Random.GetString();
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
 
             // Act
             var contains = collection.Contains(item);
@@ -329,30 +311,14 @@ namespace C6.Tests
         public void Contains_RandomCollectionExistingItem_True()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
-            var item = items.Choose(Random).ToLower();
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
 
             // Act
             var contains = collection.Contains(item);
 
             // Assert
             Assert.That(contains, Is.True);
-        }
-
-        [Test]
-        public void Contains_RandomCollectionNewItem_True()
-        {
-            // Arrange
-            var items = GetStrings(Random);
-            var collection = GetCollection(items, ReferenceEqualityComparer);
-            var item = string.Copy(items.Choose(Random));
-
-            // Act
-            var contains = collection.Contains(item);
-
-            // Assert
-            Assert.That(contains, Is.False);
         }
 
         [Test]
@@ -377,7 +343,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ContainsRange_DisallowsNullsInEnumerable_ViolatesPrecondition()
+        public void ContainsRange_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -388,12 +354,12 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ContainsRange_AllowNullEnumerableContainingNull_True()
+        public void ContainsRange_AllowNull_True()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
-            var arrayWithNull = new string[] { null };
+            var arrayWithNull = Enumerable.Empty<string>(); //collection.GetItems(Random).WithNull(Random);
 
             // Act
             var containsRange = collection.ContainsRange(arrayWithNull);

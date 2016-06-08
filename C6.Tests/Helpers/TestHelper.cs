@@ -2,11 +2,14 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
+
+using C6.Contracts;
 
 using NUnit.Framework.Constraints;
 using NUnit.Framework.Internal;
+
+using static System.Diagnostics.Contracts.Contract;
 
 using SCG = System.Collections.Generic;
 
@@ -60,12 +63,31 @@ namespace C6.Tests.Helpers
 
         public static string GetUppercaseString(Randomizer random) => random.GetString(25, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
         public static string GetLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");
+        
+        public static T Choose<T>(this SCG.IEnumerable<T> enumerable, Random random)
+        {
+            Requires(!enumerable.IsEmpty());
+            Ensures(enumerable.ContainsSame(Result<T>()));
 
-        public static T Choose<T>(this T[] array, Random random) => array[random.Next(array.Length)];
+            using (var enumerator = enumerable.GetEnumerator()) {
+                enumerator.MoveNext();
+
+                var item = enumerator.Current;
+                var count = 1;
+
+                while (enumerator.MoveNext()) {
+                    if (0 == random.Next(++count)) {
+                        item = enumerator.Current;
+                    }
+                }
+
+                return item;
+            }
+        }
 
         public static int IndexOf<T>(this T[] array, T item, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            Contract.Requires(array.Contains(item, equalityComparer));
+            Requires(array.Contains(item, equalityComparer));
 
             if (equalityComparer == null) {
                 equalityComparer = SCG.EqualityComparer<T>.Default;
@@ -82,7 +104,7 @@ namespace C6.Tests.Helpers
 
         public static int LastIndexOf<T>(this T[] array, T item, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            Contract.Requires(array.Contains(item, equalityComparer));
+            Requires(array.Contains(item, equalityComparer));
 
             if (equalityComparer == null) {
                 equalityComparer = SCG.EqualityComparer<T>.Default;

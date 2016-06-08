@@ -202,10 +202,7 @@ namespace C6.Collections
             RaiseForClear(oldCount);
         }
 
-        public override bool Contains(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public override bool Contains(T item) => this.Any(x => Equals(x, item));
 
         public override bool ContainsRange(SCG.IEnumerable<T> items)
         {
@@ -345,6 +342,12 @@ namespace C6.Collections
                 cursor = cursor.Next;
             }
         }
+
+        [Pure]
+        private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
+
+        [Pure]
+        private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
 
         private Node InsertAfter(T item, Node previous)
         {
