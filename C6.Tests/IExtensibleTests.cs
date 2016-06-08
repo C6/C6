@@ -447,9 +447,9 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
-            var item1 = Random.GetString();
-            var item2 = Random.GetString();
-            var item3 = Random.GetString();
+            var item1 = GetString(Random);
+            var item2 = GetString(Random);
+            var item3 = GetString(Random);
             var items = new[] { item1, item2, item1, item3 };
             var expectedEvents = AllowsDuplicates
                 ? new[] {

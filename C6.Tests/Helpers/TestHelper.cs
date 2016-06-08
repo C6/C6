@@ -60,7 +60,7 @@ namespace C6.Tests.Helpers
 
         public static string[] GetLowercaseStrings(Randomizer random, int count)
             => Enumerable.Range(0, count).Select(i => GetLowercaseString(random)).ToArray();
-
+            
         public static string GetUppercaseString(Randomizer random) => random.GetString(25, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
         public static string GetLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");
         

@@ -254,7 +254,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var contains = collection.Contains(item);
@@ -488,7 +488,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var countDuplicates = collection.CountDuplicates(item);
@@ -501,7 +501,7 @@ namespace C6.Tests
         public void CountDuplicates_SingleItemCollection_Count()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var count = AllowsDuplicates ? GetCount(Random) : 1;
             var items = ((Func<string>) (() => string.Copy(item))).Repeat(count);
             var collection = GetCollection(items);
@@ -621,7 +621,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var refItem = item;
 
             // Act
@@ -754,7 +754,7 @@ namespace C6.Tests
                 collection.EqualityComparer,
                 collection.AllowsNull
                 );
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var findDuplicates = collection.FindDuplicates(item);
@@ -767,7 +767,7 @@ namespace C6.Tests
         public void FindDuplicates_SingleItemCollection_WholeCollection()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var count = AllowsDuplicates ? GetCount(Random) : 1;
             var items = ((Func<string>) (() => string.Copy(item))).Repeat(count);
             var collection = GetCollection(items);
@@ -825,7 +825,7 @@ namespace C6.Tests
         public void FindDuplicates_ChangeCollectionInvalidatesCollectionValue_ThrowsInvalidOperationException()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var count = GetCount(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetCollection(items);
@@ -835,7 +835,7 @@ namespace C6.Tests
 
             // Act
             var findDuplicates = collection.FindDuplicates(item);
-            collection.UpdateOrAdd(Random.GetString());
+            collection.UpdateOrAdd(GetString(Random));
 
             // TODO: Refactor into separate CollectionValueConstraint
             // Assert
@@ -921,7 +921,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var refItem = item;
 
             // Act
@@ -1203,7 +1203,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var remove = collection.Remove(item);
@@ -1363,7 +1363,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             string removedItem;
 
             // Act
@@ -1799,7 +1799,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var removeDuplicates = collection.RemoveDuplicates(item);
@@ -1825,7 +1825,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetCollection(items);
 
@@ -2199,7 +2199,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetCollection(items);
             var expected = new ExpectedCollectionValue<string>(
@@ -2273,7 +2273,7 @@ namespace C6.Tests
 
             // Act
             var uniqueItems = collection.UniqueItems();
-            collection.UpdateOrAdd(Random.GetString());
+            collection.UpdateOrAdd(GetString(Random));
 
             // TODO: Refactor into separate CollectionValueConstraint
             // Assert
@@ -2480,7 +2480,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var update = collection.Update(item);
@@ -2763,7 +2763,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             string oldItem;
 
             // Act
@@ -2848,7 +2848,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
 
             // Act
@@ -3047,7 +3047,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             string oldItem;
 

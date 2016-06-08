@@ -304,7 +304,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -316,7 +316,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -328,7 +328,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -340,7 +340,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -409,7 +409,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = 0;
             var array = collection.ToArray();
             array[index] = item;
@@ -426,7 +426,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray();
             array[index] = item;
@@ -443,7 +443,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var array = collection.ToArray();
             array[index] = item;
@@ -460,7 +460,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var oldItem = collection[index];
             var expectedEvents = new[] {
@@ -480,7 +480,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
 
             // Act & Assert
@@ -541,7 +541,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
 
             // Act
@@ -622,7 +622,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection).Add(item), Breaks.EnumeratorFor(collection));
@@ -710,7 +710,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var contains = ((SC.IList) collection).Contains(item);
@@ -755,7 +755,7 @@ namespace C6.Tests
         public void SCIListContains_SingleItemCollectionReferenceInequalItem_False()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray, ReferenceEqualityComparer);
             var nonDuplicateItem = string.Copy(item);
@@ -772,7 +772,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random, ReferenceEqualityComparer);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var contains = ((SC.IList) collection).Contains(item);
@@ -868,7 +868,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            object item = Random.GetString();
+            object item = GetString(Random);
 
             // Act
             var indexOf = collection.IndexOf(item);
@@ -883,7 +883,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetList(items);
-            object item = items.DifferentItem(() => Random.GetString());
+            object item = items.DifferentItem(() => GetString(Random));
             var count = collection.Count;
 
             // Act
@@ -914,7 +914,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetList(items);
 
@@ -930,7 +930,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetList(items);
             var index = collection.ToArray().IndexOf(item);
@@ -986,7 +986,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            object item = Random.GetString();
+            object item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.Precondition);
@@ -998,7 +998,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            object item = Random.GetString();
+            object item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.UncaughtPrecondition);
@@ -1052,7 +1052,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            object item = Random.GetString();
+            object item = GetString(Random);
             var array = new[] { item };
 
             // Act
@@ -1068,7 +1068,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            object item = Random.GetString();
+            object item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
@@ -1098,7 +1098,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = 0;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -1114,7 +1114,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -1130,7 +1130,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -1146,7 +1146,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var expectedEvents = new[] {
                 Inserted(item, index, collection),
@@ -1163,7 +1163,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = GetIndex(collection, Random, true);
 
             // Act & Assert
@@ -1262,7 +1262,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             ((SC.IList) collection).Remove(item);
@@ -1465,7 +1465,7 @@ namespace C6.Tests
         public void SCIListRemoveAt_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -1562,7 +1562,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
@@ -1577,7 +1577,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetList(items);
-            var item = items.DifferentItem(() => Random.GetString());
+            var item = items.DifferentItem(() => GetString(Random));
             var count = collection.Count;
 
             // Act
@@ -1608,7 +1608,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetList(items);
 
@@ -1624,7 +1624,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetList(items);
             var index = collection.ToArray().IndexOf(item);
@@ -1764,7 +1764,7 @@ namespace C6.Tests
         public void SCGIListRemoveAt_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -1847,7 +1847,7 @@ namespace C6.Tests
         public void First_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -1904,7 +1904,7 @@ namespace C6.Tests
         public void Last_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -1953,7 +1953,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -1965,7 +1965,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -1977,7 +1977,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -1989,7 +1989,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2058,7 +2058,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = 0;
             var array = collection.ToArray();
             array[index] = item;
@@ -2075,7 +2075,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray();
             array[index] = item;
@@ -2092,7 +2092,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var array = collection.ToArray();
             array[index] = item;
@@ -2109,7 +2109,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var oldItem = collection[index];
             var expectedEvents = new[] {
@@ -2129,7 +2129,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
 
             // Act & Assert
@@ -2157,7 +2157,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2169,7 +2169,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2223,7 +2223,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = new[] { item };
 
             // Act
@@ -2239,7 +2239,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
@@ -2269,7 +2269,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = 0;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -2285,7 +2285,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -2301,7 +2301,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var expected = collection.InsertItem(index, item);
 
@@ -2317,7 +2317,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var expectedEvents = new[] {
                 Inserted(item, index, collection),
@@ -2334,7 +2334,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
 
             // Act & Assert
@@ -2404,7 +2404,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = new[] { item };
 
             // Act
@@ -2433,7 +2433,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = collection.ToArray().InsertItem(0, item);
 
             // Act
@@ -2448,7 +2448,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var expectedEvents = new[] {
                 Inserted(item, 0, collection),
                 Added(item, 1, collection),
@@ -2464,7 +2464,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.InsertFirst(item), Breaks.EnumeratorFor(collection));
@@ -2533,7 +2533,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = new[] { item };
 
             // Act
@@ -2562,7 +2562,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
@@ -2577,7 +2577,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var expectedEvents = new[] {
                 Inserted(item, collection.Count, collection),
                 Added(item, 1, collection),
@@ -2593,7 +2593,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.InsertLast(item), Breaks.EnumeratorFor(collection));
@@ -2946,7 +2946,7 @@ namespace C6.Tests
         public void IsSorted_SingleItemCollection_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -2989,7 +2989,7 @@ namespace C6.Tests
         public void IsSorted_TwoEqualItems_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
 
@@ -3005,7 +3005,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
 
@@ -3122,7 +3122,7 @@ namespace C6.Tests
         public void IsSortedComparison_SingleItemCollection_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -3168,7 +3168,7 @@ namespace C6.Tests
         public void IsSortedComparison_TwoEqualItems_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -3185,7 +3185,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -3292,7 +3292,7 @@ namespace C6.Tests
         public void IsSortedIComparer_SingleItemCollection_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -3338,7 +3338,7 @@ namespace C6.Tests
         public void IsSortedIComparer_TwoEqualItems_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -3355,7 +3355,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -3499,7 +3499,7 @@ namespace C6.Tests
         public void RemoveFirst_SingleItemCollection_Empty()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -3599,7 +3599,7 @@ namespace C6.Tests
         public void RemoveLast_SingleItemCollection_Empty()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -3726,7 +3726,7 @@ namespace C6.Tests
         public void Reverse_SingleItemCollection_RaisesNoEvents()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -3738,7 +3738,7 @@ namespace C6.Tests
         public void Reverse_SingleItemCollectionReverseDuringEnumeration_ThrowsNothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -4080,7 +4080,7 @@ namespace C6.Tests
         public void Sort_SingleItemCollection_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -4123,7 +4123,7 @@ namespace C6.Tests
         public void Sort_TwoEqualItems_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
 
@@ -4139,7 +4139,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
 
@@ -4344,7 +4344,7 @@ namespace C6.Tests
         public void SortComparison_SingleItemCollection_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -4390,7 +4390,7 @@ namespace C6.Tests
         public void SortComparison_TwoEqualItems_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -4407,7 +4407,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -4607,7 +4607,7 @@ namespace C6.Tests
         public void SortIComparer_SingleItemCollection_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -4653,7 +4653,7 @@ namespace C6.Tests
         public void SortIComparer_TwoEqualItems_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -4670,7 +4670,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;

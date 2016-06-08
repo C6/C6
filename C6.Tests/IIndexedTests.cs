@@ -405,7 +405,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var indexOf = collection.IndexOf(item);
@@ -420,7 +420,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetIndexed(items);
-            var item = items.DifferentItem(() => Random.GetString());
+            var item = items.DifferentItem(() => GetString(Random));
             var count = collection.Count;
 
             // Act
@@ -451,7 +451,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetIndexed(items);
 
@@ -467,7 +467,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetIndexed(items);
             var index = collection.ToArray().IndexOf(item);
@@ -530,7 +530,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var lastIndexOf = collection.LastIndexOf(item);
@@ -545,7 +545,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetIndexed(items);
-            var item = items.DifferentItem(() => Random.GetString());
+            var item = items.DifferentItem(() => GetString(Random));
             var count = collection.Count;
 
             // Act
@@ -576,7 +576,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetIndexed(items);
 
@@ -592,7 +592,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetIndexed(items);
             var index = collection.ToArray().LastIndexOf(item);
@@ -734,7 +734,7 @@ namespace C6.Tests
         public void RemoveAt_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetIndexed(itemArray);
 
