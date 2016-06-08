@@ -45,13 +45,22 @@ namespace C6.Collections
 
         protected void RaiseForAddRange(SCG.IEnumerable<T> items)
         {
-            Requires(items != null);
+            Requires(items != null, ArgumentMustBeNonNull);
+            Requires(AllowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
             if (ActiveEvents.HasFlag(Added)) {
                 foreach (var item in items) {
                     OnItemsAdded(item, 1);
                 }
             }
+            OnCollectionChanged();
+        }
+
+        protected void RaiseForClear(int count)
+        {
+            Requires(count >= 1, ArgumentMustBePositive);
+
+            OnCollectionCleared(true, count);
             OnCollectionChanged();
         }
 

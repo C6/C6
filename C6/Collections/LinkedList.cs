@@ -183,7 +183,23 @@ namespace C6.Collections
 
         public override void Clear()
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            if (IsEmpty) {
+                return;
+            }
+
+            // Only update version if the collection is actually cleared
+            UpdateVersion();
+
+            var oldCount = Count;
+            ClearPrivate();
+            RaiseForClear(oldCount);
         }
 
         public override bool Contains(T item)
@@ -271,6 +287,13 @@ namespace C6.Collections
 
             // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
             throw new InvalidOperationException(CollectionWasModified);
+        }
+
+        private void ClearPrivate()
+        {
+            _first.Next = _last;
+            _last.Previous = _first;
+            Count = 0;
         }
 
         [Pure]

@@ -1041,14 +1041,6 @@ namespace C6.Collections
 
         #region Event Helpers
 
-        private void RaiseForClear(int count)
-        {
-            Requires(count >= 1);
-
-            OnCollectionCleared(true, count);
-            OnCollectionChanged();
-        }
-
         private void RaiseForIndexSetter(T oldItem, T newItem, int index)
         {
             if (ActiveEvents != None) {

@@ -35,6 +35,8 @@ namespace C6.Tests
 
         #region Helpers
 
+        private ICollection<T> GetCollection<T>(params T[] items) => GetCollection((SCG.IEnumerable<T>) items);
+
         private ICollection<int> GetIntCollection(Random random, SCG.IEqualityComparer<int> equalityComparer = null, bool allowsNull = false)
             => GetCollection(GetIntegers(random, GetCount(random)), equalityComparer, allowsNull);
 
@@ -100,12 +102,37 @@ namespace C6.Tests
         }
 
         [Test]
+        public void Clear_EmptyCollection_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+
+            // Act & Assert
+            Assert.That(() => collection.Clear(), RaisesNoEventsFor(collection));
+        }
+
+        // TODO: Does this actually test anything? The first call to MoveNext() will always return false.
+        [Test]
+        public void Clear_ClearEmptyCollectionDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetEmptyCollection<string>();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Clear();
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
         public void Clear_SingleItem_IsEmpty()
         {
             // Arrange
-            var item = Random.GetString();
-            var itemArray = new[] { item };
-            var collection = GetCollection(itemArray);
+            var item = GetString(Random);
+            var collection = GetCollection(item);
 
             // Act
             collection.Clear();
@@ -128,13 +155,17 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Clear_EmptyCollection_RaisesNoEvents()
+        public void Clear_RandomCollectionWithNull_IsEmpty()
         {
             // Arrange
-            var collection = GetEmptyCollection<string>();
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
 
-            // Act & Assert
-            Assert.That(() => collection.Clear(), RaisesNoEventsFor(collection));
+            // Act
+            collection.Clear();
+
+            // Assert
+            Assert.That(collection, Is.Empty);
         }
 
         [Test]
@@ -2614,7 +2645,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.Update(item), Breaks.EnumeratorFor(collection));
         }
-        
+
         [Test]
         public void Update_UpdateNewItemDuringEnumeration_ThrowsNothing()
         {
@@ -2988,7 +3019,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.UpdateOrAdd(item), Breaks.EnumeratorFor(collection));
         }
-        
+
         [Test]
         public void UpdateOrAdd_AddNewDuringEnumeration_BreaksEnumerator()
         {
