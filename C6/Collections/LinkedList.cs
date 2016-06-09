@@ -202,7 +202,11 @@ namespace C6.Collections
             RaiseForClear(oldCount);
         }
 
-        public override bool Contains(T item) => this.Any(x => Equals(x, item));
+        public override bool Contains(T item)
+        {
+            Node node;
+            return Contains(item, out node);
+        }
 
         public override bool ContainsRange(SCG.IEnumerable<T> items)
         {
