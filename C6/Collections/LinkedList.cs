@@ -209,10 +209,7 @@ namespace C6.Collections
             throw new NotImplementedException();
         }
 
-        public override int CountDuplicates(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public override int CountDuplicates(T item) => this.Count(x => Equals(x, item));
 
         public override bool Find(ref T item)
         {

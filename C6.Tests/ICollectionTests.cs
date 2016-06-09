@@ -474,13 +474,41 @@ namespace C6.Tests
         #region CountDuplicates(T)
 
         [Test]
-        public void CountDuplicates_DisallowsNullCountDuplicatesNull_ViolatesPrecondition()
+        public void CountDuplicates_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
 
             // Act & Assert
             Assert.That(() => collection.CountDuplicates(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void CountDuplicates_AllowsNullNewNull_Count()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+
+            // Act
+            var countDuplicates = collection.CountDuplicates(null);
+
+            // Assert
+            Assert.That(countDuplicates, Is.Zero);
+        }
+
+        [Test]
+        public void CountDuplicates_AllowsNullExistingNull_Count()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            var count = collection.Add(null) ? 2 : 1;
+
+            // Act
+            var countDuplicates = collection.CountDuplicates(null);
+
+            // Assert
+            Assert.That(countDuplicates, Is.EqualTo(count));
         }
 
         [Test]
@@ -503,7 +531,7 @@ namespace C6.Tests
             // Arrange
             var item = GetString(Random);
             var count = AllowsDuplicates ? GetCount(Random) : 1;
-            var items = ((Func<string>) (() => string.Copy(item))).Repeat(count);
+            var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetCollection(items);
 
             // Act
@@ -514,11 +542,11 @@ namespace C6.Tests
         }
 
         [Test]
-        public void CountDuplicates_RandomCollectionWithCountEqualItems_Count()
+        public void CountDuplicates_RandomCollectionWithEqualItems_Count()
         {
             // Arrange
             var item = GetLowercaseString(Random);
-            var count = GetCount(Random);
+            var count = AllowsDuplicates ? GetCount(Random) : 1;
             var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetCollection(items);
 
@@ -529,6 +557,7 @@ namespace C6.Tests
             Assert.That(countDuplicates, Is.EqualTo(count));
         }
 
+        // TODO: Keep?
         [Test]
         public void CountDuplicates_ValueTypeCollectionWithCountEqualItems_Count()
         {
@@ -542,21 +571,6 @@ namespace C6.Tests
 
             // Act
             var countDuplicates = collection.CountDuplicates(item);
-
-            // Assert
-            Assert.That(countDuplicates, Is.EqualTo(count));
-        }
-
-        [Test]
-        public void CountDuplicates_AllowsNull_Count()
-        {
-            // Arrange
-            var items = GetStrings(Random).WithNull(Random);
-            var collection = GetCollection(items, allowsNull: true);
-            var count = collection.Add(null) ? 2 : 1;
-
-            // Act
-            var countDuplicates = collection.CountDuplicates(null);
 
             // Assert
             Assert.That(countDuplicates, Is.EqualTo(count));
