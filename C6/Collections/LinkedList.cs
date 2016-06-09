@@ -213,7 +213,13 @@ namespace C6.Collections
 
         public override bool Find(ref T item)
         {
-            throw new NotImplementedException();
+            Node node;
+            if (Contains(item, out node)) {
+                item = node.Item;
+                return true;
+            }
+
+            return false;
         }
 
         public override ICollectionValue<T> FindDuplicates(T item)
@@ -288,6 +294,20 @@ namespace C6.Collections
             _first.Next = _last;
             _last.Previous = _first;
             Count = 0;
+        }
+
+        private bool Contains(T item, out Node node)
+        {
+            node = _first.Next;
+            while (node != _last) {
+                if (Equals(item, node.Item)) {
+                    return true;
+                }
+                node = node.Next;
+            }
+
+            node = null;
+            return false;
         }
 
         [Pure]

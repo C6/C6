@@ -588,7 +588,7 @@ namespace C6.Tests
         #region Find(ref T)
 
         [Test]
-        public void Find_DisallowsNullFindNull_ViolatesPrecondition()
+        public void Find_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -599,7 +599,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Find_AllowsNullContainsNull_True()
+        public void Find_AllowsNullExistingNull_True()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -615,7 +615,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Find_AllowsNullContainsNoNull_False()
+        public void Find_AllowsNullNewNull_False()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -647,7 +647,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Find_RandomCollectionDuplicateItem_True()
+        public void Find_RandomCollectionExistingItem_True()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -664,12 +664,11 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Find_RandomCollectionNonDuplicateItem_False()
+        public void Find_RandomCollectionNewItem_False()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetCollection(items, ReferenceEqualityComparer);
-            var item = string.Copy(items.Choose(Random));
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
             var refItem = item;
 
             // Act
@@ -712,6 +711,28 @@ namespace C6.Tests
             // Assert
             Assert.That(find, Is.True);
             Assert.That(refItem, Is.EqualTo(item));
+        }
+
+        [Test]
+        public void Find_RandomCollectionNewItem_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var item = GetString(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.Find(ref item), RaisesNoEventsFor(collection));
+        }
+
+        [Test]
+        public void Find_RandomCollectionExistingItem_RaisesNoEvents()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var item = collection.Choose(Random);
+
+            // Act & Assert
+            Assert.That(() => collection.Find(ref item), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -951,8 +972,8 @@ namespace C6.Tests
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
             var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
             var expectedEvents = new[] {
                 Added(item, 1, collection),
                 Changed(collection),
@@ -963,7 +984,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void FindOrAdd_RandomCollectionDuplicateItem_True()
+        public void FindOrAdd_RandomCollectionFind_True()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -980,12 +1001,11 @@ namespace C6.Tests
         }
 
         [Test]
-        public void FindOrAdd_RandomCollectionNonDuplicateItem_False()
+        public void FindOrAdd_RandomCollectionAdd_False()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetCollection(items, ReferenceEqualityComparer);
-            var item = string.Copy(items.Choose(Random));
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
             var refItem = item;
 
             // Act
@@ -1000,9 +1020,8 @@ namespace C6.Tests
         public void FindOrAdd_Find_RaisesNoEvents()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var item = items.Choose(Random);
-            var collection = GetCollection(items);
+            var collection = GetStringCollection(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.FindOrAdd(ref item), RaisesNoEventsFor(collection));
@@ -1021,12 +1040,12 @@ namespace C6.Tests
         }
 
         [Test]
-        public void FindOrAdd_FindItemDuringEnumeration_ThrowsNothing()
+        public void FindOrAdd_FindIDuringEnumeration_ThrowsNothing()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var item = items.Choose(Random).ToLower();
 
             // Act
             var enumerator = collection.GetEnumerator();
