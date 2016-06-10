@@ -1803,7 +1803,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveDuplicates_RemoveNull_Removed()
+        public void RemoveDuplicates_AllowsNullExistingNulls_True()
         {
             // Arrange
             var count = GetCount(Random);
@@ -1816,6 +1816,21 @@ namespace C6.Tests
             // Assert
             Assert.That(removeDuplicates, Is.True);
             Assert.That(collection, Has.No.Null);
+        }
+
+        [Test]
+        public void RemoveDuplicates_AllowsNullNewNull_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+            var array = collection.ToArray();
+
+            // Act
+            var removeDuplicates = collection.RemoveDuplicates(null);
+
+            // Assert
+            Assert.That(removeDuplicates, Is.False);
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         // TODO: Find a better way to test the differences caused by DuplicatesByCounting
@@ -1842,12 +1857,11 @@ namespace C6.Tests
         // TODO: Test events properly
 
         [Test]
-        public void RemoveDuplicates_RandomCollectionRemoveNewItem_RaisesNoEvents()
+        public void RemoveDuplicates_RandomCollectionNewItem_RaisesNoEvents()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items);
-            var item = GetLowercaseString(Random);
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
 
             // Act & Assert
             Assert.That(() => collection.RemoveDuplicates(item), RaisesNoEventsFor(collection));
@@ -1865,18 +1879,34 @@ namespace C6.Tests
 
             // Assert
             Assert.That(removeDuplicates, Is.False);
+            Assert.That(collection, Is.Empty);
         }
 
         [Test]
-        public void RemoveDuplicates_RemoveDuringEnumeration_BreaksEnumerator()
+        public void RemoveDuplicates_RemoveExistingDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetCollection(items);
-            var item = items.Choose(Random);
+            var collection = GetStringCollection(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.RemoveDuplicates(item), Breaks.EnumeratorFor(collection));
+        }
+
+        [Test]
+        public void RemoveDuplicates_RemoveNewDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.RemoveDuplicates(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
         }
 
         [Test]
@@ -1897,18 +1927,35 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveDuplicates_RandomCollectionRemoveNewItem_False()
+        public void RemoveDuplicates_RandomCollectionNewItem_False()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items);
-            var item = GetLowercaseString(Random);
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
+            var array = collection.ToArray();
 
             // Act
             var removeDuplicates = collection.RemoveDuplicates(item);
 
             // Assert
             Assert.That(removeDuplicates, Is.False);
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
+        }
+
+        [Test]
+        public void RemoveDuplicates_RandomCollectionExistingItem_True()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var item = collection.Choose(Random);
+            var array = collection.Where(x => !x.Equals(item)).ToArray();
+
+            // Act
+            var removeDuplicates = collection.RemoveDuplicates(item);
+
+            // Assert
+            Assert.That(removeDuplicates, Is.True);
+            Assert.That(collection, Is.EquivalentTo(array).ByReference<string>());
         }
 
         [Test]

@@ -257,10 +257,7 @@ namespace C6.Collections
             return false;
         }
 
-        public override bool RemoveDuplicates(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
         {
@@ -298,6 +295,21 @@ namespace C6.Collections
 
             oldItem = default(T);
             return false;
+        }
+
+        #endregion
+
+        #region Events
+
+        private void RaiseForRemoveAllWhere(Node items)
+        {
+            if (ActiveEvents.HasFlag(Removed)) {
+                while (items != null) {
+                    OnItemsRemoved(items.Item, 1);
+                    items = items.Previous;
+                }
+            }
+            OnCollectionChanged();
         }
 
         #endregion
@@ -408,10 +420,45 @@ namespace C6.Collections
 
         private T Remove(Node node)
         {
-            Count--;
+            --Count;
             node.Previous.Next = node.Next;
             node.Next.Previous = node.Previous;
             return node.Item;
+        }
+
+        private bool RemoveAllWhere(Func<T, bool> predicate)
+        {
+            if (IsEmpty) {
+                return false;
+            }
+
+            var shouldRememberItems = ActiveEvents.HasFlag(Removed);
+            Node itemsRemoved = null;
+            var count = Count;
+
+            var node = _first.Next;
+            while (node != _last) {
+                if (predicate(node.Item)) {
+                    Remove(node);
+
+                    if (shouldRememberItems) {
+                        node.Previous = itemsRemoved;
+                        itemsRemoved = node;
+                    }
+                }
+
+                node = node.Next;
+            }
+
+            // No items were removed
+            if (count == Count) {
+                return false;
+            }
+
+            // Only update version if items are actually removed
+            UpdateVersion();
+            RaiseForRemoveAllWhere(itemsRemoved);
+            return true;
         }
 
         private void UpdateVersion() => _version++;
@@ -424,6 +471,7 @@ namespace C6.Collections
         ///     Represents an individual cell in the linked list.
         /// </summary>
         [Serializable]
+        [DebuggerDisplay("Node({Item})")]
         private class Node
         {
             public Node Previous, Next;
