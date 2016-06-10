@@ -466,7 +466,7 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.ContainsRange(badEnumerable), Throws.TypeOf<BadEnumerableException>());
-            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(items).ByReference<string>());
         }
 
         #endregion
@@ -1177,7 +1177,7 @@ namespace C6.Tests
         #region Remove(T)
 
         [Test]
-        public void RemoveT_DisallowsNull_ViolatesPrecondition()
+        public void Remove_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -1187,52 +1187,68 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveT_AllowsNull_True()
+        public void Remove_AllowsNullExistingNull_True()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
-            var expected = collection.Where(item => item != null).ToList();
+            var expected = collection.Where(item => item != null).ToArray();
 
             // Act
             var remove = collection.Remove(null);
 
             // Assert
             Assert.That(remove, Is.True);
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(expected).ByReference<string>());
         }
 
         [Test]
-        public void RemoveT_RemoveExistingItem_RaisesExpectedEvents()
+        public void Remove_AllowsNullNewNull_False()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
-            var existingItem = items.Choose(Random);
+            var collection = GetStringCollection(Random, allowsNull: true);
+            var expected = collection.ToArray();
+
+            // Act
+            var remove = collection.Remove(null);
+
+            // Assert
+            Assert.That(remove, Is.False);
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
+        }
+
+        [Test]
+        public void Remove_RandomCollectionExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var existingItem = collection.Choose(Random);
             var item = existingItem.ToLower();
             var expectedEvents = new[] {
                 Removed(existingItem, 1, collection),
                 Changed(collection),
             };
+            var remove = false;
 
             // Act & Assert
-            Assert.That(() => collection.Remove(item), Raises(expectedEvents).For(collection));
+            Assert.That(() => remove = collection.Remove(item), Raises(expectedEvents).For(collection));
+            Assert.That(remove, Is.True);
         }
 
         [Test]
-        public void RemoveT_RemoveNewItem_RaisesNoEvents()
+        public void Remove_RandomCollectionNewItem_RaisesNoEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
             var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Remove(item), RaisesNoEventsFor(collection));
         }
 
         [Test]
-        public void RemoveT_EmptyCollection_False()
+        public void Remove_EmptyCollection_False()
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
@@ -1247,12 +1263,11 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveT_RemoveExistingItem_True()
+        public void Remove_RandomCollectionExistingItem_True()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
 
             // Act
             var remove = collection.Remove(item);
@@ -1262,12 +1277,11 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveT_RemoveNewItem_False()
+        public void Remove_RandomCollectionNewItem_False()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
-            var collection = GetCollection(items);
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
             var expected = collection.ToArray();
 
             // Act
@@ -1275,28 +1289,26 @@ namespace C6.Tests
 
             // Assert
             Assert.That(remove, Is.False);
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
-        public void RemoveT_RemoveDuringEnumeration_BreaksEnumerator()
+        public void Remove_RemoveExistingDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
 
             // Act & Assert
             Assert.That(() => collection.Remove(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
-        public void RemoveT_RemoveItemDuringEnumeration_ThrowsNothing()
+        public void Remove_RemoveNewDuringEnumeration_ThrowsNothing()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items);
-            var item = GetLowercaseString(Random);
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
 
             // Act
             var enumerator = collection.GetEnumerator();
@@ -1309,14 +1321,14 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void RemoveT_ReadOnlyCollection_Fail()
+        public void Remove_ReadOnlyCollection_Fail()
         {
             Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
-        public void RemoveT_DuplicatesByCounting_Fail()
+        public void Remove_DuplicatesByCounting_Fail()
         {
             // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
             Assert.That(DuplicatesByCounting, Is.False, "Tests have not been written yet");
@@ -1324,7 +1336,7 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void RemoveT_Set_Fail()
+        public void Remove_Set_Fail()
         {
             Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
@@ -1334,7 +1346,7 @@ namespace C6.Tests
         #region Remove(T, out T)
 
         [Test]
-        public void RemoveTOut_DisallowsNull_ViolatesPrecondition()
+        public void RemoveOut_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -1343,13 +1355,14 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.Remove(null, out removedItem), Violates.PreconditionSaying(ItemMustBeNonNull));
         }
-
+        
         [Test]
-        public void RemoveTOut_AllowsNull_True()
+        public void RemoveOut_AllowsNullExistingNull_True()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
+            var expected = collection.Where(item => item != null).ToArray();
             string removedItem;
 
             // Act
@@ -1357,16 +1370,31 @@ namespace C6.Tests
 
             // Assert
             Assert.That(remove, Is.True);
-            Assert.That(removedItem, Is.Null);
+            Assert.That(collection, Is.EquivalentTo(expected).ByReference<string>());
         }
 
         [Test]
-        public void RemoveTOut_RemoveExistingItem_RaisesExpectedEvents()
+        public void RemoveOut_AllowsNullNewNull_False()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
-            var existingItem = items.Choose(Random);
+            var collection = GetStringCollection(Random, allowsNull: true);
+            var expected = collection.ToArray();
+            string removedItem;
+
+            // Act
+            var remove = collection.Remove(null, out removedItem);
+
+            // Assert
+            Assert.That(remove, Is.False);
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
+        }
+
+        [Test]
+        public void RemoveOut_RandomCollectionExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var existingItem = collection.Choose(Random);
             var item = existingItem.ToLower();
             string removedItem;
             var expectedEvents = new[] {
@@ -1379,12 +1407,12 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveTOut_RemoveNewItem_RaisesNoEvents()
+        public void RemoveOut_RandomCollectionNewItem_RaisesNoEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
             var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
             string removedItem;
 
             // Act & Assert
@@ -1392,7 +1420,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveTOut_EmptyCollection_False()
+        public void RemoveOut_EmptyCollection_False()
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
@@ -1408,13 +1436,12 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveTOut_RemoveExistingItem_True()
+        public void RemoveOut_RandomCollectionExistingItem_True()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var existingItem = items.Choose(Random);
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var existingItem = collection.Choose(Random);
             var item = existingItem.ToLower();
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
             string removedItem;
 
             // Act
@@ -1426,12 +1453,12 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveTOut_RemoveNewItem_False()
+        public void RemoveOut_RandomCollectionNewItem_False()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
-            var collection = GetCollection(items);
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
+            var expected = collection.ToArray();
             string removedItem;
 
             // Act
@@ -1440,15 +1467,15 @@ namespace C6.Tests
             // Assert
             Assert.That(remove, Is.False);
             Assert.That(removedItem, Is.Null);
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
-        public void RemoveTTOut_RemoveDuringEnumeration_BreaksEnumerator()
+        public void RemoveOut_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
             string removedItem;
 
             // Act & Assert
@@ -1456,12 +1483,11 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveTOut_RemoveItemDuringEnumeration_ThrowsNothing()
+        public void RemoveOut_RemoveItemDuringEnumeration_ThrowsNothing()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items);
-            var item = GetLowercaseString(Random);
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
             string removedItem;
 
             // Act
@@ -1475,14 +1501,14 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void RemoveTOut_ReadOnlyCollection_Fail()
+        public void RemoveOut_ReadOnlyCollection_Fail()
         {
             Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         [Test]
         [Category("Unfinished")]
-        public void RemoveTOut_DuplicatesByCounting_Fail()
+        public void RemoveOut_DuplicatesByCounting_Fail()
         {
             // TODO: Only one item is replaced based on AllowsDuplicates/DuplicatesByCounting
             Assert.That(DuplicatesByCounting, Is.False, "Tests have not been written yet");
@@ -1490,7 +1516,7 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void RemoveTOut_Set_Fail()
+        public void RemoveOut_Set_Fail()
         {
             Assert.That(!AllowsDuplicates, Is.False, "Tests have not been written yet");
         }
@@ -1677,7 +1703,7 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.RemoveRange(badEnumerable), Throws.TypeOf<BadEnumerableException>());
-            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(items).ByReference<string>());
         }
 
         [Test]
@@ -2121,7 +2147,7 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.RetainRange(badEnumerable), Throws.TypeOf<BadEnumerableException>());
-            Assert.That(collection, Is.EquivalentTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(items).ByReference<string>());
         }
 
         [Test]

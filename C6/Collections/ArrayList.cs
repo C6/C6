@@ -537,20 +537,7 @@ namespace C6.Collections
         public virtual T Pop() => RemoveLast();
 
         public virtual void Push(T item) => InsertLast(item);
-
-        public virtual bool Remove(T item)
-        {
-            #region Code Contracts
-
-            // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
-
-            #endregion
-
-            T removedItem;
-            return Remove(item, out removedItem);
-        }
-
+        
         public override bool Remove(T item, out T removedItem)
         {
             #region Code Contracts
@@ -1071,12 +1058,6 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
-        private void RaiseForRemove(T item)
-        {
-            OnItemsRemoved(item, 1);
-            OnCollectionChanged();
-        }
-
         private void RaiseForRemovedAt(T item, int index)
         {
             OnItemRemovedAt(item, index);
@@ -1105,15 +1086,6 @@ namespace C6.Collections
         private void RaiseForShuffle() => OnCollectionChanged();
 
         private void RaiseForSort() => OnCollectionChanged();
-
-        private void RaiseForUpdate(T item, T oldItem)
-        {
-            Requires(Equals(item, oldItem));
-
-            OnItemsRemoved(oldItem, 1);
-            OnItemsAdded(item, 1);
-            OnCollectionChanged();
-        }
 
         #endregion
 

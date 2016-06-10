@@ -64,6 +64,12 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForRemove(T removedItem)
+        {
+            OnItemsRemoved(removedItem, 1);
+            OnCollectionChanged();
+        }
+
         protected void RaiseForUpdate(T item, T oldItem)
         {
             Requires(AllowsNull || item != null, ItemMustBeNonNull);

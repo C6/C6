@@ -245,7 +245,16 @@ namespace C6.Collections
 
         public override bool Remove(T item, out T removedItem)
         {
-            throw new NotImplementedException();
+            Node node;
+            if (Contains(item, out node)) {
+                UpdateVersion();
+                removedItem = Remove(node);
+                RaiseForRemove(removedItem);
+                return true;
+            }
+
+            removedItem = default(T);
+            return false;
         }
 
         public override bool RemoveDuplicates(T item)
@@ -395,6 +404,14 @@ namespace C6.Collections
             // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
             ++Count;
             return new Node(item, next.Previous, next);
+        }
+
+        private T Remove(Node node)
+        {
+            Count--;
+            node.Previous.Next = node.Next;
+            node.Next.Previous = node.Previous;
+            return node.Item;
         }
 
         private void UpdateVersion() => _version++;
