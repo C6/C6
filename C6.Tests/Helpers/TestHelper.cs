@@ -173,6 +173,8 @@ namespace C6.Tests.Helpers
             return array;
         }
 
+        public static T[] WithRepeatedItem<T>(this SCG.IEnumerable<T> items, T item, int count, Random random) => items.WithRepeatedItem(() => item, count, random);
+
         public static T[] ShuffledCopy<T>(this SCG.IEnumerable<T> enumerable, Random random)
         {
             var copy = enumerable.ToArray();

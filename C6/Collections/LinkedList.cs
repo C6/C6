@@ -275,7 +275,20 @@ namespace C6.Collections
 
         public override bool Update(T item, out T oldItem)
         {
-            throw new NotImplementedException();
+            Node node;
+            if (Contains(item, out node)) {
+                UpdateVersion();
+
+                oldItem = node.Item;
+                node.Item = item;
+
+                RaiseForUpdate(item, oldItem);
+
+                return true;
+            }
+
+            oldItem = default(T);
+            return false;
         }
 
         #endregion

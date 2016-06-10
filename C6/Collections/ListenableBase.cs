@@ -64,6 +64,16 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForUpdate(T item, T oldItem)
+        {
+            Requires(AllowsNull || item != null, ItemMustBeNonNull);
+            Requires(AllowsNull || oldItem != null, ItemMustBeNonNull);
+
+            OnItemsRemoved(oldItem, 1);
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
+        }
+
         #endregion
 
         #region Events

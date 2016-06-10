@@ -2499,13 +2499,40 @@ namespace C6.Tests
         // TODO: Test that the proper item is replaced when several exist
 
         [Test]
-        public void Update_DisallowsNullUpdateNull_ViolatesPrecondition()
+        public void Update_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
 
             // Act & Assert
             Assert.That(() => collection.Update(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void Update_AllowsNullNewNull_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+
+            // Act
+            var update = collection.Update(null);
+
+            // Assert
+            Assert.That(update, Is.False);
+        }
+
+        [Test]
+        public void Update_AllowsNullExistingNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+
+            // Act
+            var update = collection.Update(null);
+
+            // Assert
+            Assert.That(update, Is.True);
         }
 
         [Test]
@@ -2523,12 +2550,11 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_RandomCollectionUpdateNewItem_False()
+        public void Update_RandomCollectionNewItem_False()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items);
-            var item = GetLowercaseString(Random);
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
 
             // Act
             var update = collection.Update(item);
@@ -2538,7 +2564,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_RandomCollectionUpdateExistingItem_True()
+        public void Update_RandomCollectionExistingItem_True()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2553,7 +2579,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Update_RandomCollectionUpdateExistingItem_RaisesExpectedEvents()
+        public void Update_RandomCollectioneExistingItem_RaisesExpectedEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2569,56 +2595,71 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.Update(item), Raises(expectedEvents).For(collection));
         }
-
+        
         [Test]
-        public void Update_IntegerCollectionUpdateExistingItem_RaisesExpectedEvents()
-        {
-            // Arrange
-            var items = new[] { 4, 54, 56, 8 };
-            var collection = GetCollection(items, TenEqualityComparer.Default);
-            var count = DuplicatesByCounting ? 2 : 1;
-            var item = 53;
-            var expectedEvents = new[] {
-                Removed(54, count, collection),
-                Added(item, count, collection),
-                Changed(collection)
-            };
-
-            // Act & Assert
-            Assert.That(() => collection.Update(item), Raises(expectedEvents).For(collection));
-        }
-
-        [Test]
-        public void Update_RandomCollectionUpdateNewItem_RaisesNoEvents()
+        public void Update_RandomCollectionNewItem_RaisesNoEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
             var collection = GetCollection(items);
             var item = GetLowercaseString(Random);
+            var update = true;
 
             // Act & Assert
-            Assert.That(() => collection.Update(item), RaisesNoEventsFor(collection));
+            Assert.That(() => update = collection.Update(item), RaisesNoEventsFor(collection));
+            Assert.That(update, Is.False);
         }
 
         [Test]
+        public void Update_UpdateExistingDuringEnumeration_BreaksEnumerator()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
+
+            // Act & Assert
+            Assert.That(() => collection.Update(item), Breaks.EnumeratorFor(collection));
+        }
+
+        [Test]
+        public void Update_UpdateNewItemDuringEnumeration_ThrowsNothing()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = items.Choose(Random).ToLower();
+
+            // Act
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            collection.Update(item);
+
+            // Assert
+            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
+        }
+
+        // TODO: Use string copy
+        [Test]
         public void Update_DuplicateItemCollection_ReplacesOneItem()
         {
-            // TODO
             // Arrange
-            var count = GetCount(Random);
             var item = GetLowercaseString(Random);
-            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
+            var count = GetCount(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(item, count, Random);
             var collection = GetCollection(items);
+            var array = collection.ToArray();
 
             // Act
             var update = collection.Update(item);
 
             // Assert
             Assert.That(update, Is.True);
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
+        // TODO: This is rather an IList<T> test...
         [Test]
-        public void Update_RandomCollectionUpdateFirstItem_Updated()
+        public void Update_RandomCollectionFirstItem_Updated()
         {
             // Arrange
             var item = GetLowercaseString(Random);
@@ -2632,38 +2673,6 @@ namespace C6.Tests
             // Assert
             Assert.That(update, Is.True);
         }
-
-        [Test]
-        public void Update_UpdateExistingDuringEnumeration_BreaksEnumerator()
-        {
-            // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
-
-            // Act & Assert
-            Assert.That(() => collection.Update(item), Breaks.EnumeratorFor(collection));
-        }
-
-        [Test]
-        public void Update_UpdateNewItemDuringEnumeration_ThrowsNothing()
-        {
-            // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
-            var collection = GetCollection(items);
-
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Update(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
-        }
-
-        // TODO: Null
-        // TODO: Simple type, properly replaced
 
         // TODO: Proper item replaced
 
@@ -2705,7 +2714,22 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOut_AllowsNull_UpdatesNull()
+        public void UpdateOut_AllowsNullNewNull_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+            string oldItem;
+
+            // Act
+            var update = collection.Update(null, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.False);
+            Assert.That(oldItem, Is.Null);
+        }
+
+        [Test]
+        public void UpdateOut_AllowsNullExistingNull_True()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -2718,77 +2742,6 @@ namespace C6.Tests
             // Assert
             Assert.That(update, Is.True);
             Assert.That(oldItem, Is.Null);
-        }
-
-        [Test]
-        public void UpdateOut_UpdateExistingItem_True()
-        {
-            // Arrange
-            var items = GetUppercaseStrings(Random);
-            var existingItem = items.Choose(Random);
-            var item = existingItem.ToLower();
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
-            string oldItem;
-
-            // Act
-            var update = collection.Update(item, out oldItem);
-
-            // Assert
-            Assert.That(update, Is.True);
-            Assert.That(oldItem, Is.SameAs(existingItem));
-        }
-
-        [Test]
-        public void UpdateOut_UpdateNewItem_False()
-        {
-            // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
-            var collection = GetCollection(items);
-            string oldItem;
-
-            // Act
-            var update = collection.Update(item, out oldItem);
-
-            // Assert
-            Assert.That(update, Is.False);
-            Assert.That(oldItem, Is.Null);
-        }
-
-        [Test]
-        public void UpdateOut_UpdateExistingItem_RaisesExpectedEvents()
-        {
-            // Arrange
-            var count = GetCount(Random);
-            var item = GetLowercaseString(Random);
-            var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
-            var collection = GetCollection(items);
-            var duplicateItem = string.Copy(item);
-            string oldItem;
-            var eventCount = DuplicatesByCounting ? count : 1;
-            var expectedEvents = new[] {
-                Removed(item, eventCount, collection),
-                Added(duplicateItem, eventCount, collection),
-                Changed(collection)
-            };
-
-            // Act & Assert
-            Assert.That(() => collection.Update(duplicateItem, out oldItem), Raises(expectedEvents).For(collection));
-        }
-
-        // TODO: test that the right item is removed for IList<T>
-
-        [Test]
-        public void UpdateOut_UpdateNewItem_RaisesNoEvents()
-        {
-            // Arrange
-            var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
-            var collection = GetCollection(items);
-            string oldItem;
-
-            // Act & Assert
-            Assert.That(() => collection.Update(item, out oldItem), RaisesNoEventsFor(collection));
         }
 
         [Test]
@@ -2808,12 +2761,83 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOut_UpdateDuringEnumeration_BreaksEnumerator()
+        public void UpdateOut_RandomCollectionNewItem_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
+            string oldItem;
+
+            // Act
+            var update = collection.Update(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.False);
+            Assert.That(oldItem, Is.Null);
+        }
+
+        [Test]
+        public void UpdateOut_RandomCollectionExistingItem_True()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = items.Choose(Random).ToLower();
             var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
+            var existingItem = items.Choose(Random);
+            var item = existingItem.ToLower();
+            string oldItem;
+
+            // Act
+            var update = collection.Update(item, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.True);
+            Assert.That(oldItem, Is.SameAs(existingItem));
+        }
+
+        [Test]
+        public void UpdateOut_RandomCollectionExistingItem_RaisesExpectedEvents()
+        {
+            // Arrange
+            var count = GetCount(Random);
+            var item = GetLowercaseString(Random);
+            var items = GetUppercaseStrings(Random).WithRepeatedItem(item, count, Random);
+            var collection = GetCollection(items);
+            var duplicateItem = string.Copy(item);
+            string oldItem;
+            var eventCount = DuplicatesByCounting ? count : 1;
+            var expectedEvents = new[] {
+                Removed(item, eventCount, collection),
+                Added(duplicateItem, eventCount, collection),
+                Changed(collection)
+            };
+
+            // Act & Assert
+            Assert.That(() => collection.Update(duplicateItem, out oldItem), Raises(expectedEvents).For(collection));
+        }
+
+        // TODO: test that the right item is removed for IList<T>
+
+        [Test]
+        public void UpdateOut_RandomCollectionNewItem_RaisesNoEvents()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items);
+            var item = GetLowercaseString(Random);
+            var update = true;
+            string oldItem;
+
+            // Act & Assert
+            Assert.That(() => update = collection.Update(item, out oldItem), RaisesNoEventsFor(collection));
+            Assert.That(update, Is.False);
+        }
+
+        [Test]
+        public void UpdateOut_UpdateExistingDuringEnumeration_BreaksEnumerator()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
             string oldItem;
 
             // Act & Assert
@@ -2821,12 +2845,12 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOut_UpdateDuringEnumeration_ThrowsNothing()
+        public void UpdateOut_UpdateNewDuringEnumeration_ThrowsNothing()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var item = GetLowercaseString(Random);
             var collection = GetCollection(items);
+            var item = items.Choose(Random).ToLower();
             string oldItem;
 
             // Act
@@ -2867,13 +2891,40 @@ namespace C6.Tests
         // TODO: Test that the proper item is replaced when several exist
 
         [Test]
-        public void UpdateOrAdd_DisallowsNullUpdateOrAddNull_ViolatesPrecondition()
+        public void UpdateOrAdd_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
 
             // Act & Assert
             Assert.That(() => collection.UpdateOrAdd(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+        }
+
+        [Test]
+        public void UpdateOrAdd_AllowsNullAddNull_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+
+            // Act
+            var update = collection.UpdateOrAdd(null);
+
+            // Assert
+            Assert.That(update, Is.False);
+        }
+
+        [Test]
+        public void UpdateOrAdd_AllowsNullUpdateNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+
+            // Act
+            var update = collection.UpdateOrAdd(null);
+
+            // Assert
+            Assert.That(update, Is.True);
         }
 
         [Test]
@@ -2893,7 +2944,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAdd_RandomCollectionAddNewItem_Added()
+        public void UpdateOrAdd_RandomCollectionAddItem_Added()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2908,7 +2959,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAdd_RandomCollectionUpdateExistingItem_Updated()
+        public void UpdateOrAdd_RandomCollectionUpdateItem_Updated()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2923,7 +2974,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAdd_RandomCollectionUpdateExistingItem_RaisesExpectedEvents()
+        public void UpdateOrAdd_RandomCollectionUpdateItem_RaisesExpectedEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -2941,25 +2992,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAdd_IntegerCollectionUpdateExistingItem_RaisesExpectedEvents()
-        {
-            // Arrange
-            var items = new[] { 4, 54, 56, 8 };
-            var collection = GetCollection(items, TenEqualityComparer.Default);
-            var count = DuplicatesByCounting ? 2 : 1;
-            var item = 53;
-            var expectedEvents = new[] {
-                Removed(54, count, collection),
-                Added(item, count, collection),
-                Changed(collection)
-            };
-
-            // Act & Assert
-            Assert.That(() => collection.UpdateOrAdd(item), Raises(expectedEvents).For(collection));
-        }
-
-        [Test]
-        public void UpdateOrAdd_RandomCollectionAddNewItem_RaisesExpectedEvents()
+        public void UpdateOrAdd_RandomCollectionAddItem_RaisesExpectedEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -3011,9 +3044,8 @@ namespace C6.Tests
         public void UpdateOrAdd_UpdateDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
-            var item = items.Choose(Random).ToLower();
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
 
             // Act & Assert
             Assert.That(() => collection.UpdateOrAdd(item), Breaks.EnumeratorFor(collection));
@@ -3030,10 +3062,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.UpdateOrAdd(item), Breaks.EnumeratorFor(collection));
         }
-
-        // TODO: Null
-        // TODO: Simple type, properly replaced
-
+        
         // TODO: Proper item replaced
 
         [Test]
@@ -3076,6 +3105,35 @@ namespace C6.Tests
         }
 
         [Test]
+        public void UpdateOrAddOut_AllowsNullAddNull_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+            string oldItem;
+
+            // Act
+            var update = collection.UpdateOrAdd(null, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.False);
+        }
+
+        [Test]
+        public void UpdateOrAddOut_AllowsNullUpdateNull_True()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            string oldItem;
+
+            // Act
+            var update = collection.UpdateOrAdd(null, out oldItem);
+
+            // Assert
+            Assert.That(update, Is.True);
+        }
+
+        [Test]
         public void UpdateOrAddOut_EmptyCollection_Added()
         {
             // Arrange
@@ -3094,7 +3152,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAddOut_RandomCollectionAddNewItem_Added()
+        public void UpdateOrAddOut_RandomCollectionAddItem_Added()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -3111,7 +3169,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAddOut_RandomCollectionUpdateExistingItem_Updated()
+        public void UpdateOrAddOut_RandomCollectionUpdateItem_Updated()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -3129,7 +3187,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAddOut_RandomCollectionUpdateExistingItem_RaisesExpectedEvents()
+        public void UpdateOrAddOut_RandomCollectionUpdateItem_RaisesExpectedEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -3148,26 +3206,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAddOut_IntegerCollectionUpdateExistingItem_RaisesExpectedEvents()
-        {
-            // Arrange
-            var items = new[] { 4, 54, 56, 8 };
-            var collection = GetCollection(items, TenEqualityComparer.Default);
-            var count = DuplicatesByCounting ? 2 : 1;
-            var item = 53;
-            int oldItem;
-            var expectedEvents = new[] {
-                Removed(54, count, collection),
-                Added(item, count, collection),
-                Changed(collection)
-            };
-
-            // Act & Assert
-            Assert.That(() => collection.UpdateOrAdd(item, out oldItem), Raises(expectedEvents).For(collection));
-        }
-
-        [Test]
-        public void UpdateOrAddOut_RandomCollectionAddNewItem_RaisesExpectedEvents()
+        public void UpdateOrAddOut_RandomCollectionAddItem_RaisesExpectedEvents()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -3225,9 +3264,8 @@ namespace C6.Tests
         public void UpdateOrAddOut_UpdateDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items, CaseInsensitiveStringComparer.Default);
-            var item = items.Choose(Random).ToLower();
+            var collection = GetStringCollection(Random, CaseInsensitiveStringComparer.Default);
+            var item = collection.Choose(Random).ToLower();
             string oldItem;
 
             // Act & Assert
@@ -3235,7 +3273,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void UpdateOrAddOut_AddNewDuringEnumeration_BreaksEnumerator()
+        public void UpdateOrAddOut_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
@@ -3246,10 +3284,7 @@ namespace C6.Tests
             // Act & Assert
             Assert.That(() => collection.UpdateOrAdd(item, out oldItem), Breaks.EnumeratorFor(collection));
         }
-
-        // TODO: Null
-        // TODO: Simple type, properly replaced
-
+        
         // TODO: Proper item replaced
 
         [Test]

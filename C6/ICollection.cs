@@ -1425,13 +1425,23 @@ namespace C6
             // Count remains unchanged
             Ensures(Count == OldValue(Count));
 
+            // Collection remains unchanged according to equality comparer
+            Ensures(this.UnsequenceEqual(OldValue(ToArray()), EqualityComparer));
+
+            // The number of duplicates remains unchanged
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)));
+
             // If the item is updated, that item is in the collection
             Ensures(!Result<bool>() || this.ContainsSame(item));
 
             // If result is false, the collection remains unchanged
             Ensures(Result<bool>() || this.IsSameSequenceAs(OldValue(ToArray())));
 
-            // TODO: Make contract that ensures that the right number of items are updated based on DuplicatesByCounting
+            // All items not equal to item are the same
+            Ensures(this.Where(x => !EqualityComparer.Equals(x, item)).HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToArray())));
+
+            // If items are stored by count, there are as many identical items as duplicates
+            Ensures(!DuplicatesByCounting || this.Count(x => x.IsSameAs(item)) == CountDuplicates(item));
 
 
             return default(bool);
@@ -1458,8 +1468,21 @@ namespace C6
             // Count remains unchanged
             Ensures(Count == OldValue(Count));
 
-            // TODO: Make contract that ensures that the right number of items are updated based on DuplicatesByCounting
+            // Collection remains unchanged according to equality comparer
+            Ensures(this.UnsequenceEqual(OldValue(ToArray()), EqualityComparer));
 
+            // The number of duplicates remains unchanged
+            Ensures(CountDuplicates(item) == OldValue(CountDuplicates(item)));
+
+            // If the item is updated, that item is in the collection
+            Ensures(!Result<bool>() || this.ContainsSame(item));
+
+            // All items not equal to item are the same
+            Ensures(this.Where(x => !EqualityComparer.Equals(x, item)).HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToArray())));
+
+            // If items are stored by count, there are as many identical items as duplicates
+            Ensures(!DuplicatesByCounting || this.Count(x => x.IsSameAs(item)) == CountDuplicates(item));
+            
             // Old value is non-null
             Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out oldItem) != null);
 
@@ -1501,7 +1524,22 @@ namespace C6
             // That item is in the collection
             Ensures(this.ContainsSame(item));
 
-            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+            // Collection remains unchanged according to equality comparer
+            Ensures(Result<bool>()
+                ? this.UnsequenceEqual(OldValue(ToArray()), EqualityComparer)
+                : this.UnsequenceEqual(OldValue(this.Append(item).ToArray()), EqualityComparer));
+
+            // The number of duplicates remains unchanged
+            Ensures(CountDuplicates(item) == (Result<bool>() ? OldValue(CountDuplicates(item)) : 1));
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.HasSameAs(OldValue(this.Append(item).ToArray())));
+
+            // All items not equal to item are the same
+            Ensures(this.Where(x => !EqualityComparer.Equals(x, item)).HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToArray())));
+
+            // If items are stored by count, there are as many identical items as duplicates
+            Ensures(!DuplicatesByCounting || this.Count(x => x.IsSameAs(item)) == (Result<bool>() ? CountDuplicates(item) : 1));
 
 
             return default(bool);
@@ -1531,7 +1569,22 @@ namespace C6
             // Adding an item increases the count by one
             Ensures(Count == OldValue(Count) + (Result<bool>() ? 0 : 1));
 
-            // TODO: Make contract that ensures that the right number of items are updated based on AllowsDuplicates/DuplicatesByCounting
+            // Collection remains unchanged according to equality comparer
+            Ensures(Result<bool>()
+                ? this.UnsequenceEqual(OldValue(ToArray()), EqualityComparer)
+                : this.UnsequenceEqual(OldValue(this.Append(item).ToArray()), EqualityComparer));
+
+            // The number of duplicates remains unchanged
+            Ensures(CountDuplicates(item) == (Result<bool>() ? OldValue(CountDuplicates(item)) : 1));
+
+            // If result is false, the collection remains unchanged
+            Ensures(Result<bool>() || this.HasSameAs(OldValue(this.Append(item).ToArray())));
+
+            // All items not equal to item are the same
+            Ensures(this.Where(x => !EqualityComparer.Equals(x, item)).HasSameAs(OldValue(this.Where(x => !EqualityComparer.Equals(x, item)).ToArray())));
+
+            // If items are stored by count, there are as many identical items as duplicates
+            Ensures(!DuplicatesByCounting || this.Count(x => x.IsSameAs(item)) == (Result<bool>() ? CountDuplicates(item) : 1));
 
             // Old value is non-null
             Ensures(!Result<bool>() || AllowsNull || ValueAtReturn(out oldItem) != null);
