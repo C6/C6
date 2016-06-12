@@ -324,26 +324,6 @@ namespace C6.Collections
 
         public override bool Contains(T item) => IndexOf(item) >= 0;
 
-        public override bool ContainsRange(SCG.IEnumerable<T> items)
-        {
-            if (items.IsEmpty()) {
-                return true;
-            }
-
-            if (IsEmpty) {
-                return false;
-            }
-
-            // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
-            var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
-
-            if (itemsToContain.Count > Count) {
-                return false;
-            }
-
-            return this.Any(item => itemsToContain.Remove(item) && itemsToContain.IsEmpty);
-        }
-
         public override void CopyTo(T[] array, int arrayIndex) => Array.Copy(_items, 0, array, arrayIndex, Count);
 
         // Explicitly check against null to avoid using the (slower) equality comparer

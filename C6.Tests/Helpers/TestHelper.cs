@@ -125,12 +125,8 @@ namespace C6.Tests.Helpers
         }
 
         public static SCG.IEnumerable<string> NoStrings => Enumerable.Empty<string>();
-
-        public static T[] WithNull<T>(this T[] array, Random random) where T : class
-        {
-            array[random.Next(0, array.Length)] = null;
-            return array;
-        }
+        
+        public static T[] WithNull<T>(this SCG.IEnumerable<T> enumerable, Random random, int count = 1) where T : class => enumerable.Concat(((T) null).Repeat(count)).ShuffledCopy(random);
 
         public static EqualConstraint ByReference<T>(this EqualConstraint constraint) => constraint.Using(ComparerFactory.CreateReferenceEqualityComparer<T>());
 

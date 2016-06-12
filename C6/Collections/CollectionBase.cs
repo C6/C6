@@ -2,6 +2,7 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Linq;
 
 using SCG = System.Collections.Generic;
 
@@ -22,8 +23,27 @@ namespace C6.Collections
         public abstract void Clear();
 
         public abstract bool Contains(T item);
+        
+        // TODO: Does this belong here? It could potentially be a lot easier to solve for sets..
+        public virtual bool ContainsRange(SCG.IEnumerable<T> items)
+        {
+            if (items.IsEmpty()) {
+                return true;
+            }
 
-        public abstract bool ContainsRange(SCG.IEnumerable<T> items);
+            if (IsEmpty) {
+                return false;
+            }
+
+            // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
+            var itemsToContain = new ArrayList<T>(items, EqualityComparer, AllowsNull);
+
+            if (itemsToContain.Count > Count) {
+                return false;
+            }
+
+            return this.Any(item => itemsToContain.Remove(item) && itemsToContain.IsEmpty);
+        }
 
         public abstract int CountDuplicates(T item);
 

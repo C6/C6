@@ -354,18 +354,35 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ContainsRange_AllowNull_True()
+        public void ContainsRange_AllowsNullExistingNull_True()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
             var collection = GetCollection(items, allowsNull: true);
-            var arrayWithNull = Enumerable.Empty<string>(); //collection.GetItems(Random).WithNull(Random);
+            var count = GetCount(Random);
+            var subset = collection.ShuffledCopy(Random).Take(count).ToArray();
+            var subsetWithNull = subset.Contains(null) ? subset : subset.WithNull(Random);
 
             // Act
-            var containsRange = collection.ContainsRange(arrayWithNull);
+            var containsRange = collection.ContainsRange(subsetWithNull);
 
             // Assert
             Assert.That(containsRange, Is.True);
+        }
+
+        [Test]
+        public void ContainsRange_AllowsNullNewNull_False()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random, allowsNull: true);
+            var count = GetCount(Random);
+            var subsetWithNull =  collection.ShuffledCopy(Random).Take(count).WithNull(Random);
+
+            // Act
+            var containsRange = collection.ContainsRange(subsetWithNull);
+
+            // Assert
+            Assert.That(containsRange, Is.False);
         }
 
         [Test]
@@ -373,7 +390,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var items = Enumerable.Empty<string>();
+            var items = NoStrings;
 
             // Act
             var containsRange = collection.ContainsRange(items);
@@ -415,7 +432,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringCollection(Random);
-            var items = Enumerable.Empty<string>();
+            var items = NoStrings;
 
             // Act
             var containsRange = collection.ContainsRange(items);
@@ -428,10 +445,9 @@ namespace C6.Tests
         public void ContainsRange_Subset_True()
         {
             // Arrange
+            var collection = GetStringCollection(Random, ReferenceEqualityComparer);
             var count = GetCount(Random) / 2;
-            var items = GetStrings(Random);
-            var containedItems = items.ShuffledCopy(Random).Take(count);
-            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var containedItems = collection.ShuffledCopy(Random).Take(count);
 
             // Act
             var containsRange = collection.ContainsRange(containedItems);
@@ -444,13 +460,13 @@ namespace C6.Tests
         public void ContainsRange_SubsetWithDuplicates_False()
         {
             // Arrange
+            var collection = GetStringCollection(Random, ReferenceEqualityComparer);
             var count = GetCount(Random) / 2;
-            var items = GetStrings(Random);
-            var newItems = items.Take(count).Append(items.First()).ShuffledCopy(Random);
-            var collection = GetCollection(items, ReferenceEqualityComparer);
+            var containedItems = collection.ShuffledCopy(Random).Take(count).ToArray();
+            var subsetWithDuplicate = containedItems.Append(containedItems.Choose(Random));
 
             // Act
-            var containsRange = collection.ContainsRange(newItems);
+            var containsRange = collection.ContainsRange(subsetWithDuplicate);
 
             // Assert
             Assert.That(containsRange, Is.False);

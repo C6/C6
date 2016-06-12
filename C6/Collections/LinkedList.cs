@@ -209,12 +209,7 @@ namespace C6.Collections
             Node node;
             return Contains(item, out node);
         }
-
-        public override bool ContainsRange(SCG.IEnumerable<T> items)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public override int CountDuplicates(T item) => this.Count(x => Equals(x, item));
 
         public override bool Find(ref T item)
