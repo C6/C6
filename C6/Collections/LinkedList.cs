@@ -34,7 +34,9 @@ namespace C6.Collections
         #region Fields
 
         private readonly Node _first, _last;
-        private int _version;
+
+        private int _version, _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
+        private int _sequencedHashCode, _unsequencedHashCode;
 
         #endregion
 
@@ -233,9 +235,15 @@ namespace C6.Collections
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
+        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public override int GetUnsequencedHashCode()
         {
-            throw new NotImplementedException();
+            if (_unsequencedHashCodeVersion != _version) {
+                _unsequencedHashCodeVersion = _version;
+                _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
+            }
+
+            return _unsequencedHashCode;
         }
 
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
@@ -270,11 +278,6 @@ namespace C6.Collections
         }
 
         public override ICollectionValue<T> UniqueItems()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool UnsequencedEquals(ICollection<T> otherCollection)
         {
             throw new NotImplementedException();
         }

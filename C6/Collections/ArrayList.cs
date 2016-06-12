@@ -744,9 +744,7 @@ namespace C6.Collections
         }
 
         public override ICollectionValue<T> UniqueItems() => new ItemSet(this);
-
-        public override bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
-
+        
         public override bool Update(T item, out T oldItem)
         {
             #region Code Contracts

@@ -60,8 +60,8 @@ namespace C6.Collections
         public abstract bool RetainRange(SCG.IEnumerable<T> items);
 
         public abstract ICollectionValue<T> UniqueItems();
-
-        public abstract bool UnsequencedEquals(ICollection<T> otherCollection);
+        
+        public virtual bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
 
         public virtual bool Update(T item)
         {

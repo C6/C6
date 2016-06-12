@@ -2449,10 +2449,8 @@ namespace C6.Tests
         public void UnsequencedEquals_RandomCollections_False()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items);
-            var otherItems = GetLowercaseStrings(Random);
-            var otherCollection = GetCollection(otherItems);
+            var collection = GetCollection(GetUppercaseStrings(Random));
+            var otherCollection = GetCollection(GetLowercaseStrings(Random));
 
             // Act
             var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
@@ -2481,6 +2479,20 @@ namespace C6.Tests
             var items = GetStrings(Random);
             var collection = GetCollection(items);
             var otherCollection = GetCollection(items);
+
+            // Act
+            var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
+
+            // Assert
+            Assert.That(unsequencedEquals, Is.True);
+        }
+
+        [Test]
+        public void UnsequencedEquals_OneCollectionCreatedFromAnother_True()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+            var otherCollection = GetCollection((SCG.IEnumerable<string>) collection);
 
             // Act
             var unsequencedEquals = collection.UnsequencedEquals(otherCollection);
@@ -2529,7 +2541,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetCollection(items);
-            var otherItems = items.SelectMany(item => item.Repeat(Random.Next(1, 4)));
+            var otherItems = items.SelectMany(item => item.Repeat(Random.Next(2, 4)));
             var otherCollection = GetCollection(otherItems);
 
             // Act
