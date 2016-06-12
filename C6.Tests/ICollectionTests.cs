@@ -1526,7 +1526,7 @@ namespace C6.Tests
         #region RemoveRange(IEnumerable<T>)
 
         [Test]
-        public void RemoveRange_AddNull_ViolatesPrecondition()
+        public void RemoveRange_NullEnumerable_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random);
@@ -1536,7 +1536,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveRange_DisallowNullInEnumerable_ViolatesPrecondition()
+        public void RemoveRange_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringCollection(Random, allowsNull: false);
@@ -1547,14 +1547,30 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveRange_EmptyCollection_False()
+        public void RemoveRange_AllowsNullExistingNull_True()
         {
             // Arrange
-            var collection = GetEmptyCollection<string>();
-            var items = GetStrings(Random);
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            var removeItems = GetStrings(Random).WithNull(Random);
 
             // Act
-            var removeRange = collection.RemoveRange(items);
+            var removeRange = collection.RemoveRange(removeItems);
+
+            // Assert
+            Assert.That(removeRange, Is.True);
+        }
+
+        [Test]
+        public void RemoveRange_AllowsNullNewNull_False()
+        {
+            // Arrange
+            var items = GetUppercaseStrings(Random);
+            var collection = GetCollection(items, allowsNull: true);
+            var removeItems = GetLowercaseStrings(Random).WithNull(Random);
+
+            // Act
+            var removeRange = collection.RemoveRange(removeItems);
 
             // Assert
             Assert.That(removeRange, Is.False);
@@ -1568,74 +1584,31 @@ namespace C6.Tests
             var items = GetStrings(Random);
 
             // Act & Assert
-            Assert.That(() => collection.RemoveRange(items), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.RemoveRange(items), RaisesNoEventsFor(collection).And.False);
         }
-
-        [Test]
-        public void RemoveRange_EmptyEnumerable_False()
-        {
-            // Arrange
-            var collection = GetStringCollection(Random);
-            var items = Enumerable.Empty<string>();
-
-            // Act
-            var removeRange = collection.RemoveRange(items);
-
-            // Assert
-            Assert.That(removeRange, Is.False);
-        }
-
+        
         [Test]
         public void RemoveRange_EmptyEnumerable_RaisesNoEvents()
         {
             // Arrange
             var collection = GetStringCollection(Random);
-            var items = Enumerable.Empty<string>();
+            var items = NoStrings;
 
             // Act & Assert
-            Assert.That(() => collection.RemoveRange(items), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.RemoveRange(items), RaisesNoEventsFor(collection).And.False);
         }
-
-        [Test]
-        public void RemoveRange_BothEmpty_False()
-        {
-            // Arrange
-            var collection = GetEmptyCollection<string>();
-            var items = Enumerable.Empty<string>();
-
-            // Act
-            var removeRange = collection.RemoveRange(items);
-
-            // Assert
-            Assert.That(removeRange, Is.False);
-        }
-
+        
         [Test]
         public void RemoveRange_BothEmpty_RaisesNoEvents()
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var items = Enumerable.Empty<string>();
+            var items = NoStrings;
 
             // Act & Assert
-            Assert.That(() => collection.RemoveRange(items), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.RemoveRange(items), RaisesNoEventsFor(collection).And.False);
         }
-
-        [Test]
-        public void RemoveRange_NewItems_False()
-        {
-            // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetCollection(items);
-            var newItems = GetLowercaseStrings(Random);
-
-            // Act
-            var removeRange = collection.RemoveRange(newItems);
-
-            // Assert
-            Assert.That(removeRange, Is.False);
-        }
-
+        
         [Test]
         public void RemoveRange_NewItems_RaisesNoEvents()
         {
@@ -1645,7 +1618,7 @@ namespace C6.Tests
             var newItems = GetLowercaseStrings(Random);
 
             // Act & Assert
-            Assert.That(() => collection.RemoveRange(newItems), RaisesNoEventsFor(collection));
+            Assert.That(() => collection.RemoveRange(newItems), RaisesNoEventsFor(collection).And.False);
         }
 
         [Test]

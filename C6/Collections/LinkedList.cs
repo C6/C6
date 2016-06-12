@@ -269,7 +269,20 @@ namespace C6.Collections
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+
+            #endregion
+
+            if (IsEmpty || items.IsEmpty()) {
+                return false;
+            }
+
+            // TODO: Replace ArrayList<T> with more efficient data structure like HashBag<T>
+            var itemsToRemove = new ArrayList<T>(items, EqualityComparer, AllowsNull);
+            return RemoveAllWhere(item => itemsToRemove.Remove(item));
         }
 
         public override bool RetainRange(SCG.IEnumerable<T> items)
