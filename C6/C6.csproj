@@ -250,6 +250,7 @@
     <Compile Include="Collections\CollectionValueDebugView.cs" />
     <Compile Include="Collections\LinkedList.cs" />
     <Compile Include="Collections\ListenableBase.cs" />
+    <Compile Include="Collections\SequenceBase.cs" />
     <Compile Include="ComparerFactory.cs" />
     <Compile Include="Contracts\ContractMessage.cs" />
     <Compile Include="Contracts\ContractHelperExtensions.cs" />

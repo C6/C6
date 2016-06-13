@@ -2,7 +2,11 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+
+using SCG = System.Collections.Generic;
+
+using static C6.Collections.ExceptionMessages;
 
 
 namespace C6.Collections
@@ -16,7 +20,7 @@ namespace C6.Collections
 
         public abstract bool DuplicatesByCounting { get; }
 
-        public abstract IEqualityComparer<T> EqualityComparer { get; }
+        public abstract SCG.IEqualityComparer<T> EqualityComparer { get; }
 
         public abstract bool IsFixedSize { get; }
 
@@ -28,7 +32,35 @@ namespace C6.Collections
 
         public abstract bool Add(T item);
 
-        public abstract bool AddRange(IEnumerable<T> items);
+        public abstract bool AddRange(SCG.IEnumerable<T> items);
+
+        #endregion
+
+        #region Protected Properties
+
+        protected virtual int Version
+        {
+            [Pure]
+            get;
+            private set;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        [Pure]
+        protected bool CheckVersion(int version)
+        {
+            if (version == Version) {
+                return true;
+            }
+
+            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
+            throw new InvalidOperationException(CollectionWasModified);
+        }
+
+        protected virtual void UpdateVersion() => Version++;
 
         #endregion
     }

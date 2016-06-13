@@ -278,9 +278,8 @@ namespace C6.Tests
         public void GetSequencedHashCode_EqualSequenceDifferentOrder_LikelyNotEqual()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var firstSequence = GetSequence(items);
-            var shuffledItems = items.ShuffledCopy(Random);
+            var firstSequence = GetStringSequence(Random);
+            var shuffledItems = firstSequence.ShuffledCopy(Random);
             var secondSequence = GetSequence(shuffledItems);
             var expected = firstSequence.GetSequencedHashCode(null) == secondSequence.GetSequencedHashCode(null);
 
@@ -298,8 +297,8 @@ namespace C6.Tests
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
-            var newItems = GetLowercaseStrings(Random);
             var sequence = GetSequence(items);
+            var newItems = GetLowercaseStrings(Random);
 
             // Act
             var firstSequencedHashCode = sequence.GetSequencedHashCode();
@@ -315,9 +314,9 @@ namespace C6.Tests
         public void GetSequencedHashCode_CachedValueIsUpdated_ExpectedHashCode()
         {
             // Arrange
-            var sequence = GetStringSequence(Random, ReferenceEqualityComparer);
+            var sequence = GetStringSequence(Random);
             var items = GetStrings(Random);
-            var expected = GetSequence(items, ReferenceEqualityComparer).GetSequencedHashCode();
+            var expected = GetSequence(items).GetSequencedHashCode();
 
             // Act
             var hashCode = sequence.GetSequencedHashCode();
@@ -424,9 +423,8 @@ namespace C6.Tests
         public void SequencedEquals_SequencedEqualSequences_False()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var sequence = GetSequence(items);
-            var shuffledItems = items.ShuffledCopy(Random);
+            var sequence = GetStringSequence(Random);
+            var shuffledItems = sequence.ShuffledCopy(Random);
             var otherSequence = GetSequence(shuffledItems);
 
             // Act
@@ -440,9 +438,8 @@ namespace C6.Tests
         public void SequencedEquals_DifferentEqualityComparers_TrueInOneDirection()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var sequence = GetSequence(items, CaseInsensitiveStringComparer.Default);
-            var otherItems = items.Select(item => item.ToLower());
+            var sequence = GetStringSequence(Random, CaseInsensitiveStringComparer.Default);
+            var otherItems = sequence.Select(item => item.ToLower());
             var otherSequence = GetSequence(otherItems);
 
             // Act
@@ -458,9 +455,8 @@ namespace C6.Tests
         public void SequencedEquals_EqualItemsButDifferentMultiplicity_False()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var sequence = GetSequence(items);
-            var otherItems = items.SelectMany(item => item.Repeat(Random.Next(2, 4)));
+            var sequence = GetStringSequence(Random);
+            var otherItems = sequence.SelectMany(item => item.Repeat(Random.Next(2, 4)));
             var otherSequence = GetSequence(otherItems);
 
             // Act
