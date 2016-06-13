@@ -1190,6 +1190,25 @@ namespace C6.Tests
 
         #endregion
 
+        #region ItemMultiplicities()
+
+        // TODO: Implement once HashBag<T> is introduced!
+        [Test]
+        [Ignore("Not implemented yet!")]
+        public void ItemMultiplicities_RandomCollection_NotImplemented()
+        {
+            // Arrange
+            var collection = GetStringCollection(Random);
+
+            // Act
+            var itemMultiplicities = collection.ItemMultiplicities();
+
+            // Assert
+            Assert.That(itemMultiplicities, Is.Not.Empty);
+        }
+
+        #endregion
+
         #region Remove(T)
 
         [Test]
