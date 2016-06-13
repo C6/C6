@@ -29,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : CollectionBase<T>, ICollection<T>
+    public class LinkedList<T> : SequenceBase<T>, ISequenced<T>
     {
         #region Fields
 
@@ -179,6 +179,11 @@ namespace C6.Collections
 
             RaiseForAddRange(EnumerateFrom(first));
             return true;
+        }
+
+        public override IDirectedCollectionValue<T> Backwards()
+        {
+            throw new NotImplementedException();
         }
 
         public override T Choose() => _last.Previous.Item;
@@ -645,7 +650,7 @@ namespace C6.Collections
             /// </summary>
             private void FindAll()
             {
-                while (FindNext()) { }
+                while (FindNext()) {}
             }
 
             private bool FindNext()
@@ -825,7 +830,7 @@ namespace C6.Collections
             /// </summary>
             private void FindAll()
             {
-                while (FindNext()) { }
+                while (FindNext()) {}
             }
 
             private bool FindNext()
