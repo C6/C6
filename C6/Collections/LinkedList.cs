@@ -177,10 +177,7 @@ namespace C6.Collections
             return true;
         }
 
-        public override IDirectedCollectionValue<T> Backwards()
-        {
-            throw new NotImplementedException();
-        }
+        public override IDirectedCollectionValue<T> Backwards() => new Range(this, EnumerationDirection.Backwards);
 
         public override T Choose() => _last.Previous.Item;
 
@@ -227,7 +224,7 @@ namespace C6.Collections
         public override ICollectionValue<T> FindDuplicates(T item) => new Duplicates(this, item);
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
-        
+
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
             throw new NotImplementedException();
@@ -370,10 +367,29 @@ namespace C6.Collections
 
             #endregion
 
+            return EnumerateBackwardsFromTo(cursor, _first);
+        }
+
+        [Pure]
+        private SCG.IEnumerable<T> EnumerateBackwardsFromTo(Node cursor, Node last)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(cursor != null, ArgumentMustBeNonNull);
+
+            // Node cannot be the last sentinel node
+            Requires(cursor != _last);
+
+            // The version is not updated
+            Ensures(Version == OldValue(Version));
+
+            #endregion
+
             var version = Version;
 
             // Check version at each call to MoveNext() to ensure an exception is thrown even when the enumerator was really finished
-            while (CheckVersion(version) & cursor != _first) {
+            while (CheckVersion(version) & cursor != last) {
                 yield return cursor.Item;
                 cursor = cursor.Previous;
             }
@@ -395,10 +411,32 @@ namespace C6.Collections
 
             #endregion
 
+            return EnumerateFromTo(cursor, _last);
+        }
+
+        [Pure]
+        private SCG.IEnumerable<T> EnumerateFromTo(Node cursor, Node last)
+        {
+            #region Code Contracts
+
+            // Argument must be non-null
+            Requires(cursor != null, ArgumentMustBeNonNull);
+
+            // Node cannot be the first sentinel node
+            Requires(cursor != _first);
+
+            // Argument must be non-null
+            Requires(last != null, ArgumentMustBeNonNull);
+
+            // The version is not updated
+            Ensures(Version == OldValue(Version));
+
+            #endregion
+
             var version = Version;
 
             // Check version at each call to MoveNext() to ensure an exception is thrown even when the enumerator was really finished
-            while (CheckVersion(version) & cursor != _last) {
+            while (CheckVersion(version) & cursor != last) {
                 yield return cursor.Item;
                 cursor = cursor.Next;
             }
@@ -870,6 +908,133 @@ namespace C6.Collections
                 Next = next;
                 next.Previous = this;
             }
+        }
+
+
+        /// <summary>
+        ///     Represents a range of an <see cref="ArrayList{T}"/>.
+        /// </summary>
+        [Serializable]
+        [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
+        [DebuggerDisplay("{DebuggerDisplay}")]
+        private sealed class Range : CollectionValueBase<T>, IDirectedCollectionValue<T>
+        {
+            #region Fields
+
+            private readonly LinkedList<T> _base;
+            private readonly int _version;
+            private readonly EnumerationDirection _direction;
+
+            #endregion
+
+            #region Constructors
+
+            public Range(LinkedList<T> list, EnumerationDirection direction)
+            {
+                #region Code Contracts
+
+                // Argument must be non-null
+                Requires(list != null, ArgumentMustBeNonNull);
+
+                // Argument must be valid enum constant
+                Requires(direction.IsDefined(), EnumMustBeDefined);
+
+
+                Ensures(_base != null);
+                Ensures(_version == _base.Version);
+
+                #endregion
+
+                _base = list;
+                _version = list.Version;
+                _direction = direction;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
+
+            public override int Count
+            {
+                get {
+                    CheckVersion();
+                    return _base.Count;
+                }
+            }
+
+            public override Speed CountSpeed
+            {
+                get {
+                    CheckVersion();
+                    return Constant;
+                }
+            }
+
+            public EnumerationDirection Direction
+            {
+                get {
+                    CheckVersion();
+                    return _direction;
+                }
+            }
+
+            #endregion
+
+            #region Public Methods
+
+            public IDirectedCollectionValue<T> Backwards()
+            {
+                CheckVersion();
+                return new Range(_base, _direction.Opposite());
+            }
+
+            public override T Choose()
+            {
+                CheckVersion();
+                // Select the highest index in the range
+                return _base.Choose();
+            }
+
+            public override void CopyTo(T[] array, int arrayIndex)
+            {
+                CheckVersion();
+                base.CopyTo(array, arrayIndex);
+            }
+
+            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
+
+            public override SCG.IEnumerator<T> GetEnumerator()
+            {
+                if (CheckVersion() & IsEmpty) {
+                    return Enumerable.Empty<T>().GetEnumerator();
+                }
+
+                return (Direction.IsForward() ? _base : _base.EnumerateBackwardsFromTo(_base._last.Previous, _base._first)).GetEnumerator();
+            }
+
+            public override int GetHashCode()
+            {
+                CheckVersion();
+                return base.GetHashCode();
+            }
+
+            public override T[] ToArray()
+            {
+                CheckVersion();
+                return base.ToArray();
+            }
+
+            #endregion
+
+            #region Private Members
+
+            private string DebuggerDisplay => _version == _base.Version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+
+            private bool CheckVersion() => _base.CheckVersion(_version);
+
+            #endregion
         }
 
         #endregion

@@ -1419,7 +1419,7 @@ namespace C6.Collections
             /// <param name="direction">
             ///     The direction of the range.
             /// </param>
-            public Range(ArrayList<T> list, int startIndex, int count, EnumerationDirection direction) : base()
+            public Range(ArrayList<T> list, int startIndex, int count, EnumerationDirection direction)
             {
                 #region Code Contracts
 
