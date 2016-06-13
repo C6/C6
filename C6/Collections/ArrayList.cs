@@ -622,8 +622,6 @@ namespace C6.Collections
             RaiseForReverse();
         }
 
-        public virtual bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
-
         public virtual void Shuffle() => Shuffle(new Random());
 
         public virtual void Shuffle(Random random)

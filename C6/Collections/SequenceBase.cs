@@ -36,11 +36,8 @@ namespace C6.Collections
 
             return _sequencedHashCode;
         }
-
-        public virtual bool SequencedEquals(ISequenced<T> otherCollection)
-        {
-            throw new NotImplementedException();
-        }
+        
+        public virtual bool SequencedEquals(ISequenced<T> otherCollection) => this.SequencedEquals(otherCollection, EqualityComparer);
 
         #endregion
 
