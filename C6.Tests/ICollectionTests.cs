@@ -2269,11 +2269,11 @@ namespace C6.Tests
         #region UniqueItems
 
         [Test]
-        public void UniqueItems_RandomCollectionWithNull_ResultContainsNull()
+        public void UniqueItems_AllowsNull_Distinct()
         {
             // Arrange
             var count = GetCount(Random);
-            var items = GetStrings(Random).WithNull(Random);
+            var items = GetStrings(Random).WithNull(Random).Distinct().ToArray();
             var duplicateItems = items.ShuffledCopy(Random).Take(count).Concat(items);
             var collection = GetCollection(duplicateItems, allowsNull: true);
             var expected = new ExpectedCollectionValue<string>(
@@ -2312,7 +2312,8 @@ namespace C6.Tests
         public void UniqueItems_AllUniqueItems_EqualToItself()
         {
             // Arrange
-            var collection = GetStringCollection(Random, ReferenceEqualityComparer);
+            var items = GetStrings(Random).Distinct();
+            var collection = GetCollection(items);
             var expected = new ExpectedCollectionValue<string>(
                 collection,
                 collection.EqualityComparer,
@@ -2353,8 +2354,8 @@ namespace C6.Tests
         public void UniqueItems_RepeatedItems_OnlyUniqueItems()
         {
             // Arrange
-            var originalItems = GetStrings(Random);
-            var items = originalItems.SelectMany(item => item.Repeat(Random.Next(1, 4)));
+            var originalItems = GetStrings(Random).Distinct().ToArray();
+            var items = originalItems.SelectMany(item => item.Repeat(Random.Next(1, 4))).ShuffledCopy(Random);
             var collection = GetCollection(items);
             var expected = new ExpectedCollectionValue<string>(
                 originalItems,
