@@ -223,10 +223,7 @@ namespace C6.Collections
             return false;
         }
 
-        public override ICollectionValue<T> FindDuplicates(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public override ICollectionValue<T> FindDuplicates(T item) => new Duplicates(this, item);
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
@@ -477,6 +474,186 @@ namespace C6.Collections
         #endregion
 
         #region Nested Types
+
+        // TODO: Explicitly check against null to avoid using the (slower) equality comparer
+        [Serializable]
+        [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
+        [DebuggerDisplay("{DebuggerDisplay}")]
+        private sealed class Duplicates : CollectionValueBase<T>, ICollectionValue<T>
+        {
+            #region Fields
+
+            private readonly LinkedList<T> _base;
+            private readonly IList<T> _list;
+            private readonly int _version;
+            private readonly T _item;
+            private SCG.IEnumerator<T> _enumerator;
+
+            #endregion
+
+            #region Code Contracts
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                // ReSharper disable InvocationIsSkipped
+
+                // List is never null
+                Invariant(_list != null);
+
+                // All items in the list are equal to _item
+                Invariant(ForAll(_list, x => _base.EqualityComparer.Equals(x, _item)));
+
+                // The items already found are the first list.Count equal items
+                Invariant(_base.Where(x => _base.EqualityComparer.Equals(x, _item)).Take(_list.Count).IsSameSequenceAs(_list)); // TODO: Check if valid?
+
+                // If the enumerator is used, all duplicates have been found
+                Invariant(!AllDuplicatesFound || _base.Where(x => _base.EqualityComparer.Equals(x, _item)).IsSameSequenceAs(_list));
+
+                // ReSharper restore InvocationIsSkipped
+            }
+
+            #endregion
+
+            #region Constructors
+
+            // TODO: Document
+            public Duplicates(LinkedList<T> list, T item)
+            {
+                #region Code Contracts
+
+                // Argument must be non-null
+                Requires(list != null, ArgumentMustBeNonNull);
+
+                // Argument must be non-null if collection disallows null values
+                Requires(list.AllowsNull || item != null, ItemMustBeNonNull);
+
+                #endregion
+
+                _base = list;
+                _version = _base._version;
+                _item = item;
+                _enumerator = list.GetEnumerator();
+                _list = new ArrayList<T>(equalityComparer: _base.EqualityComparer, allowsNull: _base.AllowsNull);
+            }
+
+            #endregion
+
+            #region Properties
+
+            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
+
+            public override int Count
+            {
+                get {
+                    CheckVersion();
+                    FindAll();
+                    return _list.Count;
+                }
+            }
+
+            public override Speed CountSpeed => CheckVersion() & AllDuplicatesFound ? Constant : Linear;
+
+            public override bool IsEmpty => CheckVersion() & AllDuplicatesFound ? _list.IsEmpty : _list.IsEmpty && FindNext();
+
+            #endregion
+
+            #region Public Methods
+
+            public override T Choose()
+            {
+                CheckVersion();
+                return _base.Choose(); // TODO: Is this necessarily an item in the collection value?!
+            }
+
+            public override void CopyTo(T[] array, int arrayIndex)
+            {
+                CheckVersion();
+                FindAll();
+                _list.CopyTo(array, arrayIndex);
+            }
+
+            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
+
+            public override SCG.IEnumerator<T> GetEnumerator()
+            {
+                // If all duplicates have been found, simply enumerate the list
+                if (AllDuplicatesFound) {
+                    var enumerator = _list.GetEnumerator();
+                    while (CheckVersion() & enumerator.MoveNext()) {
+                        yield return enumerator.Current;
+                    }
+                }
+                // Otherwise, evaluate lazily
+                else {
+                    var index = 0;
+                    while (CheckVersion() & index < _list.Count || FindNext()) {
+                        Assert(index < _list.Count);
+                        yield return _list[index++];
+                    }
+                }
+            }
+
+            public override int GetHashCode()
+            {
+                CheckVersion();
+                return base.GetHashCode();
+            }
+
+            public override T[] ToArray()
+            {
+                CheckVersion();
+                FindAll();
+                return _list.ToArray();
+            }
+
+            #endregion
+
+            #region Private Members
+
+            private bool AllDuplicatesFound => _enumerator == null;
+
+            private bool CheckVersion() => _base.CheckVersion(_version);
+
+            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+
+            /// <summary>
+            ///     Finds all duplicates in the base collection.
+            /// </summary>
+            private void FindAll()
+            {
+                while (FindNext()) { }
+            }
+
+            private bool FindNext()
+            {
+                if (AllDuplicatesFound) {
+                    return false;
+                }
+
+                while (CheckVersion()) {
+                    // Check if enumerator is done
+                    if (!_enumerator.MoveNext()) {
+                        // Set enumerator to null to indicate that the base has been fully enumerated
+                        _enumerator = null;
+
+                        return false;
+                    }
+
+                    // Add duplicate to list, or continue the loop
+                    if (_base.Equals(_enumerator.Current, _item)) {
+                        _list.Add(_enumerator.Current);
+                        return true;
+                    }
+                }
+
+                // This is never executed as CheckVersion() throws an exception instead of returning false
+                return false;
+            }
+
+            #endregion
+        }
+
 
         /// <summary>
         ///     Represents an individual cell in the linked list.

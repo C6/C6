@@ -775,7 +775,28 @@ namespace C6.Tests
         }
 
         [Test]
-        public void FindDuplicates_AllowsNull_Nulls()
+        public void FindDuplicates_AllowsNullExistingNull_Nulls()
+        {
+            // Arrange
+            var count = AllowsDuplicates ? GetCount(Random) : 1;
+            var items = GetStrings(Random).WithRepeatedItem(() => null, count, Random);
+            var collection = GetCollection(items, allowsNull: true);
+            var expected = new ExpectedCollectionValue<string>(
+                ((string) null).Repeat(count),
+                collection.EqualityComparer,
+                collection.AllowsNull
+                //() => null
+            );
+
+            // Act
+            var findDuplicates = collection.FindDuplicates(null);
+
+            // Assert
+            Assert.That(findDuplicates, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void FindDuplicates_AllowsNullNewNull_IsEmpty()
         {
             // Arrange
             var count = GetCount(Random);
@@ -836,15 +857,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void FindDuplicates_RandomCollectionWithDuplicateItems_EqualTo()
+        public void FindDuplicates_RandomCollectionWithDuplicateItems_RepeatedItem()
         {
             // Arrange
             var item = GetLowercaseString(Random);
-            var count = GetCount(Random);
+            var count = AllowsDuplicates ? GetCount(Random) : 1;
             var items = GetUppercaseStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetCollection(items);
             var expected = new ExpectedCollectionValue<string>(
-                item.Repeat(AllowsDuplicates ? count : 1),
+                item.Repeat(count),
                 collection.EqualityComparer,
                 collection.AllowsNull
                 );
@@ -867,9 +888,7 @@ namespace C6.Tests
             var enumerable = collection.FindDuplicates(item);
 
             // Act & Assert
-            Assert.That(() => {
-                while (!collection.Add(GetLowercaseString(Random))) {}
-            }, Breaks.EnumeratorFor(enumerable));
+            Assert.That(() => { while (!collection.Add(GetLowercaseString(Random))) {}}, Breaks.EnumeratorFor(enumerable));
         }
 
         [Test]

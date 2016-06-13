@@ -342,7 +342,7 @@ namespace C6.Collections
         }
 
         public override ICollectionValue<T> FindDuplicates(T item) => new Duplicates(this, item);
-        
+
         public override SCG.IEnumerator<T> GetEnumerator()
         {
             #region Code Contracts
@@ -517,7 +517,7 @@ namespace C6.Collections
         public virtual T Pop() => RemoveLast();
 
         public virtual void Push(T item) => InsertLast(item);
-        
+
         public override bool Remove(T item, out T removedItem)
         {
             #region Code Contracts
@@ -724,7 +724,7 @@ namespace C6.Collections
         }
 
         public override ICollectionValue<T> UniqueItems() => new ItemSet(this);
-        
+
         public override bool Update(T item, out T oldItem)
         {
             #region Code Contracts
@@ -1080,9 +1080,10 @@ namespace C6.Collections
             #region Fields
 
             private readonly ArrayList<T> _base;
+            private readonly IList<T> _list;
             private readonly int _version;
             private readonly T _item;
-            private ArrayList<T> _list;
+            private SCG.IEnumerator<T> _enumerator;
 
             #endregion
 
@@ -1093,11 +1094,17 @@ namespace C6.Collections
             {
                 // ReSharper disable InvocationIsSkipped
 
-                // All items in the list are equal to the item
-                Invariant(_list == null || ForAll(_list, x => _base.EqualityComparer.Equals(x, _item)));
+                // List is never null
+                Invariant(_list != null);
 
-                // All items in the list are equal to the item
-                Invariant(_list == null || _list.Count == _base.CountDuplicates(_item));
+                // All items in the list are equal to _item
+                Invariant(ForAll(_list, x => _base.EqualityComparer.Equals(x, _item)));
+
+                // The items already found are the first list.Count equal items
+                Invariant(_base.Where(x => _base.EqualityComparer.Equals(x, _item)).Take(_list.Count).IsSameSequenceAs(_list)); // TODO: Check if valid?
+
+                // If the enumerator is used, all duplicates have been found
+                Invariant(!AllDuplicatesFound || _base.Where(x => _base.EqualityComparer.Equals(x, _item)).IsSameSequenceAs(_list));
 
                 // ReSharper restore InvocationIsSkipped
             }
@@ -1107,18 +1114,23 @@ namespace C6.Collections
             #region Constructors
 
             // TODO: Document
-            public Duplicates(ArrayList<T> list, T item) : base()
+            public Duplicates(ArrayList<T> list, T item)
             {
                 #region Code Contracts
 
                 // Argument must be non-null
                 Requires(list != null, ArgumentMustBeNonNull);
 
+                // Argument must be non-null if collection disallows null values
+                Requires(list.AllowsNull || item != null, ItemMustBeNonNull);
+
                 #endregion
 
                 _base = list;
                 _version = _base._version;
                 _item = item;
+                _enumerator = list.GetEnumerator();
+                _list = new ArrayList<T>(equalityComparer: _base.EqualityComparer, allowsNull: _base.AllowsNull);
             }
 
             #endregion
@@ -1131,20 +1143,14 @@ namespace C6.Collections
             {
                 get {
                     CheckVersion();
-                    return List.Count;
+                    FindAll();
+                    return _list.Count;
                 }
             }
 
-            public override Speed CountSpeed
-            {
-                get {
-                    CheckVersion();
-                    // TODO: Always use Linear?
-                    return _list == null ? Linear : Constant;
-                }
-            }
+            public override Speed CountSpeed => CheckVersion() & AllDuplicatesFound ? Constant : Linear;
 
-            public override bool IsEmpty => CheckVersion() & List.IsEmpty;
+            public override bool IsEmpty => CheckVersion() & AllDuplicatesFound ? _list.IsEmpty : _list.IsEmpty && FindNext();
 
             #endregion
 
@@ -1159,15 +1165,16 @@ namespace C6.Collections
             public override void CopyTo(T[] array, int arrayIndex)
             {
                 CheckVersion();
-                List.CopyTo(array, arrayIndex);
+                FindAll();
+                _list.CopyTo(array, arrayIndex);
             }
 
             public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
-                // If a list already exists, enumerate that
-                if (_list != null) {
+                // If all duplicates have been found, simply enumerate the list
+                if (AllDuplicatesFound) {
                     var enumerator = _list.GetEnumerator();
                     while (CheckVersion() & enumerator.MoveNext()) {
                         yield return enumerator.Current;
@@ -1175,23 +1182,11 @@ namespace C6.Collections
                 }
                 // Otherwise, evaluate lazily
                 else {
-                    var list = new ArrayList<T>(allowsNull: AllowsNull);
-                    Func<T, T, bool> equals = _base.Equals;
-
-                    var enumerator = _base.GetEnumerator();
-
-
-                    T item;
-                    while (CheckVersion() & enumerator.MoveNext()) {
-                        // Only return duplicate items
-                        if (equals(item = enumerator.Current, _item)) {
-                            list.Add(item);
-                            yield return item;
-                        }
+                    var index = 0;
+                    while (CheckVersion() & index < _list.Count || FindNext()) {
+                        Assert(index < _list.Count);
+                        yield return _list[index++];
                     }
-
-                    // Save list for later (re)user
-                    _list = list;
                 }
             }
 
@@ -1204,18 +1199,53 @@ namespace C6.Collections
             public override T[] ToArray()
             {
                 CheckVersion();
-                return List.ToArray();
+                FindAll();
+                return _list.ToArray();
             }
 
             #endregion
 
             #region Private Members
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+            private bool AllDuplicatesFound => _enumerator == null;
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
-            private ArrayList<T> List => _list != null ? _list : (_list = new ArrayList<T>(_base.Where(x => _base.Equals(x, _item)), allowsNull: AllowsNull));
+            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+
+            /// <summary>
+            ///     Finds all duplicates in the base collection.
+            /// </summary>
+            private void FindAll()
+            {
+                while (FindNext()) {}
+            }
+
+            private bool FindNext()
+            {
+                if (AllDuplicatesFound) {
+                    return false;
+                }
+
+                while (CheckVersion()) {
+                    // Check if enumerator is done
+                    if (!_enumerator.MoveNext()) {
+                        // Set enumerator to null to indicate that the base has been fully enumerated
+                        _enumerator = null;
+
+                        return false;
+                    }
+
+                    // Add duplicate to list, or continue the loop
+                    if (_base.Equals(_enumerator.Current, _item)) {
+                        _list.Add(_enumerator.Current);
+                        return true;
+                    }
+                }
+
+                // This is never executed as CheckVersion() throws an exception instead of returning false
+                return false;
+            }
 
             #endregion
         }

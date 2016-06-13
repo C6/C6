@@ -28,7 +28,7 @@ namespace C6.Tests.Helpers
 
         #region Constructors
 
-        public ExpectedCollectionValue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer, bool allowsNull, Func<T> chooseFunction = null, bool sequenced = true)
+        public ExpectedCollectionValue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer, bool allowsNull, Func<T> chooseFunction = null, bool sequenced = true, Speed maximumCountSpeed = Speed.Linear)
         {
             #region Code Contracts
 
@@ -50,6 +50,7 @@ namespace C6.Tests.Helpers
             EqualityComparer = equalityComparer;
             _chooseFunction = chooseFunction;
             _sequenced = sequenced;
+            CountSpeed = maximumCountSpeed;
         }
 
         #endregion
@@ -60,7 +61,7 @@ namespace C6.Tests.Helpers
 
         public override int Count => _items.Length;
 
-        public override Speed CountSpeed => Speed.Constant; // TODO: Is this always constant? We would at least like that, right?
+        public override Speed CountSpeed { get; }
 
         public virtual bool HasChoose => _chooseFunction != null;
 
@@ -91,7 +92,7 @@ namespace C6.Tests.Helpers
                 // Properties
                 AllowsNull == other.AllowsNull
                 && Count == other.Count
-                && CountSpeed == other.CountSpeed
+                && CountSpeed >= other.CountSpeed
                 && IsEmpty == other.IsEmpty
 
                     // Pure methods
