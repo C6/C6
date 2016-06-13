@@ -13,7 +13,6 @@ using SCG = System.Collections.Generic;
 
 using static System.Diagnostics.Contracts.Contract;
 
-using static C6.Collections.ExceptionMessages;
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 using static C6.Speed;
@@ -35,7 +34,7 @@ namespace C6.Collections
 
         private readonly Node _first, _last;
 
-        private int _version, _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
+        private int _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
         private int _sequencedHashCode, _unsequencedHashCode;
 
         #endregion
@@ -141,7 +140,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // The version is updated
-            Ensures(_version != OldValue(_version));
+            Ensures(Version != OldValue(Version));
 
             #endregion
 
@@ -193,7 +192,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -235,8 +234,8 @@ namespace C6.Collections
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public override int GetUnsequencedHashCode()
         {
-            if (_unsequencedHashCodeVersion != _version) {
-                _unsequencedHashCodeVersion = _version;
+            if (_unsequencedHashCodeVersion != Version) {
+                _unsequencedHashCodeVersion = Version;
                 _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
             }
 
@@ -269,7 +268,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -287,7 +286,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -348,17 +347,6 @@ namespace C6.Collections
 
         #region Private Methods
 
-        [Pure]
-        private bool CheckVersion(int version)
-        {
-            if (version == _version) {
-                return true;
-            }
-
-            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
-            throw new InvalidOperationException(CollectionWasModified);
-        }
-
         private void ClearPrivate()
         {
             _first.Next = _last;
@@ -392,11 +380,11 @@ namespace C6.Collections
             Requires(cursor != _last);
 
             // The version is not updated
-            Ensures(_version == OldValue(_version));
+            Ensures(Version == OldValue(Version));
 
             #endregion
 
-            var version = _version;
+            var version = Version;
 
             // Check version at each call to MoveNext() to ensure an exception is thrown even when the enumerator was really finished
             while (CheckVersion(version) & cursor != _first) {
@@ -417,11 +405,11 @@ namespace C6.Collections
             Requires(cursor != _first);
 
             // The version is not updated
-            Ensures(_version == OldValue(_version));
+            Ensures(Version == OldValue(Version));
 
             #endregion
 
-            var version = _version;
+            var version = Version;
 
             // Check version at each call to MoveNext() to ensure an exception is thrown even when the enumerator was really finished
             while (CheckVersion(version) & cursor != _last) {
@@ -493,8 +481,6 @@ namespace C6.Collections
             return true;
         }
 
-        private void UpdateVersion() => _version++;
-
         #endregion
 
         #region Nested Types
@@ -558,7 +544,7 @@ namespace C6.Collections
                 #endregion
 
                 _base = list;
-                _version = _base._version;
+                _version = _base.Version;
                 _item = item;
                 _enumerator = list.GetEnumerator();
                 _list = new ArrayList<T>(equalityComparer: _base.EqualityComparer, allowsNull: _base.AllowsNull);
@@ -643,7 +629,7 @@ namespace C6.Collections
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+            private string DebuggerDisplay => _version == _base.Version ? ToString() : "Expired collection value; original collection was modified since range was created.";
 
             /// <summary>
             ///     Finds all duplicates in the base collection.
@@ -739,7 +725,7 @@ namespace C6.Collections
                 #endregion
 
                 _base = list;
-                _version = _base._version;
+                _version = _base.Version;
                 _enumerator = list.Distinct(list.EqualityComparer).GetEnumerator();
                 _list = new ArrayList<T>(equalityComparer: list.EqualityComparer, allowsNull: list.AllowsNull);
             }
@@ -823,7 +809,7 @@ namespace C6.Collections
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+            private string DebuggerDisplay => _version == _base.Version ? ToString() : "Expired collection value; original collection was modified since range was created.";
 
             /// <summary>
             ///     Finds all duplicates in the base collection.

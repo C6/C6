@@ -10,7 +10,6 @@ using C6.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
-using static C6.Collections.ExceptionMessages;
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
 using static C6.Speed;
@@ -54,7 +53,7 @@ namespace C6.Collections
 
         private T[] _items;
 
-        private int _version, _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
+        private int _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
         private int _sequencedHashCode, _unsequencedHashCode;
 
         #endregion
@@ -241,7 +240,7 @@ namespace C6.Collections
                 #region Code Contracts
 
                 // The version is updated
-                Ensures(_version != OldValue(_version));
+                Ensures(Version != OldValue(Version));
 
                 #endregion
 
@@ -261,7 +260,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // The version is updated
-            Ensures(_version != OldValue(_version));
+            Ensures(Version != OldValue(Version));
 
             #endregion
 
@@ -275,7 +274,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -304,7 +303,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -346,11 +345,11 @@ namespace C6.Collections
             #region Code Contracts
 
             // The version is not updated
-            Ensures(_version == OldValue(_version));
+            Ensures(Version == OldValue(Version));
 
             #endregion
 
-            var version = _version;
+            var version = Version;
             // Check version at each call to MoveNext() to ensure an exception is thrown even when the enumerator was really finished
             for (var i = 0; CheckVersion(version) & i < Count; i++) {
                 yield return _items[i];
@@ -362,8 +361,8 @@ namespace C6.Collections
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public virtual int GetSequencedHashCode()
         {
-            if (_sequencedHashCodeVersion != _version) {
-                _sequencedHashCodeVersion = _version;
+            if (_sequencedHashCodeVersion != Version) {
+                _sequencedHashCodeVersion = Version;
                 _sequencedHashCode = this.GetSequencedHashCode(EqualityComparer);
             }
 
@@ -373,8 +372,8 @@ namespace C6.Collections
         // TODO: Update hash code when items are added, if the hash code version is not equal to -1
         public override int GetUnsequencedHashCode()
         {
-            if (_unsequencedHashCodeVersion != _version) {
-                _unsequencedHashCodeVersion = _version;
+            if (_unsequencedHashCodeVersion != Version) {
+                _unsequencedHashCodeVersion = Version;
                 _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
             }
 
@@ -421,7 +420,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -438,7 +437,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -521,7 +520,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -543,7 +542,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -562,7 +561,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -588,7 +587,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -606,7 +605,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -633,7 +632,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -657,7 +656,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -682,7 +681,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -728,7 +727,7 @@ namespace C6.Collections
             #region Code Contracts
 
             // If collection changes, the version is updated
-            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || _version != OldValue(_version));
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
 
@@ -826,16 +825,6 @@ namespace C6.Collections
         #endregion
 
         #region Private Members
-
-        private bool CheckVersion(int version)
-        {
-            if (version == _version) {
-                return true;
-            }
-
-            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
-            throw new InvalidOperationException(CollectionWasModified);
-        }
 
         private void ClearPrivate()
         {
@@ -1000,8 +989,6 @@ namespace C6.Collections
             return item;
         }
 
-        private void UpdateVersion() => _version++;
-
         #region Event Helpers
 
         private void RaiseForIndexSetter(T oldItem, T newItem, int index)
@@ -1128,7 +1115,7 @@ namespace C6.Collections
                 #endregion
 
                 _base = list;
-                _version = _base._version;
+                _version = _base.Version;
                 _item = item;
                 _enumerator = list.GetEnumerator();
                 _list = new ArrayList<T>(equalityComparer: _base.EqualityComparer, allowsNull: _base.AllowsNull);
@@ -1213,7 +1200,7 @@ namespace C6.Collections
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+            private string DebuggerDisplay => _version == _base.Version ? ToString() : "Expired collection value; original collection was modified since range was created.";
 
             /// <summary>
             ///     Finds all duplicates in the base collection.
@@ -1309,7 +1296,7 @@ namespace C6.Collections
                 #endregion
 
                 _base = list;
-                _version = _base._version;
+                _version = _base.Version;
                 _enumerator = list.Distinct(list.EqualityComparer).GetEnumerator();
                 _list = new ArrayList<T>(equalityComparer: list.EqualityComparer, allowsNull: list.AllowsNull);
             }
@@ -1393,7 +1380,7 @@ namespace C6.Collections
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+            private string DebuggerDisplay => _version == _base.Version ? ToString() : "Expired collection value; original collection was modified since range was created.";
 
             /// <summary>
             ///     Finds all duplicates in the base collection.
@@ -1479,7 +1466,7 @@ namespace C6.Collections
 
 
                 Ensures(_base != null);
-                Ensures(_version == _base._version);
+                Ensures(_version == _base.Version);
                 Ensures(_sign == (direction.IsForward() ? 1 : -1));
                 Ensures(-1 <= _startIndex);
                 Ensures(_startIndex < _base.Count || _startIndex == 0 && _base.Count == 0);
@@ -1489,7 +1476,7 @@ namespace C6.Collections
                 #endregion
 
                 _base = list;
-                _version = list._version;
+                _version = list.Version;
                 _sign = (int) direction;
                 _startIndex = startIndex;
                 _count = count;
@@ -1585,7 +1572,7 @@ namespace C6.Collections
 
             #region Private Members
 
-            private string DebuggerDisplay => _version == _base._version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+            private string DebuggerDisplay => _version == _base.Version ? ToString() : "Expired collection value; original collection was modified since range was created.";
 
             private bool CheckVersion() => _base.CheckVersion(_version);
 

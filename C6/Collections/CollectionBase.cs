@@ -23,7 +23,7 @@ namespace C6.Collections
         public abstract void Clear();
 
         public abstract bool Contains(T item);
-        
+
         // TODO: Does this belong here? It could potentially be a lot easier to solve for sets..
         public virtual bool ContainsRange(SCG.IEnumerable<T> items)
         {
@@ -80,7 +80,7 @@ namespace C6.Collections
         public abstract bool RetainRange(SCG.IEnumerable<T> items);
 
         public abstract ICollectionValue<T> UniqueItems();
-        
+
         public virtual bool UnsequencedEquals(ICollection<T> otherCollection) => this.UnsequencedEquals(otherCollection, EqualityComparer);
 
         public virtual bool Update(T item)
