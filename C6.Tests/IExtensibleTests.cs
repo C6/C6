@@ -11,7 +11,6 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
-using static C6.Collections.ExceptionMessages;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
 
@@ -173,7 +172,7 @@ namespace C6.Tests
         #region Add(T)
 
         [Test]
-        public void Add_DisallowsNullAddNull_ViolatesPrecondition()
+        public void Add_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringExtensible(Random, allowsNull: false);
@@ -183,7 +182,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Add_AllowsNullAddNull_True()
+        public void Add_AllowsNullAddFirstNull_True()
         {
             // Arrange
             var collection = GetStringExtensible(Random, allowsNull: true);
@@ -193,6 +192,20 @@ namespace C6.Tests
 
             // Assert
             Assert.That(add, Is.True);
+        }
+
+        [Test]
+        public void Add_AllowsNullAddDuplicateNull_AllowsDuplicates()
+        {
+            // Arrange
+            var items = GetStrings(Random).WithNull(Random);
+            var collection = GetExtensible(items, allowsNull: true);
+
+            // Act
+            var add = collection.Add(null);
+
+            // Assert
+            Assert.That(add, Is.EqualTo(AllowsDuplicates));
         }
 
         [Test]
@@ -280,19 +293,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Add_AddDuringEnumeration_ThrowsInvalidOperationException()
+        public void Add_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
             var item = GetString(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Add(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Add(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -323,7 +331,7 @@ namespace C6.Tests
         // TODO: Add test with unique items?
 
         [Test]
-        public void AddRange_AddNull_ViolatesPrecondition()
+        public void AddRange_NullEnumerable_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
@@ -333,7 +341,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AddRange_DisallowNullAddNull_ViolatesPrecondition()
+        public void AddRange_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringExtensible(Random, allowsNull: false);
@@ -344,7 +352,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AddRange_AllowNullAddNull_True()
+        public void AddRange_AllowsNull_True()
         {
             // Arrange
             var collection = GetStringExtensible(Random, ReferenceEqualityComparer, allowsNull: true);
@@ -439,9 +447,9 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringExtensible(Random, ReferenceEqualityComparer);
-            var item1 = Random.GetString();
-            var item2 = Random.GetString();
-            var item3 = Random.GetString();
+            var item1 = GetString(Random);
+            var item2 = GetString(Random);
+            var item3 = GetString(Random);
             var items = new[] { item1, item2, item1, item3 };
             var expectedEvents = AllowsDuplicates
                 ? new[] {
@@ -483,19 +491,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AddRange_AddItemsDuringEnumeration_ThrowsInvalidOperationException()
+        public void AddRange_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringExtensible(Random);
             var items = GetStrings(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.AddRange(items);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.AddRange(items), Breaks.EnumeratorFor(collection));
         }
 
         [Test]

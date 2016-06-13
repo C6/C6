@@ -13,6 +13,7 @@ using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 using static C6.Contracts.ContractHelperExtensions;
+using static C6.Tests.Helpers.TestHelper;
 
 
 namespace C6.Tests.Contracts
@@ -26,7 +27,7 @@ namespace C6.Tests.Contracts
         public void ContainsRange_SecondEmptyEnumerable_True()
         {
             // Arrange
-            var first = TestHelper.GetStrings(Random);
+            var first = GetStrings(Random);
             var second = Enumerable.Empty<string>();
 
             // Act
@@ -41,7 +42,7 @@ namespace C6.Tests.Contracts
         {
             // Arrange
             var first = Enumerable.Empty<string>();
-            var second = TestHelper.GetStrings(Random);
+            var second = GetStrings(Random);
 
             // Act
             var containsRange = first.ContainsRange(second);
@@ -111,7 +112,7 @@ namespace C6.Tests.Contracts
         [Test]
         public void GetStructComparer_OneNullObject_NotEqual()
         {
-            var s = Random.GetString();
+            var s = GetString(Random);
             var comparer = CreateStructComparer<string>();
             Assert.That(s, Is.Not.EqualTo(null).Using(comparer));
             Assert.That(null, Is.Not.EqualTo(s).Using(comparer));
@@ -480,7 +481,7 @@ namespace C6.Tests.Contracts
         {
             // Arrange
             const int count = 10000;
-            Func<string> getString = () => Random.GetString();
+            Func<string> getString = () => GetString(Random);
             var items = getString.Repeat(count);
             var shuffledItems = items.ShuffledCopy(Random);
 

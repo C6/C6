@@ -493,20 +493,15 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C9D4A86CA601EC4C8E05FA82AC8FFFF9/Shortcut/@EntryValue">break enumerator</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C9D4A86CA601EC4C8E05FA82AC8FFFF9/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C9D4A86CA601EC4C8E05FA82AC8FFFF9/Text/@EntryValue">[NUnit.Framework.Test]&#xD;
-public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_ThrowsInvalidOperationException()&#xD;
+public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_BreaksEnumerator()&#xD;
 {&#xD;
     // Arrange&#xD;
     var collection = GetString$COLLECTION$(Random);&#xD;
     var items = GetStrings(Random);&#xD;
     var item = GetString(Random);&#xD;
 &#xD;
-    // Act&#xD;
-    var enumerator = collection.GetEnumerator();&#xD;
-    enumerator.MoveNext();&#xD;
-    collection.$METHOD$($ARGUMENTS$);&#xD;
-&#xD;
-    // Assert&#xD;
-    NUnit.Framework.Assert.That(() =&gt; enumerator.MoveNext(), NUnit.Framework.Throws.InvalidOperationException.Because(CollectionWasModified));&#xD;
+    // Act &amp; Assert&#xD;
+    NUnit.Framework.Assert.That(() =&gt; collection.$METHOD$($ARGUMENTS$), Breaks.EnumeratorFor(collection));&#xD;
 }</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>

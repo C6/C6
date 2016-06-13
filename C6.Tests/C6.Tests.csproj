@@ -151,6 +151,8 @@
     <Compile Include="ComparerFactoryTests.cs" />
     <Compile Include="Helpers\BadEnumerable.cs" />
     <Compile Include="Helpers\BadEnumerableException.cs" />
+    <Compile Include="Helpers\Breaks.cs" />
+    <Compile Include="Helpers\EnumeratorConstraint.cs" />
     <Compile Include="Helpers\ExpectedCollectionValue.cs" />
     <Compile Include="Helpers\ExpectedDirectedCollectionValue.cs" />
     <Compile Include="Helpers\Run.cs" />

@@ -271,7 +271,7 @@ namespace C6.Tests.Collections
             // Arrange
             var items = GetStrings(Random);
             var list = new ArrayList<string>(items);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             list.Add(item);

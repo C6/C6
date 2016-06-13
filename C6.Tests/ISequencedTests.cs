@@ -192,10 +192,11 @@ namespace C6.Tests
             var array = new string[collection.Count];
             var stringBuilder = new StringBuilder();
             var rest = 0;
+            var item = GetString(Random);
 
             // Act
             var backwards = collection.Backwards();
-            collection.UpdateOrAdd(Random.GetString());
+            collection.UpdateOrAdd(item);
 
             // TODO: Refactor into separate DirectCollectionValueConstraint
             // Assert

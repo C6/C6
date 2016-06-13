@@ -221,18 +221,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Pop_PopDuringEnumeration_ThrowsInvalidOperationException()
+        public void Pop_PopDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringStack(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Pop();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Pop(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -269,7 +264,7 @@ namespace C6.Tests
         public void Pop_SingleItemCollection_Empty()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetStack(itemArray);
 
@@ -353,7 +348,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyStack<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = new[] { item };
 
             // Act
@@ -383,7 +378,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringStack(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
@@ -414,7 +409,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringStack(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var expectedEvents = new[] {
                 Inserted(item, collection.Count, collection),
                 Added(item, 1, collection),
@@ -426,19 +421,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Push_PushItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void Push_PushDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringStack(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Push(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Push(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]

@@ -2,11 +2,14 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
+
+using C6.Contracts;
 
 using NUnit.Framework.Constraints;
 using NUnit.Framework.Internal;
+
+using static System.Diagnostics.Contracts.Contract;
 
 using SCG = System.Collections.Generic;
 
@@ -57,15 +60,34 @@ namespace C6.Tests.Helpers
 
         public static string[] GetLowercaseStrings(Randomizer random, int count)
             => Enumerable.Range(0, count).Select(i => GetLowercaseString(random)).ToArray();
-
+            
         public static string GetUppercaseString(Randomizer random) => random.GetString(25, "ABCDEFGHJKLMNOPQRSTUVWXYZ");
         public static string GetLowercaseString(Randomizer random) => random.GetString(25, "abcdefghijkmnopqrstuvwxyz");
+        
+        public static T Choose<T>(this SCG.IEnumerable<T> enumerable, Random random)
+        {
+            Requires(!enumerable.IsEmpty());
+            Ensures(enumerable.ContainsSame(Result<T>()));
 
-        public static T Choose<T>(this T[] array, Random random) => array[random.Next(array.Length)];
+            using (var enumerator = enumerable.GetEnumerator()) {
+                enumerator.MoveNext();
+
+                var item = enumerator.Current;
+                var count = 1;
+
+                while (enumerator.MoveNext()) {
+                    if (0 == random.Next(++count)) {
+                        item = enumerator.Current;
+                    }
+                }
+
+                return item;
+            }
+        }
 
         public static int IndexOf<T>(this T[] array, T item, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            Contract.Requires(array.Contains(item, equalityComparer));
+            Requires(array.Contains(item, equalityComparer));
 
             if (equalityComparer == null) {
                 equalityComparer = SCG.EqualityComparer<T>.Default;
@@ -82,7 +104,7 @@ namespace C6.Tests.Helpers
 
         public static int LastIndexOf<T>(this T[] array, T item, SCG.IEqualityComparer<T> equalityComparer = null)
         {
-            Contract.Requires(array.Contains(item, equalityComparer));
+            Requires(array.Contains(item, equalityComparer));
 
             if (equalityComparer == null) {
                 equalityComparer = SCG.EqualityComparer<T>.Default;
@@ -103,12 +125,8 @@ namespace C6.Tests.Helpers
         }
 
         public static SCG.IEnumerable<string> NoStrings => Enumerable.Empty<string>();
-
-        public static T[] WithNull<T>(this T[] array, Random random) where T : class
-        {
-            array[random.Next(0, array.Length)] = null;
-            return array;
-        }
+        
+        public static T[] WithNull<T>(this SCG.IEnumerable<T> enumerable, Random random, int count = 1) where T : class => enumerable.Concat(((T) null).Repeat(count)).ShuffledCopy(random);
 
         public static EqualConstraint ByReference<T>(this EqualConstraint constraint) => constraint.Using(ComparerFactory.CreateReferenceEqualityComparer<T>());
 
@@ -150,6 +168,8 @@ namespace C6.Tests.Helpers
             array.Shuffle(random);
             return array;
         }
+
+        public static T[] WithRepeatedItem<T>(this SCG.IEnumerable<T> items, T item, int count, Random random) => items.WithRepeatedItem(() => item, count, random);
 
         public static T[] ShuffledCopy<T>(this SCG.IEnumerable<T> enumerable, Random random)
         {
