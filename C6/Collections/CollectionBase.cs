@@ -12,6 +12,12 @@ namespace C6.Collections
     [Serializable]
     public abstract class CollectionBase<T> : ExtensibleBase<T>, ICollection<T>
     {
+        #region Fields
+
+        private int _unsequencedHashCode;
+
+        #endregion
+
         #region Properties
 
         public abstract Speed ContainsSpeed { get; }
@@ -60,8 +66,17 @@ namespace C6.Collections
             Add(item);
             return false;
         }
+        
+        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
+        public virtual int GetUnsequencedHashCode()
+        {
+            if (UnsequencedHashCodeVersion != Version) {
+                UnsequencedHashCodeVersion = Version;
+                _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
+            }
 
-        public abstract int GetUnsequencedHashCode();
+            return _unsequencedHashCode;
+        }
 
         public abstract ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities();
 
@@ -118,6 +133,12 @@ namespace C6.Collections
         bool SCG.ICollection<T>.Contains(T item) => Contains(item);
 
         bool SCG.ICollection<T>.Remove(T item) => Remove(item);
+
+        #endregion
+
+        #region Protected Properties
+
+        protected virtual int UnsequencedHashCodeVersion { get; set; } = -1;
 
         #endregion
     }

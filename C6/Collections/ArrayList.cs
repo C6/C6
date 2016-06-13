@@ -53,9 +53,6 @@ namespace C6.Collections
 
         private T[] _items;
 
-        private int _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
-        private int _sequencedHashCode, _unsequencedHashCode;
-
         #endregion
 
         #region Code Contracts
@@ -357,28 +354,6 @@ namespace C6.Collections
         }
 
         public virtual IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, EnumerationDirection.Forwards);
-
-        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
-        public virtual int GetSequencedHashCode()
-        {
-            if (_sequencedHashCodeVersion != Version) {
-                _sequencedHashCodeVersion = Version;
-                _sequencedHashCode = this.GetSequencedHashCode(EqualityComparer);
-            }
-
-            return _sequencedHashCode;
-        }
-
-        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
-        public override int GetUnsequencedHashCode()
-        {
-            if (_unsequencedHashCodeVersion != Version) {
-                _unsequencedHashCodeVersion = Version;
-                _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
-            }
-
-            return _unsequencedHashCode;
-        }
 
         [Pure]
         public virtual int IndexOf(T item)

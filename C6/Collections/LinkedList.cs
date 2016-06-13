@@ -34,9 +34,6 @@ namespace C6.Collections
 
         private readonly Node _first, _last;
 
-        private int _sequencedHashCodeVersion = -1, _unsequencedHashCodeVersion = -1;
-        private int _sequencedHashCode, _unsequencedHashCode;
-
         #endregion
 
         #region Code Contracts
@@ -230,18 +227,7 @@ namespace C6.Collections
         public override ICollectionValue<T> FindDuplicates(T item) => new Duplicates(this, item);
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
-
-        // TODO: Update hash code when items are added, if the hash code version is not equal to -1
-        public override int GetUnsequencedHashCode()
-        {
-            if (_unsequencedHashCodeVersion != Version) {
-                _unsequencedHashCodeVersion = Version;
-                _unsequencedHashCode = this.GetUnsequencedHashCode(EqualityComparer);
-            }
-
-            return _unsequencedHashCode;
-        }
-
+        
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
             throw new NotImplementedException();
