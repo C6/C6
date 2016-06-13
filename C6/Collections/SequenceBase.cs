@@ -3,15 +3,14 @@
 
 using System;
 
+using static C6.EnumerationDirection;
+
 
 namespace C6.Collections
 {
     public abstract class SequenceBase<T> : CollectionBase<T>, ISequenced<T>
     {
-        public virtual EnumerationDirection Direction
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public virtual EnumerationDirection Direction => Forwards;
 
         public abstract IDirectedCollectionValue<T> Backwards();
 

@@ -43,7 +43,7 @@ namespace C6.Collections
     /// </remarks>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class ArrayList<T> : CollectionBase<T>, IList<T>, IStack<T>
+    public class ArrayList<T> : SequenceBase<T>, IList<T>, IStack<T>
     {
         #region Fields
 
@@ -218,8 +218,6 @@ namespace C6.Collections
 
         public override Speed CountSpeed => Constant;
 
-        public virtual EnumerationDirection Direction => EnumerationDirection.Forwards;
-
         public override bool DuplicatesByCounting => false;
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
@@ -297,7 +295,7 @@ namespace C6.Collections
         }
 
         // Only creates one Range instead of two as with GetIndexRange(0, Count).Backwards()
-        public virtual IDirectedCollectionValue<T> Backwards() => new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
+        public override IDirectedCollectionValue<T> Backwards() => new Range(this, Count - 1, Count, EnumerationDirection.Backwards);
 
         public override T Choose() => _items[Count - 1];
 
