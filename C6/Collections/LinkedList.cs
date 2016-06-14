@@ -346,7 +346,10 @@ namespace C6.Collections
 
         public T RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+            var item = Remove(GetNode(index));
+            RaiseForRemoveAt(item, index);
+            return item;
         }
 
         public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));

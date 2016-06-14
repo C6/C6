@@ -655,9 +655,10 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
+            var index = 0;
 
             // Act & Assert
-            Assert.That(() => collection.RemoveAt(0), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+            Assert.That(() => collection.RemoveAt(index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
 
         [Test]
@@ -665,7 +666,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var index = Random.Next(int.MinValue, 0);
+            var index = GetNegative(Random);
 
             // Act & Assert
             Assert.That(() => collection.RemoveAt(index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -698,7 +699,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var index = Random.Next(0, collection.Count);
+            var index = GetIndex(collection, Random);
 
             // Act & Assert
             Assert.That(() => collection.RemoveAt(index), Breaks.EnumeratorFor(collection));
@@ -718,7 +719,7 @@ namespace C6.Tests
             };
 
             // Act & Assert
-            Assert.That(() => collection.RemoveAt(index), Raises(expectedEvents).For(collection));
+            Assert.That(() => collection.RemoveAt(index), Raises(expectedEvents).For(collection).And.SameAs(item));
         }
 
         [Test]
@@ -726,7 +727,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var index = Random.Next(0, collection.Count);
+            var index = GetIndex(collection, Random);
             var expectedItem = collection[index];
             var array = collection.SkipIndex(index).ToArray();
 
@@ -739,7 +740,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveAt_RandomCollectionWithNullRemoveNull_Null()
+        public void RemoveAt_AllowsNull_Null()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -762,9 +763,10 @@ namespace C6.Tests
             var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetIndexed(itemArray);
+            var index = 0;
 
             // Act
-            var removeAt = collection.RemoveAt(0);
+            var removeAt = collection.RemoveAt(index);
 
             // Assert
             Assert.That(removeAt, Is.SameAs(item));
@@ -776,16 +778,16 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var items = collection.ToArray();
+            var firstItem = collection.First();
             var index = 0;
-            var firstItem = collection[index];
+            var items = collection.SkipIndex(index).ToArray();
 
             // Act
             var removeAt = collection.RemoveAt(index);
 
             // Assert
-            Assert.That(removeAt, Is.EqualTo(firstItem));
-            Assert.That(collection, Is.EqualTo(items.Skip(1)).Using(ReferenceEqualityComparer));
+            Assert.That(removeAt, Is.SameAs(firstItem));
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
         }
 
         [Test]
@@ -793,17 +795,16 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var count = collection.Count;
-            var items = collection.ToArray();
-            var index = count - 1;
-            var lastItem = collection[index];
+            var lastItem = collection.Last();
+            var index = collection.Count - 1;
+            var items = collection.SkipIndex(index).ToArray();
 
             // Act
             var removeAt = collection.RemoveAt(index);
 
             // Assert
-            Assert.That(removeAt, Is.EqualTo(lastItem));
-            Assert.That(collection, Is.EqualTo(items.Take(index)).Using(ReferenceEqualityComparer));
+            Assert.That(removeAt, Is.SameAs(lastItem));
+            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
         }
 
         [Test]

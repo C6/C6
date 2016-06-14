@@ -522,7 +522,7 @@ namespace C6.Collections
             #endregion
 
             var item = RemoveAtPrivate(index);
-            RaiseForRemovedAt(item, index);
+            RaiseForRemoveAt(item, index);
             return item;
         }
 
@@ -991,13 +991,6 @@ namespace C6.Collections
                     OnItemsAdded(item, 1);
                 }
             }
-            OnCollectionChanged();
-        }
-
-        private void RaiseForRemovedAt(T item, int index)
-        {
-            OnItemRemovedAt(item, index);
-            OnItemsRemoved(item, 1);
             OnCollectionChanged();
         }
 
