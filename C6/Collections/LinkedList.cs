@@ -14,6 +14,7 @@ using SCG = System.Collections.Generic;
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EnumerationDirection;
 using static C6.EventTypes;
 using static C6.Speed;
 
@@ -181,7 +182,7 @@ namespace C6.Collections
             return true;
         }
 
-        public override IDirectedCollectionValue<T> Backwards() => new Range(this, EnumerationDirection.Backwards);
+        public override IDirectedCollectionValue<T> Backwards() => new Range(this, 0, Count, EnumerationDirection.Backwards);
 
         public override T Choose() => _last.Previous.Item;
 
@@ -229,10 +230,7 @@ namespace C6.Collections
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
-        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
-        {
-            throw new NotImplementedException();
-        }
+        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, Forwards);
 
         public int IndexOf(T item)
         {
@@ -299,7 +297,6 @@ namespace C6.Collections
 
             #endregion
 
-
             if (item == null) {
                 var node = _last.Previous;
                 var index = Count - 1;
@@ -362,7 +359,6 @@ namespace C6.Collections
             Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
 
             #endregion
-
 
             if (count == 0) {
                 return;
@@ -1086,20 +1082,29 @@ namespace C6.Collections
         {
             #region Fields
 
+            private readonly int _startIndex, _count, _version;
+            private readonly Node _leftNode, _rightNode;
             private readonly LinkedList<T> _base;
-            private readonly int _version;
             private readonly EnumerationDirection _direction;
 
             #endregion
 
             #region Constructors
 
-            public Range(LinkedList<T> list, EnumerationDirection direction)
+            public Range(LinkedList<T> list, int startIndex, int count, EnumerationDirection direction)
             {
                 #region Code Contracts
 
                 // Argument must be non-null
                 Requires(list != null, ArgumentMustBeNonNull);
+
+                // Argument must be within bounds
+                Requires(0 <= startIndex, ArgumentMustBeWithinBounds);
+                Requires(startIndex + count <= list.Count, ArgumentMustBeWithinBounds);
+
+                // Argument must be non-negative
+                Requires(0 <= count, ArgumentMustBeNonNegative);
+
 
                 // Argument must be valid enum constant
                 Requires(direction.IsDefined(), EnumMustBeDefined);
@@ -1112,7 +1117,31 @@ namespace C6.Collections
 
                 _base = list;
                 _version = list.Version;
+                _startIndex = startIndex;
+                _count = count;
                 _direction = direction;
+
+                if (count > 0) {
+                    _leftNode = list.GetNode(startIndex);
+                    _rightNode = list.GetNode(startIndex + count - 1);
+                }
+            }
+
+            /// <summary>
+            ///     Creates a new <see cref="Range"/> with the opposite direction of <paramref name="range"/>.
+            /// </summary>
+            /// <param name="range">
+            ///     The range to make a backwards version of.
+            /// </param>
+            private Range(Range range)
+            {
+                _base = range._base;
+                _version = range._version;
+                _startIndex = range._startIndex;
+                _count = range._count;
+                _direction = range._direction.Opposite();
+                _leftNode = range._leftNode;
+                _rightNode = range._rightNode;
             }
 
             #endregion
@@ -1125,7 +1154,7 @@ namespace C6.Collections
             {
                 get {
                     CheckVersion();
-                    return _base.Count;
+                    return _count;
                 }
             }
 
@@ -1152,14 +1181,14 @@ namespace C6.Collections
             public IDirectedCollectionValue<T> Backwards()
             {
                 CheckVersion();
-                return new Range(_base, _direction.Opposite());
+                return new Range(this);
             }
 
             public override T Choose()
             {
                 CheckVersion();
                 // Select the highest index in the range
-                return _base.Choose();
+                return _rightNode.Item;
             }
 
             public override void CopyTo(T[] array, int arrayIndex)
@@ -1172,11 +1201,34 @@ namespace C6.Collections
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
-                if (CheckVersion() & IsEmpty) {
-                    return Enumerable.Empty<T>().GetEnumerator();
+                CheckVersion();
+
+                if (IsEmpty) {
+                    yield break;
                 }
 
-                return (Direction.IsForward() ? _base : _base.EnumerateBackwardsFromTo(_base._last.Previous, _base._first)).GetEnumerator();
+                var count = _count;
+
+                if (_direction.IsForward()) {
+                    var cursor = _leftNode;
+                    yield return cursor.Item;
+
+                    while (--count > 0) {
+                        cursor = cursor.Next;
+                        CheckVersion();
+                        yield return cursor.Item;
+                    }
+                }
+                else {
+                    var cursor = _rightNode;
+                    yield return cursor.Item;
+
+                    while (--count > 0) {
+                        cursor = cursor.Previous;
+                        CheckVersion();
+                        yield return cursor.Item;
+                    }
+                }
             }
 
             public override int GetHashCode()

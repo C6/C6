@@ -203,7 +203,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var startIndex = Random.Next(int.MinValue, 0);
+            var startIndex = GetNegative(Random);
             var count = collection.Count / 2;
 
             // Act & Assert
@@ -239,11 +239,11 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var count = collection.Count / 2;
-            var startIndex = Random.Next(0, count);
+            var startIndex = GetIndex(collection, Random);
+            var count = -collection.Count / 2;
 
             // Act & Assert
-            Assert.That(() => collection.GetIndexRange(startIndex, -count), Violates.PreconditionSaying(ArgumentMustBeNonNegative));
+            Assert.That(() => collection.GetIndexRange(startIndex, count), Violates.PreconditionSaying(ArgumentMustBeNonNegative));
         }
 
         [Test]
@@ -263,6 +263,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
+            var startIndex = 0;
             var count = collection.Count;
             var expected = new ExpectedDirectedCollectionValue<string>(
                 collection.ToArray(),
@@ -271,7 +272,7 @@ namespace C6.Tests
                 );
 
             // Act
-            var getIndexRange = collection.GetIndexRange(0, count);
+            var getIndexRange = collection.GetIndexRange(startIndex, count);
 
             // Assert
             Assert.That(getIndexRange, Is.EqualTo(expected));
@@ -320,7 +321,8 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var startIndex = Random.Next(0, collection.Count);
+            var startIndex = GetIndex(collection, Random);
+            var count = 0;
             var expected = new ExpectedDirectedCollectionValue<string>(
                 NoStrings,
                 ReferenceEqualityComparer,
@@ -328,7 +330,7 @@ namespace C6.Tests
                 );
 
             // Act
-            var getIndexRange = collection.GetIndexRange(startIndex, 0);
+            var getIndexRange = collection.GetIndexRange(startIndex, count);
 
             // Assert
             Assert.That(getIndexRange, Is.EqualTo(expected));
@@ -976,7 +978,7 @@ namespace C6.Tests
             // Assert
             Assert.That(collection, Is.Empty);
         }
-        
+
         [Test]
         public void RemoveIndexRange_EmptyRange_NoEvents()
         {
