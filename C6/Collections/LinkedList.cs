@@ -486,7 +486,34 @@ namespace C6.Collections
 
         public void Reverse()
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+            if (Count <= 1) {
+                return;
+            }
+
+            // Only update version if the collection is actually reversed
+            UpdateVersion();
+            
+            var count = Count / 2;
+            Node leftNode = _first, rightNode = _last;
+
+            while (count-- > 0) {
+                leftNode = leftNode.Next;
+                rightNode = rightNode.Previous;
+
+                // Swap items
+                var item = leftNode.Item;
+                leftNode.Item = rightNode.Item;
+                rightNode.Item = item;
+            }
+
+            RaiseForReverse();
         }
 
         public void Shuffle()

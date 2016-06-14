@@ -3646,19 +3646,6 @@ namespace C6.Tests
         #region Reverse()
         
         [Test]
-        public void Reverse_EmptyCollection_Nothing()
-        {
-            // Arrange
-            var collection = GetEmptyList<string>();
-
-            // Act
-            collection.Reverse();
-
-            // Assert
-            Assert.That(collection, Is.Empty);
-        }
-
-        [Test]
         public void Reverse_EmptyCollection_RaisesNoEvents()
         {
             // Arrange
@@ -3666,6 +3653,7 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.Reverse(), RaisesNoEventsFor(collection));
+            Assert.That(collection, Is.Empty);
         }
 
         [Test]
@@ -3708,7 +3696,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Reverse_RandomCollectionWithNull_Reversed()
+        public void Reverse_AllowsNull_Reversed()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);

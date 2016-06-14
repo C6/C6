@@ -83,6 +83,8 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForReverse() => OnCollectionChanged();
+
         protected void RaiseForUpdate(T item, T oldItem)
         {
             Requires(AllowsNull || item != null, ItemMustBeNonNull);
