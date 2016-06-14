@@ -262,8 +262,7 @@ namespace C6.Collections
                     node = node.Next;
                 }
             }
-            else
-            {
+            else {
                 var node = _first.Next;
                 var index = 0;
 
@@ -287,7 +286,48 @@ namespace C6.Collections
 
         public int LastIndexOf(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.LastIndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Skip(Result<int>() + 1).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
+
+            #endregion
+
+
+            if (item == null) {
+                var node = _last.Previous;
+                var index = Count - 1;
+
+                while (node != _first) {
+                    if (node.Item == null) {
+                        return index;
+                    }
+
+                    --index;
+                    node = node.Previous;
+                }
+            }
+            else {
+                var node = _last.Previous;
+                var index = Count - 1;
+
+                while (node != _first) {
+                    if (Equals(item, node.Item)) {
+                        return index;
+                    }
+
+                    --index;
+                    node = node.Previous;
+                }
+            }
+
+            return ~Count;
         }
 
         public override bool Remove(T item, out T removedItem)
@@ -530,7 +570,6 @@ namespace C6.Collections
             // TODO: Ensure it is the right node
 
             #endregion
-
 
             // Closer to beginning
             if (index < Count / 2) {

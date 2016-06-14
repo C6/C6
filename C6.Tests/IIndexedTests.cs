@@ -523,7 +523,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void LastIndexOf_AllowsNull_PositiveIndex()
+        public void LastIndexOf_AllowsNullExistingNull_PositiveIndex()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -538,26 +538,40 @@ namespace C6.Tests
         }
 
         [Test]
+        public void LastIndexOf_AllowsNullNewNull_NegativeIndex()
+        {
+            // Arrange
+            var collection = GetStringIndexed(Random, allowsNull: true);
+            var count = collection.Count;
+
+            // Act
+            var lastIndexOf = collection.LastIndexOf(null);
+
+            // Assert
+            Assert.That(~lastIndexOf, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(count));
+        }
+
+        [Test]
         public void LastIndexOf_EmptyCollection_TildeZero()
         {
             // Arrange
             var collection = GetEmptyIndexed<string>();
             var item = GetString(Random);
+            var index = ~0;
 
             // Act
             var lastIndexOf = collection.LastIndexOf(item);
 
             // Assert
-            Assert.That(lastIndexOf, Is.EqualTo(~0));
+            Assert.That(lastIndexOf, Is.EqualTo(index));
         }
 
         [Test]
-        public void LastIndexOf_RandomCollectionLastIndexOfNewItem_NegativeIndex()
+        public void LastIndexOf_RandomCollectionNewItem_NegativeIndex()
         {
             // Arrange
-            var items = GetStrings(Random);
-            var collection = GetIndexed(items);
-            var item = items.DifferentItem(() => GetString(Random));
+            var collection = GetStringIndexed(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
             var count = collection.Count;
 
             // Act
@@ -568,13 +582,12 @@ namespace C6.Tests
         }
 
         [Test]
-        public void LastIndexOf_RandomCollectionLastIndexOfExistingItem_Index()
+        public void LastIndexOf_RandomCollectionExistingItem_Index()
         {
             // Arrange
-            var collection = GetStringIndexed(Random, ReferenceEqualityComparer);
-            var items = collection.ToArray();
-            var index = Random.Next(0, items.Length);
-            var item = items[index];
+            var collection = GetStringIndexed(Random);
+            var index = GetIndex(collection, Random);
+            var item = collection.ElementAt(index);
 
             // Act
             var lastIndexOf = collection.LastIndexOf(item);
@@ -591,12 +604,13 @@ namespace C6.Tests
             var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetIndexed(items);
+            var index = count - 1;
 
             // Act
             var lastIndexOf = collection.LastIndexOf(item);
 
             // Assert
-            Assert.That(lastIndexOf, Is.EqualTo(count - 1));
+            Assert.That(lastIndexOf, Is.EqualTo(index));
         }
 
         [Test]
@@ -620,9 +634,8 @@ namespace C6.Tests
         public void LastIndexOf_RandomCollectionNewItem_GetsTildeIndex()
         {
             // Arrange
-            var items = GetUppercaseStrings(Random);
-            var collection = GetIndexed(items);
-            var item = GetLowercaseString(Random);
+            var collection = GetStringIndexed(Random);
+            var item = collection.DifferentItem(() => GetString(Random));
 
             // Act
             var expectedIndex = ~collection.LastIndexOf(item);
