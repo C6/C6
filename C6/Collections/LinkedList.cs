@@ -516,14 +516,37 @@ namespace C6.Collections
             RaiseForReverse();
         }
 
-        public void Shuffle()
-        {
-            throw new NotImplementedException();
-        }
+        public virtual void Shuffle() => Shuffle(new Random());
 
         public void Shuffle(Random random)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+            if (Count <= 1) {
+                return;
+            }
+
+            // Only update version if the collection is shuffled
+            UpdateVersion();
+            
+            // Shuffle items in an array
+            var array = ToArray();
+            array.Shuffle(random);
+
+            // Copy them back to the list
+            var cursor = _first.Next;
+            var i = 0;
+            while (cursor != _last) {
+                cursor.Item = array[i++];
+                cursor = cursor.Next;
+            }
+
+            RaiseForShuffle();
         }
 
         public void Sort()

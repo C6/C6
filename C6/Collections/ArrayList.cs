@@ -1004,8 +1004,6 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
-        private void RaiseForShuffle() => OnCollectionChanged();
-
         private void RaiseForSort() => OnCollectionChanged();
 
         #endregion
