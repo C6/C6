@@ -14,6 +14,7 @@ using SCG = System.Collections.Generic;
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EnumerationDirection;
 using static C6.EventTypes;
 using static C6.Speed;
 
@@ -28,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : SequenceBase<T>, ISequenced<T>
+    public class LinkedList<T> : SequenceBase<T>, IIndexed<T>
     {
         #region Fields
 
@@ -114,19 +115,23 @@ namespace C6.Collections
 
         public override bool AllowsNull { get; }
 
+        public override Speed ContainsSpeed => Linear;
+
         public override Speed CountSpeed => Constant;
 
         public override bool DuplicatesByCounting => false;
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public override bool IsFixedSize => false;
+        public Speed IndexingSpeed => Linear;
 
-        public override Speed ContainsSpeed => Linear;
+        public override bool IsFixedSize => false;
 
         public override bool IsReadOnly => false;
 
         public override EventTypes ListenableEvents => All;
+
+        public T this[int index] => GetNode(index).Item;
 
         #endregion
 
@@ -177,7 +182,7 @@ namespace C6.Collections
             return true;
         }
 
-        public override IDirectedCollectionValue<T> Backwards() => new Range(this, EnumerationDirection.Backwards);
+        public override IDirectedCollectionValue<T> Backwards() => new Range(this, 0, Count, EnumerationDirection.Backwards);
 
         public override T Choose() => _last.Previous.Item;
 
@@ -225,9 +230,101 @@ namespace C6.Collections
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
+        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, Forwards);
+
+        public int IndexOf(T item)
+        {
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.IndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
+
+            #endregion
+
+            if (item == null) {
+                var node = _first.Next;
+                var index = 0;
+
+                while (node != _last) {
+                    if (node.Item == null) {
+                        return index;
+                    }
+
+                    ++index;
+                    node = node.Next;
+                }
+            }
+            else {
+                var node = _first.Next;
+                var index = 0;
+
+                while (node != _last) {
+                    if (Equals(item, node.Item)) {
+                        return index;
+                    }
+
+                    ++index;
+                    node = node.Next;
+                }
+            }
+
+            return ~Count;
+        }
+
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
             throw new NotImplementedException();
+        }
+
+        public int LastIndexOf(T item)
+        {
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.LastIndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Skip(Result<int>() + 1).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
+
+            #endregion
+
+            if (item == null) {
+                var node = _last.Previous;
+                var index = Count - 1;
+
+                while (node != _first) {
+                    if (node.Item == null) {
+                        return index;
+                    }
+
+                    --index;
+                    node = node.Previous;
+                }
+            }
+            else {
+                var node = _last.Previous;
+                var index = Count - 1;
+
+                while (node != _first) {
+                    if (Equals(item, node.Item)) {
+                        return index;
+                    }
+
+                    --index;
+                    node = node.Previous;
+                }
+            }
+
+            return ~Count;
         }
 
         public override bool Remove(T item, out T removedItem)
@@ -244,7 +341,40 @@ namespace C6.Collections
             return false;
         }
 
+        public T RemoveAt(int index)
+        {
+            UpdateVersion();
+            var item = Remove(GetNode(index));
+            RaiseForRemoveAt(item, index);
+            return item;
+        }
+
         public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
+
+        public void RemoveIndexRange(int startIndex, int count)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+            if (count == 0) {
+                return;
+            }
+
+            UpdateVersion();
+
+            // TODO: Find the node is the most optimal way
+            Node start = GetNode(startIndex), end = GetNode(startIndex + count - 1);
+
+            Count -= count;
+            start.Previous.Next = end.Next;
+            end.Next.Previous = start.Previous;
+
+            RaiseForRemoveIndexRange(startIndex, count);
+        }
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
         {
@@ -447,6 +577,37 @@ namespace C6.Collections
 
         [Pure]
         private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
+
+        [Pure]
+        private Node GetNode(int index)
+        {
+            #region Code Contracts
+
+            // Argument must be within bounds (collection must be non-empty)
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index < Count, ArgumentMustBeWithinBounds);
+
+            // TODO: Ensure it is the right node
+
+            #endregion
+
+            // Closer to beginning
+            if (index < Count / 2) {
+                var node = _first.Next;
+                for (var i = 0; i < index; i++) {
+                    node = node.Next;
+                }
+                return node;
+            }
+            // Closer to end
+            else {
+                var node = _last.Previous;
+                for (var i = Count - 1; i > index; i--) {
+                    node = node.Previous;
+                }
+                return node;
+            }
+        }
 
         private Node InsertAfter(T item, Node previous)
         {
@@ -921,20 +1082,29 @@ namespace C6.Collections
         {
             #region Fields
 
+            private readonly int _startIndex, _count, _version;
+            private readonly Node _leftNode, _rightNode;
             private readonly LinkedList<T> _base;
-            private readonly int _version;
             private readonly EnumerationDirection _direction;
 
             #endregion
 
             #region Constructors
 
-            public Range(LinkedList<T> list, EnumerationDirection direction)
+            public Range(LinkedList<T> list, int startIndex, int count, EnumerationDirection direction)
             {
                 #region Code Contracts
 
                 // Argument must be non-null
                 Requires(list != null, ArgumentMustBeNonNull);
+
+                // Argument must be within bounds
+                Requires(0 <= startIndex, ArgumentMustBeWithinBounds);
+                Requires(startIndex + count <= list.Count, ArgumentMustBeWithinBounds);
+
+                // Argument must be non-negative
+                Requires(0 <= count, ArgumentMustBeNonNegative);
+
 
                 // Argument must be valid enum constant
                 Requires(direction.IsDefined(), EnumMustBeDefined);
@@ -947,7 +1117,31 @@ namespace C6.Collections
 
                 _base = list;
                 _version = list.Version;
+                _startIndex = startIndex;
+                _count = count;
                 _direction = direction;
+
+                if (count > 0) {
+                    _leftNode = list.GetNode(startIndex);
+                    _rightNode = list.GetNode(startIndex + count - 1);
+                }
+            }
+
+            /// <summary>
+            ///     Creates a new <see cref="Range"/> with the opposite direction of <paramref name="range"/>.
+            /// </summary>
+            /// <param name="range">
+            ///     The range to make a backwards version of.
+            /// </param>
+            private Range(Range range)
+            {
+                _base = range._base;
+                _version = range._version;
+                _startIndex = range._startIndex;
+                _count = range._count;
+                _direction = range._direction.Opposite();
+                _leftNode = range._leftNode;
+                _rightNode = range._rightNode;
             }
 
             #endregion
@@ -960,7 +1154,7 @@ namespace C6.Collections
             {
                 get {
                     CheckVersion();
-                    return _base.Count;
+                    return _count;
                 }
             }
 
@@ -987,14 +1181,14 @@ namespace C6.Collections
             public IDirectedCollectionValue<T> Backwards()
             {
                 CheckVersion();
-                return new Range(_base, _direction.Opposite());
+                return new Range(this);
             }
 
             public override T Choose()
             {
                 CheckVersion();
                 // Select the highest index in the range
-                return _base.Choose();
+                return _rightNode.Item;
             }
 
             public override void CopyTo(T[] array, int arrayIndex)
@@ -1007,11 +1201,34 @@ namespace C6.Collections
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
-                if (CheckVersion() & IsEmpty) {
-                    return Enumerable.Empty<T>().GetEnumerator();
+                CheckVersion();
+
+                if (IsEmpty) {
+                    yield break;
                 }
 
-                return (Direction.IsForward() ? _base : _base.EnumerateBackwardsFromTo(_base._last.Previous, _base._first)).GetEnumerator();
+                var count = _count;
+
+                if (_direction.IsForward()) {
+                    var cursor = _leftNode;
+                    yield return cursor.Item;
+
+                    while (--count > 0) {
+                        cursor = cursor.Next;
+                        CheckVersion();
+                        yield return cursor.Item;
+                    }
+                }
+                else {
+                    var cursor = _rightNode;
+                    yield return cursor.Item;
+
+                    while (--count > 0) {
+                        cursor = cursor.Previous;
+                        CheckVersion();
+                        yield return cursor.Item;
+                    }
+                }
             }
 
             public override int GetHashCode()

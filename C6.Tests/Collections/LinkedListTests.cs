@@ -18,7 +18,7 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class LinkedListTests : ISequencedTests
+    public class LinkedListTests : IIndexedTests
     {
         #region Properties
 
@@ -27,6 +27,8 @@ namespace C6.Tests.Collections
         protected override Speed ContainsSpeed => Linear;
 
         protected override bool DuplicatesByCounting => false;
+
+        protected override Speed IndexingSpeed => Linear;
 
         protected override bool IsFixedSize => false;
 
@@ -48,9 +50,9 @@ namespace C6.Tests.Collections
             yield return linkedList.Last();
         }
 
-        protected override ISequenced<T> GetEmptySequence<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(equalityComparer, allowsNull);
+        protected override IIndexed<T> GetEmptyIndexed<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(equalityComparer, allowsNull);
 
-        protected override ISequenced<T> GetSequence<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(enumerable, equalityComparer, allowsNull);
+        protected override IIndexed<T> GetIndexed<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(enumerable, equalityComparer, allowsNull);
 
         #endregion
     }
