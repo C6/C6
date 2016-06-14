@@ -122,10 +122,7 @@ namespace C6.Collections
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public Speed IndexingSpeed
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Speed IndexingSpeed => Linear;
 
         public override bool IsFixedSize => false;
 
