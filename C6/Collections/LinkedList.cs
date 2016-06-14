@@ -28,7 +28,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : SequenceBase<T>, ISequenced<T>
+    public class LinkedList<T> : SequenceBase<T>, IIndexed<T>
     {
         #region Fields
 
@@ -114,19 +114,29 @@ namespace C6.Collections
 
         public override bool AllowsNull { get; }
 
+        public override Speed ContainsSpeed => Linear;
+
         public override Speed CountSpeed => Constant;
 
         public override bool DuplicatesByCounting => false;
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public override bool IsFixedSize => false;
+        public Speed IndexingSpeed
+        {
+            get { throw new NotImplementedException(); }
+        }
 
-        public override Speed ContainsSpeed => Linear;
+        public override bool IsFixedSize => false;
 
         public override bool IsReadOnly => false;
 
         public override EventTypes ListenableEvents => All;
+
+        public T this[int index]
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         #endregion
 
@@ -225,7 +235,22 @@ namespace C6.Collections
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
+        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int IndexOf(T item)
+        {
+            throw new NotImplementedException();
+        }
+
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int LastIndexOf(T item)
         {
             throw new NotImplementedException();
         }
@@ -244,7 +269,17 @@ namespace C6.Collections
             return false;
         }
 
+        public T RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
+
+        public void RemoveIndexRange(int startIndex, int count)
+        {
+            throw new NotImplementedException();
+        }
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
         {
