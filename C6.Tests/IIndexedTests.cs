@@ -73,7 +73,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var index = Random.Next(int.MinValue, 0);
+            var index = GetNegative(Random);
 
             // Act & Assert
             Assert.That(() => collection[index], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -113,7 +113,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ItemGet_RandomCollectionWithNull_Null()
+        public void ItemGet_AllowsNullExistingNull_Null()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -162,14 +162,14 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringIndexed(Random);
-            var array = collection.ToArray();
-            var index = Random.Next(0, array.Length);
+            var index = GetIndex(collection, Random);
+            var expected = collection.ElementAt(index);
 
             // Act
             var item = collection[index];
 
             // Assert
-            Assert.That(item, Is.SameAs(array[index]));
+            Assert.That(item, Is.SameAs(expected));
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
-            Assert.That(item, Is.EqualTo(expected));
+            Assert.That(item, Is.SameAs(expected));
         }
 
         #endregion

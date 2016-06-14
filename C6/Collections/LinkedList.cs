@@ -130,10 +130,7 @@ namespace C6.Collections
 
         public override EventTypes ListenableEvents => All;
 
-        public T this[int index]
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public T this[int index] => GetNode(index).Item;
 
         #endregion
 
@@ -479,6 +476,38 @@ namespace C6.Collections
 
         [Pure]
         private int GetHashCode(T x) => EqualityComparer.GetHashCode(x);
+
+        [Pure]
+        private Node GetNode(int index)
+        {
+            #region Code Contracts
+
+            // Argument must be within bounds (collection must be non-empty)
+            Requires(0 <= index, ArgumentMustBeWithinBounds);
+            Requires(index < Count, ArgumentMustBeWithinBounds);
+
+            // TODO: Ensure it is the right node
+
+            #endregion
+
+
+            // Closer to beginning
+            if (index < Count / 2) {
+                var node = _first;
+                for (var i = 0; i <= index; i++) {
+                    node = node.Next;
+                }
+                return node;
+            }
+            // Closer to end
+            else {
+                var node = _last;
+                for (var i = Count; i > index; i--) {
+                    node = node.Previous;
+                }
+                return node;
+            }
+        }
 
         private Node InsertAfter(T item, Node previous)
         {
