@@ -77,6 +77,12 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForRemoveIndexRange(int startIndex, int count)
+        {
+            OnCollectionCleared(false, count, startIndex);
+            OnCollectionChanged();
+        }
+
         protected void RaiseForUpdate(T item, T oldItem)
         {
             Requires(AllowsNull || item != null, ItemMustBeNonNull);

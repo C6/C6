@@ -994,12 +994,6 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
-        private void RaiseForRemoveIndexRange(int startIndex, int count)
-        {
-            OnCollectionCleared(false, count, startIndex);
-            OnCollectionChanged();
-        }
-
         private void RaiseForRemoveAllWhere(SCG.IEnumerable<T> items)
         {
             if (ActiveEvents.HasFlag(Removed)) {

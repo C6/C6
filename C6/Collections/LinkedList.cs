@@ -356,7 +356,28 @@ namespace C6.Collections
 
         public void RemoveIndexRange(int startIndex, int count)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+
+            if (count == 0) {
+                return;
+            }
+
+            UpdateVersion();
+
+            // TODO: Find the node is the most optimal way
+            Node start = GetNode(startIndex), end = GetNode(startIndex + count - 1);
+
+            Count -= count;
+            start.Previous.Next = end.Next;
+            end.Next.Previous = start.Previous;
+
+            RaiseForRemoveIndexRange(startIndex, count);
         }
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
@@ -576,16 +597,16 @@ namespace C6.Collections
 
             // Closer to beginning
             if (index < Count / 2) {
-                var node = _first;
-                for (var i = 0; i <= index; i++) {
+                var node = _first.Next;
+                for (var i = 0; i < index; i++) {
                     node = node.Next;
                 }
                 return node;
             }
             // Closer to end
             else {
-                var node = _last;
-                for (var i = Count; i > index; i--) {
+                var node = _last.Previous;
+                for (var i = Count - 1; i > index; i--) {
                     node = node.Previous;
                 }
                 return node;
