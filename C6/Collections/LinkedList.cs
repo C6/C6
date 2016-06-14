@@ -123,12 +123,7 @@ namespace C6.Collections
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public T First
-        {
-            get {
-                throw new NotImplementedException();
-            }
-        }
+        public T First => _first.Next.Item;
 
         public Speed IndexingSpeed => Linear;
 
@@ -136,12 +131,7 @@ namespace C6.Collections
 
         public override bool IsReadOnly => false;
 
-        public T Last
-        {
-            get {
-                throw new NotImplementedException();
-            }
-        }
+        public T Last => _last.Previous.Item;
 
         public override EventTypes ListenableEvents => All;
 
