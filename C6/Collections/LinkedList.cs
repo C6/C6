@@ -29,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : SequenceBase<T>, IIndexed<T>
+    public class LinkedList<T> : SequenceBase<T>, IList<T>
     {
         #region Fields
 
@@ -123,16 +123,34 @@ namespace C6.Collections
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
+        public T First
+        {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public Speed IndexingSpeed => Linear;
 
         public override bool IsFixedSize => false;
 
         public override bool IsReadOnly => false;
 
+        public T Last
+        {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public override EventTypes ListenableEvents => All;
 
-        public T this[int index] => GetNode(index).Item;
-
+        public T this[int index]
+        {
+            get { return GetNode(index).Item; }
+            set { throw new NotImplementedException(); }
+        }
+        
         #endregion
 
         #region Methods
@@ -277,6 +295,41 @@ namespace C6.Collections
             return ~Count;
         }
 
+        public void Insert(int index, T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertFirst(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertLast(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertRange(int index, SCG.IEnumerable<T> items)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsSorted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsSorted(SCG.IComparer<T> comparer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsSorted(Comparison<T> comparison)
+        {
+            throw new NotImplementedException();
+        }
+
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
             throw new NotImplementedException();
@@ -351,6 +404,11 @@ namespace C6.Collections
 
         public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
+        public T RemoveFirst()
+        {
+            throw new NotImplementedException();
+        }
+
         public void RemoveIndexRange(int startIndex, int count)
         {
             #region Code Contracts
@@ -374,6 +432,11 @@ namespace C6.Collections
             end.Next.Previous = start.Previous;
 
             RaiseForRemoveIndexRange(startIndex, count);
+        }
+
+        public T RemoveLast()
+        {
+            throw new NotImplementedException();
         }
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
@@ -421,6 +484,36 @@ namespace C6.Collections
             return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
+        public void Reverse()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Shuffle()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Shuffle(Random random)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Sort()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Sort(SCG.IComparer<T> comparer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Sort(Comparison<T> comparison)
+        {
+            throw new NotImplementedException();
+        }
+
         public override ICollectionValue<T> UniqueItems() => new ItemSet(this);
 
         public override bool Update(T item, out T oldItem)
@@ -440,6 +533,80 @@ namespace C6.Collections
             oldItem = default(T);
             return false;
         }
+
+        #endregion
+
+        #region Explicit Implementations
+
+        bool SC.ICollection.IsSynchronized => false;
+
+        object SC.ICollection.SyncRoot { get; } = new object();
+
+        object SC.IList.this[int index]
+        {
+            get { return this[index]; }
+            set {
+                try {
+                    this[index] = (T) value;
+                }
+                catch (InvalidCastException) {
+                    throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+                }
+            }
+        }
+
+        int SC.IList.Add(object value)
+        {
+            try {
+                return Add((T) value) ? Count - 1 : -1;
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
+
+        void SCG.ICollection<T>.Add(T item) => Add(item);
+
+        bool SC.IList.Contains(object value) => IsCompatibleObject(value) && Contains((T) value);
+
+        void SC.ICollection.CopyTo(Array array, int index)
+        {
+            try {
+                CopyTo((T[]) array, index);
+            }
+            catch (ArrayTypeMismatchException) {
+                // TODO: Catch the right exception type!
+                throw new ArgumentException("Target array type is not compatible with the type of items in the collection.");
+            }
+        }
+
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
+
+        int SC.IList.IndexOf(object value) => IsCompatibleObject(value) ? Math.Max(-1, IndexOf((T) value)) : -1;
+
+        // Explicit implementation is needed, since C6.IList<T>.IndexOf(T) breaks SCG.IList<T>.IndexOf(T)'s precondition: Result<T>() >= -1
+        int SCG.IList<T>.IndexOf(T item) => Math.Max(-1, IndexOf(item));
+
+        void SC.IList.Insert(int index, object value)
+        {
+            try {
+                Insert(index, (T) value);
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
+
+        void SC.IList.Remove(object value)
+        {
+            if (IsCompatibleObject(value)) {
+                Remove((T) value);
+            }
+        }
+
+        void SC.IList.RemoveAt(int index) => RemoveAt(index);
+
+        void SCG.IList<T>.RemoveAt(int index) => RemoveAt(index);
 
         #endregion
 
@@ -622,6 +789,8 @@ namespace C6.Collections
             ++Count;
             return new Node(item, next.Previous, next);
         }
+
+        private static bool IsCompatibleObject(object value) => value is T || value == null && default(T) == null;
 
         private T Remove(Node node)
         {
