@@ -236,7 +236,48 @@ namespace C6.Collections
 
         public int IndexOf(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // TODO: Add contract to IList<T>.IndexOf
+            // Result is a valid index
+            Ensures(Contains(item)
+                ? 0 <= Result<int>() && Result<int>() < Count
+                : ~Result<int>() == Count);
+
+            // Item at index is the first equal to item
+            Ensures(Result<int>() < 0 || !this.Take(Result<int>()).Contains(item, EqualityComparer) && EqualityComparer.Equals(item, this.ElementAt(Result<int>())));
+
+            #endregion
+
+            if (item == null) {
+                var node = _first.Next;
+                var index = 0;
+
+                while (node != _last) {
+                    if (node.Item == null) {
+                        return index;
+                    }
+
+                    ++index;
+                    node = node.Next;
+                }
+            }
+            else
+            {
+                var node = _first.Next;
+                var index = 0;
+
+                while (node != _last) {
+                    if (Equals(item, node.Item)) {
+                        return index;
+                    }
+
+                    ++index;
+                    node = node.Next;
+                }
+            }
+
+            return ~Count;
         }
 
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
