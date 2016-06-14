@@ -148,7 +148,20 @@ namespace C6.Collections
         public T this[int index]
         {
             get { return GetNode(index).Item; }
-            set { throw new NotImplementedException(); }
+            set {
+                #region Code Contracts
+
+                // The version is updated
+                Ensures(Version != OldValue(Version));
+
+                #endregion
+
+                UpdateVersion();
+                var node = GetNode(index);
+                var oldItem = node.Item;
+                node.Item = value;
+                RaiseForIndexSetter(oldItem, value, index);
+            }
         }
         
         #endregion

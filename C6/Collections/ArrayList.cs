@@ -964,17 +964,6 @@ namespace C6.Collections
 
         #region Event Helpers
 
-        private void RaiseForIndexSetter(T oldItem, T newItem, int index)
-        {
-            if (ActiveEvents != None) {
-                OnItemRemovedAt(oldItem, index);
-                OnItemsRemoved(oldItem, 1);
-                OnItemInserted(newItem, index);
-                OnItemsAdded(newItem, 1);
-                OnCollectionChanged();
-            }
-        }
-
         private void RaiseForInsert(int index, T item)
         {
             OnItemInserted(item, index);

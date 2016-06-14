@@ -64,6 +64,17 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForIndexSetter(T oldItem, T newItem, int index)
+        {
+            if (ActiveEvents != None) {
+                OnItemRemovedAt(oldItem, index);
+                OnItemsRemoved(oldItem, 1);
+                OnItemInserted(newItem, index);
+                OnItemsAdded(newItem, 1);
+                OnCollectionChanged();
+            }
+        }
+
         protected void RaiseForRemove(T removedItem)
         {
             OnItemsRemoved(removedItem, 1);
