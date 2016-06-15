@@ -151,7 +151,7 @@ namespace C6.Tests
             ((SC.ICollection) collection).CopyTo(array, 0);
 
             // Assert
-            Assert.That(array, Is.EqualTo(collection).Using(ReferenceEqualityComparer));
+            Assert.That(array, Is.EqualTo(collection).ByReference<string>());
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace C6.Tests
             var section = array.Skip(arrayIndex).Take(collection.Count);
 
             // Assert
-            Assert.That(section, Is.EqualTo(collection).Using(ReferenceEqualityComparer));
+            Assert.That(section, Is.EqualTo(collection).ByReference<string>());
         }
 
         #endregion
@@ -304,7 +304,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -316,7 +316,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -328,7 +328,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -340,7 +340,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.Precondition);
@@ -365,7 +365,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -379,7 +379,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act
             ((SC.IList) collection)[index] = item;
@@ -401,7 +401,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = null;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -409,7 +409,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = 0;
             var array = collection.ToArray();
             array[index] = item;
@@ -418,7 +418,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -426,7 +426,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray();
             array[index] = item;
@@ -435,7 +435,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -443,7 +443,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var array = collection.ToArray();
             array[index] = item;
@@ -452,7 +452,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -460,7 +460,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var oldItem = collection[index];
             var expectedEvents = new[] {
@@ -476,20 +476,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListItemSet_SetDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListItemSet_SetDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection)[index] = item;
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection)[index] = item, Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -546,7 +541,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
 
             // Act
@@ -589,7 +584,7 @@ namespace C6.Tests
             }
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -623,19 +618,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListAdd_AddItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListAdd_AddDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection).Add(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Add(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -720,7 +710,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyCollection<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var contains = ((SC.IList) collection).Contains(item);
@@ -765,7 +755,7 @@ namespace C6.Tests
         public void SCIListContains_SingleItemCollectionReferenceInequalItem_False()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray, ReferenceEqualityComparer);
             var nonDuplicateItem = string.Copy(item);
@@ -782,7 +772,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random, ReferenceEqualityComparer);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var contains = ((SC.IList) collection).Contains(item);
@@ -878,7 +868,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            object item = Random.GetString();
+            object item = GetString(Random);
 
             // Act
             var indexOf = collection.IndexOf(item);
@@ -893,7 +883,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetList(items);
-            object item = items.DifferentItem(() => Random.GetString());
+            object item = items.DifferentItem(() => GetString(Random));
             var count = collection.Count;
 
             // Act
@@ -924,7 +914,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetList(items);
 
@@ -940,7 +930,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetList(items);
             var index = collection.ToArray().IndexOf(item);
@@ -996,7 +986,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            object item = Random.GetString();
+            object item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.Precondition);
@@ -1008,7 +998,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            object item = Random.GetString();
+            object item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.UncaughtPrecondition);
@@ -1033,7 +1023,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            object item = collection.ToArray().Choose(Random);
+            object item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.Precondition);
@@ -1047,7 +1037,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            object item = collection.ToArray().Choose(Random);
+            object item = collection.Choose(Random);
 
             // Act
             collection.Insert(index, item);
@@ -1062,14 +1052,14 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            object item = Random.GetString();
+            object item = GetString(Random);
             var array = new[] { item };
 
             // Act
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1078,14 +1068,14 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            object item = Random.GetString();
+            object item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1100,7 +1090,7 @@ namespace C6.Tests
             collection.Insert(index, (object) null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1108,7 +1098,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = 0;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -1116,7 +1106,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1124,7 +1114,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -1132,7 +1122,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1140,7 +1130,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -1148,7 +1138,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1156,7 +1146,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var expectedEvents = new[] {
                 Inserted(item, index, collection),
@@ -1169,20 +1159,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListInsert_InsertDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListInsert_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
-            object item = Random.GetString();
+            object item = GetString(Random);
             var index = GetIndex(collection, Random, true);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Insert(index, item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1215,7 +1200,7 @@ namespace C6.Tests
             collection.Remove(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1240,7 +1225,7 @@ namespace C6.Tests
             ((SC.IList) collection).Remove(null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
@@ -1277,7 +1262,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             ((SC.IList) collection).Remove(item);
@@ -1299,7 +1284,7 @@ namespace C6.Tests
             ((SC.IList) collection).Remove(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
@@ -1315,24 +1300,19 @@ namespace C6.Tests
             ((SC.IList) collection).Remove(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
-        public void SCIListRemove_RemoveItemDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListRemove_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var items = GetUppercaseStrings(Random);
             var item = items.Choose(Random).ToLower();
             var collection = GetList(items, CaseInsensitiveStringComparer.Default);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection).Remove(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).Remove(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1422,19 +1402,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCIListRemoveAt_RemoveDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCIListRemoveAt_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(0, collection.Count);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SC.IList) collection).RemoveAt(index);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SC.IList) collection).RemoveAt(index), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1467,7 +1442,7 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1483,14 +1458,14 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
         public void SCIListRemoveAt_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -1514,7 +1489,7 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Skip(1)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Skip(1)).ByReference<string>());
         }
 
         [Test]
@@ -1531,7 +1506,7 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Take(index)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Take(index)).ByReference<string>());
         }
 
         [Test]
@@ -1587,7 +1562,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act
             var indexOf = ((SCG.IList<string>) collection).IndexOf(item);
@@ -1602,7 +1577,7 @@ namespace C6.Tests
             // Arrange
             var items = GetStrings(Random);
             var collection = GetList(items);
-            var item = items.DifferentItem(() => Random.GetString());
+            var item = items.DifferentItem(() => GetString(Random));
             var count = collection.Count;
 
             // Act
@@ -1633,7 +1608,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = item.Repeat(count);
             var collection = GetList(items);
 
@@ -1649,7 +1624,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, count, Random);
             var collection = GetList(items);
             var index = collection.ToArray().IndexOf(item);
@@ -1726,19 +1701,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SCGIListRemoveAt_RemoveDuringEnumeration_ThrowsInvalidOperationException()
+        public void SCGIListRemoveAt_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(0, collection.Count);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            ((SCG.IList<string>) collection).RemoveAt(index);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => ((SCG.IList<string>) collection).RemoveAt(index), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -1771,7 +1741,7 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1787,14 +1757,14 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
         public void SCGIListRemoveAt_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -1818,7 +1788,7 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Skip(1)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Skip(1)).ByReference<string>());
         }
 
         [Test]
@@ -1835,7 +1805,7 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Take(index)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Take(index)).ByReference<string>());
         }
 
         [Test]
@@ -1877,7 +1847,7 @@ namespace C6.Tests
         public void First_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -1934,7 +1904,7 @@ namespace C6.Tests
         public void Last_SingleItemCollection_Item()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -1983,7 +1953,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -1995,7 +1965,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2007,7 +1977,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2019,7 +1989,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2044,7 +2014,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2058,7 +2028,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act
             collection[index] = item;
@@ -2080,7 +2050,7 @@ namespace C6.Tests
             collection[index] = null;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2088,7 +2058,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = 0;
             var array = collection.ToArray();
             array[index] = item;
@@ -2097,7 +2067,7 @@ namespace C6.Tests
             collection[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2105,7 +2075,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray();
             array[index] = item;
@@ -2114,7 +2084,7 @@ namespace C6.Tests
             collection[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2122,7 +2092,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var array = collection.ToArray();
             array[index] = item;
@@ -2131,7 +2101,7 @@ namespace C6.Tests
             collection[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2139,7 +2109,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
             var oldItem = collection[index];
             var expectedEvents = new[] {
@@ -2155,20 +2125,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void ItemSet_SetDuringEnumeration_ThrowsInvalidOperationException()
+        public void ItemSet_SetDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection[index] = item;
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection[index] = item, Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2192,7 +2157,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(int.MinValue, 0);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2204,7 +2169,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = Random.Next(collection.Count + 1, int.MaxValue);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -2229,7 +2194,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2243,7 +2208,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act
             collection.Insert(index, item);
@@ -2258,14 +2223,14 @@ namespace C6.Tests
             // Arrange
             var collection = GetEmptyList<string>();
             var index = 0;
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = new[] { item };
 
             // Act
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2274,14 +2239,14 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = collection.Count;
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2296,7 +2261,7 @@ namespace C6.Tests
             collection.Insert(index, null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2304,7 +2269,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = 0;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -2312,7 +2277,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2320,7 +2285,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = collection.Count - 1;
             var array = collection.ToArray().InsertItem(index, item);
 
@@ -2328,7 +2293,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2336,7 +2301,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var expected = collection.InsertItem(index, item);
 
@@ -2344,7 +2309,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
@@ -2352,7 +2317,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
             var expectedEvents = new[] {
                 Inserted(item, index, collection),
@@ -2365,20 +2330,15 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Insert_InsertDuringEnumeration_ThrowsInvalidOperationException()
+        public void Insert_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var index = GetIndex(collection, Random, true);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Insert(index, item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Insert(index, item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2416,7 +2376,7 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.InsertFirst(item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2429,14 +2389,14 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var array = collection.ToArray().InsertItem(0, item);
 
             // Act
             collection.InsertFirst(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2444,14 +2404,14 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = new[] { item };
 
             // Act
             collection.InsertFirst(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2465,7 +2425,7 @@ namespace C6.Tests
             collection.InsertFirst(null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2473,14 +2433,14 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = collection.ToArray().InsertItem(0, item);
 
             // Act
             collection.InsertFirst(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2488,7 +2448,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var expectedEvents = new[] {
                 Inserted(item, 0, collection),
                 Added(item, 1, collection),
@@ -2500,19 +2460,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void InsertFirst_InsertFirstDuringEnumeration_ThrowsInvalidOperationException()
+        public void InsertFirst_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.InsertFirst(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.InsertFirst(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2550,7 +2505,7 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.InsertLast(item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2563,14 +2518,14 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
             collection.InsertLast(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2578,14 +2533,14 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyList<string>();
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = new[] { item };
 
             // Act
             collection.InsertLast(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2599,7 +2554,7 @@ namespace C6.Tests
             collection.InsertLast(null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2607,14 +2562,14 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
             collection.InsertLast(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2622,7 +2577,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var expectedEvents = new[] {
                 Inserted(item, collection.Count, collection),
                 Added(item, 1, collection),
@@ -2634,19 +2589,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void InsertLast_InsertLastDuringEnumeration_ThrowsInvalidOperationException()
+        public void InsertLast_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.InsertLast(item);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.InsertLast(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -2737,7 +2687,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, 1, Random);
 
             // Act & Assert
@@ -2760,7 +2710,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2771,7 +2721,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, 1, Random);
             var array = collection.ToArray().InsertItems(index, items);
 
@@ -2779,7 +2729,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2794,7 +2744,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -2810,7 +2760,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2826,7 +2776,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2842,7 +2792,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2858,7 +2808,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2874,7 +2824,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2903,7 +2853,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2946,24 +2896,19 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.InsertRange(index, badEnumerable), Throws.TypeOf<BadEnumerableException>());
-            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(array).ByReference<string>());
         }
 
         [Test]
-        public void InsertRange_InsertRangeDuringEnumeration_ThrowsInvalidOperationException()
+        public void InsertRange_InsertDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var items = GetStrings(Random);
             var index = GetIndex(collection, Random, true);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.InsertRange(index, items);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.InsertRange(index, items), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3001,7 +2946,7 @@ namespace C6.Tests
         public void IsSorted_SingleItemCollection_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -3044,7 +2989,7 @@ namespace C6.Tests
         public void IsSorted_TwoEqualItems_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
 
@@ -3060,7 +3005,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
 
@@ -3177,7 +3122,7 @@ namespace C6.Tests
         public void IsSortedComparison_SingleItemCollection_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -3223,7 +3168,7 @@ namespace C6.Tests
         public void IsSortedComparison_TwoEqualItems_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -3240,7 +3185,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -3347,7 +3292,7 @@ namespace C6.Tests
         public void IsSortedIComparer_SingleItemCollection_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -3393,7 +3338,7 @@ namespace C6.Tests
         public void IsSortedIComparer_TwoEqualItems_True()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -3410,7 +3355,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -3511,18 +3456,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveFirst_RemoveFirstDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveFirst_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveFirst();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveFirst(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3559,7 +3499,7 @@ namespace C6.Tests
         public void RemoveFirst_SingleItemCollection_Empty()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -3584,7 +3524,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(removeFirst, Is.SameAs(firstItem));
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3616,18 +3556,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void RemoveLast_RemoveLastDuringEnumeration_ThrowsInvalidOperationException()
+        public void RemoveLast_RemoveDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.RemoveLast();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.RemoveLast(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3664,7 +3599,7 @@ namespace C6.Tests
         public void RemoveLast_SingleItemCollection_Empty()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var itemArray = new[] { item };
             var collection = GetList(itemArray);
 
@@ -3689,7 +3624,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(removeLast, Is.SameAs(lastItem));
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3709,20 +3644,7 @@ namespace C6.Tests
         #endregion
 
         #region Reverse()
-
-        [Test]
-        public void Reverse_EmptyCollection_Nothing()
-        {
-            // Arrange
-            var collection = GetEmptyList<string>();
-
-            // Act
-            collection.Reverse();
-
-            // Assert
-            Assert.That(collection, Is.Empty);
-        }
-
+        
         [Test]
         public void Reverse_EmptyCollection_RaisesNoEvents()
         {
@@ -3731,6 +3653,7 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.Reverse(), RaisesNoEventsFor(collection));
+            Assert.That(collection, Is.Empty);
         }
 
         [Test]
@@ -3748,18 +3671,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Reverse_ReverseDuringEnumeration_ThrowsInvalidOperationException()
+        public void Reverse_ReverseDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Reverse();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Reverse(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -3778,7 +3696,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Reverse_RandomCollectionWithNull_Reversed()
+        public void Reverse_AllowsNull_Reversed()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -3789,14 +3707,14 @@ namespace C6.Tests
             collection.Reverse();
 
             // Assert
-            Assert.That(collection, Is.EqualTo(reversedCollection));
+            Assert.That(collection, Is.EqualTo(reversedCollection).ByReference<string>());
         }
 
         [Test]
         public void Reverse_SingleItemCollection_RaisesNoEvents()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -3808,7 +3726,7 @@ namespace C6.Tests
         public void Reverse_SingleItemCollectionReverseDuringEnumeration_ThrowsNothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -3832,7 +3750,7 @@ namespace C6.Tests
             collection.Reverse();
 
             // Assert
-            Assert.That(collection, Is.EqualTo(reversedCollection));
+            Assert.That(collection, Is.EqualTo(reversedCollection).ByReference<string>());
         }
 
         [Test]
@@ -3847,7 +3765,7 @@ namespace C6.Tests
             collection.Reverse();
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3885,7 +3803,7 @@ namespace C6.Tests
             Assert.That(() => collection.Shuffle(), RaisesNoEventsFor(collection));
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -3909,7 +3827,7 @@ namespace C6.Tests
             collection.Shuffle();
 
             // Assert
-            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3932,18 +3850,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Shuffle_ShuffleDuringEnumeration_ThrowsInvalidOperationException()
+        public void Shuffle_ShuffleDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Shuffle();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -4022,7 +3935,7 @@ namespace C6.Tests
             Assert.That(() => collection.Shuffle(Random), RaisesNoEventsFor(collection));
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -4046,7 +3959,7 @@ namespace C6.Tests
             collection.Shuffle(Random);
 
             // Assert
-            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(array).ByReference<string>());
         }
 
         [Test]
@@ -4083,24 +3996,19 @@ namespace C6.Tests
             collection2.Shuffle(random2);
 
             // Assert
-            Assert.That(collection1, Is.EqualTo(collection2).Using(ReferenceEqualityComparer));
+            Assert.That(collection1, Is.EqualTo(collection2).ByReference<string>());
         }
 
         [Test]
-        public void ShuffleRandom_ShuffleDuringEnumeration_ThrowsInvalidOperationException()
+        public void ShuffleRandom_ShuffleDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Shuffle(Random);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Shuffle(Random), Breaks.EnumeratorFor(collection));
         }
-
+        
         [Test]
         public void ShuffleRandom_ShuffleEmptyCollectionDuringEnumeration_ThrowsNothing()
         {
@@ -4160,7 +4068,7 @@ namespace C6.Tests
         public void Sort_SingleItemCollection_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
 
@@ -4203,7 +4111,7 @@ namespace C6.Tests
         public void Sort_TwoEqualItems_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
 
@@ -4219,7 +4127,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
 
@@ -4376,18 +4284,13 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Sort_SortDuringEnumeration_ThrowsInvalidOperationException()
+        public void Sort_SortDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Sort();
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Sort(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -4429,7 +4332,7 @@ namespace C6.Tests
         public void SortComparison_SingleItemCollection_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -4475,7 +4378,7 @@ namespace C6.Tests
         public void SortComparison_TwoEqualItems_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -4492,7 +4395,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             Comparison<string> comparison = string.Compare;
@@ -4643,19 +4546,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SortComparison_SortDuringEnumeration_ThrowsInvalidOperationException()
+        public void SortComparison_SortDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             Comparison<string> comparison = string.Compare;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Sort(comparison);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Sort(comparison), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
@@ -4697,7 +4595,7 @@ namespace C6.Tests
         public void SortIComparer_SingleItemCollection_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -4743,7 +4641,7 @@ namespace C6.Tests
         public void SortIComparer_TwoEqualItems_Nothing()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = new[] { item, string.Copy(item) };
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -4760,7 +4658,7 @@ namespace C6.Tests
         {
             // Arrange
             var count = GetCount(Random);
-            var item = Random.GetString();
+            var item = GetString(Random);
             var items = TestHelper.Repeat(() => string.Copy(item), count);
             var collection = GetList(items);
             var comparer = SCG.Comparer<string>.Default;
@@ -4912,19 +4810,14 @@ namespace C6.Tests
         }
 
         [Test]
-        public void SortIComparer_SortDuringEnumeration_ThrowsInvalidOperationException()
+        public void SortIComparer_SortDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
             var collection = GetStringList(Random);
             var comparer = SCG.Comparer<string>.Default;
 
-            // Act
-            var enumerator = collection.GetEnumerator();
-            enumerator.MoveNext();
-            collection.Sort(comparer);
-
-            // Assert
-            Assert.That(() => enumerator.MoveNext(), Throws.InvalidOperationException.Because(CollectionWasModified));
+            // Act & Assert
+            Assert.That(() => collection.Sort(comparer), Breaks.EnumeratorFor(collection));
         }
 
         [Test]

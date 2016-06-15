@@ -6,6 +6,7 @@ using System.Linq;
 
 using static System.Diagnostics.Contracts.Contract;
 
+using static C6.Contracts.ContractHelperExtensions;
 using static C6.Contracts.ContractMessage;
 
 using SCG = System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace C6.Tests.Helpers
             Requires(allowsNull || ForAll(items, item => item != null), ItemsMustBeNonNull);
 
             // Argument must be valid enum constant
-            Requires(Enum.IsDefined(typeof(EnumerationDirection), direction), EnumMustBeDefined);
+            Requires(direction.IsDefined(), EnumMustBeDefined);
 
             #endregion
 

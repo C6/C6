@@ -493,20 +493,15 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C9D4A86CA601EC4C8E05FA82AC8FFFF9/Shortcut/@EntryValue">break enumerator</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C9D4A86CA601EC4C8E05FA82AC8FFFF9/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C9D4A86CA601EC4C8E05FA82AC8FFFF9/Text/@EntryValue">[NUnit.Framework.Test]&#xD;
-public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_ThrowsInvalidOperationException()&#xD;
+public void $METHOD$$PARAMETER_TYPES$_$OPERATION$DuringEnumeration_BreaksEnumerator()&#xD;
 {&#xD;
     // Arrange&#xD;
     var collection = GetString$COLLECTION$(Random);&#xD;
     var items = GetStrings(Random);&#xD;
     var item = GetString(Random);&#xD;
 &#xD;
-    // Act&#xD;
-    var enumerator = collection.GetEnumerator();&#xD;
-    enumerator.MoveNext();&#xD;
-    collection.$METHOD$($ARGUMENTS$);&#xD;
-&#xD;
-    // Assert&#xD;
-    NUnit.Framework.Assert.That(() =&gt; enumerator.MoveNext(), NUnit.Framework.Throws.InvalidOperationException.Because(CollectionWasModified));&#xD;
+    // Act &amp; Assert&#xD;
+    NUnit.Framework.Assert.That(() =&gt; collection.$METHOD$($ARGUMENTS$), Breaks.EnumeratorFor(collection));&#xD;
 }</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CA150ED6301B0241BCD7B3BDEB2B42BC/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
@@ -537,6 +532,15 @@ public void $METHOD$$PARAMETER_TYPES$_$METHOD$DuringEnumeration_ThrowsNothing()&
     NUnit.Framework.Assert.That(() =&gt; enumerator.MoveNext(), NUnit.Framework.Throws.Nothing);&#xD;
 }&#xD;
 $END$</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/Description/@EntryValue">Throws NotImplementedException</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/Scope/=139FF4CE89E7094686FDA7BF5FFBBE92/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/Scope/=139FF4CE89E7094686FDA7BF5FFBBE92/Type/@EntryValue">Everywhere</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/Shortcut/@EntryValue">thrni</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CF74FD59F164AA438815BEF84362DDEE/Text/@EntryValue">throw new System.NotImplementedException();</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=D32908C40F54684A9AB47D0CCE322879/Categories/=Code_0020Contracts/@EntryIndexedValue">Code Contracts</s:String>

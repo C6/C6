@@ -23,12 +23,43 @@ namespace C6.Tests
 
         private readonly EventHandler _changed = (sender, args) => { };
         private readonly EventHandler<ClearedEventArgs> _cleared = (sender, args) => { };
-        private readonly EventHandler<ItemCountEventArgs<int>> _added = (sender, args) => { }, _removed = (sender, args) => { };
-        private readonly EventHandler<ItemAtEventArgs<int>> _inserted = (sender, args) => { }, _removedAt = (sender, args) => { };
+        private readonly EventHandler<ItemCountEventArgs<string>> _added = (sender, args) => { }, _removed = (sender, args) => { };
+        private readonly EventHandler<ItemAtEventArgs<string>> _inserted = (sender, args) => { }, _removedAt = (sender, args) => { };
 
         #endregion
 
         #region Factories
+
+        /// <summary>
+        ///     Creates an empty <see cref="IListenable{T}"/>.
+        /// </summary>
+        /// <param name="allowsNull">
+        ///     A value indicating whether the collection allows <c>null</c> items.
+        /// </param>
+        /// <typeparam name="T">
+        ///     The type of the items in the <see cref="IListenable{T}"/>.
+        /// </typeparam>
+        /// <returns>
+        ///     An empty <see cref="IListenable{T}"/>.
+        /// </returns>
+        protected abstract IListenable<T> GetEmptyListenable<T>(bool allowsNull = false);
+
+        /// <summary>
+        ///     Creates an <see cref="IListenable{T}"/> containing the items in the enumerable.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the <see cref="IListenable{T}"/>.
+        /// </typeparam>
+        /// <param name="enumerable">
+        ///     The collection whose items are copied to the new <see cref="IListenable{T}"/>.
+        /// </param>
+        /// <param name="allowsNull">
+        ///     A value indicating whether the collection allows <c>null</c> items.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IListenable{T}"/> containing the items in the enumerable.
+        /// </returns>
+        protected abstract IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 
         /// <summary>
         ///     Gets a bit flag indicating the expected value for the collection's
@@ -41,40 +72,17 @@ namespace C6.Tests
         /// <seealso cref="IListenable{T}.ListenableEvents"/>
         protected abstract EventTypes ListenableEvents { get; }
 
-        /// <summary>
-        ///     Creates an empty <see cref="IQueue{T}"/>.
-        /// </summary>
-        /// <param name="allowsNull">
-        ///     A value indicating whether the collection allows <c>null</c> items.
-        /// </param>
-        /// <typeparam name="T">
-        ///     The type of the items in the <see cref="IQueue{T}"/>.
-        /// </typeparam>
-        /// <returns>
-        ///     An empty <see cref="IQueue{T}"/>.
-        /// </returns>
-        protected abstract IListenable<T> GetEmptyListenable<T>(bool allowsNull = false);
+        #region Inherited
 
-        /// <summary>
-        ///     Creates a <see cref="IQueue{T}"/> containing the items in the enumerable.
-        /// </summary>
-        /// <typeparam name="T">
-        ///     The type of the items in the <see cref="IQueue{T}"/>.
-        /// </typeparam>
-        /// <param name="enumerable">
-        ///     The collection whose items are copied to the new <see cref="IQueue{T}"/>.
-        /// </param>
-        /// <param name="allowsNull">
-        ///     A value indicating whether the collection allows <c>null</c> items.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="IQueue{T}"/> containing the items in the enumerable.
-        /// </returns>
-        protected abstract IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
+        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => GetEmptyListenable<T>(allowsNull);
+
+        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => GetListenable(enumerable, allowsNull);
+
+        #endregion
 
         #region Helpers
 
-        private void ListenToEvents(IListenable<int> collection, EventTypes events)
+        private void ListenToEvents(IListenable<string> collection, EventTypes events)
         {
             if (events.HasFlag(Changed)) {
                 collection.CollectionChanged += _changed;
@@ -96,7 +104,7 @@ namespace C6.Tests
             }
         }
 
-        private void StopListeningToEvents(IListenable<int> collection, EventTypes events)
+        private void StopListeningToEvents(IListenable<string> collection, EventTypes events)
         {
             if (events.HasFlag(Changed)) {
                 collection.CollectionChanged -= _changed;
@@ -120,14 +128,6 @@ namespace C6.Tests
 
         #endregion
 
-        #region Inherited
-
-        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => GetEmptyListenable<T>(allowsNull);
-
-        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => GetListenable(enumerable, allowsNull);
-
-        #endregion
-
         #endregion
 
         #region Test Methods
@@ -140,7 +140,7 @@ namespace C6.Tests
         public void ActiveEvents_NoActiveEvents_None()
         {
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             var activeEvents = collection.ActiveEvents;
@@ -153,27 +153,25 @@ namespace C6.Tests
         public void ActiveEvents_ListenToAllListableEvents_EqualsListenableEvents()
         {
             // Arrange
-            var collection = GetEmptyListenable<int>();
-            var listenableEvents = collection.ListenableEvents;
-            ListenToEvents(collection, listenableEvents);
+            var collection = GetEmptyListenable<string>();
+            ListenToEvents(collection, ListenableEvents);
 
             // Act
             var activeEvents = collection.ActiveEvents;
 
             // Assert
-            Assert.That(activeEvents, Is.EqualTo(listenableEvents));
+            Assert.That(activeEvents, Is.EqualTo(ListenableEvents));
         }
 
         [Test]
         public void ActiveEvents_ListenToAllListenableEventsThenNone_None()
         {
             // Arrange
-            var collection = GetEmptyListenable<int>();
-            var listenableEvents = collection.ListenableEvents;
+            var collection = GetEmptyListenable<string>();
 
             // Act
-            ListenToEvents(collection, listenableEvents);
-            StopListeningToEvents(collection, listenableEvents);
+            ListenToEvents(collection, ListenableEvents);
+            StopListeningToEvents(collection, ListenableEvents);
             var activeEvents = collection.ActiveEvents;
 
             // Assert
@@ -188,7 +186,7 @@ namespace C6.Tests
         public void ListenableEvents_EmptyCollection_ListenableEvents()
         {
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             var listenableEvents = collection.ListenableEvents;
@@ -211,7 +209,7 @@ namespace C6.Tests
             Run.If(!ListenableEvents.HasFlag(Changed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.CollectionChanged += _changed, Violates.PreconditionSaying(EventMustBeListenable));
@@ -223,7 +221,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.CollectionChanged += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -235,7 +233,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.CollectionChanged += _changed;
@@ -251,7 +249,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.CollectionChanged += _changed;
@@ -268,7 +266,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.CollectionChanged += _changed;
@@ -286,7 +284,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.CollectionChanged -= _changed, Violates.PreconditionSaying(EventMustBeActive));
@@ -298,7 +296,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Changed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
             collection.CollectionChanged += _changed;
 
             // Act & Assert
@@ -315,7 +313,7 @@ namespace C6.Tests
             Run.If(!ListenableEvents.HasFlag(Cleared));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.CollectionCleared += _cleared, Violates.PreconditionSaying(EventMustBeListenable));
@@ -327,7 +325,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.CollectionCleared += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -339,7 +337,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.CollectionCleared += _cleared;
@@ -355,7 +353,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.CollectionCleared += _cleared;
@@ -372,7 +370,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.CollectionCleared += _cleared;
@@ -390,7 +388,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.CollectionCleared -= _cleared, Violates.PreconditionSaying(EventMustBeActive));
@@ -402,7 +400,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Cleared));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
             collection.CollectionCleared += _cleared;
 
             // Act & Assert
@@ -419,7 +417,7 @@ namespace C6.Tests
             Run.If(!ListenableEvents.HasFlag(Inserted));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemInserted += _inserted, Violates.PreconditionSaying(EventMustBeListenable));
@@ -431,7 +429,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemInserted += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -443,7 +441,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemInserted += _inserted;
@@ -459,7 +457,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemInserted += _inserted;
@@ -476,7 +474,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemInserted += _inserted;
@@ -494,7 +492,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemInserted -= _inserted, Violates.PreconditionSaying(EventMustBeActive));
@@ -506,7 +504,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Inserted));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
             collection.ItemInserted += _inserted;
 
             // Act & Assert
@@ -523,7 +521,7 @@ namespace C6.Tests
             Run.If(!ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemRemovedAt += _removedAt, Violates.PreconditionSaying(EventMustBeListenable));
@@ -535,7 +533,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemRemovedAt += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -547,7 +545,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemRemovedAt += _removedAt;
@@ -563,7 +561,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemRemovedAt += _removedAt;
@@ -580,7 +578,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemRemovedAt += _removedAt;
@@ -598,7 +596,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemRemovedAt -= _removedAt, Violates.PreconditionSaying(EventMustBeActive));
@@ -610,7 +608,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(RemovedAt));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
             collection.ItemRemovedAt += _removedAt;
 
             // Act & Assert
@@ -627,7 +625,7 @@ namespace C6.Tests
             Run.If(!ListenableEvents.HasFlag(Added));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemsAdded += _added, Violates.PreconditionSaying(EventMustBeListenable));
@@ -639,7 +637,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemsAdded += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -651,7 +649,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemsAdded += _added;
@@ -667,7 +665,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemsAdded += _added;
@@ -684,7 +682,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemsAdded += _added;
@@ -702,7 +700,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemsAdded -= _added, Violates.PreconditionSaying(EventMustBeActive));
@@ -714,7 +712,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Added));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
             collection.ItemsAdded += _added;
 
             // Act & Assert
@@ -731,7 +729,7 @@ namespace C6.Tests
             Run.If(!ListenableEvents.HasFlag(Removed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemsRemoved += _removed, Violates.PreconditionSaying(EventMustBeListenable));
@@ -743,7 +741,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemsRemoved += null, Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -755,7 +753,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemsRemoved += _removed;
@@ -771,7 +769,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemsRemoved += _removed;
@@ -788,7 +786,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act
             collection.ItemsRemoved += _removed;
@@ -806,7 +804,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
 
             // Act & Assert
             Assert.That(() => collection.ItemsRemoved -= _removed, Violates.PreconditionSaying(EventMustBeActive));
@@ -818,7 +816,7 @@ namespace C6.Tests
             Run.If(ListenableEvents.HasFlag(Removed));
 
             // Arrange
-            var collection = GetEmptyListenable<int>();
+            var collection = GetEmptyListenable<string>();
             collection.ItemsRemoved += _removed;
 
             // Act & Assert

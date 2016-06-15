@@ -13,18 +13,9 @@ namespace C6.Collections
     [Serializable]
     public abstract class CollectionValueBase<T> : ICollectionValue<T>
     {
-        #region Constructor
-
-        protected CollectionValueBase(bool allowsNull = false)
-        {
-            AllowsNull = allowsNull;
-        }
-
-        #endregion
-
         #region Properties
 
-        public virtual bool AllowsNull { get; }
+        public abstract bool AllowsNull { get; }
 
         public virtual int Count { get; protected set; }
 

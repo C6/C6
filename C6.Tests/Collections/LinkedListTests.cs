@@ -12,6 +12,7 @@ using NUnit.Framework;
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.EventTypes;
+using static C6.Speed;
 using static C6.Tests.Helpers.TestHelper;
 
 using Assert = NUnit.Framework.Assert;
@@ -21,7 +22,7 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class ArrayListTests : TestBase
+    public class LinkedListTests : TestBase
     {
         #region Constructors
 
@@ -29,7 +30,7 @@ namespace C6.Tests.Collections
         public void Constructor_Default_Empty()
         {
             // Act
-            var collection = new ArrayList<int>();
+            var collection = new LinkedList<int>();
 
             // Assert
             Assert.That(collection, Is.Empty);
@@ -42,7 +43,7 @@ namespace C6.Tests.Collections
             var defaultEqualityComparer = SCG.EqualityComparer<string>.Default;
 
             // Act
-            var collection = new ArrayList<string>();
+            var collection = new LinkedList<string>();
             var equalityComparer = collection.EqualityComparer;
 
             // Assert
@@ -53,7 +54,7 @@ namespace C6.Tests.Collections
         public void Constructor_DefaultForValueType_DisallowsNull()
         {
             // Act
-            var collection = new ArrayList<int>();
+            var collection = new LinkedList<int>();
             var allowsNull = collection.AllowsNull;
 
             // Assert
@@ -64,7 +65,7 @@ namespace C6.Tests.Collections
         public void Constructor_DefaultForNonValue_DisallowsNull()
         {
             // Act
-            var collection = new ArrayList<string>();
+            var collection = new LinkedList<string>();
             var allowsNull = collection.AllowsNull;
 
             // Assert
@@ -79,14 +80,14 @@ namespace C6.Tests.Collections
 
             // Act & Assert
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            Assert.That(() => new ArrayList<int>(allowsNull: allowsNull), Violates.UncaughtPrecondition);
+            Assert.That(() => new LinkedList<int>(allowsNull: allowsNull), Violates.UncaughtPrecondition);
         }
 
         [Test]
         public void Constructor_ValueTypeCollectionDisallowsNull_DisallowsNull()
         {
             // Act
-            var collection = new ArrayList<int>(allowsNull: false);
+            var collection = new LinkedList<int>(allowsNull: false);
 
             // Assert
             Assert.That(collection.AllowsNull, Is.False);
@@ -96,7 +97,7 @@ namespace C6.Tests.Collections
         public void Constructor_NonValueTypeCollection_AllowNull([Values(true, false)] bool allowNull)
         {
             // Act
-            var collection = new ArrayList<string>(allowsNull: allowNull);
+            var collection = new LinkedList<string>(allowsNull: allowNull);
             var allowsNull = collection.AllowsNull;
 
             // Assert
@@ -111,7 +112,7 @@ namespace C6.Tests.Collections
 
             // Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.That(() => new ArrayList<string>(enumerable), Violates.UncaughtPrecondition);
+            Assert.That(() => new LinkedList<string>(enumerable), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -121,7 +122,7 @@ namespace C6.Tests.Collections
             var enumerable = Enumerable.Empty<int>();
 
             // Act
-            var list = new ArrayList<int>(enumerable);
+            var list = new LinkedList<int>(enumerable);
 
             // Assert
             Assert.That(list, Is.Empty);
@@ -134,10 +135,10 @@ namespace C6.Tests.Collections
             var array = GetStrings(Random);
 
             // Act
-            var list = new ArrayList<string>(array);
+            var list = new LinkedList<string>(array);
 
             // Assert
-            Assert.That(list, Is.EqualTo(array));
+            Assert.That(list, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -147,7 +148,7 @@ namespace C6.Tests.Collections
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array), Violates.UncaughtPrecondition);
+            Assert.That(() => new LinkedList<string>(array), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -157,7 +158,7 @@ namespace C6.Tests.Collections
             var array = GetIntegers(Random);
 
             // Act
-            var collection = new ArrayList<int>(array);
+            var collection = new LinkedList<int>(array);
             for (var i = 0; i < array.Length; i++) {
                 array[i] *= -1;
             }
@@ -173,7 +174,7 @@ namespace C6.Tests.Collections
             var array = GetStrings(Random).WithNull(Random);
 
             // Act & Assert
-            Assert.That(() => new ArrayList<string>(array, allowsNull: false), Violates.UncaughtPrecondition);
+            Assert.That(() => new LinkedList<string>(array, allowsNull: false), Violates.UncaughtPrecondition);
         }
 
         [Test]
@@ -183,7 +184,7 @@ namespace C6.Tests.Collections
             var customEqualityComparer = ComparerFactory.CreateEqualityComparer<int>((i, j) => i == j, i => i);
 
             // Act
-            var list = new ArrayList<int>(equalityComparer: customEqualityComparer);
+            var list = new LinkedList<int>(equalityComparer: customEqualityComparer);
             var equalityComparer = list.EqualityComparer;
 
             // Assert
@@ -198,7 +199,7 @@ namespace C6.Tests.Collections
             var customEqualityComparer = ComparerFactory.CreateEqualityComparer<int>((i, j) => i == j, i => i);
 
             // Act
-            var list = new ArrayList<int>(enumerable, customEqualityComparer);
+            var list = new LinkedList<int>(enumerable, customEqualityComparer);
             var equalityComparer = list.EqualityComparer;
 
             // Assert
@@ -212,7 +213,7 @@ namespace C6.Tests.Collections
             var enumerable = new SCG.List<string>();
 
             // Act
-            var collection = new ArrayList<string>(enumerable);
+            var collection = new LinkedList<string>(enumerable);
 
             // Assert
             Assert.That(collection, Is.Empty);
@@ -226,20 +227,20 @@ namespace C6.Tests.Collections
             var enumerable = new SCG.List<string>(items);
 
             // Act
-            var collection = new ArrayList<string>(enumerable);
+            var collection = new LinkedList<string>(enumerable);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
         public void Constructor_EmptyICollectionValue_Empty()
         {
             // Arrange
-            var collectionValue = new ArrayList<string>();
+            var collectionValue = new LinkedList<string>();
 
             // Act
-            var collection = new ArrayList<string>(collectionValue);
+            var collection = new LinkedList<string>(collectionValue);
 
             // Assert
             Assert.That(collection, Is.Empty);
@@ -250,13 +251,13 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var collectionValue = new ArrayList<string>(items);
+            var collectionValue = new LinkedList<string>(items);
 
             // Act
-            var collection = new ArrayList<string>(collectionValue);
+            var collection = new LinkedList<string>(collectionValue);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         #endregion
@@ -270,7 +271,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var list = new ArrayList<string>(items);
+            var list = new LinkedList<string>(items);
             var item = GetString(Random);
 
             // Act
@@ -289,7 +290,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var enumerable = GetStrings(Random);
-            var list = new ArrayList<string>(enumerable);
+            var list = new LinkedList<string>(enumerable);
             var lastItem = enumerable.Last();
 
             // Act
@@ -308,7 +309,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = new ArrayList<string>(items);
+            var collection = new LinkedList<string>(items);
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
@@ -330,7 +331,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = new ArrayList<string>(items);
+            var collection = new LinkedList<string>(items);
             var count = Random.Next(1, collection.Count);
             var startIndex = Random.Next(0, collection.Count - count);
             var expected = new ExpectedDirectedCollectionValue<string>(
@@ -357,7 +358,7 @@ namespace C6.Tests.Collections
         {
             // Arrange
             var items = GetStrings(Random);
-            var collection = new ArrayList<string>(items);
+            var collection = new LinkedList<string>(items);
             collection.RemoveIndexRange(0, collection.Count / 2);
             var expected = collection.ToArray().Reverse();
 
@@ -365,7 +366,7 @@ namespace C6.Tests.Collections
             collection.Reverse();
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         #endregion
@@ -375,44 +376,80 @@ namespace C6.Tests.Collections
 
 
     [TestFixture]
-    public class ArrayListListTests : IListTests
+    public class LinkedListListTests : IListTests
     {
+        #region Properties
+
         protected override bool AllowsDuplicates => true;
-        protected override Speed ContainsSpeed => Speed.Linear;
+
+        protected override Speed ContainsSpeed => Linear;
+
         protected override bool DuplicatesByCounting => false;
-        protected override Speed IndexingSpeed => Speed.Constant;
+
+        protected override Speed IndexingSpeed => Linear;
+
         protected override bool IsFixedSize => false;
+
+        protected override bool IsReadOnly => false;
+
+        protected override EventTypes ListenableEvents => All;
+
+        #endregion
+
+        #region Methods
+
+        protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
+        {
+            Requires(collection is LinkedList<T>);
+
+            var linkedList = (LinkedList<T>) collection;
+
+            // TODO: Use Last
+            yield return linkedList.Last();
+        }
+
+        protected override IList<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(equalityComparer, allowsNull);
+
+        protected override IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(enumerable, equalityComparer, allowsNull);
+
+        #endregion
+    }
+
+
+    [TestFixture]
+    public class LinkedListStackTests : IStackTests
+    {
         protected override bool IsReadOnly => false;
         protected override EventTypes ListenableEvents => All;
 
-        protected override IList<T> GetEmptyList<T>(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(equalityComparer: equalityComparer, allowsNull: allowsNull);
-        protected override IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new ArrayList<T>(enumerable, equalityComparer, allowsNull);
+        protected override IStack<T> GetEmptyStack<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull: allowsNull);
+        protected override IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull: allowsNull);
         protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
         {
-            Requires(collection is ArrayList<T>);
+            Requires(collection is LinkedList<T>);
 
-            var arrayList = (ArrayList<T>) collection;
+            var linkedList = (LinkedList<T>) collection;
 
-            yield return arrayList.Last;
+            yield return linkedList.Last;
         }
     }
 
 
     [TestFixture]
-    public class ArrayListStackTests : IStackTests
+    public class LinkedListQueueTests : IQueueTests
     {
         protected override bool IsReadOnly => false;
         protected override EventTypes ListenableEvents => All;
 
-        protected override IStack<T> GetEmptyStack<T>(bool allowsNull = false) => new ArrayList<T>(allowsNull: allowsNull);
-        protected override IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new ArrayList<T>(enumerable, allowsNull: allowsNull);
+        protected override IQueue<T> GetEmptyQueue<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull: allowsNull);
+        protected override IQueue<T> GetQueue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull: allowsNull);
         protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
         {
-            Requires(collection is ArrayList<T>);
+            Requires(collection is LinkedList<T>);
 
-            var arrayList = (ArrayList<T>) collection;
+            var linkedList = (LinkedList<T>) collection;
 
-            yield return arrayList.Last;
+            yield return linkedList.Last;
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Text;
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractHelperExtensions;
+using static C6.Speed;
 
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
@@ -97,7 +98,7 @@ namespace C6
 
 
                 // Result is a valid enum constant
-                Ensures(Enum.IsDefined(typeof(EnumerationDirection), Result<EnumerationDirection>()));
+                Ensures(Result<EnumerationDirection>().IsDefined());
 
 
                 return default(EnumerationDirection);
@@ -122,7 +123,7 @@ namespace C6
             Ensures(Result<IDirectedCollectionValue<T>>().Count == Count);
 
             // Result count speed is constant
-            Ensures(Result<IDirectedCollectionValue<T>>().CountSpeed == Speed.Constant); // TODO: Is this always constant? We would at least like that, right?
+            Ensures(Result<IDirectedCollectionValue<T>>().CountSpeed <= Linear);
 
             // Result direction is opposite
             Ensures(Result<IDirectedCollectionValue<T>>().Direction.IsOppositeOf(Direction));

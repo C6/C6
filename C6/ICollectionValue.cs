@@ -82,6 +82,7 @@ namespace C6
         [Pure]
         bool IsEmpty { get; }
 
+        // TODO: Should we keep this and rather add it to IStack<T>/IQueue<T>?
         /// <summary>
         ///     Returns some item from the collection.
         /// </summary>
@@ -161,7 +162,7 @@ namespace C6
 
 
                 // Result is a valid enum constant
-                Ensures(Enum.IsDefined(typeof(Speed), Result<Speed>()));
+                Ensures(Result<Speed>().IsDefined());
 
 
                 return default(Speed);

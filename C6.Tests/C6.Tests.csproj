@@ -147,9 +147,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ArrayListTests.cs" />
+    <Compile Include="Collections\LinkedListTests.cs" />
     <Compile Include="ComparerFactoryTests.cs" />
     <Compile Include="Helpers\BadEnumerable.cs" />
     <Compile Include="Helpers\BadEnumerableException.cs" />
+    <Compile Include="Helpers\Breaks.cs" />
+    <Compile Include="Helpers\EnumeratorConstraint.cs" />
     <Compile Include="Helpers\ExpectedCollectionValue.cs" />
     <Compile Include="Helpers\ExpectedDirectedCollectionValue.cs" />
     <Compile Include="Helpers\Run.cs" />
@@ -165,6 +168,7 @@
     <Compile Include="Contracts\ContractHelperExtensionsTests.cs" />
     <Compile Include="Contracts\ViolatesTests.cs" />
     <Compile Include="EnumerationDirectionExtensionTests.cs" />
+    <Compile Include="IQueueTests.cs" />
     <Compile Include="IStackTests.cs" />
     <Compile Include="SpeedTests.cs" />
     <Compile Include="Contracts\PreconditionException.cs" />

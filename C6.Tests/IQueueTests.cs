@@ -9,7 +9,6 @@ using C6.Tests.Helpers;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
-using static C6.Collections.ExceptionMessages;
 using static C6.Contracts.ContractMessage;
 using static C6.Tests.Helpers.CollectionEvent;
 using static C6.Tests.Helpers.TestHelper;
@@ -20,55 +19,55 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests
 {
     [TestFixture]
-    public abstract class IStackTests : IListenableTests
+    public abstract class IQueueTests : IListenableTests
     {
         #region Factories
 
         protected abstract bool IsReadOnly { get; }
 
         /// <summary>
-        ///     Creates an empty <see cref="IStack{T}"/>.
+        ///     Creates an empty <see cref="IQueue{T}"/>.
         /// </summary>
         /// <param name="allowsNull">
-        ///     A value indicating whether the <see cref="IStack{T}"/> allows <c>null</c> items.
+        ///     A value indicating whether the <see cref="IQueue{T}"/> allows <c>null</c> items.
         /// </param>
         /// <typeparam name="T">
-        ///     The type of the items in the <see cref="IStack{T}"/>.
+        ///     The type of the items in the <see cref="IQueue{T}"/>.
         /// </typeparam>
         /// <returns>
-        ///     An empty <see cref="IStack{T}"/>.
+        ///     An empty <see cref="IQueue{T}"/>.
         /// </returns>
-        protected abstract IStack<T> GetEmptyStack<T>(bool allowsNull = false);
+        protected abstract IQueue<T> GetEmptyQueue<T>(bool allowsNull = false);
 
         /// <summary>
-        ///     Creates a <see cref="IStack{T}"/> containing the items in the enumerable.
+        ///     Creates a <see cref="IQueue{T}"/> containing the items in the enumerable.
         /// </summary>
         /// <typeparam name="T">
-        ///     The type of the items in the <see cref="IStack{T}"/>.
+        ///     The type of the items in the <see cref="IQueue{T}"/>.
         /// </typeparam>
         /// <param name="enumerable">
-        ///     The collection whose items are copied to the new <see cref="IStack{T}"/>.
+        ///     The collection whose items are copied to the new <see cref="IQueue{T}"/>.
         /// </param>
         /// <param name="allowsNull">
-        ///     A value indicating whether the <see cref="IStack{T}"/> allows <c>null</c> items.
+        ///     A value indicating whether the <see cref="IQueue{T}"/> allows <c>null</c> items.
         /// </param>
         /// <returns>
-        ///     A <see cref="IStack{T}"/> containing the items in the enumerable.
+        ///     A <see cref="IQueue{T}"/> containing the items in the enumerable.
         /// </returns>
-        protected abstract IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
+        protected abstract IQueue<T> GetQueue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 
         #region Helpers
 
-        private IStack<string> GetStringStack(Randomizer random, bool allowsNull = false)
-            => GetStack(GetStrings(random, GetCount(random)), allowsNull);
+        private IQueue<string> GetStringQueue(Randomizer random, bool allowsNull = false)
+            => GetQueue(GetStrings(random, GetCount(random)), allowsNull);
 
         #endregion
 
         #region Inherited
 
-        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false) => GetEmptyStack<T>(allowsNull);
+        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false) => GetEmptyQueue<T>(allowsNull);
 
-        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => GetStack(enumerable, allowsNull);
+        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => GetQueue(enumerable, allowsNull);
 
         #endregion
 
@@ -84,7 +83,7 @@ namespace C6.Tests
         public void ItemGet_NegativeIndex_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var index = GetNegative(Random);
 
             // Act & Assert
@@ -95,7 +94,7 @@ namespace C6.Tests
         public void ItemGet_IndexOfCount_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var index = collection.Count;
 
             // Act & Assert
@@ -106,7 +105,7 @@ namespace C6.Tests
         public void ItemGet_IndexLargerThanCount_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var count = collection.Count;
             var index = Random.Next(count + 1, int.MaxValue);
 
@@ -118,7 +117,7 @@ namespace C6.Tests
         public void ItemGet_EmptyCollection_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetEmptyStack<string>();
+            var collection = GetEmptyQueue<string>();
             var index = 0;
 
             // Act & Assert
@@ -130,7 +129,7 @@ namespace C6.Tests
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
-            var collection = GetStack(items, true);
+            var collection = GetQueue(items, true);
             var index = collection.ToArray().IndexOf(null);
 
             // Act
@@ -144,7 +143,7 @@ namespace C6.Tests
         public void ItemGet_RandomCollectionIndexZero_FirstItem()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var first = collection.First();
             var index = 0;
 
@@ -159,7 +158,7 @@ namespace C6.Tests
         public void ItemGet_RandomCollectionIndexCountMinusOne_LastItem()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var last = collection.Last();
             var index = collection.Count - 1;
 
@@ -174,7 +173,7 @@ namespace C6.Tests
         public void ItemGet_RandomCollectionRandomIndex_ItemAtPositionIndex()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var array = collection.ToArray();
             var index = GetIndex(collection, Random);
 
@@ -189,7 +188,7 @@ namespace C6.Tests
         public void ItemGet_GetItemDuringEnumeration_ThrowsNothing()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var index = GetIndex(collection, Random);
             var expected = collection.ElementAt(index);
 
@@ -209,100 +208,101 @@ namespace C6.Tests
 
         #region Methods
 
-        #region Pop()
+        #region Dequeue()
 
         [Test]
-        public void Pop_EmptyCollection_ViolatesPrecondtion()
+        public void Dequeue_EmptyCollection_ViolatesPrecondtion()
         {
             // Arrange
-            var collection = GetEmptyStack<string>();
+            var collection = GetEmptyQueue<string>();
 
             // Act & Assert
-            Assert.That(() => collection.Pop(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
+            Assert.That(() => collection.Dequeue(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
         }
 
         [Test]
-        public void Pop_PopDuringEnumeration_BreaksEnumerator()
+        public void Dequeue_DequeueDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
 
             // Act & Assert
-            Assert.That(() => collection.Pop(), Breaks.EnumeratorFor(collection));
+            Assert.That(() => collection.Dequeue(), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
-        public void Pop_RandomCollection_RaisesExpectedEvents()
+        public void Dequeue_RandomCollection_RaisesExpectedEvents()
         {
             // Arrange
-            var collection = GetStringStack(Random);
-            var item = collection.Last();
+            var collection = GetStringQueue(Random);
+            var item = collection.First();
             var expectedEvents = new[] {
-                RemovedAt(item, collection.Count - 1, collection),
+                RemovedAt(item, 0, collection),
                 Removed(item, 1, collection),
                 Changed(collection)
             };
 
             // Act & Assert
-            Assert.That(() => collection.Pop(), Raises(expectedEvents).For(collection));
+            Assert.That(() => collection.Dequeue(), Raises(expectedEvents).For(collection));
         }
 
         [Test]
-        public void Pop_RandomCollectionWithNullRemoveNull_Null()
+        public void Dequeue_AllowsNull_Null()
         {
             // Arrange
-            var items = GetStrings(Random).Append(null);
-            var collection = GetStack(items, allowsNull: true);
+            var items = GetStrings(Random);
+            items[0] = null;
+            var collection = GetQueue(items, allowsNull: true);
 
             // Act
-            var pop = collection.Pop();
+            var dequeue = collection.Dequeue();
 
             // Assert
-            Assert.That(pop, Is.Null);
+            Assert.That(dequeue, Is.Null);
         }
 
         [Test]
-        public void Pop_SingleItemCollection_Empty()
+        public void Dequeue_SingleItemCollection_Empty()
         {
             // Arrange
             var item = GetString(Random);
             var itemArray = new[] { item };
-            var collection = GetStack(itemArray);
+            var collection = GetQueue(itemArray);
 
             // Act
-            var pop = collection.Pop();
+            var dequeue = collection.Dequeue();
 
             // Assert
-            Assert.That(pop, Is.SameAs(item));
+            Assert.That(dequeue, Is.SameAs(item));
             Assert.That(collection, Is.Empty);
         }
 
         [Test]
-        public void Pop_PopItem_Removed()
+        public void Dequeue_DequeueItem_Removed()
         {
             // Arrange
-            var collection = GetStringStack(Random);
-            var lastItem = collection.Last();
-            var array = collection.Take(collection.Count - 1).ToArray();
+            var collection = GetStringQueue(Random);
+            var firstItem = collection.First();
+            var array = collection.Skip(1).ToArray();
 
             // Act
-            var pop = collection.Pop();
+            var dequeue = collection.Dequeue();
 
             // Assert
-            Assert.That(pop, Is.SameAs(lastItem));
+            Assert.That(dequeue, Is.SameAs(firstItem));
             Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
         [Test]
-        public void Pop_RandomCollectionPopUntilEmpty_Empty()
+        public void Dequeue_RandomCollectionDequeueUntilEmpty_Empty()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var count = collection.Count;
 
             // Act
             for (var i = 0; i < count; i++) {
-                collection.Pop();
+                collection.Dequeue();
             }
 
             // Assert
@@ -311,94 +311,94 @@ namespace C6.Tests
 
         [Test]
         [Category("Unfinished")]
-        public void Pop_ReadOnlyCollection_Fail()
+        public void Dequeue_ReadOnlyCollection_Fail()
         {
             Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }
 
         #endregion
 
-        #region Push(T)
+        #region Enqueue(T)
 
         [Test]
-        public void Push_DisallowsNull_ViolatesPrecondition()
+        public void Enqueue_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetStringStack(Random, allowsNull: false);
+            var collection = GetStringQueue(Random, allowsNull: false);
 
             // Act & Assert
-            Assert.That(() => collection.Push(null), Violates.PreconditionSaying(ItemMustBeNonNull));
+            Assert.That(() => collection.Enqueue(null), Violates.PreconditionSaying(ItemMustBeNonNull));
         }
 
         [Test]
-        public void Push_AllowsNull_Null()
+        public void Enqueue_AllowsNull_Null()
         {
             // Arrange
-            var collection = GetStringStack(Random, allowsNull: true);
+            var collection = GetStringQueue(Random, allowsNull: true);
             var array = collection.Append(null).ToArray();
 
             // Act
-            collection.Push(null);
+            collection.Enqueue(null);
 
             // Assert
             Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
         [Test]
-        public void Push_EmptyCollection_SingleItemCollection()
+        public void Enqueue_EmptyCollection_SingleItemCollection()
         {
             // Arrange
-            var collection = GetEmptyStack<string>();
+            var collection = GetEmptyQueue<string>();
             var item = GetString(Random);
             var array = new[] { item };
 
             // Act
-            collection.Push(item);
+            collection.Enqueue(item);
 
             // Assert
             Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
         [Test]
-        public void Push_RandomCollectionInsertExistingLast_InsertedLast()
+        public void Enqueue_RandomCollectionInsertExistingLast_InsertedLast()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var item = collection.Choose(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
-            collection.Push(item);
+            collection.Enqueue(item);
 
             // Assert
             Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
         [Test]
-        public void Push_RandomCollectionPush_InsertedLast()
+        public void Enqueue_RandomCollectionEnqueue_InsertedLast()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var item = GetString(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
-            collection.Push(item);
+            collection.Enqueue(item);
 
             // Assert
             Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
         [Test]
-        public void Push_ManyItems_Equal()
+        public void Enqueue_ManyItems_Equal()
         {
             // Arrange
-            var collection = GetEmptyStack<string>();
+            var collection = GetEmptyQueue<string>();
             var items = GetStrings(Random, Random.Next(100, 250));
 
             // Act
             foreach (var item in items) {
-                collection.Push(item);
+                collection.Enqueue(item);
             }
 
             // Assert
@@ -406,10 +406,10 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Push_RandomCollectionPush_RaisesExpectedEvents()
+        public void Enqueue_RandomCollectionEnqueue_RaisesExpectedEvents()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var item = GetString(Random);
             var expectedEvents = new[] {
                 Inserted(item, collection.Count, collection),
@@ -418,23 +418,23 @@ namespace C6.Tests
             };
 
             // Act & Assert
-            Assert.That(() => collection.Push(item), Raises(expectedEvents).For(collection));
+            Assert.That(() => collection.Enqueue(item), Raises(expectedEvents).For(collection));
         }
 
         [Test]
-        public void Push_PushDuringEnumeration_BreaksEnumerator()
+        public void Enqueue_EnqueueDuringEnumeration_BreaksEnumerator()
         {
             // Arrange
-            var collection = GetStringStack(Random);
+            var collection = GetStringQueue(Random);
             var item = GetString(Random);
 
             // Act & Assert
-            Assert.That(() => collection.Push(item), Breaks.EnumeratorFor(collection));
+            Assert.That(() => collection.Enqueue(item), Breaks.EnumeratorFor(collection));
         }
 
         [Test]
         [Category("Unfinished")]
-        public void Push_ReadOnlyCollection_Fail()
+        public void Enqueue_ReadOnlyCollection_Fail()
         {
             Assert.That(IsReadOnly, Is.False, "Tests have not been written yet");
         }

@@ -13,6 +13,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 using static C6.Contracts.ContractMessage;
+using static C6.Speed;
 using static C6.Tests.Helpers.TestHelper;
 
 using SCG = System.Collections.Generic;
@@ -26,59 +27,69 @@ namespace C6.Tests
         #region Factories
 
         /// <summary>
-        ///     Creates an empty collection value.
+        ///     Creates an empty <see cref="ICollectionValue{T}"/>.
         /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the <see cref="ICollectionValue{T}"/>.
+        /// </typeparam>
         /// <param name="allowsNull">
         ///     A value indicating whether the collection allows <c>null</c> items.
         /// </param>
-        /// <typeparam name="T">
-        ///     The type of the items in the collection value.
-        /// </typeparam>
         /// <returns>
-        ///     An empty collection value.
+        ///     An empty <see cref="ICollectionValue{T}"/>.
         /// </returns>
         protected abstract ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false);
 
         /// <summary>
-        ///     Creates a collection value containing the items in the enumerable.
+        ///     Creates an <see cref="ICollectionValue{T}"/> containing the items in the enumerable.
         /// </summary>
         /// <typeparam name="T">
-        ///     The type of the items in the collection value.
+        ///     The type of the items in the <see cref="ICollectionValue{T}"/>.
         /// </typeparam>
         /// <param name="enumerable">
-        ///     The collection whose items are copied to the new collection value.
+        ///     The collection whose items are copied to the new <see cref="ICollectionValue{T}"/>.
         /// </param>
         /// <param name="allowsNull">
         ///     A value indicating whether the collection allows <c>null</c> items.
         /// </param>
         /// <returns>
-        ///     A collection value containing the items in the enumerable.
+        ///     An <see cref="ICollectionValue{T}"/> containing the items in the enumerable.
         /// </returns>
         protected abstract ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false);
 
-        #region Helpers
-
-        private ICollectionValue<T> GetCollectionValue<T>(params T[] items) => GetCollectionValue((SCG.IEnumerable<T>) items);
-
-        private ICollectionValue<int> GetIntCollectionValue(Random random, bool allowsNull = false)
-            => GetCollectionValue(GetIntegers(random, GetCount(random)), allowsNull);
-
-        private ICollectionValue<int> GetIntCollectionValue(Random random, int count, bool allowsNull = false)
-            => GetCollectionValue(GetIntegers(random, count), allowsNull);
-
-        private ICollectionValue<string> GetStringCollectionValue(Randomizer random, bool allowsNull = false)
-            => GetCollectionValue(GetStrings(random, GetCount(random)), allowsNull);
-
-        private ICollectionValue<string> GetStringCollectionValue(Randomizer random, int count, bool allowsNull = false)
-            => GetCollectionValue(GetStrings(random, count), allowsNull);
-
-        #endregion
+        /// <summary>
+        ///     Returns an enumerable containing all the possible items that <see cref="ICollectionValue{T}.Choose"/> can return.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     The type of the items in the collection.
+        /// </typeparam>
+        /// <param name="collection">
+        ///     The collection from which an item is chosen.
+        /// </param>
+        /// <returns>
+        ///     The possible items that <paramref name="collection"/>'s <see cref="ICollectionValue{T}.Choose"/> can return.
+        /// </returns>
+        protected abstract SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection);
 
         #region Inherited
 
         protected override SCG.IEnumerable<T> GetEmptyEnumerable<T>() => GetEmptyCollectionValue<T>();
 
         protected override SCG.IEnumerable<T> GetEnumerable<T>(SCG.IEnumerable<T> enumerable) => GetCollectionValue(enumerable);
+
+        #endregion
+
+        #region Helpers
+
+        private ICollectionValue<T> GetCollectionValue<T>(params T[] items) => GetCollectionValue((SCG.IEnumerable<T>) items);
+
+        private ICollectionValue<int> GetIntCollectionValue(Random random) => GetCollectionValue(GetIntegers(random, GetCount(random)), false);
+
+        private ICollectionValue<string> GetStringCollectionValue(Randomizer random, bool allowsNull = false)
+            => GetCollectionValue(GetStrings(random, GetCount(random)), allowsNull);
+
+        private ICollectionValue<string> GetStringCollectionValue(Randomizer random, int count, bool allowsNull = false)
+            => GetCollectionValue(GetStrings(random, count), allowsNull);
 
         #endregion
 
@@ -91,8 +102,6 @@ namespace C6.Tests
         #region Properties
 
         #region AllowsNull
-
-        // TODO: Are there better tests to perform here?
 
         [Test]
         public void AllowsNull_EmptyCollectionAllowsNull_True()
@@ -108,7 +117,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AllowsNull_EmptyCollectionAllowsNull_False()
+        public void AllowsNull_EmptyCollectionDisallowsNull_False()
         {
             // Arrange
             var collection = GetEmptyCollectionValue<string>(allowsNull: false);
@@ -121,7 +130,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AllowsNull_AllowsNull_True()
+        public void AllowsNull_RandomCollectionAllowsNull_True()
         {
             // Arrange
             var collection = GetCollectionValue(Enumerable.Empty<string>(), allowsNull: true);
@@ -134,7 +143,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void AllowsNull_AllowsNull_False()
+        public void AllowsNull_RandomCollectionDisallowsNull_False()
         {
             // Arrange
             var collection = GetCollectionValue(Enumerable.Empty<string>(), allowsNull: false);
@@ -154,7 +163,7 @@ namespace C6.Tests
         public void Count_EmptyCollection_Zero()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act
             var count = collection.Count;
@@ -168,7 +177,7 @@ namespace C6.Tests
         {
             // Arrange
             var size = GetCount(Random);
-            var collection = GetIntCollectionValue(Random, size);
+            var collection = GetStringCollectionValue(Random, size);
 
             // Act
             var count = collection.Count;
@@ -182,16 +191,16 @@ namespace C6.Tests
         #region CountSpeed
 
         [Test]
-        public void CountSpeed_EmptyCollection_Constant()
+        public void CountSpeed_RandomCollection_Constant()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetStringCollectionValue(Random);
 
             // Act
-            var speed = collection.CountSpeed;
+            var countSpeed = collection.CountSpeed;
 
             // Assert
-            Assert.That(speed, Is.EqualTo(Speed.Constant));
+            Assert.That(countSpeed, Is.EqualTo(Constant));
         }
 
         #endregion
@@ -202,7 +211,7 @@ namespace C6.Tests
         public void IsEmpty_EmptyCollection_True()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act
             var isEmpty = collection.IsEmpty;
@@ -212,11 +221,10 @@ namespace C6.Tests
         }
 
         [Test]
-        public void IsEmpty_RandomCollection_False()
+        public void IsEmpty_NonEmptyCollection_False()
         {
             // Arrange
-            var size = GetCount(Random);
-            var collection = GetIntCollectionValue(Random, size);
+            var collection = GetStringCollectionValue(Random);
 
             // Act
             var isEmpty = collection.IsEmpty;
@@ -237,17 +245,17 @@ namespace C6.Tests
         public void Choose_EmptyCollection_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act & Assert
             Assert.That(() => collection.Choose(), Violates.PreconditionSaying(CollectionMustBeNonEmpty));
         }
 
         [Test]
-        public void Choose_SingleItemCollection_Item()
+        public void Choose_SingleItemCollection_SameItem()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var collection = GetCollectionValue(item);
 
             // Act
@@ -258,7 +266,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Choose_SingleValueTypeCollection_Item()
+        public void Choose_SingleValueTypeCollection_SameItem()
         {
             // Arrange
             var item = Random.Next();
@@ -272,7 +280,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Choose_RandomCollection_ItemFromCollection()
+        public void Choose_RandomCollection_SameAsItemFromCollection()
         {
             // Arrange
             var collection = GetStringCollectionValue(Random);
@@ -281,7 +289,7 @@ namespace C6.Tests
             var choose = collection.Choose();
 
             // Assert
-            Assert.That(collection, Has.Some.SameAs(choose));
+            Assert.That(ChooseItems(collection), Has.Some.SameAs(choose));
         }
 
         #endregion
@@ -292,7 +300,7 @@ namespace C6.Tests
         public void CopyTo_NullArray_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
+            var collection = GetStringCollectionValue(Random);
 
             // Act & Assert
             Assert.That(() => collection.CopyTo(null, 0), Violates.PreconditionSaying(ArgumentMustBeNonNull));
@@ -302,45 +310,49 @@ namespace C6.Tests
         public void CopyTo_NegativeIndex_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = new int[collection.Count];
+            var collection = GetStringCollectionValue(Random);
+            var array = new string[collection.Count];
+            var arrayIndex = GetNegative(Random);
 
             // Act & Assert
-            Assert.That(() => collection.CopyTo(array, -1), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+            Assert.That(() => collection.CopyTo(array, arrayIndex), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
-
+        
         [Test]
         public void CopyTo_IndexOutOfBound_ViolatesPrecondition()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = new int[collection.Count];
-            var index = Random.Next(1, collection.Count);
+            var collection = GetStringCollectionValue(Random);
+            var padding = GetCount(Random);
+            var array = new string[collection.Count + padding];
+            var arrayIndex = Random.Next(1, collection.Count) + padding;
 
             // Act & Assert
-            Assert.That(() => collection.CopyTo(array, index), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+            Assert.That(() => collection.CopyTo(array, arrayIndex), Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
 
         [Test]
-        public void CopyTo_EqualSizeArray_Equals()
+        public void CopyTo_EqualSizeArray_EqualsCollection()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = new int[collection.Count];
+            var collection = GetStringCollectionValue(Random);
+            var array = new string[collection.Count];
+            var arrayIndex = 0;
 
             // Act
-            collection.CopyTo(array, 0);
+            collection.CopyTo(array, arrayIndex);
 
             // Assert
-            Assert.That(array, Is.EqualTo(collection));
+            Assert.That(array, Is.EqualTo(collection).ByReference<string>());
         }
 
         [Test]
-        public void CopyTo_CopyToRandomIndex_SectionEquals()
+        public void CopyTo_RandomIndex_EqualsSection()
         {
             // Arrange
-            var collection = GetIntCollectionValue(Random);
-            var array = GetIntegers(Random, (int) (collection.Count * 1.7));
+            var collection = GetStringCollectionValue(Random);
+            var padding = GetCount(Random);
+            var array = GetStrings(Random, collection.Count + padding);
             var arrayIndex = Random.Next(0, array.Length - collection.Count);
 
             // Act
@@ -348,7 +360,7 @@ namespace C6.Tests
             var section = array.Skip(arrayIndex).Take(collection.Count);
 
             // Assert
-            Assert.That(section, Is.EqualTo(collection));
+            Assert.That(section, Is.EqualTo(collection).ByReference<string>());
         }
 
         #endregion
@@ -359,33 +371,21 @@ namespace C6.Tests
         public void ToArray_EmptyCollection_Empty()
         {
             // Arrange
-            var collection = GetEmptyCollectionValue<int>();
-
-            // Act
-            var array = collection.ToArray();
-
-            // Assert
-            Assert.That(array, Is.Empty);
-        }
-
-        [Test]
-        public void ToArray_EmptyCollection_NotNull()
-        {
-            // Arrange
-            var collection = GetEmptyCollectionValue<int>();
+            var collection = GetEmptyCollectionValue<string>();
 
             // Act
             var array = collection.ToArray();
 
             // Assert
             Assert.That(array, Is.Not.Null);
+            Assert.That(array, Is.Empty);
         }
-
+        
         [Test]
-        public void ToArray_SingleItemCollection_SingleItemArray()
+        public void ToArray_SingleItemCollection_SameAsItem()
         {
             // Arrange
-            var item = Random.GetString();
+            var item = GetString(Random);
             var collection = GetCollectionValue(item);
             var itemArray = new[] { item };
 
@@ -393,11 +393,11 @@ namespace C6.Tests
             var array = collection.ToArray();
 
             // Assert
-            Assert.That(array, Is.EqualTo(itemArray));
+            Assert.That(array, Is.EqualTo(itemArray).ByReference<string>());
         }
 
         [Test]
-        public void ToArray_RandomNonValueTypeCollection_Equal()
+        public void ToArray_RandomCollection_SameAsItems()
         {
             // Arrange
             var items = GetStrings(Random);
@@ -407,7 +407,7 @@ namespace C6.Tests
             var array = collection.ToArray();
 
             // Assert
-            Assert.That(array, Is.EqualTo(items));
+            Assert.That(array, Is.EqualTo(items).ByReference<string>());
         }
 
         #endregion
@@ -419,6 +419,8 @@ namespace C6.Tests
         #region IShowable
 
         #region Methods
+
+        // TODO: Review IShowable tests
 
         #region Show
 
@@ -494,7 +496,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(show, Is.True);
-            Assert.That(rest, Is.EqualTo(int.MaxValue - length));
+            Assert.That(rest, Is.EqualTo(int.MaxValue - length).ByReference<string>());
         }
 
         [Test]
@@ -514,7 +516,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(show, Is.False);
-            Assert.That(length, Is.EqualTo(rest - refRest));
+            Assert.That(length, Is.EqualTo(rest - refRest).ByReference<string>());
             Assert.That(result, Contains.Substring(Showing.Ellipses));
         }
 
