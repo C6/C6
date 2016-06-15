@@ -123,19 +123,19 @@ namespace C6.Collections
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
-        public T First => _first.Next.Item;
+        public virtual T First => _first.Next.Item;
 
-        public Speed IndexingSpeed => Linear;
+        public virtual Speed IndexingSpeed => Linear;
 
         public override bool IsFixedSize => false;
 
         public override bool IsReadOnly => false;
 
-        public T Last => _last.Previous.Item;
+        public virtual T Last => _last.Previous.Item;
 
         public override EventTypes ListenableEvents => All;
 
-        public T this[int index]
+        public virtual T this[int index]
         {
             get { return GetNode(index).Item; }
             set {
@@ -230,9 +230,9 @@ namespace C6.Collections
 
         public override int CountDuplicates(T item) => this.Count(x => Equals(x, item));
 
-        public T Dequeue() => RemoveFirst();
+        public virtual T Dequeue() => RemoveFirst();
 
-        public void Enqueue(T item) => InsertLast(item);
+        public virtual void Enqueue(T item) => InsertLast(item);
 
         public override bool Find(ref T item)
         {
@@ -249,9 +249,9 @@ namespace C6.Collections
 
         public override SCG.IEnumerator<T> GetEnumerator() => EnumerateFrom(_first.Next).GetEnumerator();
 
-        public IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, Forwards);
+        public virtual IDirectedCollectionValue<T> GetIndexRange(int startIndex, int count) => new Range(this, startIndex, count, Forwards);
 
-        public int IndexOf(T item)
+        public virtual int IndexOf(T item)
         {
             #region Code Contracts
 
@@ -296,7 +296,7 @@ namespace C6.Collections
             return ~Count;
         }
 
-        public void Insert(int index, T item)
+        public virtual void Insert(int index, T item)
         {
             #region Code Contracts
 
@@ -310,7 +310,7 @@ namespace C6.Collections
             RaiseForInsert(index, item);
         }
 
-        public void InsertFirst(T item)
+        public virtual void InsertFirst(T item)
         {
             #region Code Contracts
 
@@ -324,9 +324,9 @@ namespace C6.Collections
             RaiseForInsert(0, item);
         }
 
-        public void InsertLast(T item) => Insert(Count, item);
+        public virtual void InsertLast(T item) => Insert(Count, item);
 
-        public void InsertRange(int index, SCG.IEnumerable<T> items)
+        public virtual void InsertRange(int index, SCG.IEnumerable<T> items)
         {
             Node first, last;
             var count = EnumerateToList(items, out first, out last);
@@ -360,7 +360,7 @@ namespace C6.Collections
             throw new NotImplementedException();
         }
 
-        public int LastIndexOf(T item)
+        public virtual int LastIndexOf(T item)
         {
             #region Code Contracts
 
@@ -405,9 +405,9 @@ namespace C6.Collections
             return ~Count;
         }
 
-        public T Pop() => RemoveLast();
+        public virtual T Pop() => RemoveLast();
 
-        public void Push(T item) => InsertLast(item);
+        public virtual void Push(T item) => InsertLast(item);
 
         public override bool Remove(T item, out T removedItem)
         {
@@ -423,7 +423,7 @@ namespace C6.Collections
             return false;
         }
 
-        public T RemoveAt(int index)
+        public virtual T RemoveAt(int index)
         {
             UpdateVersion();
             var item = Remove(GetNode(index));
@@ -433,9 +433,9 @@ namespace C6.Collections
 
         public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
-        public T RemoveFirst() => RemoveAt(0);
+        public virtual T RemoveFirst() => RemoveAt(0);
 
-        public void RemoveIndexRange(int startIndex, int count)
+        public virtual void RemoveIndexRange(int startIndex, int count)
         {
             #region Code Contracts
 
@@ -460,7 +460,7 @@ namespace C6.Collections
             RaiseForRemoveIndexRange(startIndex, count);
         }
 
-        public T RemoveLast() => RemoveAt(Count - 1);
+        public virtual T RemoveLast() => RemoveAt(Count - 1);
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
         {
@@ -507,7 +507,7 @@ namespace C6.Collections
             return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
-        public void Reverse()
+        public virtual void Reverse()
         {
             #region Code Contracts
 
@@ -541,7 +541,7 @@ namespace C6.Collections
 
         public virtual void Shuffle() => Shuffle(new Random());
 
-        public void Shuffle(Random random)
+        public virtual void Shuffle(Random random)
         {
             #region Code Contracts
 
