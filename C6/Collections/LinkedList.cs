@@ -21,6 +21,7 @@ using static C6.Speed;
 
 namespace C6.Collections
 {
+    // TODO: Compare to C5.LinkedList<T>
     /// <summary>
     ///     Represents a generic doubly linked list.
     /// </summary>
