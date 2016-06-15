@@ -401,15 +401,9 @@ namespace C6.Collections
             return ~Count;
         }
 
-        public T Pop()
-        {
-            throw new NotImplementedException();
-        }
+        public T Pop() => RemoveLast();
 
-        public void Push(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public void Push(T item) => InsertLast(item);
 
         public override bool Remove(T item, out T removedItem)
         {
