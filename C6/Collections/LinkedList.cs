@@ -434,10 +434,7 @@ namespace C6.Collections
 
         public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
-        public T RemoveFirst()
-        {
-            throw new NotImplementedException();
-        }
+        public T RemoveFirst() => RemoveAt(0);
 
         public void RemoveIndexRange(int startIndex, int count)
         {
@@ -464,10 +461,7 @@ namespace C6.Collections
             RaiseForRemoveIndexRange(startIndex, count);
         }
 
-        public T RemoveLast()
-        {
-            throw new NotImplementedException();
-        }
+        public T RemoveLast() => RemoveAt(Count - 1);
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
         {
