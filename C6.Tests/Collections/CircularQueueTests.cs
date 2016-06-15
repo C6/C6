@@ -20,7 +20,7 @@ namespace C6.Tests.Collections
 
         protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
         {
-            yield return collection.Last();
+            yield return collection.First();
         }
     }
 }

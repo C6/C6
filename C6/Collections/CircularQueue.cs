@@ -2,11 +2,13 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
+using static C6.Speed;
 
 using SCG = System.Collections.Generic;
 
@@ -28,9 +30,60 @@ namespace C6.Collections
 
         #endregion
 
+        #region Code Contracts
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            // ReSharper disable InvocationIsSkipped
+
+            // Array is non-null
+            Invariant(_items != null);
+
+            // Count is not bigger than the capacity
+            Invariant(Count <= Capacity);
+
+            // All items must be non-null if collection disallows null values
+            Invariant(AllowsNull || ForAll(this, item => item != null));
+
+            // Pointers are within bounds
+            Invariant(0 <= _front && _front < Capacity || Count == 0 && _front == 0);
+            Invariant(0 <= _back && _back < Capacity || Count == 0 && _back == 0);
+            
+            // _front points to the first item in the queue, _back points to the index after the last item, or to the first index if the queue is at the end of the array
+            Invariant(_back - _front == Count || Capacity - _front + _back == Count || _front == _back && Count == Capacity);
+
+            // The unused part of the array contains default values
+            // TODO: Invariant(ForAll(Count, Capacity, i => Equals(_items[i], default(T))));
+
+            // Equality comparer is non-null
+            // TODO: Invariant(EqualityComparer != null);
+
+            // Empty array is always empty
+            Invariant(EmptyArray.IsEmpty());
+
+            // ReSharper restore InvocationIsSkipped
+        }
+
+        #endregion
+
         #region Constructors
 
-        public CircularQueue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        private CircularQueue(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        {
+            #region Code Contracts
+
+            // Value types cannot be null
+            Requires(!typeof(T).IsValueType || !allowsNull, AllowsNullMustBeFalseForValueTypes);
+
+            #endregion
+
+
+            //EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
+            AllowsNull = allowsNull;
+        }
+
+        public CircularQueue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
         {
             #region Code Contracts
 
@@ -48,33 +101,19 @@ namespace C6.Collections
             // The specified enumerable is not equal to the array saved
             Ensures(!ReferenceEquals(items, _items));
 
+            // Count is equal to the number of items in the enumerable
+            Ensures(base.Count == items.Count());
+
             // ReSharper restore InvocationIsSkipped
 
             #endregion
-
-            AllowsNull = allowsNull;
-            //EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
-
-            var collectionValue = items as ICollectionValue<T>;
-            var collection = items as SCG.ICollection<T>;
-
-            // Use ToArray() for ICollectionValue<T>
-            if (collectionValue != null) {
-                _items = collectionValue.IsEmpty ? EmptyArray : collectionValue.ToArray();
-                Count = Capacity;
-            }
-            // Use CopyTo() for ICollection<T>
-            else if (collection != null) {
-                Count = collection.Count;
-                _items = Count == 0 ? EmptyArray : new T[Count];
-                collection.CopyTo(_items, 0);
-            }
-            else {
-                _items = items.ToArray();
-            }
+            
+            // TODO: Check enumerable type
+            _items = items.ToArray();
+            base.Count = Capacity;
         }
 
-        public CircularQueue(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        public CircularQueue(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
         {
             #region Code Contracts
 
@@ -90,9 +129,8 @@ namespace C6.Collections
 
             #endregion
 
-            AllowsNull = allowsNull;
+            _items = EmptyArray;
             Capacity = capacity;
-            // EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
         }
 
         #endregion
@@ -101,7 +139,7 @@ namespace C6.Collections
 
         public override bool AllowsNull { get; }
 
-        public override Speed CountSpeed { get; }
+        public override Speed CountSpeed => Constant;
 
         #endregion
 
@@ -111,17 +149,17 @@ namespace C6.Collections
         ///     Gets or sets the total number of items the internal data structure can hold without resizing.
         /// </summary>
         /// <value>
-        ///     The number of items that the <see cref="ArrayList{T}"/> can contain before resizing is required.
+        ///     The number of items that the <see cref="CircularQueue{T}"/> can contain before resizing is required.
         /// </value>
         /// <remarks>
         ///     <para>
-        ///         <see cref="Capacity"/> is the number of items that the <see cref="ArrayList{T}"/> can store before resizing is
-        ///         required, whereas <see cref="ICollectionValue{T}.Count"/> is the number of items that are actually in the
-        ///         <see cref="ArrayList{T}"/>.
+        ///         <see cref="Capacity"/> is the number of items that the <see cref="CircularQueue{T}"/> can store before resizing
+        ///         is required, whereas <see cref="ICollectionValue{T}.Count"/> is the number of items that are actually in the
+        ///         <see cref="CircularQueue{T}"/>.
         ///     </para>
         ///     <para>
         ///         If the capacity is significantly larger than the count and you want to reduce the memory used by the
-        ///         <see cref="ArrayList{T}"/>, you can decrease capacity by calling the <see cref="TrimExcess"/> method or by
+        ///         <see cref="CircularQueue{T}"/>, you can decrease capacity by calling the <see cref="TrimExcess"/> method or by
         ///         setting the <see cref="Capacity"/> property explicitly to a lower value. When the value of
         ///         <see cref="Capacity"/> is set explicitly, the internal data structure is also reallocated to accommodate the
         ///         specified capacity, and all the items are copied.
@@ -148,8 +186,9 @@ namespace C6.Collections
                         return;
                     }
 
-                    // TODO: Fix
-                    Array.Resize(ref _items, value);
+                    var array = new T[value];
+                    CopyTo(array, 0);
+                    _items = array;
                 }
                 else {
                     _items = EmptyArray;
@@ -157,14 +196,25 @@ namespace C6.Collections
             }
         }
 
-        public override T Choose()
-        {
-            throw new NotImplementedException();
-        }
+        public override T Choose() => _items[_front];
 
         public override SCG.IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            var index = _front;
+            var end = _front < _back ? _back : Capacity;
+
+            while (index < end) {
+                // TODO: CheckVersion(version);
+                yield return _items[index++];
+            }
+
+            if (_front > _back) {
+                index = 0;
+                while (index < _back) {
+                    // TODO: CheckVersion(version);
+                    yield return _items[index++];
+                }
+            }
         }
 
         #endregion
