@@ -29,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : SequenceBase<T>, IList<T>
+    public class LinkedList<T> : SequenceBase<T>, IList<T>, IStack<T>
     {
         #region Fields
 
@@ -399,6 +399,16 @@ namespace C6.Collections
             }
 
             return ~Count;
+        }
+
+        public T Pop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Push(T item)
+        {
+            throw new NotImplementedException();
         }
 
         public override bool Remove(T item, out T removedItem)
