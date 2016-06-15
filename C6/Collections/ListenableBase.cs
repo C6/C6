@@ -64,6 +64,36 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForIndexSetter(T oldItem, T newItem, int index)
+        {
+            if (ActiveEvents != None) {
+                OnItemRemovedAt(oldItem, index);
+                OnItemsRemoved(oldItem, 1);
+                OnItemInserted(newItem, index);
+                OnItemsAdded(newItem, 1);
+                OnCollectionChanged();
+            }
+        }
+
+        protected void RaiseForInsert(int index, T item)
+        {
+            OnItemInserted(item, index);
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
+        }
+
+        protected void RaiseForInsertRange(int index, SCG.IEnumerable<T> items)
+        {
+            if (ActiveEvents.HasFlag(Inserted | Added)) {
+                var offset = 0;
+                foreach (var item in items) {
+                    OnItemInserted(item, index + offset++);
+                    OnItemsAdded(item, 1);
+                }
+            }
+            OnCollectionChanged();
+        }
+
         protected void RaiseForRemove(T removedItem)
         {
             OnItemsRemoved(removedItem, 1);
@@ -82,6 +112,12 @@ namespace C6.Collections
             OnCollectionCleared(false, count, startIndex);
             OnCollectionChanged();
         }
+
+        protected void RaiseForReverse() => OnCollectionChanged();
+
+        protected void RaiseForShuffle() => OnCollectionChanged();
+
+        protected void RaiseForSort() => OnCollectionChanged();
 
         protected void RaiseForUpdate(T item, T oldItem)
         {

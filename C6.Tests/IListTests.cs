@@ -151,7 +151,7 @@ namespace C6.Tests
             ((SC.ICollection) collection).CopyTo(array, 0);
 
             // Assert
-            Assert.That(array, Is.EqualTo(collection).Using(ReferenceEqualityComparer));
+            Assert.That(array, Is.EqualTo(collection).ByReference<string>());
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace C6.Tests
             var section = array.Skip(arrayIndex).Take(collection.Count);
 
             // Assert
-            Assert.That(section, Is.EqualTo(collection).Using(ReferenceEqualityComparer));
+            Assert.That(section, Is.EqualTo(collection).ByReference<string>());
         }
 
         #endregion
@@ -401,7 +401,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = null;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -418,7 +418,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -435,7 +435,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -452,7 +452,7 @@ namespace C6.Tests
             ((SC.IList) collection)[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -584,7 +584,7 @@ namespace C6.Tests
             }
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -1059,7 +1059,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1075,7 +1075,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1090,7 +1090,7 @@ namespace C6.Tests
             collection.Insert(index, (object) null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1106,7 +1106,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1122,7 +1122,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1138,7 +1138,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1200,7 +1200,7 @@ namespace C6.Tests
             collection.Remove(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1225,7 +1225,7 @@ namespace C6.Tests
             ((SC.IList) collection).Remove(null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
@@ -1284,7 +1284,7 @@ namespace C6.Tests
             ((SC.IList) collection).Remove(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
@@ -1300,7 +1300,7 @@ namespace C6.Tests
             ((SC.IList) collection).Remove(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
@@ -1442,7 +1442,7 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1458,7 +1458,7 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1489,7 +1489,7 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Skip(1)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Skip(1)).ByReference<string>());
         }
 
         [Test]
@@ -1506,7 +1506,7 @@ namespace C6.Tests
             ((SC.IList) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Take(index)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Take(index)).ByReference<string>());
         }
 
         [Test]
@@ -1741,7 +1741,7 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1757,7 +1757,7 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -1788,7 +1788,7 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Skip(1)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Skip(1)).ByReference<string>());
         }
 
         [Test]
@@ -1805,7 +1805,7 @@ namespace C6.Tests
             ((SCG.IList<string>) collection).RemoveAt(index);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items.Take(index)).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items.Take(index)).ByReference<string>());
         }
 
         [Test]
@@ -2050,7 +2050,7 @@ namespace C6.Tests
             collection[index] = null;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2067,7 +2067,7 @@ namespace C6.Tests
             collection[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2084,7 +2084,7 @@ namespace C6.Tests
             collection[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2101,7 +2101,7 @@ namespace C6.Tests
             collection[index] = item;
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2230,7 +2230,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2246,7 +2246,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2261,7 +2261,7 @@ namespace C6.Tests
             collection.Insert(index, null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2277,7 +2277,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2293,7 +2293,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2309,7 +2309,7 @@ namespace C6.Tests
             collection.Insert(index, item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(expected).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(expected).ByReference<string>());
         }
 
         [Test]
@@ -2396,7 +2396,7 @@ namespace C6.Tests
             collection.InsertFirst(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2411,7 +2411,7 @@ namespace C6.Tests
             collection.InsertFirst(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2425,7 +2425,7 @@ namespace C6.Tests
             collection.InsertFirst(null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2440,7 +2440,7 @@ namespace C6.Tests
             collection.InsertFirst(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2525,7 +2525,7 @@ namespace C6.Tests
             collection.InsertLast(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2540,7 +2540,7 @@ namespace C6.Tests
             collection.InsertLast(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2554,7 +2554,7 @@ namespace C6.Tests
             collection.InsertLast(null);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2569,7 +2569,7 @@ namespace C6.Tests
             collection.InsertLast(item);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2710,7 +2710,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2729,7 +2729,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2744,7 +2744,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -2760,7 +2760,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2776,7 +2776,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2792,7 +2792,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2808,7 +2808,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2824,7 +2824,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2853,7 +2853,7 @@ namespace C6.Tests
             collection.InsertRange(index, items);
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -2896,7 +2896,7 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.InsertRange(index, badEnumerable), Throws.TypeOf<BadEnumerableException>());
-            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3524,7 +3524,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(removeFirst, Is.SameAs(firstItem));
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3624,7 +3624,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(removeLast, Is.SameAs(lastItem));
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3644,20 +3644,7 @@ namespace C6.Tests
         #endregion
 
         #region Reverse()
-
-        [Test]
-        public void Reverse_EmptyCollection_Nothing()
-        {
-            // Arrange
-            var collection = GetEmptyList<string>();
-
-            // Act
-            collection.Reverse();
-
-            // Assert
-            Assert.That(collection, Is.Empty);
-        }
-
+        
         [Test]
         public void Reverse_EmptyCollection_RaisesNoEvents()
         {
@@ -3666,6 +3653,7 @@ namespace C6.Tests
 
             // Act & Assert
             Assert.That(() => collection.Reverse(), RaisesNoEventsFor(collection));
+            Assert.That(collection, Is.Empty);
         }
 
         [Test]
@@ -3708,7 +3696,7 @@ namespace C6.Tests
         }
 
         [Test]
-        public void Reverse_RandomCollectionWithNull_Reversed()
+        public void Reverse_AllowsNull_Reversed()
         {
             // Arrange
             var items = GetStrings(Random).WithNull(Random);
@@ -3719,7 +3707,7 @@ namespace C6.Tests
             collection.Reverse();
 
             // Assert
-            Assert.That(collection, Is.EqualTo(reversedCollection));
+            Assert.That(collection, Is.EqualTo(reversedCollection).ByReference<string>());
         }
 
         [Test]
@@ -3762,7 +3750,7 @@ namespace C6.Tests
             collection.Reverse();
 
             // Assert
-            Assert.That(collection, Is.EqualTo(reversedCollection));
+            Assert.That(collection, Is.EqualTo(reversedCollection).ByReference<string>());
         }
 
         [Test]
@@ -3777,7 +3765,7 @@ namespace C6.Tests
             collection.Reverse();
 
             // Assert
-            Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3815,7 +3803,7 @@ namespace C6.Tests
             Assert.That(() => collection.Shuffle(), RaisesNoEventsFor(collection));
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -3839,7 +3827,7 @@ namespace C6.Tests
             collection.Shuffle();
 
             // Assert
-            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(array).ByReference<string>());
         }
 
         [Test]
@@ -3947,7 +3935,7 @@ namespace C6.Tests
             Assert.That(() => collection.Shuffle(Random), RaisesNoEventsFor(collection));
 
             // Assert
-            Assert.That(collection, Is.EqualTo(items).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EqualTo(items).ByReference<string>());
         }
 
         [Test]
@@ -3971,7 +3959,7 @@ namespace C6.Tests
             collection.Shuffle(Random);
 
             // Assert
-            Assert.That(collection, Is.EquivalentTo(array).Using(ReferenceEqualityComparer));
+            Assert.That(collection, Is.EquivalentTo(array).ByReference<string>());
         }
 
         [Test]
@@ -4008,7 +3996,7 @@ namespace C6.Tests
             collection2.Shuffle(random2);
 
             // Assert
-            Assert.That(collection1, Is.EqualTo(collection2).Using(ReferenceEqualityComparer));
+            Assert.That(collection1, Is.EqualTo(collection2).ByReference<string>());
         }
 
         [Test]

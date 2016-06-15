@@ -29,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : SequenceBase<T>, IIndexed<T>
+    public class LinkedList<T> : SequenceBase<T>, IList<T>
     {
         #region Fields
 
@@ -123,15 +123,36 @@ namespace C6.Collections
 
         public override SCG.IEqualityComparer<T> EqualityComparer { get; }
 
+        public T First => _first.Next.Item;
+
         public Speed IndexingSpeed => Linear;
 
         public override bool IsFixedSize => false;
 
         public override bool IsReadOnly => false;
 
+        public T Last => _last.Previous.Item;
+
         public override EventTypes ListenableEvents => All;
 
-        public T this[int index] => GetNode(index).Item;
+        public T this[int index]
+        {
+            get { return GetNode(index).Item; }
+            set {
+                #region Code Contracts
+
+                // The version is updated
+                Ensures(Version != OldValue(Version));
+
+                #endregion
+
+                UpdateVersion();
+                var node = GetNode(index);
+                var oldItem = node.Item;
+                node.Item = value;
+                RaiseForIndexSetter(oldItem, value, index);
+            }
+        }
 
         #endregion
 
@@ -154,21 +175,15 @@ namespace C6.Collections
 
         public override bool AddRange(SCG.IEnumerable<T> items)
         {
-            // Create temporary list from items, which can be inserted at end
-            var enumerator = items.GetEnumerator();
-            if (!enumerator.MoveNext()) {
+            Node first, last;
+            var count = EnumerateToList(items, out first, out last);
+
+            if (count == 0) {
                 return false;
-            }
-            var count = Count + 1;
-            var first = new Node(enumerator.Current);
-            var last = first;
-            while (enumerator.MoveNext()) {
-                ++count;
-                last = new Node(enumerator.Current, last);
             }
 
             UpdateVersion();
-            Count = count;
+            Count += count;
 
             // Make last node in existing list and first in new list point to each other
             first.Previous = _last.Previous;
@@ -277,6 +292,65 @@ namespace C6.Collections
             return ~Count;
         }
 
+        public void Insert(int index, T item)
+        {
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(Version != OldValue(Version));
+
+            #endregion
+
+            UpdateVersion();
+            InsertBefore(item, GetNode(index));
+            RaiseForInsert(index, item);
+        }
+
+        public void InsertFirst(T item)
+        {
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(Version != OldValue(Version));
+
+            #endregion
+
+            UpdateVersion();
+            InsertAfter(item, _first);
+            RaiseForInsert(0, item);
+        }
+
+        public void InsertLast(T item) => Insert(Count, item);
+
+        public void InsertRange(int index, SCG.IEnumerable<T> items)
+        {
+            Node first, last;
+            var count = EnumerateToList(items, out first, out last);
+
+            if (count == 0) {
+                return;
+            }
+
+            UpdateVersion();
+
+            var node = GetNode(index);
+            Count += count;
+
+            node.Previous.Next = first;
+            first.Previous = node.Previous;
+
+            node.Previous = last;
+            last.Next = node;
+
+            RaiseForInsertRange(index, EnumerateFromTo(first, node));
+        }
+
+        public virtual bool IsSorted() => CollectionExtensions.IsSorted(this);
+
+        public virtual bool IsSorted(Comparison<T> comparison) => CollectionExtensions.IsSorted(this, comparison);
+
+        public virtual bool IsSorted(SCG.IComparer<T> comparer) => CollectionExtensions.IsSorted(this, comparer);
+
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
             throw new NotImplementedException();
@@ -351,6 +425,8 @@ namespace C6.Collections
 
         public override bool RemoveDuplicates(T item) => item == null ? RemoveAllWhere(x => x == null) : RemoveAllWhere(x => Equals(item, x));
 
+        public T RemoveFirst() => RemoveAt(0);
+
         public void RemoveIndexRange(int startIndex, int count)
         {
             #region Code Contracts
@@ -375,6 +451,8 @@ namespace C6.Collections
 
             RaiseForRemoveIndexRange(startIndex, count);
         }
+
+        public T RemoveLast() => RemoveAt(Count - 1);
 
         public override bool RemoveRange(SCG.IEnumerable<T> items)
         {
@@ -421,6 +499,160 @@ namespace C6.Collections
             return RemoveAllWhere(item => !itemsToRemove.Remove(item));
         }
 
+        public void Reverse()
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+            if (Count <= 1) {
+                return;
+            }
+
+            // Only update version if the collection is actually reversed
+            UpdateVersion();
+
+            var count = Count / 2;
+            Node leftNode = _first, rightNode = _last;
+
+            while (count-- > 0) {
+                leftNode = leftNode.Next;
+                rightNode = rightNode.Previous;
+
+                // Swap items
+                var item = leftNode.Item;
+                leftNode.Item = rightNode.Item;
+                rightNode.Item = item;
+            }
+
+            RaiseForReverse();
+        }
+
+        public virtual void Shuffle() => Shuffle(new Random());
+
+        public void Shuffle(Random random)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+            if (Count <= 1) {
+                return;
+            }
+
+            // Only update version if the collection is shuffled
+            UpdateVersion();
+
+            // Shuffle items in an array
+            var array = ToArray();
+            array.Shuffle(random);
+
+            // Copy them back to the list
+            var cursor = _first.Next;
+            var i = 0;
+            while (cursor != _last) {
+                cursor.Item = array[i++];
+                cursor = cursor.Next;
+            }
+
+            RaiseForShuffle();
+        }
+
+        public virtual void Sort() => Sort(comparer: null);
+
+        public virtual void Sort(Comparison<T> comparison) => Sort(comparison.ToComparer());
+
+        public virtual void Sort(SCG.IComparer<T> comparer)
+        {
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+            if (comparer == null) {
+                comparer = SCG.Comparer<T>.Default;
+            }
+
+            if (IsSorted(comparer)) {
+                return;
+            }
+
+            // Only update version if the collection is actually sorted
+            UpdateVersion();
+
+
+            Func<Node, Node, bool> isSorted = (firstNode, secondNode) => comparer.Compare(firstNode.Item, secondNode.Item) <= 0;
+
+
+            // Build a linked list of non-empty runs.
+            // The Previous field in first node of a run points to next run's first node
+            var runTail = _first.Next;
+            var previousNode = _first.Next;
+
+            _last.Previous.Next = null;
+            while (previousNode != null) {
+                var node = previousNode.Next;
+
+                while (node != null && isSorted(previousNode, node)) {
+                    previousNode = node;
+                    node = previousNode.Next;
+                }
+
+                // Completed a run; previousNode is the last node of that run
+                previousNode.Next = null; // Finish the run
+                runTail.Previous = node; // Link it into the chain of runs
+                runTail = node;
+                if (isSorted(_last.Previous, previousNode)) {
+                    // Update last pointer to point to largest
+                    _last.Previous = previousNode;
+                }
+
+                // Start a new run
+                previousNode = node;
+            }
+
+            // Repeatedly merge runs two and two, until only one run remains
+            while (_first.Next.Previous != null) {
+                var run = _first.Next;
+                Node newRunTail = null;
+
+                while (run?.Previous != null) {
+                    // At least two runs, merge
+                    var nextRun = run.Previous.Previous;
+                    var newRun = MergeRuns(run, run.Previous, isSorted);
+
+                    if (newRunTail != null) {
+                        newRunTail.Previous = newRun;
+                    }
+                    else {
+                        _first.Next = newRun;
+                    }
+
+                    newRunTail = newRun;
+                    run = nextRun;
+                }
+
+                // Add the last run, if any
+                if (run != null && newRunTail != null) {
+                    newRunTail.Previous = run;
+                }
+            }
+
+            _last.Previous.Next = _last;
+            _first.Next.Previous = _first;
+
+
+            RaiseForSort();
+        }
+
         public override ICollectionValue<T> UniqueItems() => new ItemSet(this);
 
         public override bool Update(T item, out T oldItem)
@@ -440,6 +672,79 @@ namespace C6.Collections
             oldItem = default(T);
             return false;
         }
+
+        #endregion
+
+        #region Explicit Implementations
+
+        bool SC.ICollection.IsSynchronized => false;
+
+        object SC.ICollection.SyncRoot { get; } = new object();
+
+        object SC.IList.this[int index]
+        {
+            get { return this[index]; }
+            set {
+                try {
+                    this[index] = (T) value;
+                }
+                catch (InvalidCastException) {
+                    throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+                }
+            }
+        }
+
+        int SC.IList.Add(object value)
+        {
+            try {
+                return Add((T) value) ? Count - 1 : -1;
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
+
+        void SCG.ICollection<T>.Add(T item) => Add(item);
+
+        bool SC.IList.Contains(object value) => IsCompatibleObject(value) && Contains((T) value);
+
+        void SC.ICollection.CopyTo(Array array, int index)
+        {
+            try {
+                CopyTo((T[]) array, index);
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException("Target array type is not compatible with the type of items in the collection.");
+            }
+        }
+
+        SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
+
+        int SC.IList.IndexOf(object value) => IsCompatibleObject(value) ? Math.Max(-1, IndexOf((T) value)) : -1;
+
+        // Explicit implementation is needed, since C6.IList<T>.IndexOf(T) breaks SCG.IList<T>.IndexOf(T)'s precondition: Result<T>() >= -1
+        int SCG.IList<T>.IndexOf(T item) => Math.Max(-1, IndexOf(item));
+
+        void SC.IList.Insert(int index, object value)
+        {
+            try {
+                Insert(index, (T) value);
+            }
+            catch (InvalidCastException) {
+                throw new ArgumentException($"The value \"{value}\" is not of type \"{typeof(T)}\" and cannot be used in this generic collection.{Environment.NewLine}Parameter name: {nameof(value)}");
+            }
+        }
+
+        void SC.IList.Remove(object value)
+        {
+            if (IsCompatibleObject(value)) {
+                Remove((T) value);
+            }
+        }
+
+        void SC.IList.RemoveAt(int index) => RemoveAt(index);
+
+        void SCG.IList<T>.RemoveAt(int index) => RemoveAt(index);
 
         #endregion
 
@@ -572,6 +877,42 @@ namespace C6.Collections
             }
         }
 
+        /// <summary>
+        ///     Creates a linked list starting with <paramref name="first"/> and ending with <paramref name="last"/> and returns
+        ///     the number of items in the list.
+        /// </summary>
+        /// <param name="items">
+        ///     The enumerable whose items should be copied to the list.
+        /// </param>
+        /// <param name="first">
+        ///     The first node in the list.
+        /// </param>
+        /// <param name="last">
+        ///     The last included node in the list.
+        /// </param>
+        /// <returns>
+        ///     The number of items in the list.
+        /// </returns>
+        [Pure]
+        private static int EnumerateToList(SCG.IEnumerable<T> items, out Node first, out Node last)
+        {
+            var enumerator = items.GetEnumerator();
+            if (!enumerator.MoveNext()) {
+                first = last = null;
+                return 0;
+            }
+
+            var count = 1;
+            first = last = new Node(enumerator.Current);
+
+            while (enumerator.MoveNext()) {
+                ++count;
+                last = new Node(enumerator.Current, last);
+            }
+
+            return count;
+        }
+
         [Pure]
         private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
 
@@ -585,7 +926,7 @@ namespace C6.Collections
 
             // Argument must be within bounds (collection must be non-empty)
             Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
 
             // TODO: Ensure it is the right node
 
@@ -601,8 +942,8 @@ namespace C6.Collections
             }
             // Closer to end
             else {
-                var node = _last.Previous;
-                for (var i = Count - 1; i > index; i--) {
+                var node = _last;
+                for (var i = Count; i > index; i--) {
                     node = node.Previous;
                 }
                 return node;
@@ -621,6 +962,82 @@ namespace C6.Collections
             // The incrementation must be before adding the next item, because the incrementation requires a read, which will otherwise violate a contract
             ++Count;
             return new Node(item, next.Previous, next);
+        }
+
+        private static bool IsCompatibleObject(object value) => value is T || value == null && default(T) == null;
+
+        private static Node MergeRuns(Node firstRun, Node secondRun, Func<Node, Node, bool> isSorted)
+        {
+            Requires(firstRun != null);
+            Requires(secondRun != null);
+
+            Node previous;
+            bool isPreviousFromFirstRun;
+
+            // ReSharper disable once AssignmentInConditionalExpression
+            if (isPreviousFromFirstRun = isSorted(firstRun, secondRun)) {
+                previous = firstRun;
+                firstRun = firstRun.Next;
+            }
+            else {
+                previous = secondRun;
+                secondRun = secondRun.Next;
+            }
+
+            var start = previous;
+            start.Previous = null;
+
+            while (firstRun != null & secondRun != null) {
+                if (isPreviousFromFirstRun) {
+                    Assert(previous.Next == firstRun);
+
+                    while (firstRun != null && isSorted(firstRun, secondRun)) {
+                        previous = firstRun;
+                        firstRun = previous.Next;
+                    }
+
+                    if (firstRun != null) {
+                        // prev.item <= run2.item < run1.item; insert run2
+                        previous.Next = secondRun;
+                        secondRun.Previous = previous;
+                        previous = secondRun;
+                        secondRun = previous.Next;
+                        isPreviousFromFirstRun = false;
+                    }
+                }
+                else {
+                    Assert(previous.Next == secondRun);
+
+                    while (secondRun != null && !isSorted(firstRun, secondRun)) {
+                        previous = secondRun;
+                        secondRun = previous.Next;
+                    }
+
+                    if (secondRun != null) {
+                        // prev.item < run1.item <= run2.item; insert run1
+                        previous.Next = firstRun;
+                        firstRun.Previous = previous;
+                        previous = firstRun;
+                        firstRun = previous.Next;
+                        isPreviousFromFirstRun = true;
+                    }
+                }
+            }
+
+            Assert(!(firstRun != null && isPreviousFromFirstRun) && !(secondRun != null && !isPreviousFromFirstRun));
+
+            if (firstRun != null) {
+                // last run2 < all of run1; attach run1 at end
+                previous.Next = firstRun;
+                firstRun.Previous = previous;
+            }
+            else if (secondRun != null) {
+                // last run1 
+                previous.Next = secondRun;
+                secondRun.Previous = previous;
+            }
+
+            return start;
         }
 
         private T Remove(Node node)

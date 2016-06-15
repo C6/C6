@@ -644,7 +644,7 @@ namespace C6.Collections
             RaiseForShuffle();
         }
 
-        public virtual void Sort() => Sort((SCG.IComparer<T>) null);
+        public virtual void Sort() => Sort(comparer: null);
 
         // TODO: It seems that Array.Sort(T[], Comparison<T>) is the only method that takes an Comparison<T>, not allowing us to set bounds on the sorting
         public virtual void Sort(Comparison<T> comparison) => Sort(comparison.ToComparer());
@@ -964,36 +964,6 @@ namespace C6.Collections
 
         #region Event Helpers
 
-        private void RaiseForIndexSetter(T oldItem, T newItem, int index)
-        {
-            if (ActiveEvents != None) {
-                OnItemRemovedAt(oldItem, index);
-                OnItemsRemoved(oldItem, 1);
-                OnItemInserted(newItem, index);
-                OnItemsAdded(newItem, 1);
-                OnCollectionChanged();
-            }
-        }
-
-        private void RaiseForInsert(int index, T item)
-        {
-            OnItemInserted(item, index);
-            OnItemsAdded(item, 1);
-            OnCollectionChanged();
-        }
-
-        private void RaiseForInsertRange(int index, T[] array)
-        {
-            if (ActiveEvents.HasFlag(Inserted | Added)) {
-                for (var i = 0; i < array.Length; i++) {
-                    var item = array[i];
-                    OnItemInserted(item, index + i);
-                    OnItemsAdded(item, 1);
-                }
-            }
-            OnCollectionChanged();
-        }
-
         private void RaiseForRemoveAllWhere(SCG.IEnumerable<T> items)
         {
             if (ActiveEvents.HasFlag(Removed)) {
@@ -1003,12 +973,6 @@ namespace C6.Collections
             }
             OnCollectionChanged();
         }
-
-        private void RaiseForReverse() => OnCollectionChanged();
-
-        private void RaiseForShuffle() => OnCollectionChanged();
-
-        private void RaiseForSort() => OnCollectionChanged();
 
         #endregion
 
