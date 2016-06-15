@@ -344,21 +344,12 @@ namespace C6.Collections
 
             RaiseForInsertRange(index, EnumerateFromTo(first, node));
         }
+        
+        public virtual bool IsSorted() => CollectionExtensions.IsSorted(this);
+        
+        public virtual bool IsSorted(Comparison<T> comparison) => CollectionExtensions.IsSorted(this, comparison);
 
-        public bool IsSorted()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsSorted(SCG.IComparer<T> comparer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsSorted(Comparison<T> comparison)
-        {
-            throw new NotImplementedException();
-        }
+        public virtual bool IsSorted(SCG.IComparer<T> comparer) => CollectionExtensions.IsSorted(this, comparer);
 
         public override ICollectionValue<KeyValuePair<T, int>> ItemMultiplicities()
         {
