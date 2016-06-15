@@ -168,6 +168,7 @@
     <Compile Include="Contracts\ContractHelperExtensionsTests.cs" />
     <Compile Include="Contracts\ViolatesTests.cs" />
     <Compile Include="EnumerationDirectionExtensionTests.cs" />
+    <Compile Include="IQueueTests.cs" />
     <Compile Include="IStackTests.cs" />
     <Compile Include="SpeedTests.cs" />
     <Compile Include="Contracts\PreconditionException.cs" />

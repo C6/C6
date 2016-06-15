@@ -29,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : SequenceBase<T>, IList<T>, IStack<T>
+    public class LinkedList<T> : SequenceBase<T>, IList<T>, IStack<T>, IQueue<T>
     {
         #region Fields
 
@@ -229,6 +229,10 @@ namespace C6.Collections
         }
 
         public override int CountDuplicates(T item) => this.Count(x => Equals(x, item));
+
+        public T Dequeue() => RemoveFirst();
+
+        public void Enqueue(T item) => InsertLast(item);
 
         public override bool Find(ref T item)
         {
