@@ -85,7 +85,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringStack(Random);
-            var index = Random.Next(int.MinValue, 0);
+            var index = GetNegative(Random);
 
             // Act & Assert
             Assert.That(() => collection[index], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
@@ -119,9 +119,10 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetEmptyStack<string>();
+            var index = 0;
 
             // Act & Assert
-            Assert.That(() => collection[0], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
+            Assert.That(() => collection[index], Violates.PreconditionSaying(ArgumentMustBeWithinBounds));
         }
 
         [Test]
@@ -199,7 +200,7 @@ namespace C6.Tests
 
             // Assert
             Assert.That(() => enumerator.MoveNext(), Throws.Nothing);
-            Assert.That(item, Is.EqualTo(expected));
+            Assert.That(item, Is.SameAs(expected));
         }
 
         #endregion
@@ -254,10 +255,10 @@ namespace C6.Tests
             var collection = GetStack(items, allowsNull: true);
 
             // Act
-            var removeLast = collection.Pop();
+            var pop = collection.Pop();
 
             // Assert
-            Assert.That(removeLast, Is.Null);
+            Assert.That(pop, Is.Null);
         }
 
         [Test]
@@ -269,10 +270,10 @@ namespace C6.Tests
             var collection = GetStack(itemArray);
 
             // Act
-            var removeLast = collection.Pop();
+            var pop = collection.Pop();
 
             // Assert
-            Assert.That(removeLast, Is.SameAs(item));
+            Assert.That(pop, Is.SameAs(item));
             Assert.That(collection, Is.Empty);
         }
 
@@ -285,10 +286,10 @@ namespace C6.Tests
             var array = collection.Take(collection.Count - 1).ToArray();
 
             // Act
-            var removeLast = collection.Pop();
+            var pop = collection.Pop();
 
             // Assert
-            Assert.That(removeLast, Is.SameAs(lastItem));
+            Assert.That(pop, Is.SameAs(lastItem));
             Assert.That(collection, Is.EqualTo(array).Using(ReferenceEqualityComparer));
         }
 
@@ -320,7 +321,7 @@ namespace C6.Tests
         #region Push(T)
 
         [Test]
-        public void Push_DisallowsNullPushNull_ViolatesPrecondition()
+        public void Push_DisallowsNull_ViolatesPrecondition()
         {
             // Arrange
             var collection = GetStringStack(Random, allowsNull: false);
@@ -363,7 +364,7 @@ namespace C6.Tests
         {
             // Arrange
             var collection = GetStringStack(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var array = collection.Append(item).ToArray();
 
             // Act

@@ -365,7 +365,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => ((SC.IList) collection)[index] = item, Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -379,7 +379,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act
             ((SC.IList) collection)[index] = item;
@@ -1023,7 +1023,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            object item = collection.ToArray().Choose(Random);
+            object item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.Precondition);
@@ -1037,7 +1037,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            object item = collection.ToArray().Choose(Random);
+            object item = collection.Choose(Random);
 
             // Act
             collection.Insert(index, item);
@@ -2014,7 +2014,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection[index] = item, Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2028,7 +2028,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act
             collection[index] = item;
@@ -2194,7 +2194,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.Insert(index, item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2208,7 +2208,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act
             collection.Insert(index, item);
@@ -2376,7 +2376,7 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.InsertFirst(item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2389,7 +2389,7 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var array = collection.ToArray().InsertItem(0, item);
 
             // Act
@@ -2505,7 +2505,7 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
 
             // Act & Assert
             Assert.That(() => collection.InsertLast(item), Violates.PreconditionSaying(CollectionMustAllowDuplicates));
@@ -2518,7 +2518,7 @@ namespace C6.Tests
 
             // Arrange
             var collection = GetStringList(Random);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var array = collection.Append(item).ToArray();
 
             // Act
@@ -2687,7 +2687,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, 1, Random);
 
             // Act & Assert
@@ -2721,7 +2721,7 @@ namespace C6.Tests
             // Arrange
             var collection = GetStringList(Random);
             var index = GetIndex(collection, Random, true);
-            var item = collection.ToArray().Choose(Random);
+            var item = collection.Choose(Random);
             var items = GetStrings(Random).WithRepeatedItem(() => item, 1, Random);
             var array = collection.ToArray().InsertItems(index, items);
 
