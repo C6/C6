@@ -964,18 +964,6 @@ namespace C6.Collections
 
         #region Event Helpers
 
-        private void RaiseForInsertRange(int index, T[] array)
-        {
-            if (ActiveEvents.HasFlag(Inserted | Added)) {
-                for (var i = 0; i < array.Length; i++) {
-                    var item = array[i];
-                    OnItemInserted(item, index + i);
-                    OnItemsAdded(item, 1);
-                }
-            }
-            OnCollectionChanged();
-        }
-
         private void RaiseForRemoveAllWhere(SCG.IEnumerable<T> items)
         {
             if (ActiveEvents.HasFlag(Removed)) {

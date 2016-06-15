@@ -153,7 +153,7 @@ namespace C6.Collections
                 RaiseForIndexSetter(oldItem, value, index);
             }
         }
-        
+
         #endregion
 
         #region Methods
@@ -175,21 +175,15 @@ namespace C6.Collections
 
         public override bool AddRange(SCG.IEnumerable<T> items)
         {
-            // Create temporary list from items, which can be inserted at end
-            var enumerator = items.GetEnumerator();
-            if (!enumerator.MoveNext()) {
+            Node first, last;
+            var count = EnumerateToList(items, out first, out last);
+
+            if (count == 0) {
                 return false;
-            }
-            var count = Count + 1;
-            var first = new Node(enumerator.Current);
-            var last = first;
-            while (enumerator.MoveNext()) {
-                ++count;
-                last = new Node(enumerator.Current, last);
             }
 
             UpdateVersion();
-            Count = count;
+            Count += count;
 
             // Make last node in existing list and first in new list point to each other
             first.Previous = _last.Previous;
@@ -308,8 +302,7 @@ namespace C6.Collections
             #endregion
 
             UpdateVersion();
-            var node = index == Count ? _last : GetNode(index);
-            InsertBefore(item, node);
+            InsertBefore(item, GetNode(index));
             RaiseForInsert(index, item);
         }
 
@@ -331,7 +324,25 @@ namespace C6.Collections
 
         public void InsertRange(int index, SCG.IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            Node first, last;
+            var count = EnumerateToList(items, out first, out last);
+
+            if (count == 0) {
+                return;
+            }
+
+            UpdateVersion();
+
+            var node = GetNode(index);
+            Count += count;
+
+            node.Previous.Next = first;
+            first.Previous = node.Previous;
+
+            node.Previous = last;
+            last.Next = node;
+
+            RaiseForInsertRange(index, EnumerateFromTo(first, node));
         }
 
         public bool IsSorted()
@@ -518,7 +529,7 @@ namespace C6.Collections
 
             // Only update version if the collection is actually reversed
             UpdateVersion();
-            
+
             var count = Count / 2;
             Node leftNode = _first, rightNode = _last;
 
@@ -552,7 +563,7 @@ namespace C6.Collections
 
             // Only update version if the collection is shuffled
             UpdateVersion();
-            
+
             // Shuffle items in an array
             var array = ToArray();
             array.Shuffle(random);
@@ -808,6 +819,42 @@ namespace C6.Collections
             }
         }
 
+        /// <summary>
+        ///     Creates a linked list starting with <paramref name="first"/> and ending with <paramref name="last"/> and returns
+        ///     the number of items in the list.
+        /// </summary>
+        /// <param name="items">
+        ///     The enumerable whose items should be copied to the list.
+        /// </param>
+        /// <param name="first">
+        ///     The first node in the list.
+        /// </param>
+        /// <param name="last">
+        ///     The last included node in the list.
+        /// </param>
+        /// <returns>
+        ///     The number of items in the list.
+        /// </returns>
+        [Pure]
+        private static int EnumerateToList(SCG.IEnumerable<T> items, out Node first, out Node last)
+        {
+            var enumerator = items.GetEnumerator();
+            if (!enumerator.MoveNext()) {
+                first = last = null;
+                return 0;
+            }
+
+            var count = 1;
+            first = last = new Node(enumerator.Current);
+
+            while (enumerator.MoveNext()) {
+                ++count;
+                last = new Node(enumerator.Current, last);
+            }
+
+            return count;
+        }
+
         [Pure]
         private bool Equals(T x, T y) => EqualityComparer.Equals(x, y);
 
@@ -821,7 +868,7 @@ namespace C6.Collections
 
             // Argument must be within bounds (collection must be non-empty)
             Requires(0 <= index, ArgumentMustBeWithinBounds);
-            Requires(index < Count, ArgumentMustBeWithinBounds);
+            Requires(index <= Count, ArgumentMustBeWithinBounds);
 
             // TODO: Ensure it is the right node
 
@@ -837,8 +884,8 @@ namespace C6.Collections
             }
             // Closer to end
             else {
-                var node = _last.Previous;
-                for (var i = Count - 1; i > index; i--) {
+                var node = _last;
+                for (var i = Count; i > index; i--) {
                     node = node.Previous;
                 }
                 return node;

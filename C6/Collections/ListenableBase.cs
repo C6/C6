@@ -82,6 +82,18 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForInsertRange(int index, SCG.IEnumerable<T> items)
+        {
+            if (ActiveEvents.HasFlag(Inserted | Added)) {
+                var offset = 0;
+                foreach (var item in items) {
+                    OnItemInserted(item, index + offset++);
+                    OnItemsAdded(item, 1);
+                }
+            }
+            OnCollectionChanged();
+        }
+
         protected void RaiseForRemove(T removedItem)
         {
             OnItemsRemoved(removedItem, 1);
