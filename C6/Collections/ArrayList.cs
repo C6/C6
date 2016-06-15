@@ -644,7 +644,7 @@ namespace C6.Collections
             RaiseForShuffle();
         }
 
-        public virtual void Sort() => Sort((SCG.IComparer<T>) null);
+        public virtual void Sort() => Sort(comparer: null);
 
         // TODO: It seems that Array.Sort(T[], Comparison<T>) is the only method that takes an Comparison<T>, not allowing us to set bounds on the sorting
         public virtual void Sort(Comparison<T> comparison) => Sort(comparison.ToComparer());
@@ -973,8 +973,6 @@ namespace C6.Collections
             }
             OnCollectionChanged();
         }
-
-        private void RaiseForSort() => OnCollectionChanged();
 
         #endregion
 

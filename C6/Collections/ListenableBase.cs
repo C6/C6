@@ -117,6 +117,8 @@ namespace C6.Collections
 
         protected void RaiseForShuffle() => OnCollectionChanged();
 
+        protected void RaiseForSort() => OnCollectionChanged();
+
         protected void RaiseForUpdate(T item, T oldItem)
         {
             Requires(AllowsNull || item != null, ItemMustBeNonNull);

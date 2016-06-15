@@ -344,9 +344,9 @@ namespace C6.Collections
 
             RaiseForInsertRange(index, EnumerateFromTo(first, node));
         }
-        
+
         public virtual bool IsSorted() => CollectionExtensions.IsSorted(this);
-        
+
         public virtual bool IsSorted(Comparison<T> comparison) => CollectionExtensions.IsSorted(this, comparison);
 
         public virtual bool IsSorted(SCG.IComparer<T> comparer) => CollectionExtensions.IsSorted(this, comparer);
@@ -564,19 +564,93 @@ namespace C6.Collections
             RaiseForShuffle();
         }
 
-        public void Sort()
-        {
-            throw new NotImplementedException();
-        }
+        public virtual void Sort() => Sort(comparer: null);
 
-        public void Sort(SCG.IComparer<T> comparer)
-        {
-            throw new NotImplementedException();
-        }
+        public virtual void Sort(Comparison<T> comparison) => Sort(comparison.ToComparer());
 
-        public void Sort(Comparison<T> comparison)
+        public virtual void Sort(SCG.IComparer<T> comparer)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // If collection changes, the version is updated
+            Ensures(this.IsSameSequenceAs(OldValue(ToArray())) || Version != OldValue(Version));
+
+            #endregion
+
+            if (comparer == null) {
+                comparer = SCG.Comparer<T>.Default;
+            }
+
+            if (IsSorted(comparer)) {
+                return;
+            }
+
+            // Only update version if the collection is actually sorted
+            UpdateVersion();
+
+
+            Func<Node, Node, bool> isSorted = (firstNode, secondNode) => comparer.Compare(firstNode.Item, secondNode.Item) <= 0;
+
+
+            // Build a linked list of non-empty runs.
+            // The Previous field in first node of a run points to next run's first node
+            var runTail = _first.Next;
+            var previousNode = _first.Next;
+
+            _last.Previous.Next = null;
+            while (previousNode != null) {
+                var node = previousNode.Next;
+
+                while (node != null && isSorted(previousNode, node)) {
+                    previousNode = node;
+                    node = previousNode.Next;
+                }
+
+                // Completed a run; previousNode is the last node of that run
+                previousNode.Next = null; // Finish the run
+                runTail.Previous = node; // Link it into the chain of runs
+                runTail = node;
+                if (isSorted(_last.Previous, previousNode)) {
+                    // Update last pointer to point to largest
+                    _last.Previous = previousNode;
+                }
+
+                // Start a new run
+                previousNode = node;
+            }
+
+            // Repeatedly merge runs two and two, until only one run remains
+            while (_first.Next.Previous != null) {
+                var run = _first.Next;
+                Node newRunTail = null;
+
+                while (run?.Previous != null) {
+                    // At least two runs, merge
+                    var nextRun = run.Previous.Previous;
+                    var newRun = MergeRuns(run, run.Previous, isSorted);
+
+                    if (newRunTail != null) {
+                        newRunTail.Previous = newRun;
+                    }
+                    else {
+                        _first.Next = newRun;
+                    }
+
+                    newRunTail = newRun;
+                    run = nextRun;
+                }
+
+                // Add the last run, if any
+                if (run != null && newRunTail != null) {
+                    newRunTail.Previous = run;
+                }
+            }
+
+            _last.Previous.Next = _last;
+            _first.Next.Previous = _first;
+
+
+            RaiseForSort();
         }
 
         public override ICollectionValue<T> UniqueItems() => new ItemSet(this);
@@ -891,6 +965,80 @@ namespace C6.Collections
         }
 
         private static bool IsCompatibleObject(object value) => value is T || value == null && default(T) == null;
+
+        private static Node MergeRuns(Node firstRun, Node secondRun, Func<Node, Node, bool> isSorted)
+        {
+            Requires(firstRun != null);
+            Requires(secondRun != null);
+
+            Node previous;
+            bool isPreviousFromFirstRun;
+
+            // ReSharper disable once AssignmentInConditionalExpression
+            if (isPreviousFromFirstRun = isSorted(firstRun, secondRun)) {
+                previous = firstRun;
+                firstRun = firstRun.Next;
+            }
+            else {
+                previous = secondRun;
+                secondRun = secondRun.Next;
+            }
+
+            var start = previous;
+            start.Previous = null;
+
+            while (firstRun != null & secondRun != null) {
+                if (isPreviousFromFirstRun) {
+                    Assert(previous.Next == firstRun);
+
+                    while (firstRun != null && isSorted(firstRun, secondRun)) {
+                        previous = firstRun;
+                        firstRun = previous.Next;
+                    }
+
+                    if (firstRun != null) {
+                        // prev.item <= run2.item < run1.item; insert run2
+                        previous.Next = secondRun;
+                        secondRun.Previous = previous;
+                        previous = secondRun;
+                        secondRun = previous.Next;
+                        isPreviousFromFirstRun = false;
+                    }
+                }
+                else {
+                    Assert(previous.Next == secondRun);
+
+                    while (secondRun != null && !isSorted(firstRun, secondRun)) {
+                        previous = secondRun;
+                        secondRun = previous.Next;
+                    }
+
+                    if (secondRun != null) {
+                        // prev.item < run1.item <= run2.item; insert run1
+                        previous.Next = firstRun;
+                        firstRun.Previous = previous;
+                        previous = firstRun;
+                        firstRun = previous.Next;
+                        isPreviousFromFirstRun = true;
+                    }
+                }
+            }
+
+            Assert(!(firstRun != null && isPreviousFromFirstRun) && !(secondRun != null && !isPreviousFromFirstRun));
+
+            if (firstRun != null) {
+                // last run2 < all of run1; attach run1 at end
+                previous.Next = firstRun;
+                firstRun.Previous = previous;
+            }
+            else if (secondRun != null) {
+                // last run1 
+                previous.Next = secondRun;
+                secondRun.Previous = previous;
+            }
+
+            return start;
+        }
 
         private T Remove(Node node)
         {
