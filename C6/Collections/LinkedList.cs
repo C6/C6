@@ -29,7 +29,7 @@ namespace C6.Collections
     /// </typeparam>
     [Serializable]
     [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
-    public class LinkedList<T> : SequenceBase<T>, IList<T>
+    public class LinkedList<T> : SequenceBase<T>, IList<T>, IStack<T>
     {
         #region Fields
 
@@ -400,6 +400,10 @@ namespace C6.Collections
 
             return ~Count;
         }
+
+        public T Pop() => RemoveLast();
+
+        public void Push(T item) => InsertLast(item);
 
         public override bool Remove(T item, out T removedItem)
         {

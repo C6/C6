@@ -18,7 +18,7 @@ using SCG = System.Collections.Generic;
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class LinkedListTests : IListTests
+    public class LinkedListListTests : IListTests
     {
         #region Properties
 
@@ -55,5 +55,24 @@ namespace C6.Tests.Collections
         protected override IList<T> GetList<T>(SCG.IEnumerable<T> enumerable, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) => new LinkedList<T>(enumerable, equalityComparer, allowsNull);
 
         #endregion
+    }
+
+
+    [TestFixture]
+    public class LinkedListStackTests : IStackTests
+    {
+        protected override bool IsReadOnly => false;
+        protected override EventTypes ListenableEvents => All;
+
+        protected override IStack<T> GetEmptyStack<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull: allowsNull);
+        protected override IStack<T> GetStack<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull: allowsNull);
+        protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
+        {
+            Requires(collection is LinkedList<T>);
+
+            var linkedList = (LinkedList<T>) collection;
+
+            yield return linkedList.Last;
+        }
     }
 }
