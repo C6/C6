@@ -198,6 +198,21 @@ namespace C6.Collections
 
         public override T Choose() => _items[_front];
 
+        public override void CopyTo(T[] array, int arrayIndex)
+        {
+            if (IsEmpty) {
+                return;
+            }
+
+            var count = _front < _back ? Count : Capacity - _front;
+            Array.Copy(_items, _front, array, arrayIndex, count);
+            
+            // TODO: Test
+            if (_front > _back) {
+                Array.Copy(_items, 0, array, arrayIndex + count, _back);
+            }
+        }
+
         public override SCG.IEnumerator<T> GetEnumerator()
         {
             var index = _front;
