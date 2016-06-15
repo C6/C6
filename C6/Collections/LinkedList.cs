@@ -230,15 +230,9 @@ namespace C6.Collections
 
         public override int CountDuplicates(T item) => this.Count(x => Equals(x, item));
 
-        public T Dequeue()
-        {
-            throw new NotImplementedException();
-        }
+        public T Dequeue() => RemoveFirst();
 
-        public void Enqueue(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public void Enqueue(T item) => InsertLast(item);
 
         public override bool Find(ref T item)
         {
