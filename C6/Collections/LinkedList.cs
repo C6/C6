@@ -639,8 +639,7 @@ namespace C6.Collections
             try {
                 CopyTo((T[]) array, index);
             }
-            catch (ArrayTypeMismatchException) {
-                // TODO: Catch the right exception type!
+            catch (InvalidCastException) {
                 throw new ArgumentException("Target array type is not compatible with the type of items in the collection.");
             }
         }
