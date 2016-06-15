@@ -75,6 +75,13 @@ namespace C6.Collections
             }
         }
 
+        protected void RaiseForInsert(int index, T item)
+        {
+            OnItemInserted(item, index);
+            OnItemsAdded(item, 1);
+            OnCollectionChanged();
+        }
+
         protected void RaiseForRemove(T removedItem)
         {
             OnItemsRemoved(removedItem, 1);

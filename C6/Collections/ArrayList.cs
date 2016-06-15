@@ -964,13 +964,6 @@ namespace C6.Collections
 
         #region Event Helpers
 
-        private void RaiseForInsert(int index, T item)
-        {
-            OnItemInserted(item, index);
-            OnItemsAdded(item, 1);
-            OnCollectionChanged();
-        }
-
         private void RaiseForInsertRange(int index, T[] array)
         {
             if (ActiveEvents.HasFlag(Inserted | Added)) {

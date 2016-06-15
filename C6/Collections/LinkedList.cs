@@ -300,18 +300,34 @@ namespace C6.Collections
 
         public void Insert(int index, T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(Version != OldValue(Version));
+
+            #endregion
+
+            UpdateVersion();
+            var node = index == Count ? _last : GetNode(index);
+            InsertBefore(item, node);
+            RaiseForInsert(index, item);
         }
 
         public void InsertFirst(T item)
         {
-            throw new NotImplementedException();
+            #region Code Contracts
+
+            // The version is updated
+            Ensures(Version != OldValue(Version));
+
+            #endregion
+
+            UpdateVersion();
+            InsertAfter(item, _first);
+            RaiseForInsert(0, item);
         }
 
-        public void InsertLast(T item)
-        {
-            throw new NotImplementedException();
-        }
+        public void InsertLast(T item) => Insert(Count, item);
 
         public void InsertRange(int index, SCG.IEnumerable<T> items)
         {
