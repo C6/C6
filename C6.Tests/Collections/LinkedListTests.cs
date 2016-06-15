@@ -75,4 +75,23 @@ namespace C6.Tests.Collections
             yield return linkedList.Last;
         }
     }
+
+
+    [TestFixture]
+    public class LinkedListQueueTests : IQueueTests
+    {
+        protected override bool IsReadOnly => false;
+        protected override EventTypes ListenableEvents => All;
+
+        protected override IQueue<T> GetEmptyQueue<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull: allowsNull);
+        protected override IQueue<T> GetQueue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull: allowsNull);
+        protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
+        {
+            Requires(collection is LinkedList<T>);
+
+            var linkedList = (LinkedList<T>) collection;
+
+            yield return linkedList.Last;
+        }
+    }
 }
