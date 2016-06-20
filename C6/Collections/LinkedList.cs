@@ -64,6 +64,9 @@ namespace C6.Collections
             // List is equal forwards and backwards
             Invariant(EnumerateFrom(_first.Next).IsSameSequenceAs(EnumerateBackwardsFrom(_last.Previous).Reverse()));
 
+            // Count is the same as the number of items in the enumerator
+            Invariant(Count == this.Count());
+
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
