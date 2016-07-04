@@ -16,7 +16,7 @@ using SCG = System.Collections.Generic;
 
 namespace C6.Collections
 {
-    public class CircularArrayQueue<T> : ListenableBase<T>
+    public class CircularArrayQueue<T> : ListenableBase<T>, IQueue<T>
     {
         #region Fields
 
@@ -50,7 +50,7 @@ namespace C6.Collections
             // Pointers are within bounds
             Invariant(0 <= _front && _front < Capacity || Count == 0 && _front == 0);
             Invariant(0 <= _back && _back < Capacity || Count == 0 && _back == 0);
-            
+
             // _front points to the first item in the queue, _back points to the index after the last item, or to the first index if the queue is at the end of the array
             Invariant(_back - _front == Count || Capacity - _front + _back == Count || _front == _back && Count == Capacity);
 
@@ -79,7 +79,6 @@ namespace C6.Collections
 
             #endregion
 
-
             AllowsNull = allowsNull;
         }
 
@@ -107,10 +106,10 @@ namespace C6.Collections
             // ReSharper restore InvocationIsSkipped
 
             #endregion
-            
+
             // TODO: Check enumerable type
             _items = items.ToArray();
-            base.Count = Capacity;
+            base.Count = _items.Length;
         }
 
         public CircularArrayQueue(int capacity = 0, bool allowsNull = false) : this(allowsNull)
@@ -147,19 +146,20 @@ namespace C6.Collections
         /// </value>
         /// <remarks>
         ///     <para>
-        ///         <see cref="Capacity"/> is the number of items that the <see cref="CircularArrayQueue{T}"/> can store before resizing
-        ///         is required, whereas <see cref="ICollectionValue{T}.Count"/> is the number of items that are actually in the
+        ///         <see cref="Capacity"/> is the number of items that the <see cref="CircularArrayQueue{T}"/> can store before
+        ///         resizing is required, whereas <see cref="ICollectionValue{T}.Count"/> is the number of items that are actually
+        ///         in the
         ///         <see cref="CircularArrayQueue{T}"/>.
         ///     </para>
         ///     <para>
         ///         If the capacity is significantly larger than the count and you want to reduce the memory used by the
-        ///         <see cref="CircularArrayQueue{T}"/>, you can decrease capacity by calling the <see cref="TrimExcess"/> method or by
-        ///         setting the <see cref="Capacity"/> property explicitly to a lower value. When the value of
+        ///         <see cref="CircularArrayQueue{T}"/>, you can decrease capacity by calling the <see cref="TrimExcess"/> method
+        ///         or by setting the <see cref="Capacity"/> property explicitly to a lower value. When the value of
         ///         <see cref="Capacity"/> is set explicitly, the internal data structure is also reallocated to accommodate the
         ///         specified capacity, and all the items are copied.
         ///     </para>
         /// </remarks>
-        public int Capacity
+        public virtual int Capacity
         {
             get { return _items.Length; }
             set {
@@ -192,11 +192,26 @@ namespace C6.Collections
 
         public override Speed CountSpeed => Constant;
 
+        public virtual EnumerationDirection Direction
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public override EventTypes ListenableEvents => All;
+
+        public virtual T this[int index]
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         #endregion
 
         #region Methods
+
+        public virtual IDirectedCollectionValue<T> Backwards()
+        {
+            throw new NotImplementedException();
+        }
 
         public override T Choose() => _items[_front];
 
@@ -208,11 +223,21 @@ namespace C6.Collections
 
             var count = _front < _back ? Count : Capacity - _front;
             Array.Copy(_items, _front, array, arrayIndex, count);
-            
+
             // TODO: Test
             if (_front > _back) {
                 Array.Copy(_items, 0, array, arrayIndex + count, _back);
             }
+        }
+
+        public virtual T Dequeue()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Enqueue(T item)
+        {
+            throw new NotImplementedException();
         }
 
         public override SCG.IEnumerator<T> GetEnumerator()
