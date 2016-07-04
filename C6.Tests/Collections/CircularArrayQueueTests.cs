@@ -7,16 +7,21 @@ using C6.Collections;
 
 using NUnit.Framework;
 
+using static C6.EventTypes;
+
 using SCG = System.Collections.Generic;
 
 
 namespace C6.Tests.Collections
 {
     [TestFixture]
-    public class CircularArrayQueueTests : ICollectionValueTests {
-        protected override ICollectionValue<T> GetEmptyCollectionValue<T>(bool allowsNull = false) => new CircularArrayQueue<T>(allowsNull: allowsNull);
+    public class CircularArrayQueueTests : IListenableTests
+    {
+        protected override IListenable<T> GetEmptyListenable<T>(bool allowsNull = false) => new CircularArrayQueue<T>(allowsNull: allowsNull);
 
-        protected override ICollectionValue<T> GetCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new CircularArrayQueue<T>(enumerable, allowsNull: allowsNull);
+        protected override IListenable<T> GetListenable<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new CircularArrayQueue<T>(enumerable, allowsNull: allowsNull);
+
+        protected override EventTypes ListenableEvents => All;
 
         protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection)
         {

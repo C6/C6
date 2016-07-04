@@ -8,6 +8,7 @@ using System.Linq;
 using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
+using static C6.EventTypes;
 using static C6.Speed;
 
 using SCG = System.Collections.Generic;
@@ -15,7 +16,7 @@ using SCG = System.Collections.Generic;
 
 namespace C6.Collections
 {
-    public class CircularArrayQueue<T> : CollectionValueBase<T>
+    public class CircularArrayQueue<T> : ListenableBase<T>
     {
         #region Fields
 
@@ -138,12 +139,6 @@ namespace C6.Collections
 
         public override bool AllowsNull { get; }
 
-        public override Speed CountSpeed => Constant;
-
-        #endregion
-
-        #region Methods
-
         /// <summary>
         ///     Gets or sets the total number of items the internal data structure can hold without resizing.
         /// </summary>
@@ -194,6 +189,14 @@ namespace C6.Collections
                 }
             }
         }
+
+        public override Speed CountSpeed => Constant;
+
+        public override EventTypes ListenableEvents => All;
+
+        #endregion
+
+        #region Methods
 
         public override T Choose() => _items[_front];
 
