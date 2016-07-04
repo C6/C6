@@ -69,7 +69,7 @@ namespace C6.Collections
 
         #region Constructors
 
-        private CircularArrayQueue(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        private CircularArrayQueue(bool allowsNull = false)
         {
             #region Code Contracts
 
@@ -79,11 +79,10 @@ namespace C6.Collections
             #endregion
 
 
-            //EqualityComparer = equalityComparer ?? SCG.EqualityComparer<T>.Default;
             AllowsNull = allowsNull;
         }
 
-        public CircularArrayQueue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
+        public CircularArrayQueue(SCG.IEnumerable<T> items, bool allowsNull = false) : this(allowsNull)
         {
             #region Code Contracts
 
@@ -113,7 +112,7 @@ namespace C6.Collections
             base.Count = Capacity;
         }
 
-        public CircularArrayQueue(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
+        public CircularArrayQueue(int capacity = 0, bool allowsNull = false) : this(allowsNull)
         {
             #region Code Contracts
 
