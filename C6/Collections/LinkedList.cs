@@ -64,6 +64,9 @@ namespace C6.Collections
             // List is equal forwards and backwards
             Invariant(EnumerateFrom(_first.Next).IsSameSequenceAs(EnumerateBackwardsFrom(_last.Previous).Reverse()));
 
+            // Count is the same as the number of items in the enumerator
+            Invariant(Count == this.Count());
+
             // All items must be non-null if collection disallows null values
             Invariant(AllowsNull || ForAll(this, item => item != null));
 
@@ -1280,7 +1283,7 @@ namespace C6.Collections
                     return false;
                 }
 
-                while (CheckVersion()) {
+                while (true) {
                     // Check if enumerator is done
                     if (!_enumerator.MoveNext()) {
                         // Set enumerator to null to indicate that the base has been fully enumerated
@@ -1295,9 +1298,6 @@ namespace C6.Collections
                         return true;
                     }
                 }
-
-                // This is never executed as CheckVersion() throws an exception instead of returning false
-                return false;
             }
 
             #endregion
@@ -1461,7 +1461,7 @@ namespace C6.Collections
                 }
 
                 // Check if enumerator is done
-                if (CheckVersion() & !_enumerator.MoveNext()) {
+                if (!_enumerator.MoveNext()) {
                     // Set enumerator to null to indicate that the base has been fully enumerated
                     _enumerator = null;
 

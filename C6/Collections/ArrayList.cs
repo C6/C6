@@ -1140,7 +1140,7 @@ namespace C6.Collections
                     return false;
                 }
 
-                while (CheckVersion()) {
+                while (true) {
                     // Check if enumerator is done
                     if (!_enumerator.MoveNext()) {
                         // Set enumerator to null to indicate that the base has been fully enumerated
@@ -1155,9 +1155,6 @@ namespace C6.Collections
                         return true;
                     }
                 }
-
-                // This is never executed as CheckVersion() throws an exception instead of returning false
-                return false;
             }
 
             #endregion
@@ -1321,7 +1318,7 @@ namespace C6.Collections
                 }
 
                 // Check if enumerator is done
-                if (CheckVersion() & !_enumerator.MoveNext()) {
+                if (!_enumerator.MoveNext()) {
                     // Set enumerator to null to indicate that the base has been fully enumerated
                     _enumerator = null;
 
