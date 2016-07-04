@@ -15,7 +15,7 @@ using SCG = System.Collections.Generic;
 
 namespace C6.Collections
 {
-    public class CircularQueue<T> : CollectionValueBase<T>
+    public class CircularArrayQueue<T> : CollectionValueBase<T>
     {
         #region Fields
 
@@ -69,7 +69,7 @@ namespace C6.Collections
 
         #region Constructors
 
-        private CircularQueue(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
+        private CircularArrayQueue(SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false)
         {
             #region Code Contracts
 
@@ -83,7 +83,7 @@ namespace C6.Collections
             AllowsNull = allowsNull;
         }
 
-        public CircularQueue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
+        public CircularArrayQueue(SCG.IEnumerable<T> items, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
         {
             #region Code Contracts
 
@@ -113,7 +113,7 @@ namespace C6.Collections
             base.Count = Capacity;
         }
 
-        public CircularQueue(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
+        public CircularArrayQueue(int capacity = 0, SCG.IEqualityComparer<T> equalityComparer = null, bool allowsNull = false) : this(equalityComparer, allowsNull)
         {
             #region Code Contracts
 
@@ -149,17 +149,17 @@ namespace C6.Collections
         ///     Gets or sets the total number of items the internal data structure can hold without resizing.
         /// </summary>
         /// <value>
-        ///     The number of items that the <see cref="CircularQueue{T}"/> can contain before resizing is required.
+        ///     The number of items that the <see cref="CircularArrayQueue{T}"/> can contain before resizing is required.
         /// </value>
         /// <remarks>
         ///     <para>
-        ///         <see cref="Capacity"/> is the number of items that the <see cref="CircularQueue{T}"/> can store before resizing
+        ///         <see cref="Capacity"/> is the number of items that the <see cref="CircularArrayQueue{T}"/> can store before resizing
         ///         is required, whereas <see cref="ICollectionValue{T}.Count"/> is the number of items that are actually in the
-        ///         <see cref="CircularQueue{T}"/>.
+        ///         <see cref="CircularArrayQueue{T}"/>.
         ///     </para>
         ///     <para>
         ///         If the capacity is significantly larger than the count and you want to reduce the memory used by the
-        ///         <see cref="CircularQueue{T}"/>, you can decrease capacity by calling the <see cref="TrimExcess"/> method or by
+        ///         <see cref="CircularArrayQueue{T}"/>, you can decrease capacity by calling the <see cref="TrimExcess"/> method or by
         ///         setting the <see cref="Capacity"/> property explicitly to a lower value. When the value of
         ///         <see cref="Capacity"/> is set explicitly, the internal data structure is also reallocated to accommodate the
         ///         specified capacity, and all the items are copied.

@@ -146,7 +146,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\CircularQueueTests.cs" />
+    <Compile Include="Collections\CircularArrayQueueTests.cs" />
     <Compile Include="Collections\ArrayListTests.cs" />
     <Compile Include="Collections\LinkedListTests.cs" />
     <Compile Include="ComparerFactoryTests.cs" />
