@@ -180,9 +180,15 @@ namespace C6.Collections
                         return;
                     }
 
+                    // Store Count to avoid reading it after having copied the items, as Count has a postcondition that enumerates the collection
+                    var count = Count;
+
                     var array = new T[value];
                     CopyTo(array, 0);
                     _items = array;
+
+                    _front = 0;
+                    _back = count;
                 }
                 else {
                     _items = EmptyArray;
@@ -237,27 +243,80 @@ namespace C6.Collections
 
         public virtual void Enqueue(T item)
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+
+            EnsureCapacity(Count + 1);
+
+            ++Count;
+            _items[_back++] = item;
+
+            if (_back == Capacity) {
+                _back = 0;
+            }
+
+            RaiseForEnqueue(item);
         }
 
         public override SCG.IEnumerator<T> GetEnumerator()
         {
+            if (IsEmpty) {
+                yield break;
+            }
+
+            var version = Version;
             var index = _front;
             var end = _front < _back ? _back : Capacity;
 
-            while (index < end) {
-                // TODO: CheckVersion(version);
+            while (CheckVersion(version) & index < end) {
                 yield return _items[index++];
             }
 
             if (_front > _back) {
                 index = 0;
-                while (index < _back) {
-                    // TODO: CheckVersion(version);
+                while (CheckVersion(version) & index < _back) {
                     yield return _items[index++];
                 }
             }
         }
+
+        #endregion
+
+        #region Private Members
+
+        private void EnsureCapacity(int requiredCapacity)
+        {
+            #region Code Contracts
+
+            Requires(requiredCapacity >= 0);
+
+            Requires(requiredCapacity >= Count);
+
+            Ensures(Capacity >= requiredCapacity);
+
+            Ensures(MinArrayLength <= Capacity && Capacity <= MaxArrayLength);
+
+            #endregion
+
+            if (Capacity >= requiredCapacity) {
+                return;
+            }
+
+            var capacity = Capacity * 2;
+
+            if ((uint) capacity > MaxArrayLength) {
+                capacity = MaxArrayLength;
+            }
+            else if (capacity<MinArrayLength) {
+                capacity = MinArrayLength;
+            }
+
+            if (capacity<requiredCapacity) {
+                capacity = requiredCapacity;
+            }
+
+            Capacity = capacity;
+        }
+
 
         #endregion
     }
