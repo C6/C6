@@ -235,7 +235,19 @@ namespace C6.Collections
 
         public virtual T Dequeue()
         {
-            throw new NotImplementedException();
+            UpdateVersion();
+
+            var item = _items[_front];
+            _items[_front] = default(T);
+
+            --Count;
+            if (++_front == Capacity) {
+                _front = 0;
+            }
+
+            RaiseForDequeue(item);
+
+            return item;
         }
 
         public virtual void Enqueue(T item)

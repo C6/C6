@@ -66,6 +66,13 @@ namespace C6.Collections
             OnCollectionChanged();
         }
 
+        protected void RaiseForDequeue(T item)
+        {
+            OnItemRemovedAt(item, 0);
+            OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
         protected void RaiseForEnqueue(T item)
         {
             OnItemInserted(item, Count - 1);
