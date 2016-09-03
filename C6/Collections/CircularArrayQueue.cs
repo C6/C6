@@ -205,10 +205,7 @@ namespace C6.Collections
 
         public override EventTypes ListenableEvents => All;
 
-        public virtual T this[int index]
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public virtual T this[int index] => _items[(index += _front) >= _items.Length ? index - _items.Length : index];
 
         #endregion
 
