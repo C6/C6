@@ -2,8 +2,11 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+
+using C6.Contracts;
 
 using static System.Diagnostics.Contracts.Contract;
 
@@ -55,10 +58,7 @@ namespace C6.Collections
             Invariant(_back - _front == Count || Capacity - _front + _back == Count || _front == _back && Count == Capacity);
 
             // The unused part of the array contains default values
-            // TODO: Invariant(ForAll(Count, Capacity, i => Equals(_items[i], default(T))));
-
-            // Equality comparer is non-null
-            // TODO: Invariant(EqualityComparer != null);
+            // TODO: Invariant(ForAll(Count, Capacity, i => Equals(_items[index], default(T))));
 
             // Empty array is always empty
             Invariant(EmptyArray.IsEmpty());
@@ -101,7 +101,7 @@ namespace C6.Collections
             Ensures(!ReferenceEquals(items, _items));
 
             // Count is equal to the number of items in the enumerable
-            Ensures(base.Count == items.Count());
+            Ensures(Count == items.Count());
 
             // ReSharper restore InvocationIsSkipped
 
@@ -109,7 +109,7 @@ namespace C6.Collections
 
             // TODO: Check enumerable type
             _items = items.ToArray();
-            base.Count = _items.Length;
+            Count = _items.Length;
         }
 
         public CircularArrayQueue(int capacity = 0, bool allowsNull = false) : this(allowsNull)
@@ -198,10 +198,7 @@ namespace C6.Collections
 
         public override Speed CountSpeed => Constant;
 
-        public virtual EnumerationDirection Direction
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public virtual EnumerationDirection Direction => EnumerationDirection.Forwards;
 
         public override EventTypes ListenableEvents => All;
 
@@ -211,10 +208,7 @@ namespace C6.Collections
 
         #region Methods
 
-        public virtual IDirectedCollectionValue<T> Backwards()
-        {
-            throw new NotImplementedException();
-        }
+        public virtual IDirectedCollectionValue<T> Backwards() => new Range(this, EnumerationDirection.Backwards);
 
         public override T Choose() => _items[_front];
 
@@ -243,6 +237,12 @@ namespace C6.Collections
             --Count;
             if (++_front == Capacity) {
                 _front = 0;
+
+                Assert(!IsEmpty || _back == 0);
+            }
+            // If the collection is empty, move both pointers back to the start
+            else if (IsEmpty) {
+                _front = _back = 0;
             }
 
             RaiseForDequeue(item);
@@ -276,16 +276,34 @@ namespace C6.Collections
             var index = _front;
             var end = _front < _back ? _back : Capacity;
 
-            while (CheckVersion(version) & index < end) {
+            while (CheckVersion(version) & (index < end)) {
                 yield return _items[index++];
             }
 
             if (_front > _back) {
                 index = 0;
-                while (CheckVersion(version) & index < _back) {
+                while (CheckVersion(version) & (index < _back)) {
                     yield return _items[index++];
                 }
             }
+        }
+
+        public override T[] ToArray()
+        {
+            var array = new T[Count];
+
+            if (!IsEmpty) {
+                var wraps = _front >= _back;
+                var length = (wraps ? Capacity : _back) - _front;
+
+                Array.Copy(_items, _front, array, 0, length);
+
+                if (wraps) {
+                    Array.Copy(_items, 0, array, length, Count - length);
+                }
+            }
+
+            return array;
         }
 
         #endregion
@@ -315,17 +333,200 @@ namespace C6.Collections
             if ((uint) capacity > MaxArrayLength) {
                 capacity = MaxArrayLength;
             }
-            else if (capacity<MinArrayLength) {
+            else if (capacity < MinArrayLength) {
                 capacity = MinArrayLength;
             }
 
-            if (capacity<requiredCapacity) {
+            if (capacity < requiredCapacity) {
                 capacity = requiredCapacity;
             }
 
             Capacity = capacity;
         }
 
+        #endregion
+
+        #region Nested Types
+
+        /// <summary>
+        ///     Represents a range of an <see cref="CircularArrayQueue{T}"/>.
+        /// </summary>
+        [Serializable]
+        [DebuggerTypeProxy(typeof(CollectionValueDebugView<>))]
+        [DebuggerDisplay("{DebuggerDisplay}")]
+        private sealed class Range : CollectionValueBase<T>, IDirectedCollectionValue<T>
+        {
+            #region Fields
+
+            private readonly CircularArrayQueue<T> _base;
+            private readonly int _version;
+            private readonly EnumerationDirection _direction;
+
+            #endregion
+
+            #region Constructors
+
+            /// <summary>
+            ///     Initializes a new instance of the <see cref="CircularArrayQueue{T}.Range"/> class that starts at the specified index and spans the next
+            ///     <paramref name="count"/> items in the specified direction.
+            /// </summary>
+            /// <param name="queue">
+            ///     The underlying <see cref="CircularArrayQueue{T}"/>.
+            /// </param>
+            /// <param name="startIndex">
+            ///     The zero-based <see cref="CircularArrayQueue{T}"/> index at which the range starts.
+            /// </param>
+            /// <param name="count">
+            ///     The number of items in the range.
+            /// </param>
+            /// <param name="direction">
+            ///     The direction of the range.
+            /// </param>
+            public Range(CircularArrayQueue<T> queue, EnumerationDirection direction)
+            {
+                #region Code Contracts
+
+                // Argument must be non-null
+                Requires(queue != null, ArgumentMustBeNonNull);
+
+                // Argument must be valid enum constant
+                Requires(direction.IsDefined(), EnumMustBeDefined);
+
+
+                Ensures(_base != null);
+                Ensures(_version == _base.Version);
+
+                #endregion
+
+                _base = queue;
+                _version = queue.Version;
+                _direction = direction;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public override bool AllowsNull => CheckVersion() & _base.AllowsNull;
+
+            public override int Count
+            {
+                get {
+                    CheckVersion();
+                    return _base.Count;
+                }
+            }
+
+            public override Speed CountSpeed
+            {
+                get {
+                    CheckVersion();
+                    return Constant;
+                }
+            }
+
+            public EnumerationDirection Direction
+            {
+                get {
+                    CheckVersion();
+                    return _direction;
+                }
+            }
+
+            #endregion
+
+            #region Public Methods
+
+            public IDirectedCollectionValue<T> Backwards()
+            {
+                CheckVersion();
+                return new Range(_base, Direction.Opposite());
+            }
+
+            public override T Choose()
+            {
+                CheckVersion();
+                return _base.Choose();
+            }
+
+            public override void CopyTo(T[] array, int arrayIndex)
+            {
+                CheckVersion();
+                if (_direction.IsForward()) {
+                    // Use method in base
+                    _base.CopyTo(array, arrayIndex);
+                }
+                else {
+                    // Use enumerator instead of copying and reversing
+                    base.CopyTo(array, arrayIndex);
+                }
+            }
+
+            public override bool Equals(object obj) => CheckVersion() & base.Equals(obj);
+
+            public override SCG.IEnumerator<T> GetEnumerator()
+            {
+                if (IsEmpty) {
+                    yield break;
+                }
+
+                var items = _base._items;
+                var wraps = _base._front >= _base._back;
+
+                if (_direction.IsForward()) {
+                    var index = _base._front;
+                    var end = wraps ? _base.Capacity : _base._back;
+
+                    while (CheckVersion() & (index < end)) {
+                        yield return items[index++];
+                    }
+
+                    if (wraps) {
+                        index = 0;
+                        while (CheckVersion() & (index < _base._back)) {
+                            yield return items[index++];
+                        }
+                    }
+                }
+                else {
+                    var index = _base._back - 1;
+                    var end = wraps ? 0 : _base._front;
+
+                    while (CheckVersion() & (index >= end)) {
+                        yield return items[index--];
+                    }
+
+                    if (wraps) {
+                        index = items.Length - 1;
+                        while (CheckVersion() & (index >= _base._front)) {
+                            yield return items[index--];
+                        }
+                    }
+                }
+            }
+
+            public override int GetHashCode()
+            {
+                CheckVersion();
+                return base.GetHashCode();
+            }
+
+            public override T[] ToArray()
+            {
+                CheckVersion();
+                return base.ToArray();
+            }
+
+            #endregion
+
+            #region Private Members
+
+            private string DebuggerDisplay => _version == _base.Version ? ToString() : "Expired collection value; original collection was modified since range was created.";
+
+            private bool CheckVersion() => _base.CheckVersion(_version);
+
+            #endregion
+        }
 
         #endregion
     }
