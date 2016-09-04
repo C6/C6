@@ -2,6 +2,7 @@
 // See https://github.com/C6/C6/blob/master/LICENSE.md for licensing details.
 
 using System;
+using System.Diagnostics.Contracts;
 
 using SCG = System.Collections.Generic;
 
@@ -9,6 +10,7 @@ using static System.Diagnostics.Contracts.Contract;
 
 using static C6.Contracts.ContractMessage;
 using static C6.EventTypes;
+using static C6.Collections.ExceptionMessages;
 
 
 namespace C6.Collections
@@ -61,6 +63,20 @@ namespace C6.Collections
             Requires(count >= 1, ArgumentMustBePositive);
 
             OnCollectionCleared(true, count);
+            OnCollectionChanged();
+        }
+
+        protected void RaiseForDequeue(T item)
+        {
+            OnItemRemovedAt(item, 0);
+            OnItemsRemoved(item, 1);
+            OnCollectionChanged();
+        }
+
+        protected void RaiseForEnqueue(T item)
+        {
+            OnItemInserted(item, Count - 1);
+            OnItemsAdded(item, 1);
             OnCollectionChanged();
         }
 
@@ -238,6 +254,34 @@ namespace C6.Collections
 
         protected void OnItemRemovedAt(T item, int index)
             => _itemRemovedAt?.Invoke(this, new ItemAtEventArgs<T>(item, index));
+
+        #endregion
+
+        #region Protected Properties
+
+        protected virtual int Version
+        {
+            [Pure]
+            get;
+            private set;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        [Pure]
+        protected bool CheckVersion(int version)
+        {
+            if (version == Version) {
+                return true;
+            }
+
+            // See https://msdn.microsoft.com/library/system.collections.ienumerator.movenext.aspx
+            throw new InvalidOperationException(CollectionWasModified);
+        }
+
+        protected virtual void UpdateVersion() => Version++;
 
         #endregion
     }

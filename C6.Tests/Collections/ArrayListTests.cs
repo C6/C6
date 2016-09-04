@@ -415,4 +415,17 @@ namespace C6.Tests.Collections
             yield return arrayList.Last;
         }
     }
+
+
+    [TestFixture]
+    public class ArrayListDirectedCollectionValueTests : IDirectedCollectionValueTests
+    {
+        protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection) => new[] { collection.First() };
+
+        protected override IDirectedCollectionValue<T> GetEmptyDirectedCollectionValue<T>(bool allowsNull = false) => new ArrayList<T>(allowsNull: allowsNull);
+
+        protected override IDirectedCollectionValue<T> GetDirectedCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new ArrayList<T>(enumerable, allowsNull: allowsNull);
+
+        protected override void ChangeCollection<T>(IDirectedCollectionValue<T> collection, T item) => ((ArrayList<T>)collection).UpdateOrAdd(item);
+    }
 }
