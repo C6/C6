@@ -452,4 +452,17 @@ namespace C6.Tests.Collections
             yield return linkedList.Last;
         }
     }
+
+
+    [TestFixture]
+    public class LinkedListDirectedCollectionValueTests : IDirectedCollectionValueTests
+    {
+        protected override SCG.IEnumerable<T> ChooseItems<T>(ICollectionValue<T> collection) => new[] { collection.First() };
+
+        protected override IDirectedCollectionValue<T> GetEmptyDirectedCollectionValue<T>(bool allowsNull = false) => new LinkedList<T>(allowsNull: allowsNull);
+
+        protected override IDirectedCollectionValue<T> GetDirectedCollectionValue<T>(SCG.IEnumerable<T> enumerable, bool allowsNull = false) => new LinkedList<T>(enumerable, allowsNull: allowsNull);
+
+        protected override void ChangeCollection<T>(IDirectedCollectionValue<T> collection, T item) => ((LinkedList<T>) collection).UpdateOrAdd(item);
+    }
 }

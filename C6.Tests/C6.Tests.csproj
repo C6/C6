@@ -158,6 +158,7 @@
     <Compile Include="Helpers\ExpectedDirectedCollectionValue.cs" />
     <Compile Include="Helpers\Run.cs" />
     <Compile Include="Helpers\TenEqualityComparer.cs" />
+    <Compile Include="IDirectedEnumerableTests.cs" />
     <Compile Include="IListTests.cs" />
     <Compile Include="IIndexedTests.cs" />
     <Compile Include="IListenableTests.cs" />
